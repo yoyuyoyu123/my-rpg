@@ -1277,6 +1277,7 @@ function loadSv(i){
   document.getElementById('slog').innerHTML=sv.html||'';
   scrollB(); renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS);
   addBlk('sys','▸ 已读取存档 '+(i+1));
+  LOADING = false;
 }
 function delSv(i){localStorage.removeItem('wuji_sv_'+i);renderSlots();}
 
