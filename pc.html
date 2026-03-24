@@ -1006,6 +1006,7 @@ function renderDailyBtns() {
 function renderInventory(items) {
   INVENTORY=items;
   var c=document.getElementById('inv-grid');
+  if(!c) return;
   if(!items||items.length===0){c.innerHTML='<span class="inv-empty">— 空 —</span>';return;}
   c.innerHTML='';
   items.forEach(function(item){
@@ -1055,6 +1056,7 @@ function renderSkills(skills) {
   var titleEl = document.getElementById('skill-panel-title');
   if (titleEl) titleEl.textContent = '▸ ' + label;
   var c = document.getElementById('skill-grid');
+  if (!c) return;
   if (!skills || skills.length === 0) { c.innerHTML = '<span class="skill-empty">— 空 —</span>'; return; }
   c.innerHTML = '';
   skills.forEach(function(sk) {
