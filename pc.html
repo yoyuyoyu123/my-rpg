@@ -1032,15 +1032,18 @@ function delQuest(type,i){
 
 // ── Status parsing ─────────────────────────────────────
 function updateStatus(text) {
-  var plain=text.replace(/<[^>]+>/g,'');
-  var br=plain.indexOf('\uff3b');
-  if(br>=0){
-    var statusBlock=plain.slice(br);
-    document.getElementById('sdsp').textContent=statusBlock.substring(0,400);
-    document.getElementById('sdsp').style.color='var(--tx)';
-    var im=statusBlock.match(/持有[：:]([^\]）\)]+)/);
-    if(im){
-      var items=im[1].split(/[,，、]/).filter(function(x){return x.trim()&&x.trim()!=='无';});
+  var plain = text.replace(/<[^>]+>/g, '');
+  // Support both full-width ［ and regular [ brackets
+  var br = plain.indexOf('［');
+  if (br < 0) br = plain.indexOf('[');
+  if (br >= 0) {
+    var statusBlock = plain.slice(br);
+    document.getElementById('sdsp').textContent = statusBlock.substring(0, 400);
+    document.getElementById('sdsp').style.color = 'var(--tx)';
+    // Parse inventory - support both bracket types
+    var im = statusBlock.match(/持有[:：]([^\]］）\)]+)/);
+    if (im) {
+      var items = im[1].split(/[,，、]/).filter(function(x){ return x.trim() && x.trim() !== '无'; });
       renderInventory(items);
     }
   }
