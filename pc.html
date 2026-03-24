@@ -1270,14 +1270,29 @@ function saveSv(i){
   renderSlots(); addBlk('sys','▸ 已保存至存档 '+(i+1));
 }
 function loadSv(i){
-  var raw=localStorage.getItem('wuji_sv_'+i); if(!raw)return;
+  var raw=localStorage.getItem('wuji_sv_'+i);
+  if(!raw)return;
   var sv=JSON.parse(raw);
-  HIST=sv.history; TOKENS=sv.tokens||0; QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[];
+  HIST=sv.history;
+  TOKENS=sv.tokens||0;
+  QUESTS=sv.quests||{main:[],side:[]};
+  INVENTORY=sv.inv||[];
+  SKILLS=sv.skills||[];
   document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString();
-  document.getElementById('slog').innerHTML=sv.html||'';
-  scrollB(); renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS);
+  // 重新渲染历史，不用innerHTML
+  document.getElementById('slog').innerHTML='';
+  HIST.forEach(function(m){
+    if(m.role==='assistant') renderNar(m.content);
+    else if(m.role==='user') addBlk('ply',m.content);
+  });
+  scrollB();
+  renderSlots();
+  renderQuests();
+  renderInventory(INVENTORY);
+  renderSkills(SKILLS);
+  LOADING=false;
   addBlk('sys','▸ 已读取存档 '+(i+1));
-  LOADING = false;
+  document.getElementById('pinp').focus();
 }
 function delSv(i){localStorage.removeItem('wuji_sv_'+i);renderSlots();}
 
