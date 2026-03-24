@@ -474,6 +474,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 // ── State ─────────────────────────────────────────────
 var BK='ds', APIKEY='', MODEL='', BASEURL='', WORLD='';
 var HIST=[], TOKENS=0, LOADING=false, SUMMING=false;
+var SKIP_START=false; 
 var QUESTS={main:[],side:[]}, INVENTORY=[], SKILLS=[];
 
 // ── World configs ──────────────────────────────────────
@@ -1270,6 +1271,8 @@ function saveSv(i){
   renderSlots(); addBlk('sys','▸ 已保存至存档 '+(i+1));
 }
 function loadSv(i){
+  SKIP_START=true;
+  LOADING=false;
   var raw=localStorage.getItem('wuji_sv_'+i);
   if(!raw)return;
   var sv=JSON.parse(raw);
@@ -1378,7 +1381,8 @@ function startGame() {
   renderSlots();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」世界');
   addBlk('sys','▸ 后端：'+MODEL+' · 超慢节奏模式');
-  send('开始游戏',true);
+  if(SKIP_START){ SKIP_START=false; return; }
+send('开始游戏',true);
 }
 function resetGame(){if(LOADING)return;TOKENS=0;document.getElementById('tkc').textContent='TOKENS: 0';startGame();}
 
