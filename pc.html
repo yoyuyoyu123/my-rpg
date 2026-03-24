@@ -1018,6 +1018,18 @@ function doConnect(t) {
   document.getElementById('stxt').textContent=WORLDS[WORLD].name;
   document.getElementById('game-hint').textContent='无界·叙事引擎 · '+WORLDS[WORLD].name+' · 超慢节奏';
   renderDailyBtns();
+ // 检查是否有存档
+var hasSave = localStorage.getItem('wuji_sv_0') || localStorage.getItem('wuji_sv_1') || localStorage.getItem('wuji_sv_2');
+if (hasSave) {
+  document.getElementById('api-panel').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  document.getElementById('sdot').classList.add('on');
+  document.getElementById('stxt').textContent = WORLDS[WORLD].name;
+  document.getElementById('game-hint').textContent = '无界·叙事引擎 · '+WORLDS[WORLD].name+' · 超慢节奏';
+  renderDailyBtns();
+  renderSlots();
+  addBlk('sys','▸ 检测到存档，请选择：新游戏 或 读取右侧存档');
+} else {
   startGame();
 }
 
