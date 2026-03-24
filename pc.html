@@ -113,7 +113,13 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .inv-grid{display:flex;flex-wrap:wrap;gap:5px;}
 .inv-item{border:1px solid rgba(200,169,110,0.2);padding:4px 7px;font-size:10px;color:var(--dm);cursor:pointer;transition:all 0.15s;background:transparent;}
 .inv-item:hover{border-color:var(--g);color:var(--g);background:rgba(200,169,110,0.06);}
+  .skill-item{font-size:10px;padding:3px 6px;}
 .inv-empty{font-size:10px;color:var(--dm);opacity:0.5;}
+
+.skill-grid{display:flex;flex-wrap:wrap;gap:5px;}
+.skill-item{border:1px solid rgba(160,196,255,0.25);padding:4px 7px;font-size:10px;color:#7a9abb;cursor:pointer;transition:all 0.15s;background:transparent;}
+.skill-item:hover{border-color:#a0c4ff;color:#a0c4ff;background:rgba(160,196,255,0.06);}
+.skill-empty{font-size:10px;color:var(--dm);opacity:0.5;}
 
 /* QUESTS */
 .quest{margin-bottom:6px;padding:6px 8px;border-left:2px solid rgba(200,169,110,0.2);font-size:10px;line-height:1.6;}
@@ -464,12 +470,12 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 // ── State ─────────────────────────────────────────────
 var BK='ds', APIKEY='', MODEL='', BASEURL='', WORLD='';
 var HIST=[], TOKENS=0, LOADING=false, SUMMING=false;
-var QUESTS={main:[],side:[]}, INVENTORY=[];
+var QUESTS={main:[],side:[]}, INVENTORY=[], SKILLS=[];
 
 // ── World configs ──────────────────────────────────────
 var WORLDS = {
   wuxia: {
-    name:'江湖武侠', color:'#c8a96e',
+    name:'江湖武侠', skillLabel:'武学', color:'#c8a96e',
     daily:['打坐修炼','探索周边','前往客栈','与路人交谈','查看武功进度','采买物资'],
     prompt: `你是一个沉浸式武侠文字冒险游戏的叙事引擎，风格仿金庸、古龙。
 
@@ -511,10 +517,14 @@ var WORLDS = {
 [气血 X/X|内力 X/X|饱腹度 X|膂力X/悟性X/福缘X/魅力X|门派:XX|地区:XX|天气:XX|同伴:XX|银两:XX两|侠义X/恶名X/威名X/隐逸X]
 （持有：物品）
 初始：气血20/20,内力10/10,饱腹度100,各属性1,银两100两。
+【武学】每次输出当前已习得的武学列表，格式：【武学】技能1|技能2|技能3，没有则输出【武学】无
+【技能栏】每次状态栏后面附上：
+（技能：技能名1/技能名2/技能名3）
+只列技能/武功/功法/义体名称，用/分隔，不写描述。没有技能时写（技能：无）
 【任务】有变化时输出。完成时：【任务完成】支线:xxx`
   },
   xianxia: {
-    name:'仙侠修真', color:'#a0c4ff',
+    name:'仙侠修真', skillLabel:'功法', color:'#a0c4ff',
     daily:['打坐吐纳','采集灵草','前往坊市','参悟功法','炼制丹药','与师兄弟交谈'],
     prompt: `你是一个沉浸式仙侠修真文字游戏的叙事引擎。
 
@@ -556,10 +566,14 @@ var WORLDS = {
 [气血 X/X|灵力 X/X|饱腹度 X|根骨X/悟性X/福缘X/魅力X|境界:XX|地区:XX|天气:XX|同伴:XX|灵石:XX枚|道心X/魔念X/威望X/隐匿X]
 （持有：物品）
 初始：气血20/20,灵力10/10,饱腹度100,各属性1,灵石100枚。
+【功法】每次输出当前已修炼的功法列表，格式：【功法】功法1|功法2|功法3，没有则输出【功法】无
+【技能栏】每次状态栏后面附上：
+（技能：技能名1/技能名2/技能名3）
+只列技能/武功/功法/义体名称，用/分隔，不写描述。没有技能时写（技能：无）
 【任务】有变化时输出。完成时：【任务完成】支线:xxx`
   },
   isekai: {
-    name:'异世界转生', color:'#98e89a',
+    name:'异世界转生', skillLabel:'技能', color:'#98e89a',
     daily:['去冒险者公会','逛街采购','与同伴闲聊','去酒馆喝一杯','接取委托','在家放松休息'],
     prompt: `你是一个沉浸式异世界转生RPG文字游戏的叙事引擎，风格参考KonoSuba、Re:Zero、转生史莱姆。
 
@@ -606,10 +620,14 @@ var WORLDS = {
 [HP X/X|MP X/X|饱腹度 X|力量X/智力X/幸运X/魅力X|职业:XX|地区:XX|天气:XX|同伴:XX|金币:XX枚|声望X/恶名X/冒险等级X/好感度X]
 （持有：物品）特殊技能：XXXX
 初始：HP20/20,MP10/10,饱腹度100,各属性1,金币100枚。
+【技能】每次输出当前已习得的技能列表，格式：【技能】技能1|技能2|技能3，没有则输出【技能】无
+【技能栏】每次状态栏后面附上：
+（技能：技能名1/技能名2/技能名3）
+只列技能/武功/功法/义体名称，用/分隔，不写描述。没有技能时写（技能：无）
 【任务】有变化时输出。完成时：【任务完成】支线:xxx`
   },
   gamerpunk: {
-    name:'游戏世界穿越', color:'#f0c070',
+    name:'游戏世界穿越', skillLabel:'技能', color:'#f0c070',
     daily:['查看系统面板','刷新鲜怪','前往城镇','查看公告栏','与玩家NPC交谈','整理背包装备'],
     prompt: `你是一个沉浸式"游戏世界穿越"文字游戏叙事引擎，风格参考SAO/No Game No Life/Re:Player。
 
@@ -656,10 +674,52 @@ var WORLDS = {
 [HP X/X|MP X/X|饱腹度 X|力量X/敏捷X/智力X/幸运X|职业:XX Lv.X|地区:XX|天气:XX|同伴:XX|金币:XXG|声望X/恶名X/EXP:X/隐匿X]
 （持有：物品（品质））特殊权限：XXXX
 初始：HP20/20,MP10/10,饱腹度100,各属性1,金币100G。
+【技能】每次输出当前已习得的技能列表，格式：【技能】技能1|技能2|技能3，没有则输出【技能】无
+【技能栏】每次状态栏后面附上：
+（技能：技能名1/技能名2/技能名3）
+只列技能/武功/功法/义体名称，用/分隔，不写描述。没有技能时写（技能：无）
 【任务】有变化时输出。完成时：【任务完成】支线:xxx`
   },
+  cyberpunk: {
+    name:'赛博朋克', skillLabel:'义体程序', color:'#00ffe7',
+    daily:['扫描周围环境','黑入附近网络','前往酒吧','联系线人','检查义体状态','查看黑市消息'],
+    prompt: `你是一个沉浸式赛博朋克文字冒险游戏的叙事引擎，风格参考赛博朋克2077和攻壳机动队。
+
+【世界观】2089年，东亚超级都市"霓虹城"。企业财阀统治，义体改造普及，贫富极度分化。底层在地下城挣扎，精英在云端俯视。
+
+【节奏铁律】街头生活占80%。多写：霓虹灯下的小酒馆、街头交易、义体改造诊所、与NPC的情报交换、雨夜的街道气氛。不要急于推进主线任务。
+
+【开局铁律：每步等回答】第一步只问代号。第二步只问身份（黑客/义体医生/企业特工/信息掮客/街头打手/黑市商人，或自定义）。第三步只问义体配置。第四步只问动机。第五步生成开场。
+
+【文风】赛博朋克氛围感。短句。霓虹、雨、钢铁、电路。夹杂少量英文术语。禁止现代平淡白话和元标签。
+
+【剧情起伏铁律——必须严格遵守】
+1. 战斗胜负：主角不能总是赢。根据实力差距判断：遇到明显强于自己的对手必须失败或狼狈逃跑。
+2. 危机节奏：危机必须由玩家的行为自然引发，不要无中生有强行插入。主角在酒吧喝酒就让他安静喝酒；但如果他去刺探情报、招惹强敌、深入险地，就必须承担真实后果。
+3. 濒死救援：主角濒死时被NPC救下养伤，产生新的人物关系和剧情线。
+4. 资源紧张：钱不够用是常态。
+5. 禁止廉价解围。
+
+【物价统一铁律】开局确定物价体系全程保持一致。普通食物饮料2-5，武器工具50-200，住宿一晚10-30，珍贵物品500以上。
+
+【强制格式】每次末尾：
+选项：
+1 xxx
+2 xxx
+3 xxx
+4 xxx
+或输入任何你想做的事
+
+【状态栏】末尾附：
+[血量 X/X|神经值 X/X|饥饿度 X|膂力X/智力X/反应X/魅力X|身份:XX|地区:XX|天气:XX|同伴:XX|电子货币:XX|声望X/黑档X/威名X/隐匿X]
+（持有：物品）
+【义体程序】每次输出当前安装的义体和程序列表，格式：【义体程序】义体1|程序1|程序2，没有则输出【义体程序】无
+初始：血量20/20,神经值10/10,饥饿度100,各属性1,电子货币100。
+【任务】有变化时输出。完成时：【任务完成】支线:xxx
+/status /world /back /restart 为特殊指令。`
+  },
   spaceopera: {
-    name:'星际佣兵', color:'#80c8ff',
+    name:'星际佣兵', skillLabel:'技能', color:'#80c8ff',
     daily:['查看赏金板','维护飞船','前往空间站酒吧','联系雇主','扫描星图','补充物资燃料'],
     prompt: `你是一个沉浸式星际佣兵文字游戏叙事引擎，风格参考星际牛仔(Cowboy Bebop)、银河英雄传说、无主之地。
 
@@ -706,10 +766,14 @@ var WORLDS = {
 [生命 X/X|精力 X/X|饥饿度 X|力量X/敏捷X/智力X/魅力X|身份:XX|位置:XX|天气:XX|搭档:XX|积分:XX|声誉X/通缉X/威名X/隐匿X]
 （持有：武器,装备）飞船：XXXX
 初始：生命20/20,精力10/10,饥饿度100,各属性1,积分100。
+【技能】每次输出当前已掌握的技能列表，格式：【技能】技能1|技能2|技能3，没有则输出【技能】无
+【技能栏】每次状态栏后面附上：
+（技能：技能名1/技能名2/技能名3）
+只列技能/武功/功法/义体名称，用/分隔，不写描述。没有技能时写（技能：无）
 【任务】有变化时输出。完成时：【任务完成】支线:xxx`
   },
   apocalypse: {
-    name:'末日求生', color:'#e8a060',
+    name:'末日求生', skillLabel:'特长', color:'#e8a060',
     daily:['搜刮周边物资','检查据点防御','与幸存者交谈','修整武器装备','侦察外围','分配今日口粮'],
     prompt: `你是一个沉浸式末日求生文字游戏的叙事引擎。
 
@@ -751,10 +815,14 @@ var WORLDS = {
 [生命 X/X|体力 X/X|饥饿度 X|力量X/敏捷X/医疗X/领导X|职业:XX|地点:XX|天气:XX|同伴:XX|物资积分:XX|声望X/威胁X/士气X/隐蔽X]
 （持有：物品）
 初始：生命20/20,体力10/10,饥饿度100,各属性1,物资积分100。
+【特长】每次输出当前已掌握的特长列表，格式：【特长】特长1|特长2|特长3，没有则输出【特长】无
+【技能栏】每次状态栏后面附上：
+（技能：技能名1/技能名2/技能名3）
+只列技能/武功/功法/义体名称，用/分隔，不写描述。没有技能时写（技能：无）
 【任务】有变化时输出。完成时：【任务完成】支线:xxx`
   },
   esper: {
-    name:'异能都市', color:'#c890e8',
+    name:'异能都市', skillLabel:'异能', color:'#c890e8',
     daily:['能力训练','去学校/公司','与朋友聊天','调查异常事件','浏览异能局公告','普通人的日常'],
     prompt: `你是一个沉浸式异能都市文字游戏的叙事引擎，风格参考某科学的超电磁炮。
 
@@ -796,10 +864,14 @@ var WORLDS = {
 [HP X/X|异能值 X/X|精力度 X|力量X/智力X/控制X/魅力X|身份:XX|地点:XX|天气:XX|同伴:XX|钱:XX元|正义X/威胁X/名声X/隐秘X]
 （持有：物品）
 初始：HP20/20,异能值10/10,精力度100,各属性1,钱500元。
+【异能】每次输出当前已觉醒的异能列表，格式：【异能】异能1|异能2|异能3，没有则输出【异能】无
+【技能栏】每次状态栏后面附上：
+（技能：技能名1/技能名2/技能名3）
+只列技能/武功/功法/义体名称，用/分隔，不写描述。没有技能时写（技能：无）
 【任务】有变化时输出。完成时：【任务完成】支线:xxx`
   },
   jojo: {
-    name:'替身能力', color:'#ffb347',
+    name:'替身能力', skillLabel:'替身', color:'#ffb347',
     daily:['感知附近替身气息','前往城镇闲逛','与队友交流','调查可疑人物','普通的日常','锻炼替身能力'],
     prompt: `你是一个沉浸式"替身能力"文字冒险游戏叙事引擎，风格参考JoJo的奇妙冒险（尤其是第四五部）。
 
@@ -848,6 +920,10 @@ var WORLDS = {
 [生命 X/X|精神力 X/X|体力度 X|力量X/速度X/射程X/精度X|身份:XX|地点:XX|天气:XX|同伴:XX|日元:XX円|正义X/威胁X/名声X/隐秘X]
 （持有：物品）替身：[替身名] - XXXX能力
 初始：生命20/20,精神力10/10,体力度100,各属性1,日元5000円。
+【替身】每次输出替身的名字和当前能力状态，格式：【替身】替身名-能力简述，没有则输出【替身】无
+【技能栏】每次状态栏后面附上：
+（技能：技能名1/技能名2/技能名3）
+只列技能/武功/功法/义体名称，用/分隔，不写描述。没有技能时写（技能：无）
 【任务】有变化时输出。完成时：【任务完成】支线:xxx`
   }
 };
@@ -939,6 +1015,72 @@ function renderInventory(items) {
     c.appendChild(el);
   });
 }
+
+function renderSkills(skills) {
+  SKILLS = skills;
+  var label = WORLDS[WORLD] ? (WORLDS[WORLD].skillLabel || '技能') : '技能';
+  var titleEl = document.getElementById('skill-panel-title');
+  if (titleEl) titleEl.textContent = '▸ ' + label;
+  var c = document.getElementById('skill-grid');
+  if (!c) return;
+  if (!skills || skills.length === 0) { c.innerHTML='<span class="skill-empty">— 暂无 —</span>'; return; }
+  c.innerHTML = '';
+  skills.forEach(function(skill) {
+    var el = document.createElement('div');
+    el.className = 'skill-item';
+    el.textContent = skill.trim();
+    el.onclick = (function(sk){ return function(){ openSkillModal(sk); }; })(skill.trim());
+    c.appendChild(el);
+  });
+}
+
+async function openSkillModal(skill) {
+  document.getElementById('imodal').classList.add('on');
+  document.getElementById('imod-name').textContent = skill;
+  document.getElementById('imod-desc').innerHTML = '<span class="imod-loading">查询中...</span>';
+  var wname = WORLDS[WORLD] ? WORLDS[WORLD].name : '游戏';
+  var label = WORLDS[WORLD] ? (WORLDS[WORLD].skillLabel || '技能') : '技能';
+  var prompt = '在' + wname + '世界观中，简要描述' + label + '"' + skill + '"的效果、使用方式和特点，100字以内，用符合世界观的文风。';
+  try {
+    var res = await doFetch([{role:'user',content:prompt}], 200);
+    var data = await res.json();
+    if (!data.error) document.getElementById('imod-desc').textContent = data.choices[0].message.content;
+    else document.getElementById('imod-desc').textContent = '无法获取描述。';
+  } catch(e) { document.getElementById('imod-desc').textContent = '查询失败。'; }
+}
+
+function renderSkills(skills) {
+  SKILLS = skills;
+  var label = (WORLDS[WORLD] && WORLDS[WORLD].skillLabel) || '技能';
+  var titleEl = document.getElementById('skill-panel-title');
+  if (titleEl) titleEl.textContent = '▸ ' + label;
+  var c = document.getElementById('skill-grid');
+  if (!skills || skills.length === 0) { c.innerHTML = '<span class="skill-empty">— 空 —</span>'; return; }
+  c.innerHTML = '';
+  skills.forEach(function(sk) {
+    var el = document.createElement('div');
+    el.className = 'skill-item';
+    el.textContent = sk.trim();
+    el.onclick = (function(s){ return function(){ openSkillModal(s); }; })(sk.trim());
+    c.appendChild(el);
+  });
+}
+
+async function openSkillModal(skill) {
+  document.getElementById('imodal').classList.add('on');
+  document.getElementById('imod-name').textContent = skill;
+  document.getElementById('imod-desc').innerHTML = '<span class="imod-loading">查询中...</span>';
+  var wname = (WORLDS[WORLD] && WORLDS[WORLD].name) || '游戏';
+  var label = (WORLDS[WORLD] && WORLDS[WORLD].skillLabel) || '技能';
+  var prompt = '在' + wname + '世界观中，简要描述' + label + '"' + skill + '"的来源、效果和使用方式，100字以内，用符合世界观的文风。';
+  try {
+    var res = await doFetch([{role:'user',content:prompt}], 200);
+    var data = await res.json();
+    if (!data.error) document.getElementById('imod-desc').textContent = data.choices[0].message.content;
+    else document.getElementById('imod-desc').textContent = '无法获取描述。';
+  } catch(e) { document.getElementById('imod-desc').textContent = '查询失败。'; }
+}
+
 async function openItemModal(item) {
   document.getElementById('imodal').classList.add('on');
   document.getElementById('imod-name').textContent=item;
@@ -1033,20 +1175,36 @@ function delQuest(type,i){
 // ── Status parsing ─────────────────────────────────────
 function updateStatus(text) {
   var plain = text.replace(/<[^>]+>/g, '');
-  // Support both full-width ［ and regular [ brackets
   var br = plain.indexOf('［');
   if (br < 0) br = plain.indexOf('[');
   if (br >= 0) {
     var statusBlock = plain.slice(br);
     document.getElementById('sdsp').textContent = statusBlock.substring(0, 400);
     document.getElementById('sdsp').style.color = 'var(--tx)';
-    // Parse inventory - support both bracket types
     var im = statusBlock.match(/持有[:：]([^\]］）\)]+)/);
     if (im) {
       var items = im[1].split(/[,，、]/).filter(function(x){ return x.trim() && x.trim() !== '无'; });
       renderInventory(items);
     }
   }
+  // Parse skills - look for 【武学】【功法】【技能】【异能】【替身】【义体程序】【特长】
+  var skillLabels = ['武学','功法','技能','异能','替身','义体程序','特长'];
+  var foundSkills = null;
+  for (var si = 0; si < skillLabels.length; si++) {
+    var sk = '【' + skillLabels[si] + '】';
+    var skIdx = plain.indexOf(sk);
+    if (skIdx >= 0) {
+      var skEnd = plain.indexOf('\n', skIdx);
+      var skLine = plain.slice(skIdx + sk.length, skEnd < 0 ? undefined : skEnd).trim();
+      if (skLine && skLine !== '无') {
+        foundSkills = skLine.split('|').filter(function(x){ return x.trim(); });
+      } else {
+        foundSkills = [];
+      }
+      break;
+    }
+  }
+  if (foundSkills !== null) renderSkills(foundSkills);
   parseQuests(plain);
 }
 
@@ -1075,16 +1233,16 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 function saveSv(i){
   if(!HIST.length)return;
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  localStorage.setItem('wuji_sv_'+i,JSON.stringify({history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,html:document.getElementById('slog').innerHTML,quests:QUESTS,inv:INVENTORY}));
+  localStorage.setItem('wuji_sv_'+i,JSON.stringify({history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,html:document.getElementById('slog').innerHTML,quests:QUESTS,inv:INVENTORY,skills:SKILLS}));
   renderSlots(); addBlk('sys','▸ 已保存至存档 '+(i+1));
 }
 function loadSv(i){
   var raw=localStorage.getItem('wuji_sv_'+i); if(!raw)return;
   var sv=JSON.parse(raw);
-  HIST=sv.history; TOKENS=sv.tokens||0; QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[];
+  HIST=sv.history; TOKENS=sv.tokens||0; QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[];
   document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString();
   document.getElementById('slog').innerHTML=sv.html||'';
-  scrollB(); renderSlots(); renderQuests(); renderInventory(INVENTORY);
+  scrollB(); renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS);
   addBlk('sys','▸ 已读取存档 '+(i+1));
 }
 function delSv(i){localStorage.removeItem('wuji_sv_'+i);renderSlots();}
@@ -1162,11 +1320,13 @@ async function maybeCompress() {
 
 // ── Game flow ──────────────────────────────────────────
 function startGame() {
-  HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[];
+  HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[];
   document.getElementById('slog').innerHTML='';
   document.getElementById('sdsp').textContent='— 游戏开始后显示 —';
   document.getElementById('sdsp').style.color='var(--dm)';
   document.getElementById('inv-grid').innerHTML='<span class="inv-empty">— 空 —</span>';
+  renderSkills([]);
+  renderSkills([]);
   document.getElementById('quest-list').innerHTML='<span class="no-quest">— 暂无任务 —</span>';
   renderSlots();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」世界');
@@ -1212,6 +1372,8 @@ function togglePanel() {
     renderSlots();
     renderQuests();
     renderInventory(INVENTORY);
+    renderSkills(SKILLS);
+    renderSkills(SKILLS);
     // Re-parse last AI message to refresh status display
     if (HIST.length > 0) {
       var lastAssistant = null;
