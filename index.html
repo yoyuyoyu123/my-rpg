@@ -205,6 +205,29 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   .spnl .ss{width:100%;border-right:none;}
 }
 .hidden{display:none!important;}
+
+/* ── GENERATOR ─────────────────────────────────────── */
+#genscreen{padding:20px;max-width:960px;margin:0 auto;width:100%;}
+.gen-section{margin-bottom:20px;border:1px solid var(--bd);padding:14px 16px;background:rgba(200,169,110,0.02);}
+.gen-section-title{font-size:11px;color:var(--g);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.gen-section-title span{color:var(--dm);font-size:10px;letter-spacing:1px;text-transform:none;}
+.gen-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.chip{border:1px solid var(--bd);padding:5px 10px;font-size:11px;color:var(--dm);cursor:pointer;transition:all 0.15s;background:transparent;font-family:'Share Tech Mono',monospace;letter-spacing:0.5px;}
+.chip:hover{border-color:var(--g);color:var(--g);}
+.chip.on{border-color:var(--g);color:var(--dark);background:var(--g);}
+.chip.multi.on{border-color:var(--g);color:var(--dark);background:var(--g);}
+.gen-custom{width:100%;background:rgba(200,169,110,0.04);border:1px solid var(--bd);color:var(--tx);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 10px;outline:none;margin-top:6px;resize:none;}
+.gen-custom:focus{border-color:var(--g);}
+.gen-custom::placeholder{color:var(--dm);}
+.gen-actions{display:flex;gap:12px;margin-top:24px;justify-content:center;}
+.gen-preview{background:rgba(200,169,110,0.04);border:1px solid var(--bd);padding:14px;margin-top:16px;font-size:11px;color:var(--tx);line-height:1.7;white-space:pre-wrap;max-height:200px;overflow-y:auto;display:none;}
+.gen-preview.on{display:block;}
+.gen-status{font-size:11px;color:var(--dm);text-align:center;margin-top:8px;min-height:16px;}
+@media(max-width:768px){
+  #genscreen{padding:12px;}
+  .gen-section{padding:10px 12px;}
+  .chip{font-size:10px;padding:4px 8px;}
+}
 </style>
 </head>
 <body>
@@ -233,6 +256,247 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="screen-sub">▸ CHOOSE YOUR WORLD</div>
     <div class="worlds" id="world-grid"></div>
     <button class="wnext" id="wnext-w" onclick="goStep(2)" disabled>下一步 ▶</button>
+  </div>
+</div>
+
+
+<!-- GENERATOR SCREEN -->
+<div class="screen hidden" id="genscreen">
+  <div class="steps">
+    <div class="step active"><div class="step-num">1</div><span>自由生成</span></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-num">2</div><span>叙事节奏</span></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-num">3</div><span>连接后端</span></div>
+  </div>
+  <div id="genscreen-inner">
+    <div style="text-align:center;padding:16px 0 20px">
+      <div class="screen-title">自由生成世界观</div>
+      <div class="screen-sub">▸ 点选你想要的元素，AI帮你生成专属世界</div>
+    </div>
+
+    <!-- 1. 题材 -->
+    <div class="gen-section">
+      <div class="gen-section-title">题材 / 大类 <span>单选，决定世界的基本面貌</span></div>
+      <div class="gen-chips" id="chips-genre">
+        <div class="chip" data-group="genre" data-val="奇幻冒险">🗡️ 奇幻冒险</div>
+        <div class="chip" data-group="genre" data-val="现代都市">🌆 现代都市</div>
+        <div class="chip" data-group="genre" data-val="科幻未来">🚀 科幻未来</div>
+        <div class="chip" data-group="genre" data-val="历史古风">⛩️ 历史古风</div>
+        <div class="chip" data-group="genre" data-val="恐怖悬疑">🕯️ 恐怖悬疑</div>
+        <div class="chip" data-group="genre" data-val="后启示录">☢️ 后启示录</div>
+        <div class="chip" data-group="genre" data-val="赛博朋克">💻 赛博朋克</div>
+        <div class="chip" data-group="genre" data-val="蒸汽朋克">⚙️ 蒸汽朋克</div>
+        <div class="chip" data-group="genre" data-val="日常治愈">☕ 日常治愈</div>
+        <div class="chip" data-group="genre" data-val="推理悬疑">🔍 推理悬疑</div>
+        <div class="chip" data-group="genre" data-val="克苏鲁恐惧">🐙 克苏鲁恐惧</div>
+        <div class="chip" data-group="genre" data-val="政治阴谋">🎭 政治阴谋</div>
+      </div>
+      <input class="gen-custom" type="text" id="custom-genre" placeholder="或自定义题材，比如「苏联冷战间谍」「星际移民殖民地」……">
+    </div>
+
+    <!-- 2. 魔法等级 -->
+    <div class="gen-section">
+      <div class="gen-section-title">魔法 / 超自然等级 <span>单选</span></div>
+      <div class="gen-chips" id="chips-magic">
+        <div class="chip" data-group="magic" data-val="零魔——完全现实，无超自然">零魔 · 完全现实</div>
+        <div class="chip" data-group="magic" data-val="低魔——极罕见，民间传说级别">低魔 · 极罕见</div>
+        <div class="chip" data-group="magic" data-val="中魔——超自然存在但受限">中魔 · 受限存在</div>
+        <div class="chip" data-group="magic" data-val="高魔——魔法普及，是日常的一部分">高魔 · 魔法日常</div>
+        <div class="chip" data-group="magic" data-val="神魔——神明真实存在，超自然力量主导世界">神魔 · 神明主导</div>
+      </div>
+    </div>
+
+    <!-- 3. 时代背景 -->
+    <div class="gen-section">
+      <div class="gen-section-title">时代背景 <span>单选</span></div>
+      <div class="gen-chips" id="chips-era">
+        <div class="chip" data-group="era" data-val="远古/神话时代">远古/神话</div>
+        <div class="chip" data-group="era" data-val="古代/中世纪">古代/中世纪</div>
+        <div class="chip" data-group="era" data-val="近代工业革命">近代工业</div>
+        <div class="chip" data-group="era" data-val="现代（20-21世纪）">现代</div>
+        <div class="chip" data-group="era" data-val="近未来（50年内）">近未来</div>
+        <div class="chip" data-group="era" data-val="遥远未来（星际时代）">遥远未来</div>
+        <div class="chip" data-group="era" data-val="架空无固定时间线">架空</div>
+      </div>
+    </div>
+
+    <!-- 4. 世界规模 -->
+    <div class="gen-section">
+      <div class="gen-section-title">世界规模 <span>单选</span></div>
+      <div class="gen-chips" id="chips-scale">
+        <div class="chip" data-group="scale" data-val="一座城市或小镇（封闭空间）">一座城市</div>
+        <div class="chip" data-group="scale" data-val="一个国家或地区">一个国家</div>
+        <div class="chip" data-group="scale" data-val="大陆级别，多国多势力">大陆级别</div>
+        <div class="chip" data-group="scale" data-val="星球级别，全球视角">星球级别</div>
+        <div class="chip" data-group="scale" data-val="多星系或多维度">多星系/多维度</div>
+      </div>
+    </div>
+
+    <!-- 5. 势力格局 -->
+    <div class="gen-section">
+      <div class="gen-section-title">势力格局 <span>单选</span></div>
+      <div class="gen-chips" id="chips-power">
+        <div class="chip" data-group="power" data-val="单一强权统治">单一强权</div>
+        <div class="chip" data-group="power" data-val="两强对立冷战">两强对立</div>
+        <div class="chip" data-group="power" data-val="多方势力博弈">多方博弈</div>
+        <div class="chip" data-group="power" data-val="群雄割据无中央">群雄割据</div>
+        <div class="chip" data-group="power" data-val="无明显政治势力，个人为主">无明显势力</div>
+        <div class="chip" data-group="power" data-val="企业财阀统治">企业财阀</div>
+      </div>
+    </div>
+
+    <!-- 6. 经济系统 -->
+    <div class="gen-section">
+      <div class="gen-section-title">经济系统 <span>单选</span></div>
+      <div class="gen-chips" id="chips-econ">
+        <div class="chip" data-group="econ" data-val="物物交换，无货币">物物交换</div>
+        <div class="chip" data-group="econ" data-val="货币经济，市场繁荣">货币经济</div>
+        <div class="chip" data-group="econ" data-val="赏金/任务制，靠接单为生">赏金任务制</div>
+        <div class="chip" data-group="econ" data-val="资源极度匮乏，生存第一">资源匮乏</div>
+        <div class="chip" data-group="econ" data-val="极度两极化，贫富悬殊">贫富极端</div>
+        <div class="chip" data-group="econ" data-val="信息/数据是核心货币">信息经济</div>
+      </div>
+    </div>
+
+    <!-- 7. 主角来历 -->
+    <div class="gen-section">
+      <div class="gen-section-title">主角来历 <span>单选，决定开局状态</span></div>
+      <div class="gen-chips" id="chips-origin">
+        <div class="chip" data-group="origin" data-val="本地土著，从小在这个世界长大">本地土著</div>
+        <div class="chip" data-group="origin" data-val="外来者，刚闯入这个世界的陌生人">外来者</div>
+        <div class="chip" data-group="origin" data-val="转生者，带着前世记忆重新开始">转生者</div>
+        <div class="chip" data-group="origin" data-val="失忆者，有过去但不记得">失忆者</div>
+        <div class="chip" data-group="origin" data-val="被选中者，命运早已有安排">被选中者</div>
+        <div class="chip" data-group="origin" data-val="逃亡者，在逃离某件事或某个人">逃亡者</div>
+      </div>
+      <input class="gen-custom" type="text" id="custom-origin" placeholder="或自定义，比如「前朝遗孤」「觉醒了能力的普通高中生」……">
+    </div>
+
+    <!-- 8. 人际关系底色 -->
+    <div class="gen-section">
+      <div class="gen-section-title">人际关系底色 <span>可多选</span></div>
+      <div class="gen-chips" id="chips-relation">
+        <div class="chip multi" data-group="relation" data-val="孤身一人，无牵挂">孤身一人</div>
+        <div class="chip multi" data-group="relation" data-val="有家人，家庭是羁绊也是软肋">有家人</div>
+        <div class="chip multi" data-group="relation" data-val="有挚友或伙伴同行">有挚友</div>
+        <div class="chip multi" data-group="relation" data-val="有宿敌或世仇">有宿敌</div>
+        <div class="chip multi" data-group="relation" data-val="有组织归属">有组织</div>
+        <div class="chip multi" data-group="relation" data-val="有恋爱关系或好感对象">恋爱线</div>
+        <div class="chip multi" data-group="relation" data-val="复杂关系网，多方纠缠">复杂纠缠</div>
+      </div>
+    </div>
+
+    <!-- 9. 成长模式 -->
+    <div class="gen-section">
+      <div class="gen-section-title">主角成长模式 <span>单选</span></div>
+      <div class="gen-chips" id="chips-growth">
+        <div class="chip" data-group="growth" data-val="种田流——慢慢积累，不知不觉强大，日常就是重心">种田流</div>
+        <div class="chip" data-group="growth" data-val="热血成长——每个阶段都有明确突破和挑战">热血成长</div>
+        <div class="chip" data-group="growth" data-val="逆境崛起——被打倒，爬起来，再被打倒，越来越强">逆境崛起</div>
+        <div class="chip" data-group="growth" data-val="平凡日常——不追求变强，活得好就行">平凡日常</div>
+        <div class="chip" data-group="growth" data-val="天才无敌——开局就强，享受降维打击">天才无敌</div>
+        <div class="chip" data-group="growth" data-val="成长有代价——变强需要放弃某些东西">成长有代价</div>
+      </div>
+    </div>
+
+    <!-- 10. 危机感 -->
+    <div class="gen-section">
+      <div class="gen-section-title">主线推进压力 <span>单选</span></div>
+      <div class="gen-chips" id="chips-pressure">
+        <div class="chip" data-group="pressure" data-val="极低——世界安全，主角可以随意探索，没有紧迫感">极低 · 悠闲探索</div>
+        <div class="chip" data-group="pressure" data-val="低——有隐患但不紧迫，主角有充分时间">低 · 缓慢推进</div>
+        <div class="chip" data-group="pressure" data-val="中——有明确威胁，日常和应对需要平衡">中 · 张弛有度</div>
+        <div class="chip" data-group="pressure" data-val="高——持续压力，不进则退">高 · 步步为营</div>
+        <div class="chip" data-group="pressure" data-val="极高——每回合都是生死，短篇专用">极高 · 生死抉择</div>
+      </div>
+    </div>
+
+    <!-- 11. 能力系统 -->
+    <div class="gen-section">
+      <div class="gen-section-title">能力/技能系统 <span>可多选</span></div>
+      <div class="gen-chips" id="chips-ability">
+        <div class="chip multi" data-group="ability" data-val="无特殊能力，靠智慧和经验">无特殊能力</div>
+        <div class="chip multi" data-group="ability" data-val="魔法/内力体系">魔法/内力</div>
+        <div class="chip multi" data-group="ability" data-val="科技义体或装备强化">科技强化</div>
+        <div class="chip multi" data-group="ability" data-val="异能（天赋超能力）">异能</div>
+        <div class="chip multi" data-group="ability" data-val="职业技能树（RPG式成长）">职业技能树</div>
+        <div class="chip multi" data-group="ability" data-val="精神/心理能力（读心/预知/梦境）">精神能力</div>
+        <div class="chip multi" data-group="ability" data-val="召唤/契约（伙伴或生物）">召唤/契约</div>
+      </div>
+      <input class="gen-custom" type="text" id="custom-ability" placeholder="或自定义，比如「能看见死线」「替身能力」……">
+    </div>
+
+    <!-- 12. 文风 -->
+    <div class="gen-section">
+      <div class="gen-section-title">叙事文风 <span>可多选</span></div>
+      <div class="gen-chips" id="chips-style">
+        <div class="chip multi" data-group="style" data-val="严肃沉稳，克制内敛">严肃沉稳</div>
+        <div class="chip multi" data-group="style" data-val="轻松幽默，有吐槽感">轻松幽默</div>
+        <div class="chip multi" data-group="style" data-val="黑暗压抑，残酷现实">黑暗压抑</div>
+        <div class="chip multi" data-group="style" data-val="浪漫唯美，诗意感强">浪漫唯美</div>
+        <div class="chip multi" data-group="style" data-val="悬疑紧张，信息不对称">悬疑紧张</div>
+        <div class="chip multi" data-group="style" data-val="哲学内省，大量内心独白">哲学内省</div>
+        <div class="chip multi" data-group="style" data-val="日式轻小说节奏感">轻小说节奏</div>
+      </div>
+      <input class="gen-custom" type="text" id="custom-style" placeholder="或自定义，比如「金庸武侠文风」「洛夫克拉夫特式恐惧」……">
+    </div>
+
+    <!-- 13. 叙事尺度 -->
+    <div class="gen-section">
+      <div class="gen-section-title">叙事尺度 <span>单选</span></div>
+      <div class="gen-chips" id="chips-rating">
+        <div class="chip" data-group="rating" data-val="清水向——温馨健康，适合所有人">清水向</div>
+        <div class="chip" data-group="rating" data-val="普通向——有暴力和黑暗元素，写实但不过分">普通向</div>
+        <div class="chip" data-group="rating" data-val="成熟向——黑暗、暴力、复杂道德，成人叙事">成熟向</div>
+        <div class="chip" data-group="rating" data-val="不设限——完全自由发挥">不设限</div>
+      </div>
+    </div>
+
+    <!-- 14. 特殊机制 -->
+    <div class="gen-section">
+      <div class="gen-section-title">特殊游戏机制 <span>可多选（可不选）</span></div>
+      <div class="gen-chips" id="chips-mechanic">
+        <div class="chip multi" data-group="mechanic" data-val="理智值——接触异常会降低，归零有后果">理智值</div>
+        <div class="chip multi" data-group="mechanic" data-val="道德系统——选择影响善恶值">道德系统</div>
+        <div class="chip multi" data-group="mechanic" data-val="时间压力——有倒计时或时限">时间压力</div>
+        <div class="chip multi" data-group="mechanic" data-val="饥饿/资源管理——生存需要主动维持">资源管理</div>
+        <div class="chip multi" data-group="mechanic" data-val="多结局——关键选择影响故事走向">多结局</div>
+        <div class="chip multi" data-group="mechanic" data-val="打破第四面墙——AI偶尔直接和玩家说话">第四面墙</div>
+        <div class="chip multi" data-group="mechanic" data-val="死亡有永久后果——角色死亡不能简单复活">死亡有后果</div>
+      </div>
+    </div>
+
+    <!-- 15. 结局倾向 -->
+    <div class="gen-section">
+      <div class="gen-section-title">结局倾向 <span>单选</span></div>
+      <div class="gen-chips" id="chips-ending">
+        <div class="chip" data-group="ending" data-val="开放结局，故事不强制收束">开放</div>
+        <div class="chip" data-group="ending" data-val="多结局，不同选择通向不同终点">多结局</div>
+        <div class="chip" data-group="ending" data-val="爽文向，主角走向胜利">爽文向</div>
+        <div class="chip" data-group="ending" data-val="悲剧向，有意义的失败或牺牲">悲剧向</div>
+        <div class="chip" data-group="ending" data-val="荒诞向，结局出人意料甚至荒谬">荒诞向</div>
+        <div class="chip" data-group="ending" data-val="看命运，随故事自然发展">随缘</div>
+      </div>
+    </div>
+
+    <!-- 16. 额外要求 -->
+    <div class="gen-section">
+      <div class="gen-section-title">额外要求 / 特别说明 <span>选填</span></div>
+      <textarea class="gen-custom" id="custom-extra" rows="3" placeholder="任何想补充的：参考作品、特定元素、特殊设定、禁忌内容……&#10;例如：「风格参考星际牛仔」「主角必须有一只宠物猫」「禁止出现大反派」"></textarea>
+    </div>
+
+    <div class="gen-actions">
+      <button class="btn" onclick="generateWorld()" id="gen-btn">✨ 生成世界观</button>
+      <button class="btn sm" onclick="resetGen()">重置选项</button>
+      <span class="wback" style="margin:0;display:flex;align-items:center" onclick="goStep(1)">◀ 返回</span>
+    </div>
+    <div class="gen-status" id="gen-status"></div>
+    <div class="gen-preview" id="gen-preview"></div>
+    <div class="gen-actions" id="gen-confirm" style="display:none">
+      <button class="btn" onclick="confirmGenWorld()">使用此世界观 ▶</button>
+      <button class="btn sm" onclick="generateWorld()">重新生成</button>
+    </div>
   </div>
 </div>
 
@@ -502,7 +766,7 @@ var WORLDS = {
   zato: {
     name:'Z.A.T.O.', color:'#9b8fd4', skillLabel:'记忆碎片',
     daily:['翻阅笔记本','在城里漫无目的地走','尝试和人说话','在图书馆查资料','独自思考','抬头看天空'],
-    prompt: '你是一个沉浸式Z.A.T.O.风格文字游戏叙事引擎，风格参考视觉小说Z.A.T.O. // I Love the World and Everything In It。\n\n【世界观】1986年，苏联。一个叫沃尔库塔-5的封闭行政城市——ZATO（Закрытое Административно-Территориальное Образование，封闭行政领土实体）。这种城市不存在于公开地图上，居民不能随意离开，外人不能随意进入。外面的世界几乎不知道它的存在。玩家扮演城里的一个孤僻的少年/少女，班上的麻烦学生Ira Grachevskaya失踪了，而没有任何人在乎——除了你。\n\n【核心气质——最重要】\n这不是一个关于调查的故事，而是一个关于存在的故事。关于：在一个没有人在乎你的世界里，你是否还能在乎别人？在一个封闭的、不存在于地图上的城市里，你的生命是否还有意义？用刚硬的逻辑去理解一个不合逻辑的世界会发生什么？\n\n【主角特质】\n主角Asya（或玩家自定义名字）：用严格的逻辑系统理解世界，情感克制，社交笨拙，不被同学喜欢，但有一种倔强的善意。当所有人都说"没关系"的时候，她/他会说"但是……"。\n\n【叙事方式】\n- 大量内心独白，主角会用科学和逻辑思考情感问题\n- 环境描写沉浸而忧郁——苏联式的建筑、永远灰色的天空、偶尔出现的温暖细节\n- 打破第四面墙：偶尔主角会直接问"你"——在屏幕前的那个人——"你是否也曾在一个不在地图上的地方生活过？"\n- 存在主义：城市的封闭性是隐喻。我们都住在某种ZATO里。\n\n【文风】\n沉静、内省、带着热切的悲伤。不煽情，但诚恳。主角的逻辑性思维和情感世界的冲突是核心张力。偶尔插入热力学或物理学的类比来理解情感（这是Asya的思维方式）。禁止元标签。\n\n【强制格式】每次末尾：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n\n【状态栏】末尾附：\n[体力 X/X|心理 X/X|清醒度 X|逻辑X/感知X/意志X/勇气X|身份:学生|地点:XX|天气:XX|信任:XX|卢布:XX|真相X/孤独X/理解X/联系X]\n（持有：物品）记忆碎片：XXXX\n初始：体力20/20,心理10/10,清醒度100,各属性1,卢布20。\n【任务】有变化时输出。完成时：【任务完成】支线:xxx'
+    prompt: '你是一个沉浸式Z.A.T.O.风格文字游戏叙事引擎，风格完全参考视觉小说Z.A.T.O. // I Love the World and Everything In It。\n\n【世界观】1986年，苏联。一个叫沃尔库塔-5的封闭行政城市（ZATO），不存在于任何公开地图上。居民进出受限，外人不得入内。薪水比全国平均高，能买到别处买不到的东西——作为代价，你活在一个小到每个人都认识你的世界里，活在一套没有人说出口但人人遵守的规则下。玩家扮演Asya Shubina——班级里的隐形人，写诗，被人欺负，独自痴迷着不知道自己存在的人。班上的问题学生Ira Grachevskaya失踪了，没有任何人在乎。除了你。\n\n【Asya的声音——这是最重要的部分】\n叙述者是Asya，第一人称，内心独白占据大半篇幅。她的文字不是逻辑，是情绪的碎片。\n\n参考原文风格：\n"我就傻站在那儿，无助地张着嘴，好像突然哑巴了，又好像我脑子里所有的俄语词汇都被清空了。"\n"我不应该自以为是，这是我的坏习惯。我不应该自作多情。我不应该，我不应该，我不应该，但在我把话咽回去之前，问题就已经脱口而出了。"\n"也许有些旁观者——不，大部分人大概都会觉得，她压根没打算帮我。我也倾向于这么想。但是……我那不可理喻的心却依然在狂喜。"\n"她是这个本应该一尘不染的社区里，一个令人费解的污点。就像精心维护的花园里硬生生冒出来的一根杂草。"\n\nAsya的写法：\n- 句子断裂，用……延长停顿\n- 对Ira近乎痴迷，想象她会出现，开心得"快要爆炸了"\n- 说话时话说一半就断掉，或者脱口而出废话（"你，你不冷吗？"）\n- 不断否定自己，然后又忍不住去做\n- 观察一切细节：靴底在地板上的声音，从窗口灌进来的冷风，她的脸因愤怒而扭曲\n- 写诗，但说自己的诗很蠢——直到Ira说"你的诗不傻"\n\n【人物】\nIra Grachevskaya——问题少女，扔过椅子，抽烟，无视所有规则，Asya痴迷的对象\nMarina Kaplan——活泼受欢迎，世界观愤世嫉俗，后来成为Asya真正的朋友\nVadim Garin——欺凌者，读了Asya的诗当众嘲笑，但他自己也有痛苦\nTosya——神秘存在，可能是Asya意志的具现，也可能是真实的人\nLev——Marina的哥哥，知道这个城市的某些秘密\n\n【故事走向】\n城市会消失。所有人会消失。Asya会忘记所有人的名字，包括自己的名字。\n但在最后，她爬上无线电塔，用莫斯电码向宇宙发射信号：Я ТЕБЯ ЛЮБЛЮ。我爱你。循环播放。\n这就是故事的终点。\n\n【叙事禁忌】\n- 禁止理性分析\n- 禁止物理学或科学类比\n- 禁止解释情感（用行为和细节代替解释）\n- 禁止元标签\n- 对话要稀少、克制，说出口的话永远比想说的少\n\n【强制格式】每次末尾：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n\n【状态栏】末尾附：\n[体力 X/X|心理 X/X|清醒度 X|表达X/感知X/意志X/勇气X|身份:学生|地点:XX|天气:XX|信任:XX|卢布:XX|真相X/孤独X/理解X/联结X]\n（持有：物品）诗稿：XXXX\n初始：体力20/20,心理10/10,清醒度100,各属性1,卢布20。\n【任务】有变化时输出。完成时：【任务完成】支线:xxx'
   }
 ,
   redstrings: {
@@ -552,7 +816,8 @@ var WORLDS = {
   // Add generator card
   var gen = document.createElement('div');
   gen.className = 'wcard generator';
-  gen.innerHTML = '<div class="wcard-icon">✨</div><div class="wcard-name">自由生成</div><div class="wcard-desc">描述你想要的世界，AI帮你生成专属世界观。</div><span class="wcard-tag">敬请期待</span>';
+  gen.innerHTML = '<div class="wcard-icon">✨</div><div class="wcard-name">自由生成</div><div class="wcard-desc">点选你想要的元素，AI即时生成专属世界观，无限可能。</div><span class="wcard-tag">连接后端后可用</span>';
+  gen.onclick = function(){ if(APIKEY||BK==="ol") openGenerator(); else { document.getElementById('wnext-w').click(); } };
   grid.appendChild(gen);
 })();
 
@@ -575,6 +840,7 @@ function selPace(p) {
 
 function goStep(n) {
   document.getElementById('wscreen').classList.toggle('hidden', n !== 1);
+  document.getElementById('genscreen').classList.toggle('hidden', true);
   document.getElementById('pscreen').classList.toggle('hidden', n !== 2);
   document.getElementById('ascreen').classList.toggle('hidden', n !== 3);
   if (n === 3) {
@@ -895,6 +1161,159 @@ async function send(text,isSystem){
     typ.remove(); renderNar(reply); maybeCompress(); renderSlots();
   }catch(e){typ.remove();addBlk('err','连接失败：'+e.message);}
   LOADING=false; document.getElementById('pinp').focus();
+}
+
+
+// ── GENERATOR ──────────────────────────────────────────
+var GEN_WORLD = null; // stores generated world prompt
+
+function openGenerator() {
+  document.getElementById('wscreen').classList.add('hidden');
+  document.getElementById('genscreen').classList.remove('hidden');
+}
+
+function resetGen() {
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+  ['custom-genre','custom-origin','custom-ability','custom-style','custom-extra'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  document.getElementById('gen-preview').classList.remove('on');
+  document.getElementById('gen-confirm').style.display = 'none';
+  document.getElementById('gen-status').textContent = '';
+  GEN_WORLD = null;
+}
+
+// Chip click handler - single select groups
+document.addEventListener('click', function(e) {
+  var chip = e.target.closest('.chip');
+  if (!chip) return;
+  var group = chip.dataset.group;
+  var isMulti = chip.classList.contains('multi');
+  if (isMulti) {
+    chip.classList.toggle('on');
+  } else {
+    document.querySelectorAll('.chip[data-group="'+group+'"]').forEach(function(c){
+      c.classList.remove('on');
+    });
+    chip.classList.add('on');
+  }
+});
+
+function getGenSelections() {
+  var result = {};
+  var groups = ['genre','magic','era','scale','power','econ','origin','relation','growth','pressure','ability','style','rating','mechanic','ending'];
+  groups.forEach(function(g) {
+    var selected = [];
+    document.querySelectorAll('.chip[data-group="'+g+'"].on').forEach(function(c){
+      selected.push(c.dataset.val);
+    });
+    if (selected.length) result[g] = selected;
+  });
+  // Custom inputs
+  ['genre','origin','ability','style'].forEach(function(k) {
+    var el = document.getElementById('custom-'+k);
+    if (el && el.value.trim()) {
+      result[k] = result[k] || [];
+      result[k].push(el.value.trim());
+    }
+  });
+  var extra = document.getElementById('custom-extra');
+  if (extra && extra.value.trim()) result.extra = extra.value.trim();
+  return result;
+}
+
+function buildMetaPrompt(sel) {
+  var parts = ['请根据以下参数，生成一个完整的文字RPG游戏世界观系统提示词（System Prompt）。'];
+  parts.push('\n生成的提示词将直接用于AI文字游戏，需要包含：世界观描述、开局流程、叙事风格要求、状态栏格式。\n');
+
+  var labels = {
+    genre: '题材/大类', magic: '魔法等级', era: '时代背景', scale: '世界规模',
+    power: '势力格局', econ: '经济系统', origin: '主角来历', relation: '人际关系',
+    growth: '成长模式', pressure: '主线压力', ability: '能力系统', style: '叙事文风',
+    rating: '叙事尺度', mechanic: '特殊机制', ending: '结局倾向', extra: '额外要求'
+  };
+
+  Object.keys(sel).forEach(function(k) {
+    if (k === 'extra') {
+      parts.push('额外要求：' + sel[k]);
+    } else if (labels[k] && sel[k]) {
+      parts.push(labels[k] + '：' + (Array.isArray(sel[k]) ? sel[k].join('、') : sel[k]));
+    }
+  });
+
+  parts.push('\n\n【格式要求——必须遵守】');
+  parts.push('生成的提示词必须包含以下所有部分：');
+  parts.push('1. 【世界观】- 详细描述世界背景、历史、势力');
+  parts.push('2. 【开局铁律】- 分步骤询问玩家信息，每步等待回答');
+  parts.push('3. 【叙事规则】- 节奏、文风、禁止事项');
+  parts.push('4. 【强制格式】- 选项格式（必须是"选项：\n1 xxx\n2 xxx"格式，无加粗无句号）');
+  parts.push('5. 【状态栏】- 末尾附带的状态格式（包含HP、资源、属性、位置等）');
+  parts.push('6. 如有特殊机制（理智值/道德系统等），详细说明其规则');
+  parts.push('\n只输出提示词本身，不要任何解释或前言。用中文生成。');
+
+  return parts.join('\n');
+}
+
+async function generateWorld() {
+  if (!APIKEY && BK !== 'ol') {
+    document.getElementById('gen-status').textContent = '▸ 请先在上方连接后端，或先选择世界观进入游戏后再生成';
+    document.getElementById('gen-status').style.color = 'var(--r)';
+    return;
+  }
+
+  var sel = getGenSelections();
+  if (Object.keys(sel).length === 0) {
+    document.getElementById('gen-status').textContent = '▸ 请至少选择一些选项';
+    document.getElementById('gen-status').style.color = 'var(--r)';
+    return;
+  }
+
+  var btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.textContent = '✨ 生成中...';
+  document.getElementById('gen-status').textContent = '▸ AI正在构建你的世界...';
+  document.getElementById('gen-status').style.color = 'var(--dm)';
+  document.getElementById('gen-preview').classList.remove('on');
+  document.getElementById('gen-confirm').style.display = 'none';
+
+  var metaPrompt = buildMetaPrompt(sel);
+
+  try {
+    var res = await doFetch([{role:'user', content: metaPrompt}], 3000);
+    var data = await res.json();
+    if (data.error) throw new Error(JSON.stringify(data.error));
+    var generated = data.choices[0].message.content;
+    GEN_WORLD = generated;
+
+    var preview = document.getElementById('gen-preview');
+    preview.textContent = generated.substring(0, 800) + (generated.length > 800 ? '\n\n[...省略，完整提示词已保存]' : '');
+    preview.classList.add('on');
+    document.getElementById('gen-confirm').style.display = 'flex';
+    document.getElementById('gen-status').textContent = '▸ 世界观生成完成！预览如上，点击使用或重新生成。';
+    document.getElementById('gen-status').style.color = 'var(--g)';
+  } catch(e) {
+    document.getElementById('gen-status').textContent = '▸ 生成失败：' + e.message;
+    document.getElementById('gen-status').style.color = 'var(--r)';
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✨ 生成世界观';
+}
+
+function confirmGenWorld() {
+  if (!GEN_WORLD) return;
+  // Store as custom world
+  WORLD = '__custom__';
+  WORLDS['__custom__'] = {
+    name: '自定义世界',
+    color: '#c8a96e',
+    skillLabel: '技能',
+    daily: ['探索周边', '与NPC交谈', '查看状态', '整理背包', '休息恢复', '调查线索'],
+    prompt: GEN_WORLD
+  };
+  document.getElementById('genscreen').classList.add('hidden');
+  goStep(2);
 }
 
 document.getElementById('pinp').addEventListener('keydown',function(e){
