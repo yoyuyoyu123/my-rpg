@@ -243,19 +243,19 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 </div>
 
 <!-- STEP 1: WORLD SELECT -->
-<div class="screen" id="wscreen">
+<div class="screen hidden" id="wscreen">
   <div class="steps" id="steps-w">
-    <div class="step active"><div class="step-num">1</div><span>选择世界</span></div>
+    <div class="step done"><div class="step-num">✓</div><span>连接后端</span></div>
     <div class="step-line"></div>
-    <div class="step"><div class="step-num">2</div><span>叙事节奏</span></div>
+    <div class="step active"><div class="step-num">2</div><span>选择世界</span></div>
     <div class="step-line"></div>
-    <div class="step"><div class="step-num">3</div><span>连接后端</span></div>
+    <div class="step"><div class="step-num">3</div><span>叙事节奏</span></div>
   </div>
   <div style="padding:20px">
     <div class="screen-title">选择你的世界</div>
-    <div class="screen-sub">▸ CHOOSE YOUR WORLD</div>
+    <div class="screen-sub">▸ CHOOSE YOUR WORLD · 后端已连接，可使用自由生成</div>
     <div class="worlds" id="world-grid"></div>
-    <button class="wnext" id="wnext-w" onclick="goStep(2)" disabled>下一步 ▶</button>
+    <button class="wnext" id="wnext-w" onclick="goStep(3)" disabled>下一步 ▶</button>
   </div>
 </div>
 
@@ -263,11 +263,11 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 <!-- GENERATOR SCREEN -->
 <div class="screen hidden" id="genscreen">
   <div class="steps">
-    <div class="step active"><div class="step-num">1</div><span>自由生成</span></div>
+    <div class="step done"><div class="step-num">✓</div><span>连接后端</span></div>
     <div class="step-line"></div>
-    <div class="step"><div class="step-num">2</div><span>叙事节奏</span></div>
+    <div class="step active"><div class="step-num">2</div><span>自由生成</span></div>
     <div class="step-line"></div>
-    <div class="step"><div class="step-num">3</div><span>连接后端</span></div>
+    <div class="step"><div class="step-num">3</div><span>叙事节奏</span></div>
   </div>
   <div id="genscreen-inner">
     <div style="text-align:center;padding:16px 0 20px">
@@ -489,7 +489,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="gen-actions">
       <button class="btn" onclick="generateWorld()" id="gen-btn">✨ 生成世界观</button>
       <button class="btn sm" onclick="resetGen()">重置选项</button>
-      <span class="wback" style="margin:0;display:flex;align-items:center" onclick="goStep(1)">◀ 返回</span>
+      <span class="wback" style="margin:0;display:flex;align-items:center" onclick="goStep(2)">◀ 返回</span>
     </div>
     <div class="gen-status" id="gen-status"></div>
     <div class="gen-preview" id="gen-preview"></div>
@@ -503,11 +503,11 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 <!-- STEP 2: PACE SELECT -->
 <div class="screen hidden" id="pscreen">
   <div class="steps">
+    <div class="step done"><div class="step-num">✓</div><span>连接后端</span></div>
+    <div class="step-line"></div>
     <div class="step done"><div class="step-num">✓</div><span>选择世界</span></div>
     <div class="step-line"></div>
-    <div class="step active"><div class="step-num">2</div><span>叙事节奏</span></div>
-    <div class="step-line"></div>
-    <div class="step"><div class="step-num">3</div><span>连接后端</span></div>
+    <div class="step active"><div class="step-num">3</div><span>叙事节奏</span></div>
   </div>
   <div style="padding:20px">
     <div class="screen-title">选择叙事节奏</div>
@@ -535,19 +535,19 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         <div class="pcard-examples">适合：武侠日常 · 异世界生活 · 末日经营</div>
       </div>
     </div>
-    <button class="wnext" id="wnext-p" onclick="goStep(3)" disabled>下一步 ▶</button>
-    <span class="wback" onclick="goStep(1)">◀ 返回</span>
+    <button class="wnext" id="wnext-p" onclick="launchGame()" disabled>开始冒险 ▶</button>
+    <span class="wback" onclick="goStep(2)">◀ 返回</span>
   </div>
 </div>
 
 <!-- STEP 3: API CONNECT -->
-<div class="screen hidden" id="ascreen">
+<div class="screen" id="ascreen">
   <div class="steps">
-    <div class="step done"><div class="step-num">✓</div><span>选择世界</span></div>
+    <div class="step active"><div class="step-num">1</div><span>连接后端</span></div>
     <div class="step-line"></div>
-    <div class="step done"><div class="step-num">✓</div><span>叙事节奏</span></div>
+    <div class="step"><div class="step-num">2</div><span>选择世界</span></div>
     <div class="step-line"></div>
-    <div class="step active"><div class="step-num">3</div><span>连接后端</span></div>
+    <div class="step"><div class="step-num">3</div><span>叙事节奏</span></div>
   </div>
   <div style="padding:20px;max-width:700px;margin:0 auto;width:100%">
     <div class="sel-summary" id="sel-summary"></div>
@@ -817,7 +817,7 @@ var WORLDS = {
   var gen = document.createElement('div');
   gen.className = 'wcard generator';
   gen.innerHTML = '<div class="wcard-icon">✨</div><div class="wcard-name">自由生成</div><div class="wcard-desc">点选你想要的元素，AI即时生成专属世界观，无限可能。</div><span class="wcard-tag">连接后端后可用</span>';
-  gen.onclick = function(){ if(APIKEY||BK==="ol") openGenerator(); else { document.getElementById('wnext-w').click(); } };
+  gen.onclick = function(){ openGenerator(); };
   grid.appendChild(gen);
 })();
 
@@ -839,19 +839,18 @@ function selPace(p) {
 }
 
 function goStep(n) {
-  document.getElementById('wscreen').classList.toggle('hidden', n !== 1);
+  document.getElementById('ascreen').classList.toggle('hidden', n !== 1);
+  document.getElementById('wscreen').classList.toggle('hidden', n !== 2);
   document.getElementById('genscreen').classList.toggle('hidden', true);
-  document.getElementById('pscreen').classList.toggle('hidden', n !== 2);
-  document.getElementById('ascreen').classList.toggle('hidden', n !== 3);
+  document.getElementById('pscreen').classList.toggle('hidden', n !== 3);
   if (n === 3) {
     var w = WORLDS[WORLD];
-    var p = PACE_CONFIG[PACE];
     var summary = document.getElementById('sel-summary');
-    summary.innerHTML = '世界观：<span>' + (w ? w.name : '') + '</span> &nbsp;|&nbsp; 节奏：<span>' + (p ? p.icon + ' ' + p.label : '') + '</span>';
+    summary.innerHTML = '世界观：<span>' + (w ? w.name : '') + '</span> &nbsp;|&nbsp; 后端：<span>' + MODEL.split('/').pop() + '</span>';
   }
   if (n === 1) {
     document.getElementById('sdot').classList.remove('on');
-    document.getElementById('stxt').textContent = '选择世界';
+    document.getElementById('stxt').textContent = '连接后端';
   }
 }
 
@@ -889,12 +888,9 @@ function doConnect(t) {
   if(!MODEL||(t!=='ol'&&!APIKEY)){st.textContent='▸ 请填写Key并选择模型';st.style.color='var(--r)';return;}
   BK=t;
   document.getElementById('ascreen').classList.add('hidden');
-  document.getElementById('gscreen').style.display='flex';
+  document.getElementById('wscreen').classList.remove('hidden');
   document.getElementById('sdot').classList.add('on');
-  document.getElementById('stxt').textContent=WORLDS[WORLD].name+' · '+PACE_CONFIG[PACE].label;
-  document.getElementById('game-hint').textContent='无界·叙事引擎 · '+WORLDS[WORLD].name+' · '+PACE_CONFIG[PACE].label;
-  renderDailyBtns();
-  startGame();
+  document.getElementById('stxt').textContent='已连接 · '+MODEL.split('/').pop();
 }
 
 function renderDailyBtns() {
@@ -1124,6 +1120,16 @@ async function maybeCompress(){
   SUMMING=false;
 }
 
+function launchGame() {
+  if (!WORLD || !PACE) return;
+  document.getElementById('pscreen').classList.add('hidden');
+  document.getElementById('gscreen').style.display = 'flex';
+  document.getElementById('stxt').textContent = WORLDS[WORLD].name + ' · ' + PACE_CONFIG[PACE].label;
+  document.getElementById('game-hint').textContent = '无界·叙事引擎 · ' + WORLDS[WORLD].name + ' · ' + PACE_CONFIG[PACE].label;
+  renderDailyBtns();
+  startGame();
+}
+
 function buildSystemPrompt(){
   var w=WORLDS[WORLD];
   var p=PACE_CONFIG[PACE];
@@ -1313,7 +1319,7 @@ function confirmGenWorld() {
     prompt: GEN_WORLD
   };
   document.getElementById('genscreen').classList.add('hidden');
-  goStep(2);
+  goStep(3);
 }
 
 document.getElementById('pinp').addEventListener('keydown',function(e){
