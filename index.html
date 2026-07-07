@@ -235,6 +235,12 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .pin-txt{color:var(--tx);flex:1;}
 .pin-x{background:transparent;border:none;color:var(--dm);cursor:pointer;font-size:10px;flex-shrink:0;padding:0;}
 .pin-x:hover{color:var(--r);}
+.set-row{font-size:10px;color:var(--dm);display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+.set-row input[type=range]{flex:1;accent-color:#c8a96e;}
+.set-chk{display:block;font-size:10px;color:var(--dm);margin-bottom:4px;cursor:pointer;}
+.set-chk input{accent-color:#c8a96e;margin-right:4px;}
+.lore-txt{cursor:pointer;}
+.lore-txt:hover{color:var(--g);}
 </style>
 </head>
 <body>
@@ -263,6 +269,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="screen-sub">▸ CHOOSE YOUR WORLD · 后端已连接，可使用自由生成</div>
     <div class="worlds" id="world-grid"></div>
     <button class="wnext" id="wnext-w" onclick="goStep(3)" disabled>下一步 ▶</button>
+    <div style="text-align:center;margin-top:14px"><button class="btn sm" onclick="document.getElementById('cardfile').click()">📇 导入角色卡（SillyTavern PNG / JSON）</button><input type="file" id="cardfile" accept=".png,.json" style="display:none" onchange="importCard(this.files[0]);this.value=''"></div>
   </div>
 </div>
 
@@ -635,6 +642,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div id="slog"></div>
     <div class="deco"></div>
     <div class="daily" id="daily-btns"></div>
+    <div class="daily" id="turn-tools"><button class="db" onclick="regenTurn()">↻ 重写本回合</button><button class="db" onclick="undoTurn()">↩ 撤销</button><span class="ofr" style="align-self:center">双击对话可编辑 · 数字键1-4选选项</span></div>
     <div class="inpa">
       <div class="iw">
         <span class="ipr">›</span>
@@ -649,7 +657,17 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="ss"><div class="st" id="skill-panel-title">▸ 技能</div><div class="skill-grid" id="skill-grid"><span class="skill-empty">— 空 —</span></div></div>
     <div class="ss"><div class="st">▸ 任务</div><div id="quest-list"><span class="no-quest">— 暂无任务 —</span></div></div>
     <div class="ss"><div class="st">🔒 锁定设定 <button class="pin-add" onclick="promptAddPin()">+ 锁定</button></div><div id="pin-list"><span class="no-quest">— 未锁定任何设定 —</span></div></div>
+    <div class="ss"><div class="st">📖 世界书 <button class="pin-add" onclick="promptAddLore()">+ 条目</button></div><div id="lore-list"><span class="no-quest">— 空 —</span></div></div>
     <div class="ss"><div class="st">▸ 存档</div><div id="svslots"></div></div>
+    <div class="ss">
+      <div class="st">⚙ 设置</div>
+      <div class="set-row">温度 <input type="range" id="set-temp" min="0.3" max="1.3" step="0.05" oninput="setTemp(this.value)"><span id="set-temp-v"></span></div>
+      <label class="set-chk"><input type="checkbox" id="set-stream" onchange="SETTINGS.stream=this.checked;saveSettings()"> 流式输出（逐字显示）</label>
+      <label class="set-chk"><input type="checkbox" id="set-dice" onchange="SETTINGS.dice=this.checked;saveSettings()"> 裁定骰（行动可失败）</label>
+      <label class="set-chk"><input type="checkbox" id="set-automem" onchange="SETTINGS.autoMem=this.checked;saveSettings()"> 自动记忆提取</label>
+      <button class="qb" onclick="exportSave()"><span class="ic">⇩</span>导出进度JSON</button>
+      <button class="qb" onclick="importSave()"><span class="ic">⇧</span>导入进度JSON</button>
+    </div>
     <div class="ss">
       <div class="st">▸ 指令</div>
       <button class="qb" onclick="qcmd('/status')"><span class="ic">◈</span>查看详细状态</button>
@@ -679,6 +697,11 @@ var PINS=[]; // locked facts: {id, text, category}
 var WORLD_CLOCK=0; // turns since last world event
 var EVENT_THRESHOLD=8; // rising threshold for background world events
 var LORE_ACTIVE=[]; // currently injected lore chunk names
+var LOREBOOK=[]; // world book entries: {id,name,keywords[],text,cat}
+var TURNS=0; // player turns this run
+var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true};
+try{var _st=localStorage.getItem('wuji_settings'); if(_st) SETTINGS=Object.assign(SETTINGS,JSON.parse(_st));}catch(e){}
+function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(SETTINGS));}catch(e){}}
 
 var PACE_CONFIG = {
   short: {
@@ -1011,7 +1034,7 @@ function updateStatus(text) {
     document.getElementById('sdsp').textContent=sb.substring(0,400);
     document.getElementById('sdsp').style.color='var(--tx)';
     var im=sb.match(/持有[\uff1a:]([^\n\uff08\(]+)/);
-    if(im){var items=im[1].replace(/[\]］]/g,'').split(/[,，、]/).filter(function(x){return x.trim()&&x.trim()!=='无';});renderInventory(items);}
+    if(im){var items=im[1].replace(/[\]］)）]/g,'').split(/[,，、]/).filter(function(x){return x.trim()&&x.trim()!=='无';});renderInventory(items);}
     var sm=plain.match(/（技能[：:]([^）\)]+)）/);
     if(!sm) sm=plain.match(/\(技能[：:]([^\)]+)\)/);
     if(sm){var skills=sm[1].split(/[\/／]/).filter(function(x){return x.trim()&&x.trim()!=='无';});renderSkills(skills);}
@@ -1019,14 +1042,17 @@ function updateStatus(text) {
   parseQuests(plain);
 }
 
-function renderSlots() {
+async function renderSlots() {
   var c=document.getElementById('svslots'); if(!c)return;
+  for(var mi=0;mi<3;mi++){
+    var raw=localStorage.getItem('wuji_sv_'+mi);
+    if(raw){ try{ await idbPut('sv_'+mi,JSON.parse(raw)); localStorage.removeItem('wuji_sv_'+mi);}catch(e){} }
+  }
   c.innerHTML='';
   for(var i=0;i<3;i++){
-    var raw=localStorage.getItem('wuji_sv_'+i);
+    var sv=null; try{ sv=await idbGet('sv_'+i);}catch(e){}
     var d=document.createElement('div');
-    if(raw){
-      var sv=JSON.parse(raw);
+    if(sv){
       d.className='svs';
       d.innerHTML='<div class="sn">存档 '+(i+1)+'</div><div class="si">'+esc(sv.desc||'')+'</div><div class="si" style="opacity:0.5">'+esc(sv.time||'')+'</div><div class="sb2"><button onclick="loadSv('+i+')">读取</button><button onclick="saveSv('+i+')">覆盖</button><button class="dl" onclick="delSv('+i+')">删除</button></div>';
     } else {
@@ -1035,17 +1061,24 @@ function renderSlots() {
     }
     c.appendChild(d);
   }
+  var av=null; try{ av=await idbGet('auto'); }catch(e){}
+  if(av){
+    var d2=document.createElement('div'); d2.className='svs';
+    d2.innerHTML='<div class="sn">⟳ 自动存档</div><div class="si">'+esc(av.desc||'')+'</div><div class="si" style="opacity:0.5">'+esc(av.time||'')+'</div><div class="sb2"><button onclick="loadSvAuto()">读取</button></div>';
+    c.appendChild(d2);
+  }
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function scrollB(){var l=document.getElementById('slog');l.scrollTop=l.scrollHeight;}
-function addBlk(cls,txt){var el=document.createElement('div');el.className='sb '+cls;el.textContent=txt;document.getElementById('slog').appendChild(el);scrollB();return el;}
+function addBlk(cls,txt,hidx){var el=document.createElement('div');el.className='sb '+cls;el.textContent=txt;if(typeof hidx==='number')el.dataset.hidx=hidx;document.getElementById('slog').appendChild(el);scrollB();return el;}
 function addTyp(){var el=document.createElement('div');el.className='sb nar';el.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';document.getElementById('slog').appendChild(el);scrollB();return el;}
 function qcmd(c){if(!LOADING)send(c,false);}
 
-function renderNar(text) {
-  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【大纲】[\s\S]*$/,'').trim();
+function renderNar(text,hidx) {
+  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【裁定】[\s\S]*?【\/裁定】/g,'').replace(/【大纲】[\s\S]*$/,'').trim();
   var wrapper=document.createElement('div'); wrapper.className='sb nar';
+  if(typeof hidx==='number') wrapper.dataset.hidx=hidx;
   var optIdx=text.search(/选项[：:]\s*\n/);
   var mainText=optIdx>=0?text.slice(0,optIdx).trim():text;
   mainText=mainText.replace(/【任务[^』]*』[^\n]*/g,'').replace(/【技能标[^』]*』[^\n]*/g,'').trim();
@@ -1078,45 +1111,98 @@ function renderNar(text) {
 
 function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent&&d.textContent!=='— 游戏开始后显示 —')?d.textContent.replace(/\n/g,' ').substring(0,55)+'…':'第'+Math.ceil(HIST.length/2)+'回合';}
 
-function saveSv(i){
-  if(!HIST.length)return;
+function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  localStorage.setItem('wuji_sv_'+i,JSON.stringify({history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,html:'',quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD}));
-  renderSlots(); addBlk('sys','▸ 已保存至存档 '+(i+1));
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,customWorld:WORLDS['__custom__']||null};
 }
-
-function loadSv(i){
-  var raw=localStorage.getItem('wuji_sv_'+i); if(!raw)return;
-  var sv=JSON.parse(raw);
+function applySnapshot(sv){
+  if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
-  QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[]; WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8;
+  QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0;
+  if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
   document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString();
-  document.getElementById('slog').innerHTML='';
-  HIST.forEach(function(m){
-    if(m.role==='assistant') renderNar(m.content);
-    else if(m.role==='user') addBlk('ply',m.content);
-  });
-  scrollB(); renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins();
+  rebuildLog();
+  renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins(); renderLore(); renderDailyBtns();
   LOADING=false;
-  addBlk('sys','▸ 已读取存档 '+(i+1));
   document.getElementById('pinp').focus();
 }
+function rebuildLog(){
+  document.getElementById('slog').innerHTML='';
+  HIST.forEach(function(m,idx){
+    if(m.role==='assistant') renderNar(m.content,idx);
+    else if(m.role==='user'&&m.content!=='开始游戏') addBlk('ply',m.content,idx);
+  });
+  scrollB();
+}
+var IDB=null;
+function idbOpen(){return new Promise(function(ok,bad){ if(IDB)return ok(IDB); var rq=indexedDB.open('wuji_rpg',1); rq.onupgradeneeded=function(){rq.result.createObjectStore('saves');}; rq.onsuccess=function(){IDB=rq.result;ok(IDB);}; rq.onerror=function(){bad(rq.error);};});}
+function idbPut(k,v){return idbOpen().then(function(db){return new Promise(function(ok,bad){var tx=db.transaction('saves','readwrite');tx.objectStore('saves').put(v,k);tx.oncomplete=function(){ok();};tx.onerror=function(){bad(tx.error);};});});}
+function idbGet(k){return idbOpen().then(function(db){return new Promise(function(ok,bad){var rq=db.transaction('saves','readonly').objectStore('saves').get(k);rq.onsuccess=function(){ok(rq.result);};rq.onerror=function(){bad(rq.error);};});});}
+function idbDel(k){return idbOpen().then(function(db){return new Promise(function(ok,bad){var tx=db.transaction('saves','readwrite');tx.objectStore('saves').delete(k);tx.oncomplete=function(){ok();};tx.onerror=function(){bad(tx.error);};});});}
+function autoSave(){ if(HIST.length){ idbPut('auto',snapshot()).catch(function(){}); } }
+function saveSv(i){
+  if(!HIST.length)return;
+  idbPut('sv_'+i,snapshot()).then(function(){renderSlots();addBlk('sys','▸ 已保存至存档 '+(i+1));}).catch(function(e){addBlk('err','保存失败：'+e);});
+}
 
-function delSv(i){localStorage.removeItem('wuji_sv_'+i);renderSlots();}
+function loadSv(i){
+  idbGet(i==='auto'?'auto':'sv_'+i).then(function(sv){
+    if(!sv){addBlk('sys','▸ 存档为空');return;}
+    applySnapshot(sv);
+    addBlk('sys','▸ 已读取'+(i==='auto'?'自动存档':('存档 '+(i+1))));
+  }).catch(function(e){addBlk('err','读取失败：'+e);});
+}
+function loadSvAuto(){loadSv('auto');}
+
+function delSv(i){idbDel('sv_'+i).then(function(){renderSlots();});}
 
 function doFetch(messages,maxTok){
   var url,hdrs,body;
   if(BK==='ol'){
     url=BASEURL+'/v1/chat/completions'; hdrs={'Content-Type':'application/json'};
-    body=JSON.stringify({model:MODEL,messages:messages,stream:false,options:{num_ctx:32768,temperature:0.85,top_p:0.9,num_predict:maxTok||-1}});
+    body=JSON.stringify({model:MODEL,messages:messages,stream:false,options:{num_ctx:32768,temperature:Number(SETTINGS.temp),top_p:0.9,num_predict:maxTok||-1}});
   } else {
     url=BASEURL+'/v1/chat/completions'; hdrs={'Content-Type':'application/json','Authorization':'Bearer '+APIKEY};
     if(BK==='or'){hdrs['HTTP-Referer']='https://localhost';hdrs['X-Title']='WuxiaRPG';}
-    body=JSON.stringify({model:MODEL,messages:messages,stream:false,temperature:0.85,max_tokens:maxTok||4096});
+    body=JSON.stringify({model:MODEL,messages:messages,stream:false,temperature:Number(SETTINGS.temp),max_tokens:maxTok||4096});
   }
   return fetch(url,{method:'POST',headers:hdrs,body:body});
+}
+
+async function doFetchStream(messages,maxTok,onDelta){
+  var url=BASEURL+'/v1/chat/completions',hdrs,body;
+  if(BK==='ol'){
+    hdrs={'Content-Type':'application/json'};
+    body={model:MODEL,messages:messages,stream:true,options:{num_ctx:32768,temperature:Number(SETTINGS.temp),top_p:0.9,num_predict:maxTok||-1}};
+  } else {
+    hdrs={'Content-Type':'application/json','Authorization':'Bearer '+APIKEY};
+    if(BK==='or'){hdrs['HTTP-Referer']='https://localhost';hdrs['X-Title']='WuxiaRPG';}
+    body={model:MODEL,messages:messages,stream:true,temperature:Number(SETTINGS.temp),max_tokens:maxTok||4096};
+  }
+  var res=await fetch(url,{method:'POST',headers:hdrs,body:JSON.stringify(body)});
+  if(!res.ok||!res.body){var et='';try{et=await res.text();}catch(e){}throw new Error('HTTP '+res.status+' '+et.substring(0,200));}
+  var reader=res.body.getReader(),dec=new TextDecoder(),buf='',full='',usage=null;
+  while(true){
+    var r=await reader.read(); if(r.done)break;
+    buf+=dec.decode(r.value,{stream:true});
+    var lines=buf.split('\n'); buf=lines.pop();
+    for(var i=0;i<lines.length;i++){
+      var ln=lines[i].trim();
+      if(ln.indexOf('data:')!==0)continue;
+      var payload=ln.slice(5).trim();
+      if(payload==='[DONE]')continue;
+      try{
+        var j=JSON.parse(payload);
+        var d=j.choices&&j.choices[0]&&j.choices[0].delta&&j.choices[0].delta.content;
+        if(d){full+=d;if(onDelta)onDelta(full);}
+        if(j.usage)usage=j.usage;
+      }catch(e){}
+    }
+  }
+  return {text:full,usage:usage};
 }
 
 async function maybeCompress(){
@@ -1163,11 +1249,12 @@ function buildSystemPrompt(recentText){
 // ── LORE CHUNK SYSTEM: world can define .lore = [{name, keywords:[], text, always}] ──
 function getRelevantLore(recentText){
   var w = WORLDS[WORLD];
-  if(!w || !w.lore || !w.lore.length) return '';
+  var pool = ((w&&w.lore)||[]).concat(LOREBOOK);
+  if(!pool.length) return '';
   LORE_ACTIVE = [];
   var hay = (recentText||'').toLowerCase();
   var picked = [];
-  w.lore.forEach(function(chunk){
+  pool.forEach(function(chunk){
     if(chunk.always){ picked.push(chunk); LORE_ACTIVE.push(chunk.name); return; }
     var hit = (chunk.keywords||[]).some(function(kw){ return hay.indexOf(kw.toLowerCase())>=0; });
     if(hit){ picked.push(chunk); LORE_ACTIVE.push(chunk.name); }
@@ -1211,21 +1298,17 @@ function undoTurn(){
   for(var i=HIST.length-1;i>=0;i--){ if(HIST[i].role==='assistant'){ai=i;break;} }
   if(ai<1 || HIST[ai-1].role!=='user'){ addBlk('sys','▸ 没有可撤销的回合'); return; }
   HIST.splice(ai-1,2);
-  document.getElementById('slog').innerHTML='';
-  HIST.forEach(function(m){
-    if(m.role==='assistant') renderNar(m.content);
-    else if(m.role==='user' && m.content!=='开始游戏') addBlk('ply',m.content);
-  });
+  rebuildLog();
   addBlk('sys','▸ 已撤销上一回合');
-  scrollB();
 }
 
 function startGame(){
-  HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8;
+  HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0;
+  LOREBOOK=((WORLDS[WORLD]&&WORLDS[WORLD].lorebook)||[]).slice();
   document.getElementById('slog').innerHTML='';
   var d=document.getElementById('sdsp'); d.textContent='— 游戏开始后显示 —'; d.style.color='var(--dm)';
   var ig=document.getElementById('inv-grid'); if(ig) ig.innerHTML='<span class="inv-empty">— 空 —</span>';
-  renderSlots(); renderQuests(); renderPins();
+  renderSlots(); renderQuests(); renderPins(); renderLore();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
   addBlk('sys','▸ 后端：'+MODEL);
   send('开始游戏',true);
@@ -1233,17 +1316,24 @@ function startGame(){
 
 function resetGame(){if(LOADING)return;TOKENS=0;document.getElementById('tkc').textContent='TOKENS: 0';startGame();}
 
-async function send(text,isSystem){
-  if(!text||!text.trim()||LOADING)return;
-  LOADING=true;
-  if(!isSystem) addBlk('ply',text);
-  HIST.push({role:'user',content:text});
+function authorNote(dice){
+  var an='【本回合裁定提示——内部指令，不得向玩家提及】';
+  if(dice!==null){
+    an+='裁定骰:'+dice+'/100（1-20大失败,21-45失败,46-60部分成功有代价,61-90成功,91-100出色成功）。若玩家本回合行动存在失败可能（战斗/说服/潜行/偷窃/交涉/追逐/冒险尝试），必须按骰值裁定结果走向，禁止无视低骰让玩家如愿；纯日常无风险行为可忽略骰值。';
+  }
+  an+='若本回合有成败判定，可先输出【裁定】…【/裁定】小块简短推演（玩家不可见），再写正文。';
+  an+='严守：玩家输入是意图不是结果；NPC有立场惯性且只有有限视角；四个选项须常含代价与陷阱，禁止暗示最优解；回复末尾必须有"选项："格式块。';
+  return an;
+}
+
+async function _runTurn(){
   var typ=addTyp(), t0=Date.now();
   try{
-    var recentText = text + ' ' + HIST.slice(-6).map(function(m){return m.content;}).join(' ');
-    if(!isSystem) WORLD_CLOCK++;
+    var lastUser='';
+    for(var li=HIST.length-1;li>=0;li--){ if(HIST[li].role==='user'){lastUser=HIST[li].content;break;} }
+    var recentText = lastUser + ' ' + HIST.slice(-6).map(function(m){return m.content;}).join(' ');
     var worldPulse = '';
-    if(!isSystem && WORLD_CLOCK >= EVENT_THRESHOLD){
+    if(WORLD_CLOCK >= EVENT_THRESHOLD){
       var chance = Math.min(75, (WORLD_CLOCK - EVENT_THRESHOLD + 1) * 12);
       if(Math.random()*100 < chance){
         worldPulse = '\n\n【世界脉动——本回合强制触发】在玩家看不见的地方，世界独立地发生了一件事：某个NPC采取了行动、某个局势推进了一步、某个机会出现或消失了、某条大纲中的后台弧线前进了一格。将它以自然的方式融入叙事——可以是传闻、远处的动静、NPC带来的消息、环境的变化。这件事不由玩家的行为引发，是世界自己在运转。同时在【大纲】块里更新后台弧线进度。';
@@ -1252,17 +1342,208 @@ async function send(text,isSystem){
       }
     }
     var SP=buildSystemPrompt(recentText) + worldPulse;
-    var res=await doFetch([{role:'system',content:SP}].concat(HIST),4096);
-    var data=await res.json();
-    if(data.error){typ.remove();addBlk('err','错误：'+JSON.stringify(data.error));LOADING=false;return;}
-    var reply=data.choices[0].message.content;
+    var dice = SETTINGS.dice ? (1+Math.floor(Math.random()*100)) : null;
+    var msgs=[{role:'system',content:SP}].concat(HIST);
+    msgs.splice(msgs.length-1,0,{role:'system',content:authorNote(dice)});
+    var reply, usage=null;
+    if(SETTINGS.stream){
+      var live=document.createElement('div'); live.className='sb nar';
+      typ.remove(); typ=null;
+      document.getElementById('slog').appendChild(live);
+      try{
+        var r=await doFetchStream(msgs,4096,function(full){
+          var vis=full.replace(/【大纲】[\s\S]*$/,'').replace(/【裁定】[\s\S]*?(【\/裁定】|$)/g,'');
+          live.innerHTML=vis.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');
+          scrollB();
+        });
+        reply=r.text; usage=r.usage;
+      } finally { live.remove(); }
+      if(!reply) throw new Error('空回复（可尝试在设置中关闭流式输出）');
+    } else {
+      var res=await doFetch(msgs,4096);
+      var data=await res.json();
+      if(data.error){typ.remove();addBlk('err','错误：'+JSON.stringify(data.error));LOADING=false;return;}
+      reply=data.choices[0].message.content; usage=data.usage;
+      typ.remove(); typ=null;
+    }
     HIST.push({role:'assistant',content:reply});
-    if(data.usage){TOKENS+=(data.usage.total_tokens||0);document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString()+' · '+((Date.now()-t0)/1000).toFixed(1)+'s';}
-    typ.remove(); renderNar(reply); maybeCompress(); renderSlots();
-  }catch(e){typ.remove();addBlk('err','连接失败：'+e.message);}
+    if(usage&&usage.total_tokens){TOKENS+=usage.total_tokens;}
+    else{TOKENS+=Math.round((SP.length+reply.length)/3);}
+    document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString()+' · '+((Date.now()-t0)/1000).toFixed(1)+'s';
+    renderNar(reply,HIST.length-1);
+    maybeCompress(); renderSlots(); autoSave(); maybeAutoMemory();
+  }catch(e){ if(typ)typ.remove(); addBlk('err','连接失败：'+String(e&&e.message||e).substring(0,250)); }
   LOADING=false; document.getElementById('pinp').focus();
 }
 
+async function send(text,isSystem){
+  if(!text||!text.trim()||LOADING)return;
+  LOADING=true;
+  if(!isSystem){ addBlk('ply',text,HIST.length); WORLD_CLOCK++; TURNS++; }
+  HIST.push({role:'user',content:text});
+  await _runTurn();
+}
+
+function regenTurn(){
+  if(LOADING)return;
+  if(!HIST.length||HIST[HIST.length-1].role!=='assistant'){addBlk('sys','▸ 没有可重写的回复');return;}
+  HIST.pop();
+  rebuildLog();
+  addBlk('sys','▸ 正在重写本回合...');
+  LOADING=true;
+  _runTurn();
+}
+
+
+// ── LOREBOOK (world info) UI ──
+function renderLore(){
+  var c=document.getElementById('lore-list'); if(!c)return;
+  if(!LOREBOOK.length){c.innerHTML='<span class="no-quest">— 空 —</span>';return;}
+  c.innerHTML='';
+  LOREBOOK.forEach(function(l){
+    var d=document.createElement('div'); d.className='pin-item';
+    var cat=document.createElement('span'); cat.className='pin-cat'; cat.textContent=l.cat||'条目';
+    var tx=document.createElement('span'); tx.className='pin-txt lore-txt';
+    tx.textContent=l.name+'：'+(l.text||'').substring(0,42);
+    tx.title='关键词：'+(l.keywords||[]).join(',')+'（点击编辑）';
+    tx.onclick=function(){editLore(l.id);};
+    var x=document.createElement('button'); x.className='pin-x'; x.textContent='✕';
+    x.onclick=function(){removeLore(l.id);};
+    d.appendChild(cat); d.appendChild(tx); d.appendChild(x);
+    c.appendChild(d);
+  });
+}
+function removeLore(id){LOREBOOK=LOREBOOK.filter(function(l){return l.id!==id;});renderLore();}
+function editLore(id){
+  var l=LOREBOOK.find(function(x){return x.id===id;}); if(!l)return;
+  var kw=prompt('触发关键词（逗号分隔，剧情近期文本命中才注入）：',(l.keywords||[]).join(',')); if(kw===null)return;
+  var tx=prompt('条目内容：',l.text); if(tx===null||!tx.trim())return;
+  l.keywords=kw.split(/[,，]/).map(function(x){return x.trim();}).filter(Boolean);
+  l.text=tx.trim(); renderLore();
+}
+function promptAddLore(){
+  var name=prompt('条目名称（如：铁掌帮、王掌柜的秘密）：'); if(!name||!name.trim())return;
+  var kw=prompt('触发关键词（逗号分隔）：',name.trim()); if(kw===null)return;
+  var tx=prompt('条目内容（设定/事实，命中关键词时注入给AI）：'); if(!tx||!tx.trim())return;
+  LOREBOOK.push({id:'lore_'+Date.now()+'_'+Math.floor(Math.random()*1e3),name:name.trim(),keywords:kw.split(/[,，]/).map(function(x){return x.trim();}).filter(Boolean),text:tx.trim(),cat:'手动'});
+  renderLore();
+}
+
+// ── AUTO MEMORY: every 12 player turns, extract established facts into lorebook ──
+var _memBusy=false;
+async function maybeAutoMemory(){
+  if(!SETTINGS.autoMem||_memBusy)return;
+  if(TURNS===0||TURNS%12!==0)return;
+  _memBusy=true;
+  try{
+    var recent=HIST.slice(-24).map(function(m){return m.role+': '+m.content;}).join('\n').substring(0,9000);
+    var p='从以下文字游戏最近的剧情中，提取1-3条今后必须记住的既成事实（NPC关系变化、许下的承诺、结下的恩怨、重要物品去向、地点变化）。每行一条，格式严格为：名称|逗号分隔的触发关键词|一句话事实。只输出这些行，没有值得记的就输出：无\n\n'+recent;
+    var res=await doFetch([{role:'user',content:p}],300);
+    var data=await res.json();
+    if(!data.error&&data.choices){
+      data.choices[0].message.content.split('\n').forEach(function(ln){
+        var parts=ln.split('|'); if(parts.length<3)return;
+        var name=parts[0].trim().replace(/^[-\d.、\s]+/,''), kws=parts[1].split(/[,，]/).map(function(x){return x.trim();}).filter(Boolean), txt=parts.slice(2).join('|').trim();
+        if(!name||name==='无'||!txt)return;
+        if(LOREBOOK.some(function(l){return l.name===name;}))return;
+        LOREBOOK.push({id:'lore_'+Date.now()+'_'+Math.floor(Math.random()*1e3),name:name,keywords:kws.length?kws:[name],text:txt,cat:'记忆'});
+      });
+      var autos=LOREBOOK.filter(function(l){return l.cat==='记忆';});
+      if(autos.length>40){
+        var drop=autos.slice(0,autos.length-40);
+        LOREBOOK=LOREBOOK.filter(function(l){return drop.indexOf(l)<0;});
+      }
+      renderLore();
+    }
+  }catch(e){}
+  _memBusy=false;
+}
+
+// ── JSON EXPORT / IMPORT ──
+function exportSave(){
+  if(!HIST.length){addBlk('sys','▸ 没有可导出的进度');return;}
+  var blob=new Blob([JSON.stringify(snapshot(),null,1)],{type:'application/json'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='wuji_save_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+  addBlk('sys','▸ 进度已导出为JSON文件');
+}
+function importSave(){
+  var inp=document.createElement('input'); inp.type='file'; inp.accept='.json';
+  inp.onchange=function(){
+    var f=inp.files[0]; if(!f)return;
+    f.text().then(function(t){
+      try{ var sv=JSON.parse(t); if(!sv.history)throw new Error('不是有效的进度文件'); applySnapshot(sv); addBlk('sys','▸ 已导入外部进度'); }
+      catch(e){ alert('导入失败：'+e.message); }
+    });
+  };
+  inp.click();
+}
+
+// ── CHARACTER CARD IMPORT (SillyTavern V2 PNG / JSON) ──
+function importCard(file){
+  if(!file)return;
+  if(/\.json$/i.test(file.name)){
+    file.text().then(function(t){ try{cardToWorld(JSON.parse(t));}catch(e){alert('JSON解析失败：'+e.message);} });
+    return;
+  }
+  file.arrayBuffer().then(function(ab){
+    try{
+      var dv=new DataView(ab), off=8, json=null;
+      while(off+8<=dv.byteLength){
+        var len=dv.getUint32(off);
+        var type=String.fromCharCode(dv.getUint8(off+4),dv.getUint8(off+5),dv.getUint8(off+6),dv.getUint8(off+7));
+        if(type==='tEXt'){
+          var bytes=new Uint8Array(ab,off+8,len), z=bytes.indexOf(0);
+          if(z>0){
+            var key=''; for(var k=0;k<z;k++)key+=String.fromCharCode(bytes[k]);
+            if(key==='chara'||key==='ccv3'){
+              var b64=''; for(var i2=z+1;i2<bytes.length;i2++)b64+=String.fromCharCode(bytes[i2]);
+              json=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(b64),function(c){return c.charCodeAt(0);})));
+              break;
+            }
+          }
+        }
+        off+=12+len;
+      }
+      if(!json){alert('这张PNG里没有角色卡数据（需要SillyTavern格式的卡片）');return;}
+      cardToWorld(json);
+    }catch(e){alert('解析失败：'+e.message);}
+  });
+}
+function cardToWorld(card){
+  var d=card.data||card;
+  var name=d.name||'角色卡世界';
+  var pieces=[];
+  pieces.push('你是一个沉浸式文字RPG叙事引擎。以下角色卡定义了本局的核心NPC与世界，请完全内化，围绕该角色与玩家展开互动叙事，角色说话要完全符合卡片人设：');
+  if(d.description)pieces.push('【角色/世界描述】\n'+d.description);
+  if(d.personality)pieces.push('【性格】\n'+d.personality);
+  if(d.scenario)pieces.push('【场景】\n'+d.scenario);
+  if(d.mes_example)pieces.push('【对话风格示例】\n'+String(d.mes_example).substring(0,1500));
+  pieces.push('【开局】用第二人称把玩家带入场景，然后以下面的开场白开始（可自然润色）：\n'+(d.first_mes||'自由发挥一个符合人设的开场'));
+  pieces.push('【强制格式】每次回复末尾必须有：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事');
+  var book=[];
+  try{
+    var entries=(d.character_book&&d.character_book.entries)||[];
+    if(!Array.isArray(entries)) entries=Object.values(entries);
+    entries.forEach(function(en,ei){
+      var txt=en.content||en.entry||''; if(!txt)return;
+      var keys=en.keys||en.key||[]; if(typeof keys==='string')keys=keys.split(',');
+      book.push({id:'lore_card_'+ei,name:(en.comment||en.name||keys[0]||('条目'+(ei+1))).substring(0,20),keywords:keys.map(function(x){return String(x).trim();}).filter(Boolean),text:txt,cat:'角色卡',always:!!en.constant});
+    });
+  }catch(e){}
+  WORLDS['__custom__']={
+    name:name.substring(0,12), color:'#c8a96e', skillLabel:'技能',
+    daily:['继续对话','观察周围','询问对方','回顾发生的事','换个话题','休息片刻'],
+    prompt:pieces.join('\n\n'),
+    lorebook:book
+  };
+  WORLD='__custom__';
+  alert('已导入角色卡「'+name+'」'+(book.length?('，附带世界书 '+book.length+' 条'):''));
+  goStep(3);
+}
 
 // ── GENERATOR ──────────────────────────────────────────
 var GEN_WORLD = null; // stores generated world prompt
@@ -1423,6 +1704,43 @@ document.getElementById('pinp').addEventListener('input',function(){
   this.style.height='44px';this.style.height=Math.min(this.scrollHeight,110)+'px';
 });
 document.getElementById('imodal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// settings init
+function setTemp(v){SETTINGS.temp=Number(v);var el=document.getElementById('set-temp-v');if(el)el.textContent=Number(v).toFixed(2);saveSettings();}
+(function(){
+  var t=document.getElementById('set-temp'); if(t){t.value=SETTINGS.temp;}
+  var tv=document.getElementById('set-temp-v'); if(tv){tv.textContent=Number(SETTINGS.temp).toFixed(2);}
+  var st=document.getElementById('set-stream'); if(st)st.checked=!!SETTINGS.stream;
+  var dc=document.getElementById('set-dice'); if(dc)dc.checked=!!SETTINGS.dice;
+  var am=document.getElementById('set-automem'); if(am)am.checked=!!SETTINGS.autoMem;
+})();
+
+// double-click any logged message to edit it (rewrites history)
+document.getElementById('slog').addEventListener('dblclick',function(e){
+  if(LOADING)return;
+  var blk=e.target.closest('[data-hidx]'); if(!blk)return;
+  var idx=parseInt(blk.dataset.hidx,10);
+  if(isNaN(idx)||!HIST[idx])return;
+  var nv=prompt('编辑这条内容（修改会成为正史，影响后续剧情）：',HIST[idx].content);
+  if(nv===null||!nv.trim())return;
+  HIST[idx].content=nv;
+  rebuildLog();
+  addBlk('sys','▸ 已修改历史');
+});
+
+// number keys 1-4 pick the latest options
+document.addEventListener('keydown',function(e){
+  if(LOADING)return;
+  var t=e.target;
+  if(t&&(t.tagName==='TEXTAREA'||t.tagName==='INPUT'||t.isContentEditable))return;
+  if(e.key>='1'&&e.key<='4'){
+    var groups=document.getElementById('slog').querySelectorAll('.opts');
+    if(!groups.length)return;
+    var btns=groups[groups.length-1].querySelectorAll('.ob');
+    var bi=parseInt(e.key,10)-1;
+    if(btns[bi]){e.preventDefault();btns[bi].click();}
+  }
+});
 
 </script>
 </body>
