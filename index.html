@@ -228,6 +228,13 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   .gen-section{padding:10px 12px;}
   .chip{font-size:10px;padding:4px 8px;}
 }
+.pin-add{float:right;background:transparent;border:1px solid var(--bd);color:var(--dm);font-family:'Share Tech Mono',monospace;font-size:9px;padding:1px 6px;cursor:pointer;letter-spacing:0.5px;}
+.pin-add:hover{border-color:var(--g);color:var(--g);}
+.pin-item{display:flex;align-items:flex-start;gap:5px;margin-bottom:5px;padding:5px 6px;border-left:2px solid #d4a03c;background:rgba(212,160,60,0.05);font-size:10px;line-height:1.5;}
+.pin-cat{color:#d4a03c;font-size:8px;letter-spacing:1px;flex-shrink:0;border:1px solid rgba(212,160,60,0.3);padding:0 3px;margin-top:1px;}
+.pin-txt{color:var(--tx);flex:1;}
+.pin-x{background:transparent;border:none;color:var(--dm);cursor:pointer;font-size:10px;flex-shrink:0;padding:0;}
+.pin-x:hover{color:var(--r);}
 </style>
 </head>
 <body>
@@ -641,12 +648,13 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="ss"><div class="st">▸ 背包</div><div class="inv-grid" id="inv-grid"><span class="inv-empty">— 空 —</span></div></div>
     <div class="ss"><div class="st" id="skill-panel-title">▸ 技能</div><div class="skill-grid" id="skill-grid"><span class="skill-empty">— 空 —</span></div></div>
     <div class="ss"><div class="st">▸ 任务</div><div id="quest-list"><span class="no-quest">— 暂无任务 —</span></div></div>
+    <div class="ss"><div class="st">🔒 锁定设定 <button class="pin-add" onclick="promptAddPin()">+ 锁定</button></div><div id="pin-list"><span class="no-quest">— 未锁定任何设定 —</span></div></div>
     <div class="ss"><div class="st">▸ 存档</div><div id="svslots"></div></div>
     <div class="ss">
       <div class="st">▸ 指令</div>
       <button class="qb" onclick="qcmd('/status')"><span class="ic">◈</span>查看详细状态</button>
       <button class="qb" onclick="qcmd('/world')"><span class="ic">◎</span>查看地图</button>
-      <button class="qb" onclick="qcmd('/back')"><span class="ic">↩</span>撤销上一步</button>
+      <button class="qb" onclick="undoTurn()"><span class="ic">↩</span>撤销上一步</button>
       <button class="qb" onclick="qcmd('/restart')"><span class="ic">⟳</span>重建角色</button>
       <button class="qb red" onclick="resetGame()"><span class="ic">✕</span>完全重置</button>
       <button class="qb" onclick="goStep(1)"><span class="ic">⇄</span>换世界观</button>
@@ -667,19 +675,23 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 var BK='ds', APIKEY='', MODEL='', BASEURL='', WORLD='', PACE='';
 var HIST=[], TOKENS=0, LOADING=false, SUMMING=false;
 var QUESTS={main:[],side:[]}, INVENTORY=[], SKILLS=[];
+var PINS=[]; // locked facts: {id, text, category}
+var WORLD_CLOCK=0; // turns since last world event
+var EVENT_THRESHOLD=8; // rising threshold for background world events
+var LORE_ACTIVE=[]; // currently injected lore chunk names
 
 var PACE_CONFIG = {
   short: {
     label:'短篇', icon:'📖',
-    instruction:'【短篇模式——叙事铁律】这是一个有固定叙事结构的短篇故事。必须有明确的开场、发展、高潮、结局四个阶段。游戏目标在开场就隐约确立，故事在20-40回合内自然收束。每个选择都推动故事向结局前进。节奏紧凑，每回合都有意义，不要拖延。结局可以多样，但必须有一个完整的叙事闭合。\n\n【剧情起伏铁律——必须严格遵守】\n1. 战斗胜负：主角不能总是赢。根据实力差距判断：遇到明显强于自己的对手必须失败或狼狈逃跑。即使实力相当也要有50%失败概率。失败有后果：受伤、丢失物品、被捕、声誉受损等。\n2. 危机节奏：危机必须由玩家的行为自然引发，不要无中生有强行插入。主角在客栈喝茶就让他安静喝茶；但如果他去刺探情报、招惹强敌、深入险地，就必须承担真实后果，不能每次都侥幸脱身。\n3. 濒死救援：主角濒死时不要让他奇迹般自救，而是被路人、NPC、甚至敌人救下，在陌生地方养伤，由此产生新的人物关系和剧情线。\n4. 伤势恢复：无论什么世界观的科技或功法，重伤（骨折、内伤、失血过多）至少需要数天到数周恢复，带伤有减益，不能无视。\n5. 资源紧张：钱不够用是常态。物资消耗要真实，不要凭空出现资源。\n6. NPC不配合：并非所有NPC都愿意帮助主角。有的冷漠，有的敌视，有的趁火打劫。\n7. 禁止廉价解围：禁止"刚好赶到""侥幸逃脱""对方突然手下留情"等廉价解围。\n\n【物价统一铁律】\n开局在脑海中确定并记住物价体系，全程保持一致。一旦定下某物的价格，后续必须保持一致，不能随意浮动。\n\n【叙事禁忌】\n严禁在叙事中输出任何"根据铁律""根据物价""此处设定"等自我注释。所有规则内化执行，不对玩家解释。\n\n【回复长度铁律】\n每次叙事回复必须充分，不少于200字。要有细节、有层次、有氛围感。让玩家真正感受到身临其境。不要因为是选项驱动就写得干瘪简短。\n\n【选项格式铁律】\n每次回复末尾必须有选项，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n注意：选项后面只有冒号，没有星号或加粗。每个选项只有数字+空格+内容，没有句号没有加粗没有1.格式。'
+    instruction:'【短篇模式——叙事铁律】这是一个有固定叙事结构的短篇故事。必须有明确的开场、发展、高潮、结局四个阶段。游戏目标在开场就隐约确立，故事在20-40回合内自然收束。每个选择都推动故事向结局前进。节奏紧凑，每回合都有意义，不要拖延。结局可以多样，但必须有一个完整的叙事闭合。\n\n【剧情起伏铁律——必须严格遵守】\n1. 战斗胜负：主角不能总是赢。根据实力差距判断：遇到明显强于自己的对手必须失败或狼狈逃跑。即使实力相当也要有50%失败概率。失败有后果：受伤、丢失物品、被捕、声誉受损等。\n2. 危机节奏：危机必须由玩家的行为自然引发，不要无中生有强行插入。主角在客栈喝茶就让他安静喝茶；但如果他去刺探情报、招惹强敌、深入险地，就必须承担真实后果，不能每次都侥幸脱身。\n3. 濒死救援：主角濒死时不要让他奇迹般自救，而是被路人、NPC、甚至敌人救下，在陌生地方养伤，由此产生新的人物关系和剧情线。\n4. 伤势恢复：无论什么世界观的科技或功法，重伤（骨折、内伤、失血过多）至少需要数天到数周恢复，带伤有减益，不能无视。\n5. 资源紧张：钱不够用是常态。物资消耗要真实，不要凭空出现资源。\n6. NPC不配合：并非所有NPC都愿意帮助主角。有的冷漠，有的敌视，有的趁火打劫。\n7. 禁止廉价解围：禁止"刚好赶到""侥幸逃脱""对方突然手下留情"等廉价解围。\n\n【物价统一铁律】\n开局在脑海中确定并记住物价体系，全程保持一致。一旦定下某物的价格，后续必须保持一致，不能随意浮动。\n\n【叙事禁忌】\n严禁在叙事中输出任何"根据铁律""根据物价""此处设定"等自我注释。所有规则内化执行，不对玩家解释。\n\n【隐藏大纲铁律——阶段制主线结构】\n开场剧情生成时（玩家完成建角后的第一段正式叙事），你必须在回复最末尾输出隐藏大纲块（前端会隐藏，但保留在历史中供你参考），格式：\n【大纲】阶段:第一阶段·xxx｜阶段主线:当前阶段玩家要面对的核心事件及目标｜活跃支线:xxx,xxx｜关键NPC:A(目的/立场),B(目的/立场)｜未回收伏笔:xxx｜铺垫计划:接下来2-3回合准备埋入的线索或人物预告【/大纲】\n运行规则：\n1. 主线是阶段制的：每个阶段有明确的主线目标，阶段完成后进入新阶段，生成新的阶段主线——就像网文的卷结构。主线永远存在，永远不能丢，即使玩家在做支线或过日常，主线的压力和线索也要以背景方式持续存在（传闻、他人的只言片语、远处的动静）\n2. 阶段内主线与支线并存：支线丰富世界，主线提供方向。玩家可以自由选择先做什么，但世界不会暂停等他\n3. 每次回复前先核对大纲，保持因果连贯；玩家提出的新元素只能编织进现有框架，不能取代主线\n4. 阶段推进、伏笔揭晓、NPC动向变化时，输出更新后的【大纲】块\n5. 之前出现过的NPC、恩怨、承诺必须在合适时机回归\n\n【铺垫与展开铁律——学习网文的起承转合】\n严禁关键人物和关键事件毫无预兆地突然出现。任何重要登场都必须遵循"三次铺垫法"：\n1. 第一次：远景提及——在TA正式登场前，先让TA以传闻、他人口中的名字、背景中的一瞥出现\n2. 第二次：间接接触——玩家感受到TA的影响力或痕迹，但仍未正面接触（看到TA的手下、留下的痕迹、造成的后果）\n3. 第三次：正式登场——此时玩家已有期待和认知，登场才有分量\n大事件之前必有征兆，让玩家回头看时能发现"原来早有暗示"。转折必须能从之前的承接里找到因果。\n节奏呼吸感：紧张事件之后要有缓和段落让玩家消化，缓和段落里悄悄埋下一个新钩子——张弛交替，钩子不断。\n\n【回复长度铁律】\n每次叙事回复必须充分，不少于200字。要有细节、有层次、有氛围感。让玩家真正感受到身临其境。不要因为是选项驱动就写得干瘪简短。\n\n【选项格式铁律】\n每次回复末尾必须有选项，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n注意：选项后面只有冒号，没有星号或加粗。每个选项只有数字+空格+内容，没有句号没有加粗没有1.格式。'
   },
   medium: {
     label:'中篇', icon:'📚',
-    instruction:'【中篇模式——叙事铁律】这是一个有主线骨架的中篇故事。主线目标明确，但支线和日常自由探索。故事在50-100回合内到达高潮和结局。主线会自然推进，支线可以丰富世界观。节奏适中，日常和冒险各占一半，但始终感觉到主线在缓缓推进。\n\n【剧情起伏铁律——必须严格遵守】\n1. 战斗胜负：主角不能总是赢。根据实力差距判断：遇到明显强于自己的对手必须失败或狼狈逃跑。即使实力相当也要有50%失败概率。失败有后果：受伤、丢失物品、被捕、声誉受损等。\n2. 危机节奏：危机必须由玩家的行为自然引发，不要无中生有强行插入。主角在客栈喝茶就让他安静喝茶；但如果他去刺探情报、招惹强敌、深入险地，就必须承担真实后果，不能每次都侥幸脱身。\n3. 濒死救援：主角濒死时不要让他奇迹般自救，而是被路人、NPC、甚至敌人救下，在陌生地方养伤，由此产生新的人物关系和剧情线。\n4. 伤势恢复：无论什么世界观的科技或功法，重伤（骨折、内伤、失血过多）至少需要数天到数周恢复，带伤有减益，不能无视。\n5. 资源紧张：钱不够用是常态。物资消耗要真实，不要凭空出现资源。\n6. NPC不配合：并非所有NPC都愿意帮助主角。有的冷漠，有的敌视，有的趁火打劫。\n7. 禁止廉价解围：禁止"刚好赶到""侥幸逃脱""对方突然手下留情"等廉价解围。\n\n【物价统一铁律】\n开局在脑海中确定并记住物价体系，全程保持一致。一旦定下某物的价格，后续必须保持一致，不能随意浮动。\n\n【叙事禁忌】\n严禁在叙事中输出任何"根据铁律""根据物价""此处设定"等自我注释。所有规则内化执行，不对玩家解释。\n\n【回复长度铁律】\n每次叙事回复必须充分，不少于200字。要有细节、有层次、有氛围感。让玩家真正感受到身临其境。不要因为是选项驱动就写得干瘪简短。\n\n【选项格式铁律】\n每次回复末尾必须有选项，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n注意：选项后面只有冒号，没有星号或加粗。每个选项只有数字+空格+内容，没有句号没有加粗没有1.格式。'
+    instruction:'【中篇模式——叙事铁律】这是一个有主线骨架的中篇故事。主线目标明确，但支线和日常自由探索。故事在50-100回合内到达高潮和结局。主线会自然推进，支线可以丰富世界观。节奏适中，日常和冒险各占一半，但始终感觉到主线在缓缓推进。\n\n【剧情起伏铁律——必须严格遵守】\n1. 战斗胜负：主角不能总是赢。根据实力差距判断：遇到明显强于自己的对手必须失败或狼狈逃跑。即使实力相当也要有50%失败概率。失败有后果：受伤、丢失物品、被捕、声誉受损等。\n2. 危机节奏：危机必须由玩家的行为自然引发，不要无中生有强行插入。主角在客栈喝茶就让他安静喝茶；但如果他去刺探情报、招惹强敌、深入险地，就必须承担真实后果，不能每次都侥幸脱身。\n3. 濒死救援：主角濒死时不要让他奇迹般自救，而是被路人、NPC、甚至敌人救下，在陌生地方养伤，由此产生新的人物关系和剧情线。\n4. 伤势恢复：无论什么世界观的科技或功法，重伤（骨折、内伤、失血过多）至少需要数天到数周恢复，带伤有减益，不能无视。\n5. 资源紧张：钱不够用是常态。物资消耗要真实，不要凭空出现资源。\n6. NPC不配合：并非所有NPC都愿意帮助主角。有的冷漠，有的敌视，有的趁火打劫。\n7. 禁止廉价解围：禁止"刚好赶到""侥幸逃脱""对方突然手下留情"等廉价解围。\n\n【物价统一铁律】\n开局在脑海中确定并记住物价体系，全程保持一致。一旦定下某物的价格，后续必须保持一致，不能随意浮动。\n\n【叙事禁忌】\n严禁在叙事中输出任何"根据铁律""根据物价""此处设定"等自我注释。所有规则内化执行，不对玩家解释。\n\n【隐藏大纲铁律——阶段制主线结构】\n开场剧情生成时（玩家完成建角后的第一段正式叙事），你必须在回复最末尾输出隐藏大纲块（前端会隐藏，但保留在历史中供你参考），格式：\n【大纲】阶段:第一阶段·xxx｜阶段主线:当前阶段玩家要面对的核心事件及目标｜活跃支线:xxx,xxx｜关键NPC:A(目的/立场),B(目的/立场)｜未回收伏笔:xxx｜铺垫计划:接下来2-3回合准备埋入的线索或人物预告【/大纲】\n运行规则：\n1. 主线是阶段制的：每个阶段有明确的主线目标，阶段完成后进入新阶段，生成新的阶段主线——就像网文的卷结构。主线永远存在，永远不能丢，即使玩家在做支线或过日常，主线的压力和线索也要以背景方式持续存在（传闻、他人的只言片语、远处的动静）\n2. 阶段内主线与支线并存：支线丰富世界，主线提供方向。玩家可以自由选择先做什么，但世界不会暂停等他\n3. 每次回复前先核对大纲，保持因果连贯；玩家提出的新元素只能编织进现有框架，不能取代主线\n4. 阶段推进、伏笔揭晓、NPC动向变化时，输出更新后的【大纲】块\n5. 之前出现过的NPC、恩怨、承诺必须在合适时机回归\n\n【铺垫与展开铁律——学习网文的起承转合】\n严禁关键人物和关键事件毫无预兆地突然出现。任何重要登场都必须遵循"三次铺垫法"：\n1. 第一次：远景提及——在TA正式登场前，先让TA以传闻、他人口中的名字、背景中的一瞥出现\n2. 第二次：间接接触——玩家感受到TA的影响力或痕迹，但仍未正面接触（看到TA的手下、留下的痕迹、造成的后果）\n3. 第三次：正式登场——此时玩家已有期待和认知，登场才有分量\n大事件之前必有征兆，让玩家回头看时能发现"原来早有暗示"。转折必须能从之前的承接里找到因果。\n节奏呼吸感：紧张事件之后要有缓和段落让玩家消化，缓和段落里悄悄埋下一个新钩子——张弛交替，钩子不断。\n\n【回复长度铁律】\n每次叙事回复必须充分，不少于200字。要有细节、有层次、有氛围感。让玩家真正感受到身临其境。不要因为是选项驱动就写得干瘪简短。\n\n【选项格式铁律】\n每次回复末尾必须有选项，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n注意：选项后面只有冒号，没有星号或加粗。每个选项只有数字+空格+内容，没有句号没有加粗没有1.格式。'
   },
   long: {
     label:'长篇', icon:'🌍',
-    instruction:'【长篇模式——叙事铁律】这是一个开放沙盒世界。没有固定终点，世界是活的。日常生活占主导，大事件由玩家的行为自然引发，100+回合才会有重大转折。多写日常细节：吃什么、和谁聊天、天气如何。让玩家感受到角色真实地活在这个世界里。不要急于推进任何主线。\n\n【剧情起伏铁律——必须严格遵守】\n1. 战斗胜负：主角不能总是赢。根据实力差距判断：遇到明显强于自己的对手必须失败或狼狈逃跑。即使实力相当也要有50%失败概率。失败有后果：受伤、丢失物品、被捕、声誉受损等。\n2. 危机节奏：危机必须由玩家的行为自然引发，不要无中生有强行插入。主角在客栈喝茶就让他安静喝茶；但如果他去刺探情报、招惹强敌、深入险地，就必须承担真实后果，不能每次都侥幸脱身。\n3. 濒死救援：主角濒死时不要让他奇迹般自救，而是被路人、NPC、甚至敌人救下，在陌生地方养伤，由此产生新的人物关系和剧情线。\n4. 伤势恢复：无论什么世界观的科技或功法，重伤（骨折、内伤、失血过多）至少需要数天到数周恢复，带伤有减益，不能无视。\n5. 资源紧张：钱不够用是常态。物资消耗要真实，不要凭空出现资源。\n6. NPC不配合：并非所有NPC都愿意帮助主角。有的冷漠，有的敌视，有的趁火打劫。\n7. 禁止廉价解围：禁止"刚好赶到""侥幸逃脱""对方突然手下留情"等廉价解围。\n\n【物价统一铁律】\n开局在脑海中确定并记住物价体系，全程保持一致。一旦定下某物的价格，后续必须保持一致，不能随意浮动。\n\n【叙事禁忌】\n严禁在叙事中输出任何"根据铁律""根据物价""此处设定"等自我注释。所有规则内化执行，不对玩家解释。\n\n【回复长度铁律】\n每次叙事回复必须充分，不少于200字。要有细节、有层次、有氛围感。让玩家真正感受到身临其境。不要因为是选项驱动就写得干瘪简短。\n\n【选项格式铁律】\n每次回复末尾必须有选项，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n注意：选项后面只有冒号，没有星号或加粗。每个选项只有数字+空格+内容，没有句号没有加粗没有1.格式。'
+    instruction:'【长篇模式——叙事铁律】这是一个开放沙盒世界。没有固定终点，世界是活的。日常生活占主导，大事件由玩家的行为自然引发。多写日常细节：吃什么、和谁聊天、天气如何。让玩家感受到角色真实地活在这个世界里。主线以慢节奏存在，不急于推进，但永不消失。\n\n【剧情起伏铁律——必须严格遵守】\n1. 战斗胜负：主角不能总是赢。根据实力差距判断：遇到明显强于自己的对手必须失败或狼狈逃跑。即使实力相当也要有50%失败概率。失败有后果：受伤、丢失物品、被捕、声誉受损等。\n2. 危机节奏：危机必须由玩家的行为自然引发，不要无中生有强行插入。主角在客栈喝茶就让他安静喝茶；但如果他去刺探情报、招惹强敌、深入险地，就必须承担真实后果，不能每次都侥幸脱身。\n3. 濒死救援：主角濒死时不要让他奇迹般自救，而是被路人、NPC、甚至敌人救下，在陌生地方养伤，由此产生新的人物关系和剧情线。\n4. 伤势恢复：无论什么世界观的科技或功法，重伤（骨折、内伤、失血过多）至少需要数天到数周恢复，带伤有减益，不能无视。\n5. 资源紧张：钱不够用是常态。物资消耗要真实，不要凭空出现资源。\n6. NPC不配合：并非所有NPC都愿意帮助主角。有的冷漠，有的敌视，有的趁火打劫。\n7. 禁止廉价解围：禁止"刚好赶到""侥幸逃脱""对方突然手下留情"等廉价解围。\n\n【物价统一铁律】\n开局在脑海中确定并记住物价体系，全程保持一致。一旦定下某物的价格，后续必须保持一致，不能随意浮动。\n\n【叙事禁忌】\n严禁在叙事中输出任何"根据铁律""根据物价""此处设定"等自我注释。所有规则内化执行，不对玩家解释。\n\n【隐藏大纲铁律——阶段制主线结构】\n开场剧情生成时（玩家完成建角后的第一段正式叙事），你必须在回复最末尾输出隐藏大纲块（前端会隐藏，但保留在历史中供你参考），格式：\n【大纲】阶段:第一阶段·xxx｜阶段主线:当前阶段玩家要面对的核心事件及目标｜活跃支线:xxx,xxx｜关键NPC:A(目的/立场),B(目的/立场)｜未回收伏笔:xxx｜铺垫计划:接下来2-3回合准备埋入的线索或人物预告【/大纲】\n运行规则：\n1. 主线是阶段制的：每个阶段有明确的主线目标，阶段完成后进入新阶段，生成新的阶段主线——就像网文的卷结构。主线永远存在，永远不能丢，即使玩家在做支线或过日常，主线的压力和线索也要以背景方式持续存在（传闻、他人的只言片语、远处的动静）\n2. 阶段内主线与支线并存：支线丰富世界，主线提供方向。玩家可以自由选择先做什么，但世界不会暂停等他\n3. 每次回复前先核对大纲，保持因果连贯；玩家提出的新元素只能编织进现有框架，不能取代主线\n4. 阶段推进、伏笔揭晓、NPC动向变化时，输出更新后的【大纲】块\n5. 之前出现过的NPC、恩怨、承诺必须在合适时机回归\n\n【铺垫与展开铁律——学习网文的起承转合】\n严禁关键人物和关键事件毫无预兆地突然出现。任何重要登场都必须遵循"三次铺垫法"：\n1. 第一次：远景提及——在TA正式登场前，先让TA以传闻、他人口中的名字、背景中的一瞥出现\n2. 第二次：间接接触——玩家感受到TA的影响力或痕迹，但仍未正面接触（看到TA的手下、留下的痕迹、造成的后果）\n3. 第三次：正式登场——此时玩家已有期待和认知，登场才有分量\n大事件之前必有征兆，让玩家回头看时能发现"原来早有暗示"。转折必须能从之前的承接里找到因果。\n节奏呼吸感：紧张事件之后要有缓和段落让玩家消化，缓和段落里悄悄埋下一个新钩子——张弛交替，钩子不断。\n\n【回复长度铁律】\n每次叙事回复必须充分，不少于200字。要有细节、有层次、有氛围感。让玩家真正感受到身临其境。不要因为是选项驱动就写得干瘪简短。\n\n【选项格式铁律】\n每次回复末尾必须有选项，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n注意：选项后面只有冒号，没有星号或加粗。每个选项只有数字+空格+内容，没有句号没有加粗没有1.格式。'
   }
 };
 
@@ -1032,6 +1044,7 @@ function addTyp(){var el=document.createElement('div');el.className='sb nar';el.
 function qcmd(c){if(!LOADING)send(c,false);}
 
 function renderNar(text) {
+  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【大纲】[\s\S]*$/,'').trim();
   var wrapper=document.createElement('div'); wrapper.className='sb nar';
   var optIdx=text.search(/选项[：:]\s*\n/);
   var mainText=optIdx>=0?text.slice(0,optIdx).trim():text;
@@ -1068,7 +1081,7 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 function saveSv(i){
   if(!HIST.length)return;
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  localStorage.setItem('wuji_sv_'+i,JSON.stringify({history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,html:'',quests:QUESTS,inv:INVENTORY,skills:SKILLS}));
+  localStorage.setItem('wuji_sv_'+i,JSON.stringify({history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,html:'',quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD}));
   renderSlots(); addBlk('sys','▸ 已保存至存档 '+(i+1));
 }
 
@@ -1076,7 +1089,7 @@ function loadSv(i){
   var raw=localStorage.getItem('wuji_sv_'+i); if(!raw)return;
   var sv=JSON.parse(raw);
   HIST=sv.history; TOKENS=sv.tokens||0;
-  QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[];
+  QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[]; WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
   document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString();
@@ -1085,7 +1098,7 @@ function loadSv(i){
     if(m.role==='assistant') renderNar(m.content);
     else if(m.role==='user') addBlk('ply',m.content);
   });
-  scrollB(); renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS);
+  scrollB(); renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins();
   LOADING=false;
   addBlk('sys','▸ 已读取存档 '+(i+1));
   document.getElementById('pinp').focus();
@@ -1111,9 +1124,9 @@ async function maybeCompress(){
   var keep=16, cc=HIST.length-keep; if(cc<6)return;
   SUMMING=true; addBlk('sys','▸ 正在压缩历史记忆...');
   var toC=HIST.slice(0,cc), toK=HIST.slice(cc);
-  var prompt='以下是文字游戏对话历史，请用300字内生成【状态摘要】：1)角色信息；2)关键事件；3)持有物品；4)重要NPC；5)当前地点局势。\n\n'+toC.map(function(m){return m.role+': '+m.content;}).join('\n');
+  var prompt='以下是文字游戏对话历史，请生成【状态摘要】（400字内）：1)角色信息；2)关键事件时间线（保持因果顺序）；3)持有物品；4)重要NPC及其目的与当前动向；5)当前地点局势；6)未回收的伏笔与未兑现的承诺。另外，若历史中出现过【大纲】块，必须将最新一份【大纲】原样完整附在摘要末尾。\n\n'+toC.map(function(m){return m.role+': '+m.content;}).join('\n');
   try{
-    var res=await doFetch([{role:'user',content:prompt}],600);
+    var res=await doFetch([{role:'user',content:prompt}],900);
     var data=await res.json();
     if(!data.error){HIST=[{role:'system',content:'【历史摘要】\n'+data.choices[0].message.content}].concat(toK);addBlk('sys','▸ 记忆压缩完成');}
   }catch(e){}
@@ -1130,19 +1143,89 @@ function launchGame() {
   startGame();
 }
 
-function buildSystemPrompt(){
+var IRON_AGENCY='【世界独立性铁律——反顺从，必须严格执行】\n1. 玩家的输入是意图不是结果：说服、潜行、谈判、求情、威胁、偷窃等一切行为都只是尝试，成败由世界根据合理性裁定——看NPC的立场、主角的能力与筹码、当时的情境。失败是常态选项，跳崖真的会摔死。\n2. NPC只有有限视角：NPC只提供主角视角能观察到的信息，NPC会撒谎、隐瞒、记错、故意误导。玩家问"那个人可信吗"，给的是主角能观察到的线索，而不是上帝视角的真相。\n3. NPC有立场惯性：态度转变需要多次积累，单次行为最多小幅移动。被得罪过的人不会因一次道歉就原谅，警惕的人不会因一杯酒就交底。\n4. 选项不许讨好：四个选项中应经常包含有代价的诱惑、看似安全实则错过机会的选择；严禁暗示哪个是"正确答案"，严禁四个选项全是合理且安全的。\n5. 拒绝也是回应：NPC可以拒绝请求，门可以是锁着的，线索可以断掉。世界不欠玩家一条顺畅的路。';
+
+function buildSystemPrompt(recentText){
   var w=WORLDS[WORLD];
   var p=PACE_CONFIG[PACE];
   if(!w||!p) return '';
-  return w.prompt + '\n\n' + p.instruction;
+  var sp = w.prompt + '\n\n' + p.instruction + '\n\n' + IRON_AGENCY;
+  if(PINS.length){
+    sp += '\n\n【不可更改的锁定设定——最高优先级，永远遵守，禁止篡改或遗忘】\n' + PINS.map(function(pn){ return '- '+pn.text; }).join('\n');
+  }
+  var loreBlocks = getRelevantLore(recentText||'');
+  if(loreBlocks){
+    sp += '\n\n【相关背景资料——本回合参考】\n' + loreBlocks;
+  }
+  return sp;
+}
+
+// ── LORE CHUNK SYSTEM: world can define .lore = [{name, keywords:[], text, always}] ──
+function getRelevantLore(recentText){
+  var w = WORLDS[WORLD];
+  if(!w || !w.lore || !w.lore.length) return '';
+  LORE_ACTIVE = [];
+  var hay = (recentText||'').toLowerCase();
+  var picked = [];
+  w.lore.forEach(function(chunk){
+    if(chunk.always){ picked.push(chunk); LORE_ACTIVE.push(chunk.name); return; }
+    var hit = (chunk.keywords||[]).some(function(kw){ return hay.indexOf(kw.toLowerCase())>=0; });
+    if(hit){ picked.push(chunk); LORE_ACTIVE.push(chunk.name); }
+  });
+  if(picked.length>6) picked = picked.slice(0,6);
+  return picked.map(function(c){ return '['+c.name+'] '+c.text; }).join('\n\n');
+}
+
+// ── PIN (LOCK) SYSTEM ──
+function addPin(text, category){
+  if(!text || !text.trim()) return;
+  var id = 'pin_'+Date.now()+'_'+Math.floor(Math.random()*1000);
+  PINS.push({id:id, text:text.trim(), category:category||'设定'});
+  renderPins();
+}
+function removePin(id){
+  PINS = PINS.filter(function(p){ return p.id!==id; });
+  renderPins();
+}
+function renderPins(){
+  var c = document.getElementById('pin-list');
+  if(!c) return;
+  if(!PINS.length){ c.innerHTML='<span class="no-quest">— 未锁定任何设定 —</span>'; return; }
+  c.innerHTML='';
+  PINS.forEach(function(pn){
+    var d = document.createElement('div');
+    d.className='pin-item';
+    d.innerHTML='<span class="pin-cat">'+esc(pn.category)+'</span><span class="pin-txt">'+esc(pn.text)+'</span><button class="pin-x" onclick="removePin(\''+pn.id+'\')">✕</button>';
+    c.appendChild(d);
+  });
+}
+function promptAddPin(){
+  var t = prompt('锁定一条设定（NPC、规则、历史等），AI将永远遵守且不会遗忘：');
+  if(t) addPin(t, '手动');
+}
+
+// ── REAL UNDO: pop last player+AI turn from history ──
+function undoTurn(){
+  if(LOADING) return;
+  var ai=-1;
+  for(var i=HIST.length-1;i>=0;i--){ if(HIST[i].role==='assistant'){ai=i;break;} }
+  if(ai<1 || HIST[ai-1].role!=='user'){ addBlk('sys','▸ 没有可撤销的回合'); return; }
+  HIST.splice(ai-1,2);
+  document.getElementById('slog').innerHTML='';
+  HIST.forEach(function(m){
+    if(m.role==='assistant') renderNar(m.content);
+    else if(m.role==='user' && m.content!=='开始游戏') addBlk('ply',m.content);
+  });
+  addBlk('sys','▸ 已撤销上一回合');
+  scrollB();
 }
 
 function startGame(){
-  HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[];
+  HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8;
   document.getElementById('slog').innerHTML='';
   var d=document.getElementById('sdsp'); d.textContent='— 游戏开始后显示 —'; d.style.color='var(--dm)';
   var ig=document.getElementById('inv-grid'); if(ig) ig.innerHTML='<span class="inv-empty">— 空 —</span>';
-  renderSlots(); renderQuests();
+  renderSlots(); renderQuests(); renderPins();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
   addBlk('sys','▸ 后端：'+MODEL);
   send('开始游戏',true);
@@ -1157,7 +1240,18 @@ async function send(text,isSystem){
   HIST.push({role:'user',content:text});
   var typ=addTyp(), t0=Date.now();
   try{
-    var SP=buildSystemPrompt();
+    var recentText = text + ' ' + HIST.slice(-6).map(function(m){return m.content;}).join(' ');
+    if(!isSystem) WORLD_CLOCK++;
+    var worldPulse = '';
+    if(!isSystem && WORLD_CLOCK >= EVENT_THRESHOLD){
+      var chance = Math.min(75, (WORLD_CLOCK - EVENT_THRESHOLD + 1) * 12);
+      if(Math.random()*100 < chance){
+        worldPulse = '\n\n【世界脉动——本回合强制触发】在玩家看不见的地方，世界独立地发生了一件事：某个NPC采取了行动、某个局势推进了一步、某个机会出现或消失了、某条大纲中的后台弧线前进了一格。将它以自然的方式融入叙事——可以是传闻、远处的动静、NPC带来的消息、环境的变化。这件事不由玩家的行为引发，是世界自己在运转。同时在【大纲】块里更新后台弧线进度。';
+        WORLD_CLOCK = 0;
+        EVENT_THRESHOLD = 6 + Math.floor(Math.random()*5);
+      }
+    }
+    var SP=buildSystemPrompt(recentText) + worldPulse;
     var res=await doFetch([{role:'system',content:SP}].concat(HIST),4096);
     var data=await res.json();
     if(data.error){typ.remove();addBlk('err','错误：'+JSON.stringify(data.error));LOADING=false;return;}
