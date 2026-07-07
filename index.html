@@ -241,6 +241,9 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .set-chk input{accent-color:#c8a96e;margin-right:4px;}
 .lore-txt{cursor:pointer;}
 .lore-txt:hover{color:var(--g);}
+.check{display:inline-block;border:1px solid rgba(200,169,110,0.4);padding:2px 9px;margin:2px 0 6px;font-size:11px;letter-spacing:0.5px;background:rgba(200,169,110,0.06);border-radius:2px;}
+.check.ck-ok{color:#b8dc8f;border-color:rgba(150,200,110,0.5);background:rgba(150,200,110,0.06);}
+.check.ck-fail{color:#d98080;border-color:rgba(139,26,26,0.6);background:rgba(139,26,26,0.08);}
 </style>
 </head>
 <body>
@@ -1082,6 +1085,11 @@ function renderNar(text,hidx) {
   var optIdx=text.search(/选项[：:]\s*\n/);
   var mainText=optIdx>=0?text.slice(0,optIdx).trim():text;
   mainText=mainText.replace(/【任务[^』]*』[^\n]*/g,'').replace(/【技能标[^』]*』[^\n]*/g,'').trim();
+  mainText=mainText.replace(/【检定】([\s\S]*?)【\/检定】/g,function(_m,inner){
+    inner=inner.replace(/[<>]/g,'').trim();
+    var fail=inner.indexOf('失败')>=0;
+    return '<span class="check '+(fail?'ck-fail':'ck-ok')+'">🎲 '+inner+'</span>';
+  });
   var body=document.createElement('div');
   body.innerHTML=mainText.replace(/\n/g,'<br>');
   wrapper.appendChild(body);
@@ -1319,7 +1327,12 @@ function resetGame(){if(LOADING)return;TOKENS=0;document.getElementById('tkc').t
 function authorNote(dice){
   var an='【本回合裁定提示——内部指令，不得向玩家提及】';
   if(dice!==null){
-    an+='裁定骰:'+dice+'/100（1-20大失败,21-45失败,46-60部分成功有代价,61-90成功,91-100出色成功）。若玩家本回合行动存在失败可能（战斗/说服/潜行/偷窃/交涉/追逐/冒险尝试），必须按骰值裁定结果走向，禁止无视低骰让玩家如愿；纯日常无风险行为可忽略骰值。';
+    an+='裁定骰:'+dice+'/100。若玩家本回合行动存在失败可能（战斗/说服/潜行/偷窃/交涉/追逐/冒险尝试），必须按CRPG规则检定：';
+    an+='1)从状态栏选取与该行动最相关的一项属性（膂力/悟性/魅力/敏捷等，按世界观），加成=属性值×5；';
+    an+='2)按情境和对手实力定难度：简单40/普通55/困难70/极难85（挑战远超当前实力可更高）；';
+    an+='3)总值=骰值+属性加成，总值≥难度即成功；总值低于难度30以上为大失败，超出难度30以上为大成功；';
+    an+='4)必须在叙事正文最开头输出检定行，格式严格为：【检定】行为·属性｜骰'+dice+'+属性名N×5=总值｜难度D｜结果【/检定】（结果只能是：大失败/失败/成功/大成功）；';
+    an+='5)之后的叙事必须严格符合检定结果，禁止无视失败让玩家如愿。纯日常无风险行为不检定、不输出检定行。';
   }
   an+='若本回合有成败判定，可先输出【裁定】…【/裁定】小块简短推演（玩家不可见），再写正文。';
   an+='严守：玩家输入是意图不是结果；NPC有立场惯性且只有有限视角；四个选项须常含代价与陷阱，禁止暗示最优解；回复末尾必须有"选项："格式块。';
