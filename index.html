@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>无界·叙事引擎</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -12,7 +12,8 @@
   --panel:rgba(10,8,5,0.85);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--dark);color:var(--tx);font-family:'Share Tech Mono',monospace;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+body{background:var(--dark);color:var(--tx);font-family:'Share Tech Mono',monospace;height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;-webkit-tap-highlight-color:transparent;}
+button,textarea,input,select{touch-action:manipulation;}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.05) 3px,rgba(0,0,0,0.05) 4px);pointer-events:none;z-index:200;}
 .gbg{position:fixed;inset:0;background-image:linear-gradient(rgba(200,169,110,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(200,169,110,0.04) 1px,transparent 1px);background-size:40px 40px;z-index:0;}
 
@@ -244,6 +245,38 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .check{display:inline-block;border:1px solid rgba(200,169,110,0.4);padding:2px 9px;margin:2px 0 6px;font-size:11px;letter-spacing:0.5px;background:rgba(200,169,110,0.06);border-radius:2px;}
 .check.ck-ok{color:#b8dc8f;border-color:rgba(150,200,110,0.5);background:rgba(150,200,110,0.06);}
 .check.ck-fail{color:#d98080;border-color:rgba(139,26,26,0.6);background:rgba(139,26,26,0.08);}
+/* ── MOBILE POLISH ── */
+@media(max-width:768px){
+  /* 16px inputs = no iOS focus-zoom */
+  .fld,#pinp,.gen-custom,select{font-size:16px!important;}
+  #pinp{height:48px;padding:12px 12px 12px 28px;}
+  .ipr{top:14px;}
+  /* readable narrative */
+  #slog{padding:14px 14px 8px;gap:15px;}
+  .sb{font-size:15px;line-height:1.85;}
+  .sb.sys{font-size:11px;}
+  .check{font-size:11px;padding:3px 10px;}
+  /* finger-sized buttons */
+  .ob{padding:12px 14px;min-height:44px;font-size:14px;line-height:1.55;}
+  .qb{padding:11px 12px;font-size:13px;}
+  .db{padding:9px 13px;font-size:12px;white-space:nowrap;flex-shrink:0;}
+  /* quick actions: one scrollable row instead of tall wrap */
+  .daily{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:7px 10px;}
+  .daily::-webkit-scrollbar{display:none;}
+  #turn-tools .ofr{display:none;}
+  /* input row hugs the home-indicator area */
+  .inpa{padding:8px 10px calc(8px + env(safe-area-inset-bottom));}
+  .hint{display:none;}
+  .hdr{padding:7px 12px calc(7px);}
+  /* status drawer */
+  .spnl.open{max-height:72dvh;}
+  .panel-toggle{padding:11px;font-size:12px;}
+  .ss{padding:12px 12px calc(12px + env(safe-area-inset-bottom)/2);}
+  .imod-box{width:94%;padding:16px;}
+}
+@media(max-width:768px) and (display-mode:standalone){
+  .hdr{padding-top:calc(7px + env(safe-area-inset-top));}
+}
 </style>
 </head>
 <body>
@@ -1832,6 +1865,15 @@ document.getElementById('pinp').addEventListener('input',function(){
   this.style.height='44px';this.style.height=Math.min(this.scrollHeight,110)+'px';
 });
 document.getElementById('imodal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// soft keyboard: re-pin the log to the bottom when the visual viewport shrinks
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',function(){ setTimeout(scrollB,50); });
+}
+document.getElementById('pinp').addEventListener('focus',function(){ setTimeout(scrollB,250); });
+if(window.matchMedia&&window.matchMedia('(max-width:768px)').matches){
+  document.getElementById('pinp').placeholder='你想做什么？';
+}
 
 // settings init
 function setTemp(v){SETTINGS.temp=Number(v);var el=document.getElementById('set-temp-v');if(el)el.textContent=Number(v).toFixed(2);saveSettings();}
