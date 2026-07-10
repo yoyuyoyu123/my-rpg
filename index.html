@@ -741,6 +741,51 @@ var TURNS=0; // player turns this run
 var OUTLINE=''; GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:''}; STATE_ACTIVE=false; // JS-owned latest hidden outline (survives even if model forgets to re-output)
 var GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:''}; // authoritative state, owned by JS
 var STATE_ACTIVE=false; // true once the model starts reporting via STATE patches
+var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
+var OPENING_STYLES=[
+  {n:'错位苏醒',d:'主角在陌生的处境中醒来，世界已经不对了。没有解释、没有引导者，靠观察细节和碎片自己拼凑现状。'},
+  {n:'原主记忆',d:'主角以本地人的身份开场，带着这具身体原主人的完整记忆正常生活。开场就是普通的一天，关于真正来历的线索要在很久以后才出现。'},
+  {n:'危机切入',d:'开场即身处一场进行中的小危机（紧迫但不致命），角色的能力和背景在应对危机的动作中自然带出。'},
+  {n:'平凡裂缝',d:'从一段彻底平凡的日常开始，日常里埋着一丝几乎察觉不到的异样。前几回合就是好好过日子。'},
+  {n:'事件余波',d:'某件大事刚刚结束（葬礼后/战败后/被逐出师门后/失业后/搬进新住处后），主角站在它的余波里，故事从收拾残局开始。'},
+  {n:'旅途开场',d:'主角正在前往某地的路上，目的地明确但原因先不揭示，动机随剧情逐步展开。'},
+  {n:'他人视角',d:'第一幕先借一个路人或配角的眼睛看到主角登场（他们眼中的主角是什么样），第二幕再切回主角本人。'},
+  {n:'经典问答',d:'按世界观原有的分步建角问答执行。'}
+];
+var TRANSMIGRATE_MECH=[
+  '神明面谈——但必须原创一个和以往完全不同的神明与赐予方式',
+  '毫无解释——一觉醒来就在这里了，穿越原因本身是长线悬念',
+  '继承原主记忆——像本地人一样生活多年，直到某个契机才碰到关于自己来历的第一条线索',
+  '被法阵召唤——召唤者有自己的目的，不一定友善，主角只是他们计划的一部分',
+  '大规模魔法或实验事故的波及者——同一批被卷进来的可能还有别人',
+  '非人格系统绑定——冷冰冰的机制文本，没有神，没有温度，规则要自己试探',
+  '重生或夺舍——回到这个世界的过去，或占据了一个刚死之人的身体',
+  '写实无金手指——没有任何特殊能力，只有上辈子的知识和记忆'
+];
+var REVEAL_TIMING=[
+  '开局即知晓自己的全部来历',
+  '开局只有碎片印象，第一条像样的线索在10-20回合后才出现',
+  '长期悬念——来历本身就是主线之一，揭开它需要整个阶段'
+];
+function rollOpening(){
+  var st=OPENING_STYLES[Math.floor(Math.random()*OPENING_STYLES.length)];
+  OPENING_PICK=st.n;
+  if(st.n==='经典问答'){
+    OPENING_TEXT='【本局开局变体：经典问答】按世界观提示词中原有的分步建角流程执行。';
+    return;
+  }
+  var t='【本局开局变体——系统随机抽取，最高优先级，覆盖世界观提示词中一切分步问答式的开局流程】\n';
+  t+='叙事切入：'+st.n+'——'+st.d+'\n';
+  if(WORLD==='isekai'||WORLD==='gamerpunk'||WORLD==='xianxia'){
+    var mech=TRANSMIGRATE_MECH[Math.floor(Math.random()*TRANSMIGRATE_MECH.length)];
+    var tim=REVEAL_TIMING[Math.floor(Math.random()*REVEAL_TIMING.length)];
+    t+='（若本局涉及穿越/转生/入道）机制：'+mech+'\n来历揭示节奏：'+tim+'\n';
+    OPENING_PICK+=' · '+mech.split('——')[0];
+  }
+  t+='建角规则：禁止分步问答建角。最多向玩家问一个开放式问题（也可以一个都不问、直接开演），主角其余设定由你按切入方式自动生成并在叙事中自然呈现，玩家之后随时可用输入修正。\n';
+  t+='开场必须严格符合上述切入方式，严禁滑回模板化开场（穿越必见神明、旅店醒来听传闻、神秘老人赠功法等）。开场细节要具体：气味、声音、手边的东西，而不是概述。';
+  OPENING_TEXT=t;
+}
 var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,director:true};
 try{var _st=localStorage.getItem('wuji_settings'); if(_st) SETTINGS=Object.assign(SETTINGS,JSON.parse(_st));}catch(e){}
 function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(SETTINGS));}catch(e){}}
@@ -1172,13 +1217,13 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,opening:OPENING_TEXT,openingPick:OPENING_PICK,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:''}; STATE_ACTIVE=!!sv.stateActive;
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:''}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||'';
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
@@ -1307,6 +1352,9 @@ function buildSystemPrompt(recentText){
   if(ss){
     sp += '\n\n【权威角色状态——系统维护的唯一事实，叙事与状态栏均不得与此矛盾；技能列表是全集，禁止让主角使用列表之外的技能】\n' + ss;
   }
+  if(OPENING_TEXT && TURNS<20){
+    sp += '\n\n' + OPENING_TEXT;
+  }
   if(PINS.length){
     sp += '\n\n【不可更改的锁定设定——最高优先级，永远遵守，禁止篡改或遗忘】\n' + PINS.map(function(pn){ return '- '+pn.text; }).join('\n');
   }
@@ -1380,7 +1428,9 @@ function startGame(){
   var d=document.getElementById('sdsp'); d.textContent='— 游戏开始后显示 —'; d.style.color='var(--dm)';
   var ig=document.getElementById('inv-grid'); if(ig) ig.innerHTML='<span class="inv-empty">— 空 —</span>';
   renderSlots(); renderQuests(); renderPins(); renderLore();
+  rollOpening();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
+  addBlk('sys','▸ 本局开局变体：'+OPENING_PICK+'（不满意可点「完全重置」重抽）');
   addBlk('sys','▸ 后端：'+MODEL);
   send('开始游戏',true);
 }
