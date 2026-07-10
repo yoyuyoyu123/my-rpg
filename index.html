@@ -917,6 +917,7 @@ function selPace(p) {
 
 function goStep(n) {
   document.getElementById('gscreen').style.display = 'none';
+  closePanel();
   document.getElementById('ascreen').classList.toggle('hidden', n !== 1);
   document.getElementById('wscreen').classList.toggle('hidden', n !== 2);
   document.getElementById('genscreen').classList.toggle('hidden', true);
@@ -978,6 +979,12 @@ function renderDailyBtns() {
     var b=document.createElement('button'); b.className='db'; b.textContent=a;
     b.onclick=function(){if(!LOADING)send(a,false);}; c.appendChild(b);
   });
+}
+
+function closePanel() {
+  var p=document.getElementById('spnl'), btn=document.getElementById('panel-toggle');
+  if(p)p.classList.remove('open');
+  if(btn)btn.textContent='▲ 状态面板';
 }
 
 function togglePanel() {
@@ -1277,6 +1284,7 @@ function launchGame() {
   if (!WORLD || !PACE) return;
   document.getElementById('pscreen').classList.add('hidden');
   document.getElementById('gscreen').style.display = 'flex';
+  closePanel();
   document.getElementById('stxt').textContent = WORLDS[WORLD].name + ' · ' + PACE_CONFIG[PACE].label;
   document.getElementById('game-hint').textContent = '无界·叙事引擎 · ' + WORLDS[WORLD].name + ' · ' + PACE_CONFIG[PACE].label;
   renderDailyBtns();
