@@ -224,10 +224,24 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .gen-preview{background:rgba(200,169,110,0.04);border:1px solid var(--bd);padding:14px;margin-top:16px;font-size:11px;color:var(--tx);line-height:1.7;white-space:pre-wrap;max-height:200px;overflow-y:auto;display:none;}
 .gen-preview.on{display:block;}
 .gen-status{font-size:11px;color:var(--dm);text-align:center;margin-top:8px;min-height:16px;}
+.tag-db-section{border-color:rgba(126,184,255,0.45);background:rgba(80,120,180,0.04);}
+.tag-db-controls{display:grid;grid-template-columns:minmax(220px,1fr) 180px auto auto;gap:7px;align-items:end;margin-bottom:10px;}
+.tag-db-controls .gen-custom{margin-top:0;height:36px;}
+.tag-db-selected{min-height:32px;border:1px dashed rgba(126,184,255,0.35);padding:7px 9px;margin-bottom:9px;color:#8ba8c8;font-size:10px;line-height:1.6;}
+.tag-db-selected .sel-tag{display:inline-block;border:1px solid rgba(126,184,255,0.45);padding:2px 6px;margin:2px;color:#a8caf0;cursor:pointer;}
+.tag-db-results{max-height:230px;overflow-y:auto;padding-right:3px;}
+.tag-db-results .chip{border-color:rgba(126,184,255,0.25);}
+.tag-db-results .chip:hover,.tag-db-results .chip.on{border-color:#7eb8ff;}
+.tag-db-works{border-top:1px solid rgba(126,184,255,0.2);margin-top:8px;padding-top:7px;color:var(--dm);font-size:10px;}
+.tag-db-works summary{cursor:pointer;color:#8ba8c8;}
+.tag-db-work-results{padding:8px 2px;line-height:1.7;max-height:220px;overflow:auto;}
+.tag-work{border-left:2px solid rgba(126,184,255,0.35);padding:5px 8px;margin-bottom:6px;}
+.tag-work b{color:var(--tx);}
 @media(max-width:768px){
   #genscreen{padding:12px;}
   .gen-section{padding:10px 12px;}
   .chip{font-size:10px;padding:4px 8px;}
+  .tag-db-controls{grid-template-columns:1fr 1fr;}
 }
 .pin-add{float:right;background:transparent;border:1px solid var(--bd);color:var(--dm);font-family:'Share Tech Mono',monospace;font-size:9px;padding:1px 6px;cursor:pointer;letter-spacing:0.5px;}
 .pin-add:hover{border-color:var(--g);color:var(--g);}
@@ -330,6 +344,22 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <div class="screen-sub">▸ 点选你想要的元素，AI帮你生成专属世界</div>
     </div>
 
+    <div class="gen-section tag-db-section">
+      <div class="gen-section-title">十年类型标签数据库 <span id="tag-db-stats">研究数据载入中</span></div>
+      <div class="tag-db-controls">
+        <input class="gen-custom" type="search" id="tag-db-search" placeholder="搜索：退队、器灵、职业、百合、论坛体、群像……">
+        <select class="gen-custom" id="tag-db-category"><option value="">全部类别</option></select>
+        <button class="btn sm" type="button" onclick="suggestResearchTags()">🎲 生成兼容组合</button>
+        <button class="btn sm" type="button" onclick="clearResearchTags()">清空研究标签</button>
+      </div>
+      <div class="tag-db-selected" id="tag-db-selected">尚未选择研究标签</div>
+      <div class="gen-chips tag-db-results" id="tag-db-results"></div>
+      <details class="tag-db-works">
+        <summary>查看匹配的代表作品与叙事样本</summary>
+        <div id="tag-db-work-results" class="tag-db-work-results">选择标签后显示；这里只提取结构与标签，不要求AI模仿原作文字。</div>
+      </details>
+    </div>
+
     <!-- 1. 题材 -->
     <div class="gen-section">
       <div class="gen-section-title">题材 / 大类 <span>单选，决定世界的基本面貌</span></div>
@@ -428,7 +458,53 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <input class="gen-custom" type="text" id="custom-origin" placeholder="或自定义，比如「前朝遗孤」「觉醒了能力的普通高中生」……">
     </div>
 
-    <!-- 8. 人际关系底色 -->
+    <!-- 8. 主角存在形态 -->
+    <div class="gen-section">
+      <div class="gen-section-title">主角存在形态 <span>单选；身份不默认等于人类</span></div>
+      <div class="gen-chips" id="chips-form">
+        <div class="chip" data-group="form" data-val="普通人类，但职业与社会位置完全开放">普通人类</div>
+        <div class="chip" data-group="form" data-val="类人种族或混血，种族影响生活但不决定性格">类人/混血</div>
+        <div class="chip" data-group="form" data-val="异种生物或魔物，拥有符合生态的身体与生活方式">异种/魔物</div>
+        <div class="chip" data-group="form" data-val="无机物或器物生命，例如剑、盔甲、建筑、载具或终端">器物生命</div>
+        <div class="chip" data-group="form" data-val="人工生命、机械、魔像、克隆体或数字意识">人工生命</div>
+        <div class="chip" data-group="form" data-val="非实体存在，例如幽灵、精灵、契约意识或群体意识">非实体存在</div>
+      </div>
+      <input class="gen-custom" type="text" id="custom-form" placeholder="或自定义任何存在形态；也可以写「由剧情自然决定」">
+    </div>
+
+    <!-- 9. 叙事位置 -->
+    <div class="gen-section">
+      <div class="gen-section-title">主角在故事中的位置 <span>单选；不默认是勇者或中心人物</span></div>
+      <div class="gen-chips" id="chips-rolepos">
+        <div class="chip" data-group="rolepos" data-val="普通职业人，在世界里经营自己的生活">普通职业人</div>
+        <div class="chip" data-group="rolepos" data-val="勇者或英雄的挚友，能力与人生独立，不是附属跟班">勇者挚友</div>
+        <div class="chip" data-group="rolepos" data-val="队伍后勤、参谋、商人、治疗者或技术人员">队伍后勤</div>
+        <div class="chip" data-group="rolepos" data-val="曾被队伍辞退或主动退队，从第二职业和新生活重新开始">退队/转职</div>
+        <div class="chip" data-group="rolepos" data-val="路人配角或原作边缘人物，知道主角团但拥有自己的生活线">路人/边缘角色</div>
+        <div class="chip" data-group="rolepos" data-val="领地、店铺、工坊、公会或学校的经营者">经营管理者</div>
+        <div class="chip" data-group="rolepos" data-val="师父、前辈、监护人或照顾后辈的人">前辈/养成位</div>
+        <div class="chip" data-group="rolepos" data-val="反派阵营中的普通成员，但不预设邪恶或洗白路线">对立阵营成员</div>
+      </div>
+      <input class="gen-custom" type="text" id="custom-rolepos" placeholder="或自定义，例如「勇者老家的面包师」「魔王军会计」">
+    </div>
+
+    <!-- 10. 世界来源框架 -->
+    <div class="gen-section">
+      <div class="gen-section-title">作品 / 游戏世界框架 <span>单选；也可完全原创</span></div>
+      <div class="gen-chips" id="chips-sourceframe">
+        <div class="chip" data-group="sourceframe" data-val="完全原创世界，不存在预定剧情或攻略路线">完全原创</div>
+        <div class="chip" data-group="sourceframe" data-val="进入乙女游戏世界；可当主角、恶役、攻略对象、路人或与攻略无关的人">乙女游戏</div>
+        <div class="chip" data-group="sourceframe" data-val="进入百合游戏世界；尊重原角色主体性，主角不必介入原有关系">百合游戏</div>
+        <div class="chip" data-group="sourceframe" data-val="进入Galgame或恋爱模拟世界；性别、身份与是否恋爱完全开放">Galgame</div>
+        <div class="chip" data-group="sourceframe" data-val="进入BL游戏或女性向作品世界；不强制攻略线">BL/女性向</div>
+        <div class="chip" data-group="sourceframe" data-val="进入MMO、卡牌、策略或RPG世界；可为玩家、NPC、系统或怪物">RPG/MMO</div>
+        <div class="chip" data-group="sourceframe" data-val="进入经营、建设或生活模拟游戏世界">经营模拟</div>
+        <div class="chip" data-group="sourceframe" data-val="进入漫画、网文或动画世界的边缘位置；原作剧情不强制发生">小说/漫画世界</div>
+      </div>
+      <input class="gen-custom" type="text" id="custom-sourceframe" placeholder="或自定义作品类型、原作位置与知道多少剧情">
+    </div>
+
+    <!-- 11. 人际关系底色 -->
     <div class="gen-section">
       <div class="gen-section-title">人际关系底色 <span>可多选</span></div>
       <div class="gen-chips" id="chips-relation">
@@ -438,6 +514,12 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         <div class="chip multi" data-group="relation" data-val="有宿敌或世仇">有宿敌</div>
         <div class="chip multi" data-group="relation" data-val="有组织归属">有组织</div>
         <div class="chip multi" data-group="relation" data-val="有恋爱关系或好感对象">恋爱线</div>
+        <div class="chip multi" data-group="relation" data-val="无恋爱线，重点是职业、冒险、生活与友情">无恋爱线</div>
+        <div class="chip multi" data-group="relation" data-val="女性群像或百合关系，角色拥有独立目标，不围着主角竞争">女性群像/百合</div>
+        <div class="chip multi" data-group="relation" data-val="男性群像、兄弟或战友情，关系可亲密但不预设恋爱">男性群像/挚友</div>
+        <div class="chip multi" data-group="relation" data-val="师徒、前后辈或养成关系">师徒/前后辈</div>
+        <div class="chip multi" data-group="relation" data-val="非血缘共同生活形成的选择家庭">选择家庭</div>
+        <div class="chip multi" data-group="relation" data-val="工作搭档或共同经营关系">职业搭档</div>
         <div class="chip multi" data-group="relation" data-val="复杂关系网，多方纠缠">复杂纠缠</div>
       </div>
     </div>
@@ -452,6 +534,23 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         <div class="chip" data-group="growth" data-val="平凡日常——不追求变强，活得好就行">平凡日常</div>
         <div class="chip" data-group="growth" data-val="天才无敌——开局就强，享受降维打击">天才无敌</div>
         <div class="chip" data-group="growth" data-val="成长有代价——变强需要放弃某些东西">成长有代价</div>
+        <div class="chip" data-group="growth" data-val="职业专精——不追求战力顶点，靠专业能力建立不可替代的位置">职业专精</div>
+        <div class="chip" data-group="growth" data-val="苟道长生——谨慎准备、控制风险、长期积累，但不无故迫害妄想">苟道长生</div>
+        <div class="chip" data-group="growth" data-val="经营建设——通过店铺、领地、宗门、团队或社区的成长体现进步">经营建设</div>
+      </div>
+    </div>
+
+    <div class="gen-section">
+      <div class="gen-section-title">可选叙事机制 <span>可多选；没有选中的不自动出现</span></div>
+      <div class="gen-chips" id="chips-storyengine">
+        <div class="chip multi" data-group="storyengine" data-val="退队或退休后的第二职业与新生活，不默认旧队恶毒">退队/第二职业</div>
+        <div class="chip multi" data-group="storyengine" data-val="勇者或主角人物的挚友视角，双方人生独立">挚友视角</div>
+        <div class="chip multi" data-group="storyengine" data-val="模拟器机制用于试错或推演，但模拟结果不是强制命运">模拟器</div>
+        <div class="chip multi" data-group="storyengine" data-val="聊天群连接不同人物或世界，群友不是任务发布机器">聊天群</div>
+        <div class="chip multi" data-group="storyengine" data-val="直播、论坛或观影反馈影响社会关系，但不让全世界只看主角">直播/论坛</div>
+        <div class="chip multi" data-group="storyengine" data-val="多人穿越或群体召唤，每个人有独立选择和发展">群穿/群召唤</div>
+        <div class="chip multi" data-group="storyengine" data-val="传统志怪、民俗与地方生活结合，异常不等于阴谋">民俗志怪</div>
+        <div class="chip multi" data-group="storyengine" data-val="现代都市出现公开迷宫或副本，可围绕职业、竞技、直播或研究展开">现代迷宫</div>
       </div>
     </div>
 
@@ -759,19 +858,20 @@ var OPENING_STYLES=[
   {n:'经典问答',d:'按世界观原有的分步建角问答执行。'}
 ];
 var TRANSMIGRATE_MECH=[
-  '神明面谈——但必须原创一个和以往完全不同的神明与赐予方式',
-  '毫无解释——一觉醒来就在这里了，穿越原因本身是长线悬念',
-  '继承原主记忆——像本地人一样生活多年，直到某个契机才碰到关于自己来历的第一条线索',
-  '被法阵召唤——召唤者有自己的目的，不一定友善，主角只是他们计划的一部分',
-  '大规模魔法或实验事故的波及者——同一批被卷进来的可能还有别人',
-  '非人格系统绑定——冷冰冰的机制文本，没有神，没有温度，规则要自己试探',
-  '重生或夺舍——回到这个世界的过去，或占据了一个刚死之人的身体',
-  '写实无金手指——没有任何特殊能力，只有上辈子的知识和记忆'
+  '本地人生——没有穿越，主角本来就是这个世界的人，只采用日轻式人际和生活节奏',
+  '从出生开始的第二人生——可以是人类、亚人、魔物、动物、植物或其他形态，拥有真实成长经历',
+  '群体召唤的非勇者位——勇者另有其人，主角可能是挚友、同学、后勤、家属或被忽略的同行者',
+  '原作边缘身份——成为路人、配角、反派阵营普通成员或主角团身边的职业人，但拥有独立人生',
+  '完成冒险后的第二职业——故事从退队、退休、转职、开店、任教或回乡之后开始',
+  '非人或器物生命——身体可能是魔物、人工生命、武器、建筑、迷宫核心或非实体意识，必须落实真实生活方式',
+  '主动移居或普通转移——没有死亡和神明，因工作、事故、学习或旅行进入另一个世界',
+  '经典神明面谈——仅在玩家确实喜欢经典转生流程时使用，技能和身份仍由玩家决定',
+  '写实无金手指——没有特殊权限，依靠职业经验、关系和长期积累生活'
 ];
 var REVEAL_TIMING=[
   '开局即知晓自己的全部来历',
-  '开局只有碎片印象，第一条像样的线索在10-20回合后才出现',
-  '长期悬念——来历本身就是主线之一，揭开它需要整个阶段'
+  '保留前世常识与少量生活记忆，具体细节在相关场景自然想起，不作为悬疑线',
+  '来历并不重要——主角接受当前人生，故事重心是现在的身份、关系与生活'
 ];
 function rollOpening(){
   var st=OPENING_STYLES[Math.floor(Math.random()*OPENING_STYLES.length)];
@@ -785,11 +885,11 @@ function rollOpening(){
   if(WORLD==='isekai'||WORLD==='gamerpunk'||WORLD==='xianxia'){
     var mech=TRANSMIGRATE_MECH[Math.floor(Math.random()*TRANSMIGRATE_MECH.length)];
     var tim=REVEAL_TIMING[Math.floor(Math.random()*REVEAL_TIMING.length)];
-    t+='（若本局涉及穿越/转生/入道）机制：'+mech+'\n来历揭示节奏：'+tim+'\n';
+    t+='（若本局涉及穿越/转生/入道）可参考的身份起点：'+mech+'\n来历揭示节奏：'+tim+'\n玩家一旦声明不同身份、形态或与勇者的关系，立刻以玩家版本为准，放弃随机起点。\n';
     if(tim===REVEAL_TIMING[0]){
       t+='机制呈现：开场第一幕必须让玩家亲历该机制的关键时刻或它的直接后果——第一现场、主角视角、正在发生。严禁把它处理成旁人的闲聊、吐槽或转述。\n';
     } else {
-      t+='机制呈现：开场严禁出现关于该机制的任何直接信息——按揭示节奏它属于后期内容，开场就是不知情者的生活。\n';
+      t+='机制呈现：开场只交代当前生活真正需要的信息；不要用失忆、碎片、可疑梦境或幕后真相把来历强行做成悬疑主线。\n';
     }
     OPENING_PICK+=' · '+mech.split('——')[0];
   }
@@ -908,7 +1008,7 @@ var WORLDS = {
   },
   isekai: {
     name:'异世界转生', skillLabel:'技能', color:'#98e89a',
-    daily:['去冒险者公会','逛街采购','与同伴闲聊','去酒馆喝一杯','接取委托','在家放松休息'],
+    daily:['处理当前职业事务','探索自己的存在形态','与熟人或挚友联系','采购生活所需','训练或研究能力','安排今天的自由时间'],
     prompt: '你是一个沉浸式异世界转生RPG文字游戏叙事引擎，风格参考KonoSuba、Re:Zero、转生史莱姆等日式轻小说。\n\n【世界观】西式奇幻异世界。冒险者公会、魔法、怪物。但重点是日常生活：酒馆的热闹、市场的叫卖、同伴的拌嘴。\n\n【节奏铁律】日常占90%，冒险占10%。主线要很久才出现。\n\n【开局步骤——每步等回答，不要跳过】\n第一步：只问名字。\n\n第二步：问死亡方式（卡车侠/过劳死/睡觉睡过去/不明原因/自定义），然后用大量笔墨戏剧性描写死亡瞬间——要荒诞好笑，要有画面感，不要吝啬字数。\n\n第三步：神明登场！每次都要创作一个全新的、有独特个性的神明——严禁重复使用"傲娇女神""慵懒神明"等固定标签，自由发挥：\n神明的外貌要具体（不是泛泛的"美丽"，而是"穿着工地安全帽""在啃方便面""打哈欠停不下来"这类具体细节）\n神明的说话方式要有个性\n神明赐予的技能必须是独一无二的——根据玩家的死亡方式、说话风格、神明的个性来创造。可以强大可以奇葩，可以有限制或副作用，可以完全出乎意料。绝对不要用"无限背包""读心术（只对动物有效）"等固定答案。\n让玩家选择接受或重新抽取（重抽有代价）。\n\n第四步：问想要什么样的异世界生活。\n\n第五步：生成开场，要有冲击感和具体细节。第一个NPC同伴登场，性格说话方式必须鲜明。\n\n【文风】轻松幽默，有日式轻小说节奏感。吐槽和自我调侃是日常。每个NPC都有不同的说话方式。神明偶尔在脑海插嘴，时机往往很尴尬。禁止元标签。\n\n【强制格式】每次末尾：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n\n【状态栏】末尾附：\n[HP X/X|MP X/X|饱腹度 X|力量X/智力X/幸运X/魅力X|职业:XX|地区:XX|天气:XX|同伴:XX|金币:XX枚|声望X/恶名X/冒险等级X/好感度X]\n（持有：物品）特殊技能：XXXX\n初始：HP20/20,MP10/10,饱腹度100,各属性1,金币100枚。\n【任务】有变化时输出。完成时：【任务完成】支线:xxx'
   },
   gamerpunk: {
@@ -998,7 +1098,7 @@ var WORLDS = {
   var worlds_data = [
     {id:'wuxia', icon:'⚔️', name:'江湖武侠', desc:'门派纷争，侠义江湖，快意恩仇。以武入道，闯出一番天地。', tag:'金庸·古龙 ／ "侠之大者，为国为民"'},
     {id:'xianxia', icon:'🌙', name:'仙侠修真', desc:'修炼长生，问鼎大道，踏遍三千界。但飞升那天，你还记得自己是谁吗？', tag:'修炼·飞升 ／ "问道长生，不过是不甘心"'},
-    {id:'isekai', icon:'🍺', name:'异世界转生', desc:'卡车一响，黄金万两。神明赐予奇怪的技能，异世界的日常就此开始。', tag:'转生·神明技能 ／ "为什么是我，还是卡车"'},
+    {id:'isekai', icon:'🍺', name:'异世界转生', desc:'人类、异种、器物或意识；勇者、挚友、退队者、后勤或普通职业人。身份与故事位置都由你决定。', tag:'开放日轻 ／ 转生·转移·第二人生'},
     {id:'gamerpunk', icon:'🎮', name:'游戏世界穿越', desc:'打游戏打到睡着，醒来发现自己就在游戏里。系统面板是真的，死亡也是真的。', tag:'网游穿越 ／ "新手保护期已结束"'},
     {id:'cyberpunk', icon:'🌆', name:'赛博朋克', desc:'2089年，霓虹城。企业财阀统治，义体改造普及，在钢铁丛林的缝隙里求生。', tag:'赛博·义体 ／ "这城市会把你吃掉"'},
     {id:'spaceopera', icon:'🚀', name:'星际佣兵', desc:'飞船是家，太空是江湖。赏金猎人在星系之间漂泊，活得潇洒，死得随机。', tag:'星际牛仔 ／ "宇宙很大，赏金太少"'},
@@ -1437,13 +1537,41 @@ var IRON_AGENCY='【叙事核心铁律】\n1. 玩家输入是意图不是结果�
 
 var ANTI_MYSTERY='【生活感与相关性】普通NPC说人话：问路给方向、买卖报价、闲聊就聊眼前话题。信息不完整只能来自不知道/记错/只听说过。禁用：你不该知道、现在还不是时候、别问、我只能告诉你这么多、这座城市不简单，以及无缘无故的停顿、眼神闪烁、神秘微笑。玩家没有询问的背景故事不要主动倾倒；与当前行动无关的世界变化不进入正文。';
 
-var PACING_LOOP='【节奏循环铁律——经典网文四拍循环】按四拍循环组织节奏：①发育拍（2-4回合的日常/修炼/经营/交友，让玩家安心攒实力攒资源，写出生活的质感）→②摩擦拍（一场从日常本身长出来的小冲突或小意外）→③收获拍（解决它，拿到实打实的好处：技能、物品、人情、名声或情报）→④钩子拍（收获里自然带出一条更大的线索，指向主线或下一阶段）。主线在①②③拍只作为背景存在，不施压；只有④拍才拉主线。支线孵化主线：下一阶段的主线目标应尽量从已发生的支线和日常中长出来，而不是凭空降下。发育期的收获要让玩家看得见摸得着（属性、技能、存款的具体增长）。';
+var IDENTITY_FREEDOM='【身份开放规则——覆盖各世界观中的固定列表】世界观提示里出现的职业、种族、出身、阵营、性别、身体形态和社会身份都只是例子，不是可选范围。玩家可以声明任何符合该世界基本规律的身份，也可以要求打破常规；玩家的明确声明优先于预设。主角不默认是人类、勇者、救世主、指挥官、天选者或故事中心。若玩家已经给出某项身份，不得重复询问或擅自改回预设。若需要提问，每次提供4-6个跨度明显的例子，并明确允许玩家自由输入。非人形态必须认真落实身体结构、感官、移动、交流、社会待遇和日常需求，不能只把外观换皮后仍按普通人类书写。';
+
+var ISEKAI_MODERN='【现代日轻母题库——覆盖旧式“死亡→神明→外挂→勇者”固定流程】\n1. 转移/转生只是来历之一：也可以是本地人觉醒前世记忆、群体召唤中的非勇者、原作边缘人物、第二人生、主动移居、被世界误召或根本没有穿越。神明面谈和卡车死亡都不是必经环节。\n2. 存在形态开放：人类、亚人、魔族、魔物、动物、植物、菌群、史莱姆、龙、亡灵、迷宫核心、武器、盔甲、建筑、载具、魔导具、人工生命、幽灵、契约意识等都可成立；异种只是一个方向，不应默认比人类更新潮或更有趣。\n3. 叙事位置开放：可以是勇者本人，也可以是勇者的挚友、青梅竹马、同学、兄弟姐妹、老师、后勤、参谋、治疗者、商人、工匠、公会职员、领民、房东、邻居、竞争者、魔王军基层、退队成员、主动退休者或与主线无关的普通职业人。\n4. 可使用但不得强制的日轻母题：退队后转职或慢生活；勇者挚友拥有独立人生；被低估职业的专业成长；恶役/路人/配角视角；领地、店铺、工坊、迷宫或公会经营；师徒与养成；带娃或家庭生活；队伍后勤；群像伙伴；公开身份下的误解喜剧；完成大冒险后的第二职业。\n5. 退队流不默认“原队全员恶毒且离开后立刻衰败”。退队原因可以是发展方向、合同结束、能力错配、健康、家庭、价值观或主动转职；旧队友可以是普通人，关系可以复杂但不强行打脸。\n6. 挚友流中，勇者不是主角的上级或剧情太阳。双方各有职业、关系和生活圈；挚友可以互相帮助，也可以长期各忙各的。\n7. 不套潮流公式：先确定玩家真正想体验的身份和生活，再选择合适母题；没有选择的母题不出现。';
+
+var GAMEWORLD_VARIANTS='【作品/游戏世界变体】如果玩家选择穿进既有作品或游戏，先确认作品规则和主角所在位置，不默认乙女游戏恶役千金。可以是乙女游戏、百合游戏、Galgame、BL游戏、女性向RPG、男性向RPG、策略经营、卡牌、MMO、恐怖游戏、模拟经营、TRPG模组、漫画或网文。身份可以是主角、攻略对象、恶役、败犬、隐藏角色、路人、店员、教师、家属、魔物、系统NPC、玩家角色的召唤物，或原作中根本没有的人。\n乙女游戏不默认必须攻略男性角色；可以远离攻略线、专注事业、与女主成为朋友、改变配角结局或只经营生活。百合游戏不默认主角必须插入原有关系，也不把女性角色当作争夺奖品；可以作为朋友、家人、同事、对手、旁观者或发展玩家自己选择的关系。玩家可自由指定性别、性取向与是否需要恋爱线；未指定时不要擅自锁定。知道原作不等于全知：只记得玩家合理记得的部分，但不要靠强制失忆制造悬疑。';
+
+var WORLD_EXPANSIONS={
+  wuxia:'【武侠身份扩展】主角不只限于门派侠客。可为镖师、捕快、仵作、郎中、药农、铁匠、厨师、说书人、戏班成员、商旅、船工、驿卒、账房、门派后勤、武馆教习、江湖记者、退隐前辈、家眷、普通百姓、异族来客或不会武功的人。故事可走市井职业、武馆经营、镖局公路片、地方治理、家族生活、技艺成长、门派重建、群像旅行；不强制卷入武林阴谋。武功体系、官府秩序、市井经济与地方风俗可以自由组合。',
+  xianxia:'【仙侠身份扩展】主角不只限于拜宗升级的标准修士。可为凡人、散修、宗门杂役或管事、灵农、炼丹师、炼器师、阵师、符师、御兽师、医修、厨修、商会人员、宗门教师、长老、掌门、家族成员、香火神、山精、妖兽、灵植、器灵、鬼修、分身或转世者。可采用苟道长生、种田经营、技艺专精、宗门建设、模拟器、聊天群、群穿、民俗志怪、香火神道、师徒养成、凡俗王朝生活等机制；没有选择的机制不得自动出现。境界是世界规则之一，不是唯一剧情轴。',
+  cyberpunk:'【赛博身份扩展】主角不只限于黑客、佣兵和企业特工。可为义体维修师、外卖员、平台劳动者、医生、护士、律师、记者、主播、偶像、教师、社区组织者、工会成员、公司文员、审计、物流、数据清洁工、仿生人、克隆体、上传意识、城市AI、无人机群或拒绝改造的普通人。可写街区生活、职业伦理、劳动关系、身份认同、维修经营、媒体调查、社区互助、公司日常或后赛博希望；霓虹、雨和阴谋都不是强制装饰。',
+  spaceopera:'【星际身份扩展】主角可为飞船船员、殖民者、空间站职员、打捞者、快递员、商人、外交官、科研人员、生态工程师、厨师、移民家庭、异星种族、船载AI、仿生体、群体意识或一艘船本身。故事可围绕航运、贸易、殖民地建设、星际考古、科研、移民生活、船员群像、家庭、公路旅行或局部战争；不默认拯救银河。',
+  apocalypse:'【末日身份扩展】主角可处于灾前预警、灾中求生、灾后重建或多年后的新社会；可为社区居民、农民、医生、司机、维修工、教师、老人、儿童监护者、变异者、感染者、避难所管理者、商队成员或非人生命。重点可以是基地经营、迁徙、农业、社区规则、职业协作、家庭和新文明，而不只是杀怪搜物资。',
+  esper:'【异能都市身份扩展】主角可以有强、弱、怪异、生活化或无法战斗的能力，也可以完全没有能力；可为学生、上班族、家属、研究人员、媒体人、能力管理机构基层、民间互助者、反能力者或能力造成的非人存在。可写职业、校园、家庭、社群、竞技、公开化社会或能力经济，不强制隐藏身份。',
+  jojo:'【能力战身份扩展】替身/特殊能力可以用于工作、表演、调查、照护、经营和旅行，不只用于连续战斗。主角可为能力者的朋友、家人、医生、普通目击者、敌方成员或不会战斗的能力者。能力规则要具体，但不要求每个新人物都是敌人。',
+  scp:'【异常世界身份扩展】主角不只限于基金会特工或研究员。可为站点后勤、伦理委员会、文书、维修、医疗、家属、地方警察、普通目击者、蛇之手成员、其他组织基层、被收容者、合作型异常或异常地点本身。可写行政日常、收容照护、跨组织协商、异常社会学、职业伦理或普通人与异常共处；只有玩家选择时才走持续收容失效。',
+  cthulhu:'【神话世界身份扩展】可为调查员，也可为普通居民、医生、记者、学者家属、艺术家、工人、教会人员、边缘神话种族或已经知道部分真相的人。可写地方生活、知识伦理、家族关系、旅行、历史考据或与异常保持距离的生存；不要求每局必然疯狂、死亡或揭开宇宙真相。',
+  arknights:'【泰拉身份扩展】主角不只限于博士。可为干员、感染者平民、医生、工程人员、后勤、商人、信使、移动城市居民、地方官员、佣兵、学生、整合运动普通成员或原创势力成员。玩家可以远离罗德岛主线，经营自己的职业、人际和地方生活；原作角色不是必须登场。',
+  discoelysium:'【都市侦探身份扩展】可以保留技能对话机制，但主角不必是失忆警探。可为记者、工会成员、旅馆员工、律师、医生、艺术家、码头工人、普通居民或案件外围人物；也可以完全没有案件，写政治、职业和个人生活。内心技能只评论与当前选择相关的内容。',
+  undertale:'【地下世界身份扩展】主角可为坠落人类、本地怪物、守卫、商人、教师、家庭成员或新搬来的居民；可以发生在和平线后、普通历史阶段或完全原创区域。宽恕与战斗都是选择，不强制复刻原作路线或角色。',
+  vallhalla:'【酒吧日常身份扩展】主角可为调酒师、客人、厨师、老板、供货商、驻唱、记者、附近居民、机器人或其他服务业者。可经营不同店铺或社区空间；倾听不是自动套取秘密，客人可以只聊普通生活。',
+  zato:'【封闭城市身份扩展】主角身份、年龄、职业、家庭与对异常的敏感程度均开放；可以是学生、工人、教师、医护、行政人员、研究所外围、家属或普通居民。玩家可以专注最后几天的日常、人际和选择，不强迫主动调查城市真相。',
+  redstrings:'【红弦式世界扩展】主角可为调酒师、黑客、机器人、公司职员、心理咨询者、记者、普通消费者或植入物维护人员；核心可围绕自由意志、劳动、亲密关系、技术伦理或日常职业，不固定复刻原作角色与一夜倒计时。',
+  elona:'【伊尔瓦身份扩展】种族、职业、善恶、生活方式和目标完全开放。可为冒险者、农夫、商人、音乐家、厨师、工匠、宠物训练者、城镇经营者、怪物、神仆或普通居民；自由不等于必须犯罪或挑战古神，种田、建造、家庭和旅行同样是完整主线。',
+  gamerpunk:'【游戏世界身份扩展】主角不必是拥有隐藏BUG的玩家。可为NPC、系统管理员、游戏测试员、生活职业玩家、召唤物、Boss、路人、任务发布者、退役高玩、原作边缘角色或无法查看面板的本地人。游戏类型可为乙女、百合、Galgame、BL、MMO、策略、经营、卡牌、恐怖、竞技或TRPG；系统面板不是必选。',
+  isekai:'【异世界身份扩展】采用现代日轻母题库与作品/游戏世界变体；所有身份、关系、性别、种族、身体和职业均由玩家决定。'
+};
 
 function buildSystemPrompt(recentText){
   var w=WORLDS[WORLD];
   var p=PACE_CONFIG[PACE];
   if(!w||!p) return '';
   var sp = w.prompt + '\n\n' + p.instruction + '\n\n' + IRON_AGENCY + '\n\n' + ANTI_MYSTERY;
+  sp += '\n\n' + IDENTITY_FREEDOM;
+  if(WORLD_EXPANSIONS[WORLD]) sp += '\n\n' + WORLD_EXPANSIONS[WORLD];
+  if(WORLD==='isekai' || WORLD==='gamerpunk') sp += '\n\n' + ISEKAI_MODERN + '\n\n' + GAMEWORLD_VARIANTS;
   if(TONE_LINE){ sp += '\n\n' + TONE_LINE; }
   if(OUTLINE){
     sp += '\n\n【剧情备忘——用于保持目标与因果的连续，这是编剧笔记，不是需要营造悬念的秘密清单】\n' + OUTLINE + '\n（剧情有实质推进时才输出更新版【大纲】块，否则无需重复输出）';
@@ -1931,7 +2059,7 @@ function openGenerator() {
 
 function resetGen() {
   document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
-  ['custom-genre','custom-origin','custom-ability','custom-style','custom-extra'].forEach(function(id){
+  ['custom-genre','custom-origin','custom-form','custom-rolepos','custom-sourceframe','custom-ability','custom-style','custom-extra'].forEach(function(id){
     var el = document.getElementById(id);
     if(el) el.value = '';
   });
@@ -1959,7 +2087,7 @@ document.addEventListener('click', function(e) {
 
 function getGenSelections() {
   var result = {};
-  var groups = ['genre','magic','era','scale','power','econ','origin','relation','growth','pressure','ability','style','rating','mechanic','ending'];
+  var groups = ['genre','magic','era','scale','power','econ','origin','form','rolepos','sourceframe','relation','growth','storyengine','pressure','ability','style','rating','mechanic','ending'];
   groups.forEach(function(g) {
     var selected = [];
     document.querySelectorAll('.chip[data-group="'+g+'"].on').forEach(function(c){
@@ -1968,7 +2096,7 @@ function getGenSelections() {
     if (selected.length) result[g] = selected;
   });
   // Custom inputs
-  ['genre','origin','ability','style'].forEach(function(k) {
+  ['genre','origin','form','rolepos','sourceframe','ability','style'].forEach(function(k) {
     var el = document.getElementById('custom-'+k);
     if (el && el.value.trim()) {
       result[k] = result[k] || [];
@@ -1986,8 +2114,8 @@ function buildMetaPrompt(sel) {
 
   var labels = {
     genre: '题材/大类', magic: '魔法等级', era: '时代背景', scale: '世界规模',
-    power: '势力格局', econ: '经济系统', origin: '主角来历', relation: '人际关系',
-    growth: '成长模式', pressure: '主线压力', ability: '能力系统', style: '叙事文风',
+    power: '势力格局', econ: '经济系统', origin: '主角来历', form:'存在形态', rolepos:'叙事位置', sourceframe:'作品/游戏框架', relation: '人际关系',
+    growth: '成长模式', storyengine:'叙事机制', pressure: '主线压力', ability: '能力系统', style: '叙事文风',
     rating: '叙事尺度', mechanic: '特殊机制', ending: '结局倾向', extra: '额外要求'
   };
 
@@ -2002,11 +2130,12 @@ function buildMetaPrompt(sel) {
   parts.push('\n\n【格式要求——必须遵守】');
   parts.push('生成的提示词必须包含以下所有部分：');
   parts.push('1. 【世界观】- 详细描述世界背景、历史、势力');
-  parts.push('2. 【开局铁律】- 分步骤询问玩家信息，每步等待回答');
+  parts.push('2. 【开局流程】- 最多询问3项真正必要的信息；所有身份列表都只是示例，必须允许自由输入。若玩家已经明确给出身份、形态或目标，不得重复询问');
   parts.push('3. 【叙事规则】- 节奏、文风、禁止事项');
   parts.push('4. 【强制格式】- 选项格式（必须是"选项：\n1 xxx\n2 xxx"格式，无加粗无句号）');
   parts.push('5. 【状态栏】- 末尾附带的状态格式（包含HP、资源、属性、位置等）');
   parts.push('6. 如有特殊机制（理智值/道德系统等），详细说明其规则');
+  parts.push('7. 【身份开放】- 职业、种族、身体形态、阵营与故事位置不得被预设列表锁死；严格落实所选“存在形态”和“叙事位置”，主角不默认是人类、勇者或世界中心');
   parts.push('\n只输出提示词本身，不要任何解释或前言。用中文生成。');
 
   return parts.join('\n');
