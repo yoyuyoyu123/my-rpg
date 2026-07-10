@@ -670,6 +670,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <label class="set-chk"><input type="checkbox" id="set-stream" onchange="SETTINGS.stream=this.checked;saveSettings()"> 流式输出（逐字显示）</label>
       <label class="set-chk"><input type="checkbox" id="set-dice" onchange="SETTINGS.dice=this.checked;saveSettings()"> 裁定骰（行动可失败）</label>
       <label class="set-chk"><input type="checkbox" id="set-automem" onchange="SETTINGS.autoMem=this.checked;saveSettings()"> 自动记忆提取</label>
+      <label class="set-chk"><input type="checkbox" id="set-director" onchange="SETTINGS.director=this.checked;saveSettings()"> GM双阶段裁定（更硬核，略慢）</label>
       <button class="qb" onclick="exportSave()"><span class="ic">⇩</span>导出进度JSON</button>
       <button class="qb" onclick="importSave()"><span class="ic">⇧</span>导入进度JSON</button>
     </div>
@@ -704,8 +705,10 @@ var EVENT_THRESHOLD=8; // rising threshold for background world events
 var LORE_ACTIVE=[]; // currently injected lore chunk names
 var LOREBOOK=[]; // world book entries: {id,name,keywords[],text,cat}
 var TURNS=0; // player turns this run
-var OUTLINE=''; // JS-owned latest hidden outline (survives even if model forgets to re-output)
-var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true};
+var OUTLINE=''; GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:''}; STATE_ACTIVE=false; // JS-owned latest hidden outline (survives even if model forgets to re-output)
+var GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:''}; // authoritative state, owned by JS
+var STATE_ACTIVE=false; // true once the model starts reporting via STATE patches
+var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,director:true};
 try{var _st=localStorage.getItem('wuji_settings'); if(_st) SETTINGS=Object.assign(SETTINGS,JSON.parse(_st));}catch(e){}
 function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(SETTINGS));}catch(e){}}
 
@@ -1041,10 +1044,14 @@ function updateStatus(text) {
     document.getElementById('sdsp').textContent=sb.substring(0,400);
     document.getElementById('sdsp').style.color='var(--tx)';
     var im=sb.match(/持有[\uff1a:]([^\n\uff08\(]+)/);
-    if(im){var items=im[1].replace(/[\]］)）]/g,'').split(/[,，、]/).filter(function(x){return x.trim()&&x.trim()!=='无';});renderInventory(items);}
+    if(im&&!STATE_ACTIVE){var items=im[1].replace(/[\]］)）]/g,'').split(/[,，、]/).map(function(x){return x.trim();}).filter(function(x){return x&&x!=='无';});GAME_STATE.inv=items.slice();renderInventory(items);}
     var sm=plain.match(/（技能[：:]([^）\)]+)）/);
     if(!sm) sm=plain.match(/\(技能[：:]([^\)]+)\)/);
-    if(sm){var skills=sm[1].split(/[\/／]/).filter(function(x){return x.trim()&&x.trim()!=='无';});renderSkills(skills);}
+    if(sm&&!STATE_ACTIVE){var skills=sm[1].split(/[\/／]/).map(function(x){return x.trim();}).filter(function(x){return x&&x!=='无';});GAME_STATE.skills=skills.slice();renderSkills(skills);}
+    if(!STATE_ACTIVE){
+      var am=plain.match(/([\u4e00-\u9fa5]{2})(\d+)\/([\u4e00-\u9fa5]{2})(\d+)\/([\u4e00-\u9fa5]{2})(\d+)\/([\u4e00-\u9fa5]{2})(\d+)/);
+      if(am){GAME_STATE.attrs={};GAME_STATE.attrs[am[1]]=+am[2];GAME_STATE.attrs[am[3]]=+am[4];GAME_STATE.attrs[am[5]]=+am[6];GAME_STATE.attrs[am[7]]=+am[8];}
+    }
   }
   parseQuests(plain);
 }
@@ -1083,7 +1090,7 @@ function addTyp(){var el=document.createElement('div');el.className='sb nar';el.
 function qcmd(c){if(!LOADING)send(c,false);}
 
 function renderNar(text,hidx) {
-  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【裁定】[\s\S]*?【\/裁定】/g,'').replace(/【大纲】[\s\S]*$/,'').trim();
+  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【裁定】[\s\S]*?【\/裁定】/g,'').replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*$/,'').trim();
   var wrapper=document.createElement('div'); wrapper.className='sb nar';
   if(typeof hidx==='number') wrapper.dataset.hidx=hidx;
   var optIdx=text.search(/选项[：:]\s*\n/);
@@ -1125,13 +1132,13 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||'';
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:''}; STATE_ACTIVE=!!sv.stateActive;
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
@@ -1243,7 +1250,7 @@ function launchGame() {
   startGame();
 }
 
-var IRON_AGENCY='【世界独立性铁律——反顺从，必须严格执行】\n1. 玩家的输入是意图不是结果：说服、潜行、谈判、求情、威胁、偷窃等一切行为都只是尝试，成败由世界根据合理性裁定——看NPC的立场、主角的能力与筹码、当时的情境。失败是常态选项，跳崖真的会摔死。\n2. NPC只有有限视角：NPC只提供主角视角能观察到的信息，NPC会撒谎、隐瞒、记错、故意误导。玩家问"那个人可信吗"，给的是主角能观察到的线索，而不是上帝视角的真相。\n3. NPC有立场惯性：态度转变需要多次积累，单次行为最多小幅移动。被得罪过的人不会因一次道歉就原谅，警惕的人不会因一杯酒就交底。\n4. 选项不许讨好：四个选项中应经常包含有代价的诱惑、看似安全实则错过机会的选择；严禁暗示哪个是"正确答案"，严禁四个选项全是合理且安全的。\n5. 拒绝也是回应：NPC可以拒绝请求，门可以是锁着的，线索可以断掉。世界不欠玩家一条顺畅的路。\n6. 输入先分类再执行：玩家输入可能是【行动/说出口的台词/心理活动/对引擎的疑问】。心理活动与内心独白只影响主角自己的判断和情绪，任何NPC都绝不可能听见、察觉或回应它；没有明确说出口的话一律视为没有说出口，拿不准时默认没说出口。\n7. 禁止谜语人：NPC说话的直白程度必须符合其身份，市井小民、同伴、普通路人有话直说；故意隐瞒或说半句话的NPC必须是少数，且要有具体动机（怕惹祸/在谈条件/立场对立）。铺垫靠事件、细节与环境变化，不靠人人故弄玄虚。';
+var IRON_AGENCY='【世界独立性铁律——反顺从，必须严格执行】\n1. 玩家的输入是意图不是结果：说服、潜行、谈判、求情、威胁、偷窃等一切行为都只是尝试，成败由世界根据合理性裁定——看NPC的立场、主角的能力与筹码、当时的情境。失败是常态选项，跳崖真的会摔死。\n2. NPC只有有限视角：NPC只提供主角视角能观察到的信息，NPC会撒谎、隐瞒、记错、故意误导。玩家问"那个人可信吗"，给的是主角能观察到的线索，而不是上帝视角的真相。\n3. NPC有立场惯性：态度转变需要多次积累，单次行为最多小幅移动。被得罪过的人不会因一次道歉就原谅，警惕的人不会因一杯酒就交底。\n4. 选项不许讨好：四个选项中应经常包含有代价的诱惑、看似安全实则错过机会的选择；严禁暗示哪个是"正确答案"，严禁四个选项全是合理且安全的。\n5. 拒绝也是回应：NPC可以拒绝请求，门可以是锁着的，线索可以断掉。世界不欠玩家一条顺畅的路。\n6. 输入先分类再执行：玩家输入可能是【行动/说出口的台词/心理活动/对引擎的疑问】。心理活动与内心独白只影响主角自己的判断和情绪，任何NPC都绝不可能听见、察觉或回应它；没有明确说出口的话一律视为没有说出口，拿不准时默认没说出口。\n7. 禁止谜语人：NPC说话的直白程度必须符合其身份，市井小民、同伴、普通路人有话直说；故意隐瞒或说半句话的NPC必须是少数，且要有具体动机（怕惹祸/在谈条件/立场对立）。铺垫靠事件、细节与环境变化，不靠人人故弄玄虚。\n8. 状态申报：当主角的属性、技能、持有物、资源或位置发生变化时，必须在回复最末尾（大纲块之后）输出【STATE】{"attr_set":{"属性名":变化后的新值},"res_set":{"资源名":变化后的新数值},"inv_add":["获得的物品"],"inv_rm":["失去的物品"],"skill_add":["新学会的技能"],"skill_rm":[],"loc":"新位置"}【/STATE】，未变化的字段省略，无变化则不输出此块。技能与物品的增减只有通过此块申报才算数。';
 
 function buildSystemPrompt(recentText){
   var w=WORLDS[WORLD];
@@ -1252,6 +1259,10 @@ function buildSystemPrompt(recentText){
   var sp = w.prompt + '\n\n' + p.instruction + '\n\n' + IRON_AGENCY;
   if(OUTLINE){
     sp += '\n\n【当前隐藏大纲——最新剧情大纲，本回合叙事必须据此保持主线连续】\n' + OUTLINE + '\n（剧情有实质推进时才输出更新版【大纲】块，否则无需重复输出）';
+  }
+  var ss=stateSummary();
+  if(ss){
+    sp += '\n\n【权威角色状态——系统维护的唯一事实，叙事与状态栏均不得与此矛盾；技能列表是全集，禁止让主角使用列表之外的技能】\n' + ss;
   }
   if(PINS.length){
     sp += '\n\n【不可更改的锁定设定——最高优先级，永远遵守，禁止篡改或遗忘】\n' + PINS.map(function(pn){ return '- '+pn.text; }).join('\n');
@@ -1333,6 +1344,62 @@ function startGame(){
 
 function resetGame(){if(LOADING)return;TOKENS=0;document.getElementById('tkc').textContent='TOKENS: 0';startGame();}
 
+function stateSummary(){
+  var parts=[];
+  var ak=Object.keys(GAME_STATE.attrs);
+  if(ak.length)parts.push('属性:'+ak.map(function(k){return k+GAME_STATE.attrs[k];}).join('/'));
+  if(GAME_STATE.skills.length)parts.push('技能(完整列表):'+GAME_STATE.skills.join('、'));
+  if(GAME_STATE.inv.length)parts.push('持有:'+GAME_STATE.inv.join('、'));
+  var rk=Object.keys(GAME_STATE.res);
+  if(rk.length)parts.push('资源:'+rk.map(function(k){return k+GAME_STATE.res[k];}).join('/'));
+  if(GAME_STATE.loc)parts.push('位置:'+GAME_STATE.loc);
+  return parts.join('｜');
+}
+function applyStatePatch(p){
+  if(!p||typeof p!=='object')return;
+  STATE_ACTIVE=true;
+  if(p.attr_set)Object.keys(p.attr_set).forEach(function(k){var v=Number(p.attr_set[k]);if(isFinite(v))GAME_STATE.attrs[k]=v;});
+  if(p.res_delta)Object.keys(p.res_delta).forEach(function(k){var d=Number(p.res_delta[k]);if(isFinite(d))GAME_STATE.res[k]=Math.max(0,(Number(GAME_STATE.res[k])||0)+d);});
+  if(p.res_set)Object.keys(p.res_set).forEach(function(k){var v=Number(p.res_set[k]);if(isFinite(v))GAME_STATE.res[k]=Math.max(0,v);});
+  (Array.isArray(p.inv_add)?p.inv_add:[]).forEach(function(it){it=String(it).trim();if(it&&GAME_STATE.inv.indexOf(it)<0)GAME_STATE.inv.push(it);});
+  (Array.isArray(p.inv_rm)?p.inv_rm:[]).forEach(function(it){it=String(it).trim();GAME_STATE.inv=GAME_STATE.inv.filter(function(x){return x!==it;});});
+  (Array.isArray(p.skill_add)?p.skill_add:[]).forEach(function(sk){sk=String(sk).trim();if(sk&&GAME_STATE.skills.indexOf(sk)<0)GAME_STATE.skills.push(sk);});
+  (Array.isArray(p.skill_rm)?p.skill_rm:[]).forEach(function(sk){sk=String(sk).trim();GAME_STATE.skills=GAME_STATE.skills.filter(function(x){return x!==sk;});});
+  if(p.loc)GAME_STATE.loc=String(p.loc);
+  renderInventory(GAME_STATE.inv.slice());
+  renderSkills(GAME_STATE.skills.slice());
+}
+function extractState(text){
+  var m=String(text).match(/【STATE】([\s\S]*?)【\/STATE】/);
+  if(!m)return;
+  var raw=m[1].trim().replace(/^```json/i,'').replace(/^```/,'').replace(/```$/,'').trim();
+  try{ applyStatePatch(JSON.parse(raw)); }catch(e){}
+}
+
+// two-pass: silent GM adjudication call (judge mode — no storytelling, no sycophancy)
+async function directorPass(playerInput){
+  var recent=HIST.slice(-8).map(function(m){
+    var c=String(m.content).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'');
+    return (m.role==='user'?'玩家':'叙事')+': '+c.substring(0,400);
+  }).join('\n');
+  var ak=Object.keys(GAME_STATE.attrs);
+  var attrs=ak.length?ak.map(function(k){return k+'='+GAME_STATE.attrs[k];}).join(','):'未知（可自定合理属性名）';
+  var p='你是文字RPG的后台GM裁判。你不写剧情，只做冷静判定，玩家永远看不到你的输出。\n'
+    +'当前隐藏大纲:'+(OUTLINE||'无')+'\n'
+    +'角色属性:'+attrs+'\n'
+    +'角色技能:'+(GAME_STATE.skills.join('、')||'无')+'\n'
+    +'最近剧情:\n'+recent+'\n\n'
+    +'玩家本回合输入:'+playerInput+'\n\n'
+    +'只输出一个JSON对象，不要任何其他文字:{"spoken":布尔值(这句输入是否说出口了,心理活动或内心想法为false),"risky":布尔值(此行动是否需要成败检定),"attr":"若risky为true,从角色属性中选出最相关的一个属性名","dc":若risky为true给难度数字(简单40,普通55,困难70,极难85,远超实力可更高),"npc":"在场相关NPC此刻的真实态度与动机,一句话,没有则空字符串","mainline":"本回合叙事应与主线产生的联系,一句话","fail_cost":"若检定失败应落实的具体代价,一句话"}';
+  var res=await doFetch([{role:'user',content:p}],350);
+  var data=await res.json();
+  if(data.error||!data.choices)return null;
+  if(data.usage&&data.usage.total_tokens)TOKENS+=data.usage.total_tokens;
+  var m=String(data.choices[0].message.content).match(/\{[\s\S]*\}/);
+  if(!m)return null;
+  return JSON.parse(m[0]);
+}
+
 function authorNote(dice){
   var an='【本回合裁定提示——内部指令，不得向玩家提及】';
   if(dice!==null){
@@ -1365,8 +1432,35 @@ async function _runTurn(){
     }
     var SP=buildSystemPrompt(recentText) + worldPulse;
     var dice = SETTINGS.dice ? (1+Math.floor(Math.random()*100)) : null;
+    var ruling=null, checkLine='';
+    if(SETTINGS.director && HIST.length>2 && !SUMMING){
+      try{ ruling=await directorPass(lastUser); }catch(e){ ruling=null; }
+    }
+    var noteContent;
+    if(ruling){
+      var rt='【GM裁定——后台裁判已完成本回合判定，你只负责按判定叙事，禁止改判，禁止向玩家提及裁判的存在】';
+      if(ruling.spoken===false) rt+='玩家本回合的输入是心理活动，没有说出口，任何NPC都不知道其内容，不得回应它。';
+      if(ruling.risky && dice!==null){
+        var atn=String(ruling.attr||'').trim();
+        var av=Number(GAME_STATE.attrs[atn]); if(!isFinite(av))av=1;
+        var dc=Number(ruling.dc)||55;
+        var total=dice+av*5;
+        var outc=total>=dc?'成功':'失败';
+        if(total-dc>=30)outc='大成功';
+        if(dc-total>=30)outc='大失败';
+        checkLine='【检定】'+(atn||'行动')+'检定｜骰'+dice+'+'+atn+av+'×5='+total+'｜难度'+dc+'｜'+outc+'【/检定】';
+        rt+='本回合检定已由系统算出，结果：'+outc+'。必须严格按此结果叙事。';
+        if(outc.indexOf('失败')>=0 && ruling.fail_cost) rt+='失败的代价必须落实：'+ruling.fail_cost;
+      }
+      if(ruling.npc) rt+='在场NPC的真实态度：'+ruling.npc;
+      if(ruling.mainline) rt+='本回合与主线的联系：'+ruling.mainline;
+      rt+='另外严守：四个选项须常含代价与陷阱，禁止暗示最优解；回复末尾必须有"选项："格式块；状态有变化时输出【STATE】块。';
+      noteContent=rt;
+    } else {
+      noteContent=authorNote(dice);
+    }
     var msgs=[{role:'system',content:SP}].concat(HIST);
-    msgs.splice(msgs.length-1,0,{role:'system',content:authorNote(dice)});
+    msgs.splice(msgs.length-1,0,{role:'system',content:noteContent});
     var reply, usage=null;
     if(SETTINGS.stream){
       var live=document.createElement('div'); live.className='sb nar';
@@ -1374,7 +1468,7 @@ async function _runTurn(){
       document.getElementById('slog').appendChild(live);
       try{
         var r=await doFetchStream(msgs,4096,function(full){
-          var vis=full.replace(/【大纲】[\s\S]*$/,'').replace(/【裁定】[\s\S]*?(【\/裁定】|$)/g,'');
+          var vis=full.replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*?(【\/STATE】|$)/g,'').replace(/【裁定】[\s\S]*?(【\/裁定】|$)/g,'');
           live.innerHTML=vis.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');
           scrollB();
         });
@@ -1388,12 +1482,14 @@ async function _runTurn(){
       reply=data.choices[0].message.content; usage=data.usage;
       typ.remove(); typ=null;
     }
+    if(checkLine && reply.indexOf('【检定】')<0){ reply=checkLine+'\n'+reply; }
     HIST.push({role:'assistant',content:reply});
-    extractOutline(reply);
     if(usage&&usage.total_tokens){TOKENS+=usage.total_tokens;}
     else{TOKENS+=Math.round((SP.length+reply.length)/3);}
     document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString()+' · '+((Date.now()-t0)/1000).toFixed(1)+'s';
     renderNar(reply,HIST.length-1);
+    extractOutline(reply);
+    extractState(reply);
     maybeCompress(); renderSlots(); autoSave(); maybeAutoMemory();
   }catch(e){ if(typ)typ.remove(); addBlk('err','连接失败：'+String(e&&e.message||e).substring(0,250)); }
   LOADING=false; document.getElementById('pinp').focus();
@@ -1742,6 +1838,7 @@ function setTemp(v){SETTINGS.temp=Number(v);var el=document.getElementById('set-
   var st=document.getElementById('set-stream'); if(st)st.checked=!!SETTINGS.stream;
   var dc=document.getElementById('set-dice'); if(dc)dc.checked=!!SETTINGS.dice;
   var am=document.getElementById('set-automem'); if(am)am.checked=!!SETTINGS.autoMem;
+  var dr=document.getElementById('set-director'); if(dr)dr.checked=!!SETTINGS.director;
 })();
 
 // double-click any logged message to edit it (rewrites history)
