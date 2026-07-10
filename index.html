@@ -281,6 +281,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .npc-name{color:var(--tx);}
 .npc-rel{color:var(--dm);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .npc-att{font-weight:bold;font-size:10px;}
+.chap{text-align:center;color:var(--g);letter-spacing:4px;font-family:'Noto Serif SC',serif;font-size:14px;margin:4px 0 10px;opacity:0.92;}
 </style>
 </head>
 <body>
@@ -684,7 +685,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div id="slog"></div>
     <div class="deco"></div>
     <div class="daily" id="daily-btns"></div>
-    <div class="daily" id="turn-tools"><button class="db" onclick="regenTurn()">↻ 重写本回合</button><button class="db" onclick="undoTurn()">↩ 撤销</button><span class="ofr" style="align-self:center">双击对话可编辑 · 数字键1-4选选项</span></div>
+    <div class="daily" id="turn-tools"><button class="db" onclick="regenTurn()">↻ 重写本回合</button><button class="db" onclick="undoTurn()">↩ 撤销</button><button class="db" onclick="requestSkip()">⏩ 时间跳跃</button><span class="ofr" style="align-self:center">双击对话可编辑 · 数字键1-4选选项</span></div>
     <div class="inpa">
       <div class="iw">
         <span class="ipr">›</span>
@@ -785,8 +786,14 @@ function rollOpening(){
     var mech=TRANSMIGRATE_MECH[Math.floor(Math.random()*TRANSMIGRATE_MECH.length)];
     var tim=REVEAL_TIMING[Math.floor(Math.random()*REVEAL_TIMING.length)];
     t+='（若本局涉及穿越/转生/入道）机制：'+mech+'\n来历揭示节奏：'+tim+'\n';
+    if(tim===REVEAL_TIMING[0]){
+      t+='机制呈现：开场第一幕必须让玩家亲历该机制的关键时刻或它的直接后果——第一现场、主角视角、正在发生。严禁把它处理成旁人的闲聊、吐槽或转述。\n';
+    } else {
+      t+='机制呈现：开场严禁出现关于该机制的任何直接信息——按揭示节奏它属于后期内容，开场就是不知情者的生活。\n';
+    }
     OPENING_PICK+=' · '+mech.split('——')[0];
   }
+  t+='切入即体验：抽到的切入方式必须作为开场第一幕完整演出来，玩家身处其中、亲手参与，而不是听别人提起它。\n';
   t+='建角规则：禁止分步问答建角。最多向玩家问一个开放式问题（也可以一个都不问、直接开演），主角其余设定由你按切入方式自动生成并在叙事中自然呈现，玩家之后随时可用输入修正。\n';
   t+='开场必须严格符合上述切入方式，严禁滑回模板化开场（穿越必见神明、旅店醒来听传闻、神秘老人赠功法等）。开场细节要具体：气味、声音、手边的东西，而不是概述。\n开场第一回合必须给玩家落脚感：我是谁、身在何处、手头正在做什么、今天原本打算干什么——通过具体场景自然带出，禁止设定罗列。';
   OPENING_TEXT=t;
@@ -1277,6 +1284,7 @@ function renderNar(text,hidx) {
     var fail=inner.indexOf('失败')>=0;
     return '<span class="check '+(fail?'ck-fail':'ck-ok')+'">🎲 '+inner.trim()+'</span>';
   });
+  safe=safe.replace(/【章[:：]([^】\n]{1,24})】/g,function(_m,tt){return '<div class="chap">— '+tt+' —</div>';});
   body.innerHTML=safe.replace(/\n/g,'<br>');
   wrapper.appendChild(body);
   if(optIdx>=0){
@@ -1426,7 +1434,7 @@ function launchGame() {
   startGame();
 }
 
-var IRON_AGENCY='【叙事核心铁律】\n1. 玩家输入是意图不是结果：成败由情境、能力与裁定决定；失败、拒绝、平淡都是正常结果，但须有可理解的原因。\n2. 心理活动NPC永远听不见；没说出口的话就是没说。\n3. NPC是活人不是道具：有自己的生活、有限的见识和立场惯性，观察力不超过其身份；态度变化要渐进。\n4. 世界的绝大多数细节只是生活本身，不是线索；绝大多数NPC没有秘密。悬念只属于主线场景，日常场景就安心写日常，不制造可疑细节。\n5. 选项覆盖不同玩法（行动/交谈/探索/稳妥），不暗示最优解；日常场景不设陷阱选项。\n6. 状态申报：当主角的属性、技能、持有物、资源或位置发生变化时，必须在回复最末尾（大纲块之后）输出【STATE】{"attr_set":{"属性名":变化后的新值},"res_set":{"资源名":变化后的新数值},"inv_add":["获得的物品"],"inv_rm":["失去的物品"],"skill_add":["新学会的技能"],"skill_rm":[],"loc":"新位置","npc_set":{"NPC名":{"rel":"与主角的关系","att":-5到5的态度整数,"note":"一句话现状"}},"npc_rm":["永久离场或死亡的NPC名"]}【/STATE】，未变化的字段省略，无变化则不输出此块。技能与物品的增减只有通过此块申报才算数。有名有姓的NPC首次登场、关系变化、态度变化或有新动向时都必须用npc_set申报；态度值-5敌对~0中立~5生死之交，单回合变化不得超过1（系统会强制截断）。';
+var IRON_AGENCY='【叙事核心铁律】\n1. 玩家输入是意图不是结果：成败由情境、能力与裁定决定；失败、拒绝、平淡都是正常结果，但须有可理解的原因。\n2. 心理活动NPC永远听不见；没说出口的话就是没说。\n3. NPC是活人不是道具：有自己的生活、有限的见识和立场惯性，观察力不超过其身份；态度变化要渐进。\n4. 世界的绝大多数细节只是生活本身，不是线索；绝大多数NPC没有秘密。悬念只属于主线场景，日常场景就安心写日常，不制造可疑细节。\n5. 选项覆盖不同玩法（行动/交谈/探索/稳妥），不暗示最优解；日常场景不设陷阱选项。\n6. 状态申报：当主角的属性、技能、持有物、资源或位置发生变化时，必须在回复最末尾（大纲块之后）输出【STATE】{"attr_set":{"属性名":变化后的新值},"res_set":{"资源名":变化后的新数值},"inv_add":["获得的物品"],"inv_rm":["失去的物品"],"skill_add":["新学会的技能"],"skill_rm":[],"loc":"新位置","npc_set":{"NPC名":{"rel":"与主角的关系","att":-5到5的态度整数,"note":"一句话现状"}},"npc_rm":["永久离场或死亡的NPC名"]}【/STATE】，未变化的字段省略，无变化则不输出此块。技能与物品的增减只有通过此块申报才算数。有名有姓的NPC首次登场、关系变化、态度变化或有新动向时都必须用npc_set申报；态度值-5敌对~0中立~5生死之交，单回合变化不得超过1（系统会强制截断）。\n7. 时间可伸缩：像小说一样处理时间。发育期、赶路、等待、阶段转换处要主动时间跳跃——用蒙太奇概括跳过的数天/数月/数年（2-4个亮点小场景+具体收获），再从新时间点的具体场景继续；跳跃后在正文开头标注经过的时间（如：三个月后）。玩家请求跳过时间时必须照做，并用【STATE】块结算这段时间的属性/技能/资源/关系变化。转瞬即逝的对话回合也不必强行塞满一天。\n8. 章节感：进入新阶段或发生时间大跳跃时，在正文第一行输出【章：一个四到十字的标题】，其余回合不输出。';
 
 var ANTI_MYSTERY='【生活感】普通NPC说人话：问路给方向、买卖报价、闲聊就聊生活、工作、钱、天气、家人。信息不完整只能来自不知道/记错/只听说过，禁用句式：你不该知道、现在还不是时候、别问、我只能告诉你这么多、这座城市不简单。';
 
@@ -1507,6 +1515,12 @@ function promptAddPin(){
 }
 
 // ── REAL UNDO: pop last player+AI turn from history ──
+function requestSkip(){
+  if(LOADING)return;
+  var v=prompt('跳过多久？可附目标节点（例：三个月，练成基础剑法 / 直接到开春商队出发那天）：');
+  if(!v||!v.trim())return;
+  send('【时间跳跃】跳过'+v.trim()+'。用蒙太奇概括这段时间：2-4个亮点小场景加具体收获，用【STATE】块结算属性/技能/资源/关系变化，正文第一行标注【章：标题】和经过的时间，然后从新时间点的一个具体场景继续。',false);
+}
 function undoTurn(){
   if(LOADING) return;
   var ai=-1;
@@ -1604,6 +1618,7 @@ async function directorPass(playerInput){
     +'最近剧情:\n'+recent+'\n\n'
     +'玩家本回合输入:'+playerInput+'\n\n'
     +'节拍循环参考：发育（纯日常2-4回合，让玩家安心攒实力，不埋任何线索）→摩擦（从日常本身长出的小冲突）→收获（解决它并拿到实打实的好处）→钩子（收获里自然带出一条主线线索）。根据最近剧情判断当前应处的节拍，日常和发育要占大头。\n'
+    +'若玩家输入是【时间跳跃】请求：risky填false，beat填发育，scene_note写"用蒙太奇概括跳过的时间并结算收获"。\n'
     +'只输出一个JSON对象，不要任何其他文字:{"spoken":布尔值(这句输入是否说出口了,心理活动或内心想法为false),"risky":布尔值(此行动是否需要成败检定),"attr":"若risky为true,从角色属性中选出最相关的一个属性名","dc":若risky为true给难度数字(简单40,普通55,困难70,极难85,远超实力可更高),"npc":"在场相关NPC此刻的真实态度与动机,一句话,没有则空字符串","beat":"发育|摩擦|收获|钩子,四选一","scene_note":"给叙事者的一句话基调指令,例如：本回合纯日常,写生活的质感,不得出现任何可疑细节或主线暗示","mainline":"仅当beat为钩子时填写本回合应带出的主线联系,否则必须是空字符串","fail_cost":"若检定失败应落实的具体代价,一句话"}';
   var res=await doFetch([{role:'user',content:p}],350);
   var data=await res.json();
