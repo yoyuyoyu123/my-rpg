@@ -277,6 +277,10 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 @media(max-width:768px) and (display-mode:standalone){
   .hdr{padding-top:calc(7px + env(safe-area-inset-top));}
 }
+.npc-item{display:flex;gap:6px;align-items:center;font-size:10px;margin-bottom:4px;padding:3px 4px;border-left:2px solid rgba(200,169,110,0.2);}
+.npc-name{color:var(--tx);}
+.npc-rel{color:var(--dm);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.npc-att{font-weight:bold;font-size:10px;}
 </style>
 </head>
 <body>
@@ -694,6 +698,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="ss"><div class="st">▸ 背包</div><div class="inv-grid" id="inv-grid"><span class="inv-empty">— 空 —</span></div></div>
     <div class="ss"><div class="st" id="skill-panel-title">▸ 技能</div><div class="skill-grid" id="skill-grid"><span class="skill-empty">— 空 —</span></div></div>
     <div class="ss"><div class="st">▸ 任务</div><div id="quest-list"><span class="no-quest">— 暂无任务 —</span></div></div>
+    <div class="ss"><div class="st">👥 人物关系</div><div id="npc-list"><span class="no-quest">— 尚未结识 —</span></div></div>
     <div class="ss"><div class="st">🔒 锁定设定 <button class="pin-add" onclick="promptAddPin()">+ 锁定</button></div><div id="pin-list"><span class="no-quest">— 未锁定任何设定 —</span></div></div>
     <div class="ss"><div class="st">📖 世界书 <button class="pin-add" onclick="promptAddLore()">+ 条目</button></div><div id="lore-list"><span class="no-quest">— 空 —</span></div></div>
     <div class="ss"><div class="st">▸ 存档</div><div id="svslots"></div></div>
@@ -738,8 +743,8 @@ var EVENT_THRESHOLD=8; // rising threshold for background world events
 var LORE_ACTIVE=[]; // currently injected lore chunk names
 var LOREBOOK=[]; // world book entries: {id,name,keywords[],text,cat}
 var TURNS=0; // player turns this run
-var OUTLINE=''; GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:''}; STATE_ACTIVE=false; // JS-owned latest hidden outline (survives even if model forgets to re-output)
-var GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:''}; // authoritative state, owned by JS
+var OUTLINE=''; GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=false; // JS-owned latest hidden outline (survives even if model forgets to re-output)
+var GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; // authoritative state, owned by JS
 var STATE_ACTIVE=false; // true once the model starts reporting via STATE patches
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
 var OPENING_STYLES=[
@@ -834,11 +839,14 @@ function rollStoryDNA(){
   try{localStorage.setItem('wuji_dna_hist',JSON.stringify(hist));}catch(e){}
   var t1=DNA_TWISTS[Math.floor(Math.random()*DNA_TWISTS.length)], t2;
   do{ t2=DNA_TWISTS[Math.floor(Math.random()*DNA_TWISTS.length)]; }while(t2===t1);
+  var startTier=1+Math.floor(Math.random()*2);
+  var climbCap=PACE==='short'?'本局舞台至多上升1级，故事在小舞台内收束':(PACE==='medium'?'本局舞台上升2-3级后到达终点':'不设上限，随阶段一路向上');
   STORY_DNA='【本局故事基因——系统抽取，对玩家绝对保密。初始【大纲】的核心冲突与阶段主线必须以此为骨架搭建；阶段推进时可自然演化，但禁止无故更换骨架】\n'
     +'主线骨架：'+sk[0]+'——'+sk[1]+'\n'
     +'核心冲突：'+cf+'\n'
     +'对手性质：'+ag[0]+'——'+ag[1]+'\n'
     +'预埋反转种子（各在合适的阶段揭晓，揭晓前不得泄露）：其一，'+t1+'；其二，'+t2+'。\n'
+    +'舞台阶梯：生成初始大纲时，你要为本局设计一条6-7级、由小到大的舞台阶梯——级别名称必须贴合本世界观的空间或权力尺度（武侠可以是村镇→县城→州府→名门→朝堂→天下，星际可以是舱段→空间站→行星→星域→……，都市可以是街区→区→城→国→……，自行命名），写进大纲的"舞台阶梯:"字段，并用"当前舞台:"字段记录所在级。本局从第'+startTier+'级开始。每个大纲阶段绑定一个舞台等级；阶段完成后舞台上升一级或在原级纵深展开；每次升级必须由一次资格事件触发（扬名、遇到引路人、实力或身份越过门槛），禁止跳级。'+climbCap+'。\n'
     +'以上是骨架不是剧本：具体人物、地点、事件由你结合世界观和玩家的选择去生成。';
 }
 var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,director:true};
@@ -1178,12 +1186,12 @@ function renderQuests() {
 
 function updateStatus(text) {
   var plain=text.replace(/<[^>]+>/g,'');
-  var br=plain.indexOf('［'); if(br<0) br=plain.indexOf('[');
-  if(br>=0){
-    var sb=plain.slice(br);
+  var bm=plain.match(/[\[［][^\[\]［］\n]*\|[^\[\]［］\n]*[\]］]/);
+  if(bm){
+    var sb=bm[0];
     document.getElementById('sdsp').textContent=sb.substring(0,400);
     document.getElementById('sdsp').style.color='var(--tx)';
-    var im=sb.match(/持有[\uff1a:]([^\n\uff08\(]+)/);
+    var im=plain.match(/持有[\uff1a:]([^\n\uff08\(]+)/);
     if(im&&!STATE_ACTIVE){var items=im[1].replace(/[\]］)）]/g,'').split(/[,，、]/).map(function(x){return x.trim();}).filter(function(x){return x&&x!=='无';});GAME_STATE.inv=items.slice();renderInventory(items);}
     var sm=plain.match(/（技能[：:]([^）\)]+)）/);
     if(!sm) sm=plain.match(/\(技能[：:]([^\)]+)\)/);
@@ -1236,6 +1244,7 @@ function renderNar(text,hidx) {
   var optIdx=text.search(/选项[：:]\s*\n/);
   var mainText=optIdx>=0?text.slice(0,optIdx).trim():text;
   mainText=mainText.replace(/【任务[^』]*』[^\n]*/g,'').replace(/【技能标[^』]*』[^\n]*/g,'').trim();
+  mainText=mainText.replace(/[\[［][^\[\]［］\n]*\|[^\[\]［］\n]*[\]］]/g,'').replace(/（(?:持有|技能)[：:][^）\n]*）?/g,'').replace(/\((?:持有|技能)[：:][^)\n]*\)?/g,'').trim();
   var body=document.createElement('div');
   var safe=esc(mainText);
   safe=safe.replace(/【检定】([\s\S]*?)【\/检定】/g,function(_m,inner){
@@ -1278,13 +1287,13 @@ function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:''}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||'';
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||'';
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
   document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString();
   rebuildLog();
-  renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins(); renderLore(); renderDailyBtns();
+  renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins(); renderLore(); renderNpcs(); renderDailyBtns();
   LOADING=false;
   document.getElementById('pinp').focus();
 }
@@ -1391,15 +1400,17 @@ function launchGame() {
   startGame();
 }
 
-var IRON_AGENCY='【世界独立性铁律——反顺从，必须严格执行】\n1. 玩家的输入是意图不是结果：说服、潜行、谈判、求情、威胁、偷窃等一切行为都只是尝试，成败由世界根据合理性裁定——看NPC的立场、主角的能力与筹码、当时的情境。失败可以发生，但必须有清楚原因。\n2. NPC只有有限视角：NPC只提供自己可能知道的信息。NPC可能信息有限、记错、带有个人偏见；只有在有明确动机时才会撒谎或隐瞒。普通NPC默认正常交流，不故意误导玩家。\n3. NPC有立场惯性：态度转变需要多次积累，单次行为最多小幅移动。被得罪过的人不会因一次道歉就原谅，警惕的人不会因一杯酒就交底；但普通人也不会无缘无故阴阳怪气。\n4. 选项不许讨好：四个选项不暗示最优解，但必须覆盖不同玩法。日常场景不得四个选项全是陷阱，高风险场景才允许明显代价。\n5. 拒绝也是回应：NPC可以拒绝请求，门可以是锁着的，线索可以断掉。拒绝后要给出可理解的原因或替代路径，不要只制造无意义卡关。\n6. 输入先分类再执行：玩家输入可能是【行动/说出口的台词/心理活动/对引擎的疑问】。心理活动与内心独白只影响主角自己的判断和情绪，任何NPC都绝不可能听见、察觉或回应它；没有明确说出口的话一律视为没有说出口，拿不准时默认没说出口。\n7. 禁止谜语人：NPC说话的直白程度必须符合其身份。市井小民、同伴、普通路人、店员、委托人应尽量有话直说；故意隐瞒或说半句话的NPC必须是少数，且要有具体动机（怕惹祸/在谈条件/立场对立/职业保密）。铺垫靠事件、细节与环境变化，不靠人人故弄玄虚。\n8. 状态申报：当主角的属性、技能、持有物、资源或位置发生变化时，必须在回复最末尾（大纲块之后）输出【STATE】{"attr_set":{"属性名":变化后的新值},"res_set":{"资源名":变化后的新数值},"inv_add":["获得的物品"],"inv_rm":["失去的物品"],"skill_add":["新学会的技能"],"skill_rm":[],"loc":"新位置"}【/STATE】，未变化的字段省略，无变化则不输出此块。技能与物品的增减只有通过此块申报才算数。';
+var IRON_AGENCY='【世界独立性铁律——反顺从，必须严格执行】\n1. 玩家的输入是意图不是结果：说服、潜行、谈判、求情、威胁、偷窃等一切行为都只是尝试，成败由世界根据合理性裁定——看NPC的立场、主角的能力与筹码、当时的情境。失败可以发生，但必须有清楚原因。\n2. NPC只有有限视角：NPC只提供自己可能知道的信息。NPC可能信息有限、记错、带有个人偏见；只有在有明确动机时才会撒谎或隐瞒。普通NPC默认正常交流，不故意误导玩家。\n3. NPC有立场惯性：态度转变需要多次积累，单次行为最多小幅移动。被得罪过的人不会因一次道歉就原谅，警惕的人不会因一杯酒就交底；但普通人也不会无缘无故阴阳怪气。\n4. 选项不许讨好：四个选项不暗示最优解，但必须覆盖不同玩法。日常场景不得四个选项全是陷阱，高风险场景才允许明显代价。\n5. 拒绝也是回应：NPC可以拒绝请求，门可以是锁着的，线索可以断掉。拒绝后要给出可理解的原因或替代路径，不要只制造无意义卡关。\n6. 输入先分类再执行：玩家输入可能是【行动/说出口的台词/心理活动/对引擎的疑问】。心理活动与内心独白只影响主角自己的判断和情绪，任何NPC都绝不可能听见、察觉或回应它；没有明确说出口的话一律视为没有说出口，拿不准时默认没说出口。\n7. 禁止谜语人：NPC说话的直白程度必须符合其身份。市井小民、同伴、普通路人、店员、委托人应尽量有话直说；故意隐瞒或说半句话的NPC必须是少数，且要有具体动机（怕惹祸/在谈条件/立场对立/职业保密）。铺垫靠事件、细节与环境变化，不靠人人故弄玄虚。\n8. 状态申报：当主角的属性、技能、持有物、资源或位置发生变化时，必须在回复最末尾（大纲块之后）输出【STATE】{"attr_set":{"属性名":变化后的新值},"res_set":{"资源名":变化后的新数值},"inv_add":["获得的物品"],"inv_rm":["失去的物品"],"skill_add":["新学会的技能"],"skill_rm":[],"loc":"新位置","npc_set":{"NPC名":{"rel":"与主角的关系","att":-5到5的态度整数,"note":"一句话现状"}},"npc_rm":["永久离场或死亡的NPC名"]}【/STATE】，未变化的字段省略，无变化则不输出此块。技能与物品的增减只有通过此块申报才算数。有名有姓的NPC首次登场、关系变化、态度变化或有新动向时都必须用npc_set申报；态度值-5敌对~0中立~5生死之交，单回合变化不得超过1（系统会强制截断）。';
 
 var ANTI_MYSTERY='【普通生活感规则——最高风味约束】\n1. 至少70%的普通NPC没有秘密身份、不参与主线、不掌握重大真相。\n2. 普通NPC默认说人话：问路就给方向，买东西就报价，聊天就聊自己的生活、工作、钱、天气、家人、兴趣或眼前麻烦。\n3. 除非玩家主动调查危险线索，普通场景不得强行引出阴谋、追杀、灭世、神秘组织或全员沉默。\n4. 信息不完整可以来自“不知道、记错、只听说过、身份权限不够”，不要来自“故意谜语”。\n5. 每3回合至少允许一次低压力日常互动。低压力互动也可以推进角色关系、技能、金钱、装备和生活目标。\n6. 禁止滥用这些句式：你不该知道、现在还不是时候、他们来了、别问、你会后悔的、这座城市不简单、我只能告诉你这么多。';
+
+var PACING_LOOP='【节奏循环铁律——经典网文四拍循环】按四拍循环组织节奏：①发育拍（2-4回合的日常/修炼/经营/交友，让玩家安心攒实力攒资源，写出生活的质感）→②摩擦拍（一场从日常本身长出来的小冲突或小意外）→③收获拍（解决它，拿到实打实的好处：技能、物品、人情、名声或情报）→④钩子拍（收获里自然带出一条更大的线索，指向主线或下一阶段）。主线在①②③拍只作为背景存在，不施压；只有④拍才拉主线。支线孵化主线：下一阶段的主线目标应尽量从已发生的支线和日常中长出来，而不是凭空降下。发育期的收获要让玩家看得见摸得着（属性、技能、存款的具体增长）。';
 
 function buildSystemPrompt(recentText){
   var w=WORLDS[WORLD];
   var p=PACE_CONFIG[PACE];
   if(!w||!p) return '';
-  var sp = w.prompt + '\n\n' + p.instruction + '\n\n' + IRON_AGENCY + '\n\n' + ANTI_MYSTERY;
+  var sp = w.prompt + '\n\n' + p.instruction + '\n\n' + IRON_AGENCY + '\n\n' + ANTI_MYSTERY + '\n\n' + PACING_LOOP;
   if(OUTLINE){
     sp += '\n\n【当前隐藏进度表——最新剧情进度，本回合叙事必须据此保持目标连续】\n' + OUTLINE + '\n（剧情有实质推进时才输出更新版【大纲】块，否则无需重复输出）';
   }
@@ -1485,7 +1496,7 @@ function startGame(){
   document.getElementById('slog').innerHTML='';
   var d=document.getElementById('sdsp'); d.textContent='— 游戏开始后显示 —'; d.style.color='var(--dm)';
   var ig=document.getElementById('inv-grid'); if(ig) ig.innerHTML='<span class="inv-empty">— 空 —</span>';
-  renderSlots(); renderQuests(); renderPins(); renderLore();
+  renderSlots(); renderQuests(); renderPins(); renderLore(); renderNpcs();
   rollOpening();
   rollStoryDNA();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
@@ -1506,6 +1517,8 @@ function stateSummary(){
   var rk=Object.keys(GAME_STATE.res);
   if(rk.length)parts.push('资源:'+rk.map(function(k){return k+GAME_STATE.res[k];}).join('/'));
   if(GAME_STATE.loc)parts.push('位置:'+GAME_STATE.loc);
+  var nk=Object.keys(GAME_STATE.npcs||{});
+  if(nk.length)parts.push('人物关系(态度-5敌对~5挚交,变化需渐进):'+nk.slice(-12).map(function(n){var v=GAME_STATE.npcs[n];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+(v.note?','+v.note:'')+')';}).join('；'));
   return parts.join('｜');
 }
 function applyStatePatch(p){
@@ -1519,8 +1532,26 @@ function applyStatePatch(p){
   (Array.isArray(p.skill_add)?p.skill_add:[]).forEach(function(sk){sk=String(sk).trim();if(sk&&GAME_STATE.skills.indexOf(sk)<0)GAME_STATE.skills.push(sk);});
   (Array.isArray(p.skill_rm)?p.skill_rm:[]).forEach(function(sk){sk=String(sk).trim();GAME_STATE.skills=GAME_STATE.skills.filter(function(x){return x!==sk;});});
   if(p.loc)GAME_STATE.loc=String(p.loc);
+  if(!GAME_STATE.npcs)GAME_STATE.npcs={};
+  if(p.npc_set&&typeof p.npc_set==='object')Object.keys(p.npc_set).forEach(function(n){
+    n=String(n).trim(); if(!n)return;
+    var v=p.npc_set[n]||{};
+    var cur=GAME_STATE.npcs[n]||{rel:'',att:0,note:''};
+    if(v.rel)cur.rel=String(v.rel).substring(0,12);
+    if(v.att!==undefined&&isFinite(Number(v.att))){
+      var target=Math.max(-5,Math.min(5,Math.round(Number(v.att))));
+      var prev=Number(cur.att)||0;
+      if(target>prev+1)target=prev+1;
+      if(target<prev-1)target=prev-1;
+      cur.att=target;
+    }
+    if(v.note)cur.note=String(v.note).substring(0,40);
+    GAME_STATE.npcs[n]=cur;
+  });
+  (Array.isArray(p.npc_rm)?p.npc_rm:[]).forEach(function(n){delete GAME_STATE.npcs[String(n).trim()];});
   renderInventory(GAME_STATE.inv.slice());
   renderSkills(GAME_STATE.skills.slice());
+  renderNpcs();
 }
 function extractState(text){
   var m=String(text).match(/【STATE】([\s\S]*?)【\/STATE】/);
@@ -1541,6 +1572,7 @@ async function directorPass(playerInput){
     +'当前隐藏大纲:'+(OUTLINE||'无')+'\n'
     +'角色属性:'+attrs+'\n'
     +'角色技能:'+(GAME_STATE.skills.join('、')||'无')+'\n'
+    +'人物关系:'+(Object.keys(GAME_STATE.npcs||{}).slice(-10).map(function(n){var v=GAME_STATE.npcs[n];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+')';}).join('；')||'无')+'\n'
     +'最近剧情:\n'+recent+'\n\n'
     +'玩家本回合输入:'+playerInput+'\n\n'
     +'只输出一个JSON对象，不要任何其他文字:{"spoken":布尔值(这句输入是否说出口了,心理活动或内心想法为false),"risky":布尔值(此行动是否需要成败检定),"attr":"若risky为true,从角色属性中选出最相关的一个属性名","dc":若risky为true给难度数字(简单40,普通55,困难70,极难85,远超实力可更高),"npc":"在场相关NPC此刻的真实态度与动机,一句话,没有则空字符串","mainline":"本回合叙事应与主线产生的联系,一句话","fail_cost":"若检定失败应落实的具体代价,一句话"}';
@@ -1689,6 +1721,24 @@ function renderLore(){
     var x=document.createElement('button'); x.className='pin-x'; x.textContent='✕';
     x.onclick=function(){removeLore(l.id);};
     d.appendChild(cat); d.appendChild(tx); d.appendChild(x);
+    c.appendChild(d);
+  });
+}
+function renderNpcs(){
+  var c=document.getElementById('npc-list'); if(!c)return;
+  var nk=Object.keys(GAME_STATE.npcs||{});
+  if(!nk.length){c.innerHTML='<span class="no-quest">— 尚未结识 —</span>';return;}
+  c.innerHTML='';
+  nk.forEach(function(n){
+    var v=GAME_STATE.npcs[n];
+    var att=Number(v.att)||0;
+    var col=att>=2?'#98c878':(att<=-2?'#c86060':'var(--dm)');
+    var d=document.createElement('div'); d.className='npc-item';
+    var s1=document.createElement('span'); s1.className='npc-name'; s1.textContent=n;
+    var s2=document.createElement('span'); s2.className='npc-rel'; s2.textContent=v.rel||'';
+    var s3=document.createElement('span'); s3.className='npc-att'; s3.style.color=col; s3.textContent=(att>0?'+':'')+att;
+    d.appendChild(s1); d.appendChild(s2); d.appendChild(s3);
+    if(v.note)d.title=v.note;
     c.appendChild(d);
   });
 }
