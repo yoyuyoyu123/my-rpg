@@ -786,6 +786,61 @@ function rollOpening(){
   t+='开场必须严格符合上述切入方式，严禁滑回模板化开场（穿越必见神明、旅店醒来听传闻、神秘老人赠功法等）。开场细节要具体：气味、声音、手边的东西，而不是概述。';
   OPENING_TEXT=t;
 }
+
+// ── STORY DNA: distilled narratology decks (Polti/Plotto/webnovel skeletons) ──
+var STORY_DNA='';
+var DNA_SKELETONS=[
+  ['复仇线','仇不止一层，最上面那层出乎意料；报复的每一步都在改变主角自己'],
+  ['寻宝寻人线','目标随线索不断具体化，每条线索都要付代价，想要它的不止主角一方'],
+  ['悬疑真相线','表面事件之下真相层层剥开，越接近真相越伤人'],
+  ['权谋上位线','从边缘向核心爬，每上一级都要交换或放弃某样东西'],
+  ['生存逃亡线','资源与追兵的双重压力，每个安全点都是暂时的'],
+  ['护送守护线','被保护的对象有自己的意志和秘密，不会乖乖配合'],
+  ['救赎线','一桩已经犯下的错需要漫长弥补，受害者不欠主角原谅'],
+  ['身份秘密线','主角藏着一个暴露即毁灭的秘密，瞒的成本越来越高'],
+  ['竞技争锋线','明确的对手与擂台，实力阶梯清晰，但胜负之外另有输赢'],
+  ['建设经营线','从小摊或废墟做起，壮大本身会引来觊觎与规则的挤压'],
+  ['倒计时灾变线','所有人都活在临近的大限阴影下，不同人做出不同选择'],
+  ['归乡寻根线','回到已经变样的故土，物是人非，旧账未清'],
+  ['继承夺产线','一份遗产/衣钵/位置悬而未决，几方都自认应得'],
+  ['卧底潜伏线','身在对方阵营，每天都在暴露边缘，立场逐渐动摇']
+];
+var DNA_CONFLICTS=['复仇与血债','被冤枉与洗清污名','禁忌的感情或关系','忠诚与背叛的拉扯','野心与它的代价','匮乏之下的求生','失去之物的寻回','秘密身份的重压','恩人变成对头','夹在两个阵营之间','守护比自己弱小的人','知道真相却无人肯信','权力交接的漩涡','信仰或师门的崩塌','与过去的自己和解','必须偿还的债与承诺','嫉妒滚成的祸端','一场误会越滚越大'];
+var DNA_ANTAGONISTS=[
+  ['镜像对手','与主角同起点、不同选择的人，赢他等于否定另一个自己'],
+  ['亲近之人','伤害来自最信任的人，且对方自有苦衷'],
+  ['制度与规则','没有具体坏人，是规则本身在吃人'],
+  ['非人之物','不可理喻、无法谈判的存在，只能理解其规律'],
+  ['群体狂热','乌合之众的恶意，找不到主谋可恨'],
+  ['上位者的棋局','主角只是别人棋盘上的一枚子，下棋的人未必露面'],
+  ['昔日恩人','有恩于主角的人提出了无法接受的要求'],
+  ['自身欲望','最大的敌人是主角自己想要的东西'],
+  ['环境本身','天灾、荒野、瘟疫——无人可恨，只能硬扛'],
+  ['无反派','根本没有坏人，一连串阴差阳错酿成一切']
+];
+var DNA_TWISTS=['盟友有隐藏动机，但动机情有可原','主角掌握的某条关键信息其实是假的','对手的诉求在某种意义上是对的','被保护的人或物另有真相','一位不起眼的配角远比表现出来的重要','主角的某件持有物来历不简单','大限比所有人以为的更早','两难：救一边必失另一边','有人把主角错认成了别人','帮过主角的NPC将来会来讨这份人情','两条看似无关的线索最终指向同一处','对手阵营内部并不铁板一块'];
+function rollStoryDNA(){
+  var hist=[];
+  try{hist=JSON.parse(localStorage.getItem('wuji_dna_hist')||'[]');}catch(e){}
+  var sk,cf,ag,key,tries=0;
+  do{
+    sk=DNA_SKELETONS[Math.floor(Math.random()*DNA_SKELETONS.length)];
+    cf=DNA_CONFLICTS[Math.floor(Math.random()*DNA_CONFLICTS.length)];
+    ag=DNA_ANTAGONISTS[Math.floor(Math.random()*DNA_ANTAGONISTS.length)];
+    key=sk[0]+'|'+cf+'|'+ag[0];
+    tries++;
+  }while(hist.indexOf(key)>=0 && tries<8);
+  hist.push(key); if(hist.length>12)hist=hist.slice(-12);
+  try{localStorage.setItem('wuji_dna_hist',JSON.stringify(hist));}catch(e){}
+  var t1=DNA_TWISTS[Math.floor(Math.random()*DNA_TWISTS.length)], t2;
+  do{ t2=DNA_TWISTS[Math.floor(Math.random()*DNA_TWISTS.length)]; }while(t2===t1);
+  STORY_DNA='【本局故事基因——系统抽取，对玩家绝对保密。初始【大纲】的核心冲突与阶段主线必须以此为骨架搭建；阶段推进时可自然演化，但禁止无故更换骨架】\n'
+    +'主线骨架：'+sk[0]+'——'+sk[1]+'\n'
+    +'核心冲突：'+cf+'\n'
+    +'对手性质：'+ag[0]+'——'+ag[1]+'\n'
+    +'预埋反转种子（各在合适的阶段揭晓，揭晓前不得泄露）：其一，'+t1+'；其二，'+t2+'。\n'
+    +'以上是骨架不是剧本：具体人物、地点、事件由你结合世界观和玩家的选择去生成。';
+}
 var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,director:true};
 try{var _st=localStorage.getItem('wuji_settings'); if(_st) SETTINGS=Object.assign(SETTINGS,JSON.parse(_st));}catch(e){}
 function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(SETTINGS));}catch(e){}}
@@ -1217,13 +1272,13 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,opening:OPENING_TEXT,openingPick:OPENING_PICK,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:''}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||'';
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:''}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||'';
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
@@ -1355,6 +1410,9 @@ function buildSystemPrompt(recentText){
   if(OPENING_TEXT && TURNS<20){
     sp += '\n\n' + OPENING_TEXT;
   }
+  if(STORY_DNA){
+    sp += '\n\n' + STORY_DNA;
+  }
   if(PINS.length){
     sp += '\n\n【不可更改的锁定设定——最高优先级，永远遵守，禁止篡改或遗忘】\n' + PINS.map(function(pn){ return '- '+pn.text; }).join('\n');
   }
@@ -1429,8 +1487,10 @@ function startGame(){
   var ig=document.getElementById('inv-grid'); if(ig) ig.innerHTML='<span class="inv-empty">— 空 —</span>';
   renderSlots(); renderQuests(); renderPins(); renderLore();
   rollOpening();
+  rollStoryDNA();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
   addBlk('sys','▸ 本局开局变体：'+OPENING_PICK+'（不满意可点「完全重置」重抽）');
+  addBlk('sys','▸ 故事基因已生成：主线骨架/核心冲突/对手/反转已随机抽取（对玩家保密）');
   addBlk('sys','▸ 后端：'+MODEL);
   send('开始游戏',true);
 }
