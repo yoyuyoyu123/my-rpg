@@ -296,6 +296,14 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .npc-rel{color:var(--dm);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .npc-att{font-weight:bold;font-size:10px;}
 .chap{text-align:center;color:var(--g);letter-spacing:4px;font-family:'Noto Serif SC',serif;font-size:14px;margin:4px 0 10px;opacity:0.92;}
+.pref-box{max-width:800px;margin:18px auto 0;border:1px solid var(--bd);padding:12px 14px;background:rgba(200,169,110,0.02);}
+.pref-title{font-size:11px;color:var(--g);letter-spacing:2px;margin-bottom:10px;}
+.pref-title span{color:var(--dm);letter-spacing:0.5px;font-size:10px;}
+.pref-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;}
+.pref-row:last-child{margin-bottom:0;}
+.pref-lbl{font-size:11px;color:var(--dm);flex-shrink:0;margin-top:5px;width:58px;text-align:right;}
+.pref-row .gen-chips{margin-bottom:0;}
+@media(max-width:768px){.pref-row{flex-direction:column;gap:4px;}.pref-lbl{text-align:left;width:auto;}}
 </style>
 </head>
 <body>
@@ -689,6 +697,31 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         <div class="pcard-examples">适合：武侠日常 · 异世界生活 · 末日经营</div>
       </div>
     </div>
+    <div class="pref-box">
+      <div class="pref-title">本局口味约束 <span>不选=完全随机；选了就在该范围内随机抽取</span></div>
+      <div class="pref-row"><span class="pref-lbl">基调</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-tone" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-tone" data-val="欢乐搞笑">😆 欢乐搞笑</div>
+        <div class="chip" data-group="pref-tone" data-val="爽快热血">🔥 爽快热血</div>
+        <div class="chip" data-group="pref-tone" data-val="温馨日常">☕ 温馨日常</div>
+        <div class="chip" data-group="pref-tone" data-val="严肃正剧">🎭 严肃正剧</div>
+        <div class="chip" data-group="pref-tone" data-val="黑色悬疑">🕯️ 黑色悬疑</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">主线方向</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-skeleton" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-skeleton" data-val="冒险探索">🗺️ 冒险探索</div>
+        <div class="chip" data-group="pref-skeleton" data-val="经营生活">🌾 经营生活</div>
+        <div class="chip" data-group="pref-skeleton" data-val="争锋上位">⚔️ 争锋上位</div>
+        <div class="chip" data-group="pref-skeleton" data-val="恩怨情仇">🩸 恩怨情仇</div>
+        <div class="chip" data-group="pref-skeleton" data-val="悬疑真相">🔍 悬疑真相</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">开局方式</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-opening" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-opening" data-val="经典问答">📝 经典问答建角</div>
+        <div class="chip" data-group="pref-opening" data-val="平静日常切入">🌤 平静日常切入</div>
+        <div class="chip" data-group="pref-opening" data-val="戏剧性切入">⚡ 戏剧性切入</div>
+      </div></div>
+    </div>
     <button class="wnext" id="wnext-p" onclick="launchGame()" disabled>开始冒险 ▶</button>
     <span class="wback" onclick="goStep(2)">◀ 返回</span>
   </div>
@@ -847,6 +880,30 @@ var OUTLINE=''; // JS-owned latest hidden outline (survives even if model forget
 var GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; // authoritative state, owned by JS
 var STATE_ACTIVE=false; // true once the model starts reporting via STATE patches
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
+var PREFS={tone:'',skeleton:'',opening:''}; // player taste constraints from the pace screen
+var PREF_MAPS={
+  tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'严肃正剧':['严肃正剧'],'黑色悬疑':['黑色悬疑']},
+  skeleton:{'冒险探索':['旅行见闻线','探索发现线','公开委托线'],'经营生活':['安身立业线','建设经营线','社区生活线','职业成长线'],'争锋上位':['竞技争锋线','权谋上位线','学习修炼线'],'恩怨情仇':['复仇线','救赎线','守护责任线','归乡重建线'],'悬疑真相':['悬疑真相线','身份秘密线','卧底潜伏线']},
+  opening:{'经典问答':['经典问答'],'平静日常切入':['普通一天','工作现场','抵达新地','熟人见面','小麻烦','公开委托','自由闲暇'],'戏剧性切入':['错位苏醒','危机切入','事件余波','他人视角']}
+};
+var OPENING_STYLES_X=[
+  {n:'错位苏醒',d:'主角在陌生的处境中醒来，世界已经不对了。没有解释、没有引导者，靠观察细节和碎片自己拼凑现状。'},
+  {n:'危机切入',d:'开场即身处一场进行中的小危机（紧迫但不致命），角色的能力和背景在应对危机的动作中自然带出。'},
+  {n:'事件余波',d:'某件大事刚刚结束（葬礼后/战败后/被逐出师门后/失业后），主角站在它的余波里，故事从收拾残局开始。'},
+  {n:'他人视角',d:'第一幕先借一个路人或配角的眼睛看到主角登场，第二幕再切回主角本人。'}
+];
+var DNA_SKELETONS_X=[
+  ['复仇线','仇不止一层，最上面那层出乎意料；报复的每一步都在改变主角自己'],
+  ['救赎线','一桩已经犯下的错需要漫长弥补，受害者不欠主角原谅'],
+  ['权谋上位线','从边缘向核心爬，每上一级都要交换或放弃某样东西'],
+  ['悬疑真相线','表面事件之下真相层层剥开，越接近真相越伤人'],
+  ['身份秘密线','主角藏着一个暴露即毁灭的秘密，瞒的成本越来越高'],
+  ['卧底潜伏线','身在对方阵营，每天都在暴露边缘，立场逐渐动摇']
+];
+function readPrefChips(){
+  var get=function(g){var el=document.querySelector('.chip[data-group="'+g+'"].on');return el?el.dataset.val:'';};
+  PREFS={tone:get('pref-tone'),skeleton:get('pref-skeleton'),opening:get('pref-opening')};
+}
 var OPENING_STYLES=[
   {n:'普通一天',d:'主角以本地人的身份开始普通的一天。交代眼前要做的事、生活条件和一个明确的小目标；没有异象、暗示或隐藏危机。'},
   {n:'工作现场',d:'从一件正在进行的工作、学习、训练、买卖或家务切入。先让玩家完成眼前具体事务，再由玩家决定去向。'},
@@ -874,7 +931,14 @@ var REVEAL_TIMING=[
   '来历并不重要——主角接受当前人生，故事重心是现在的身份、关系与生活'
 ];
 function rollOpening(){
-  var st=OPENING_STYLES[Math.floor(Math.random()*OPENING_STYLES.length)];
+  var opool=OPENING_STYLES;
+  var opref=PREFS.opening&&PREF_MAPS.opening[PREFS.opening];
+  if(opref){
+    var omerged=OPENING_STYLES.concat(OPENING_STYLES_X);
+    opool=omerged.filter(function(x){return opref.indexOf(x.n)>=0;});
+    if(!opool.length)opool=OPENING_STYLES;
+  }
+  var st=opool[Math.floor(Math.random()*opool.length)];
   OPENING_PICK=st.n;
   if(st.n==='经典问答'){
     OPENING_TEXT='【本局开局变体：经典问答】按世界观提示词中原有的分步建角流程执行。';
@@ -944,7 +1008,10 @@ var DNA_TONES=(function(){
   return pool;
 })();
 function rollTone(){
-  var t=DNA_TONES[Math.floor(Math.random()*DNA_TONES.length)];
+  var tpool=DNA_TONES;
+  var tpref=PREFS.tone&&PREF_MAPS.tone[PREFS.tone];
+  if(tpref){ tpool=DNA_TONES.filter(function(x){return tpref.indexOf(x[0])>=0;}); if(!tpool.length)tpool=DNA_TONES; }
+  var t=tpool[Math.floor(Math.random()*tpool.length)];
   STORY_TONE=t[0];
   var trans;
   if(Math.random()<0.8){ trans='明牌——主角与玩家都清楚自己的处境和目标，看点是怎么做成，而不是猜真相；不存在藏在幕后的阴谋网，NPC没有集体瞒着主角的事'; }
@@ -954,9 +1021,14 @@ function rollTone(){
 function rollStoryDNA(){
   var hist=[];
   try{hist=JSON.parse(localStorage.getItem('wuji_dna_hist')||'[]');}catch(e){}
+  var skmerged=DNA_SKELETONS.concat(DNA_SKELETONS_X);
+  var skpool=DNA_SKELETONS;
+  var skpref=PREFS.skeleton&&PREF_MAPS.skeleton[PREFS.skeleton];
+  if(skpref){ skpool=skmerged.filter(function(x){return skpref.indexOf(x[0])>=0;}); if(!skpool.length)skpool=DNA_SKELETONS; }
+  else if(STORY_TONE==='黑色悬疑'||STORY_TONE==='严肃正剧'){ skpool=skmerged; }
   var sk,cf,ag,key,tries=0;
   do{
-    sk=DNA_SKELETONS[Math.floor(Math.random()*DNA_SKELETONS.length)];
+    sk=skpool[Math.floor(Math.random()*skpool.length)];
     cf=DNA_CONFLICTS[Math.floor(Math.random()*DNA_CONFLICTS.length)];
     ag=DNA_ANTAGONISTS[Math.floor(Math.random()*DNA_ANTAGONISTS.length)];
     key=sk[0]+'|'+cf+'|'+ag[0];
@@ -1524,6 +1596,7 @@ async function maybeCompress(){
 
 function launchGame() {
   if (!WORLD || !PACE) return;
+  readPrefChips();
   document.getElementById('pscreen').classList.add('hidden');
   document.getElementById('gscreen').style.display = 'flex';
   closePanel();
@@ -1669,7 +1742,8 @@ function startGame(){
   rollStoryDNA();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
   addBlk('sys','▸ 本局开局变体：'+OPENING_PICK+'（不满意可点「完全重置」重抽）');
-  addBlk('sys','▸ 本局基调：'+STORY_TONE+' · 故事骨架已随机抽取（对玩家保密）');
+  var prefNote=[PREFS.tone,PREFS.skeleton,PREFS.opening].filter(Boolean).join('/');
+  addBlk('sys','▸ 本局基调：'+STORY_TONE+(prefNote?' · 口味约束：'+prefNote:'')+' · 故事骨架已随机抽取（对玩家保密）');
   addBlk('sys','▸ 后端：'+MODEL);
   send('开始游戏',true);
 }
