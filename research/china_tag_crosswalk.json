@@ -1,0 +1,5007 @@
+[
+  {
+    "raw_tag": "现实职业",
+    "frequency": 10,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "群像",
+    "frequency": 8,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "通用群像标签归入既有群像交叉线；性别、职业与视角方式另行选择。"
+  },
+  {
+    "raw_tag": "东方玄幻",
+    "frequency": 6,
+    "canonical_tags": [
+      "东方玄幻"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "都市异能",
+    "frequency": 6,
+    "canonical_tags": [
+      "都市异能"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "历史穿越",
+    "frequency": 6,
+    "canonical_tags": [
+      "历史穿越"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "轻喜剧",
+    "frequency": 6,
+    "canonical_tags": [
+      "轻喜剧"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体只有荒诞、误解、黑色幽默等子型，缺少可独立选择的低烈度喜剧基调。"
+  },
+  {
+    "raw_tag": "近未来科幻",
+    "frequency": 5,
+    "canonical_tags": [
+      "近未来科幻"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "女性群像",
+    "frequency": 5,
+    "canonical_tags": [
+      "女性群像"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "女性事业线",
+    "frequency": 5,
+    "canonical_tags": [
+      "女性事业线"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "群像生活流",
+    "frequency": 5,
+    "canonical_tags": [
+      "群像生活流"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "团队成长",
+    "frequency": 5,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "系统",
+    "frequency": 5,
+    "canonical_tags": [
+      "系统流"
+    ],
+    "action": "alias",
+    "rationale": "泛称系统机制时统一到中国网文母题“系统流”，具体系统类型另行记录。"
+  },
+  {
+    "raw_tag": "仙侠",
+    "frequency": 5,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "职业专精",
+    "frequency": 5,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "穿越",
+    "frequency": 4,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "纯爱",
+    "frequency": 4,
+    "canonical_tags": [
+      "BL"
+    ],
+    "action": "alias",
+    "rationale": "本语料来自晋江等中文网文语境，纯爱为男男关系分区用语；非平台语境需人工复核。"
+  },
+  {
+    "raw_tag": "荒诞喜剧",
+    "frequency": 4,
+    "canonical_tags": [
+      "荒诞喜剧"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "克苏鲁",
+    "frequency": 4,
+    "canonical_tags": [
+      "克苏鲁神话"
+    ],
+    "action": "alias",
+    "rationale": "简称映射至既有世界框架。"
+  },
+  {
+    "raw_tag": "民俗志怪",
+    "frequency": 4,
+    "canonical_tags": [
+      "民俗志怪"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "日常",
+    "frequency": 4,
+    "canonical_tags": [
+      "生活流"
+    ],
+    "action": "new_candidate",
+    "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
+  },
+  {
+    "raw_tag": "市井烟火",
+    "frequency": 4,
+    "canonical_tags": [
+      "市井烟火"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "双男主",
+    "frequency": 4,
+    "canonical_tags": [
+      "双主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "双主角是叙事结构，不应自动等同于BL；性别与关系类型应由其他轴单独决定。"
+  },
+  {
+    "raw_tag": "无限流",
+    "frequency": 4,
+    "canonical_tags": [
+      "无限流"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "星际",
+    "frequency": 4,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "成熟正剧",
+    "frequency": 3,
+    "canonical_tags": [
+      "成熟正剧"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "成长",
+    "frequency": 3,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "都市高武",
+    "frequency": 3,
+    "canonical_tags": [
+      "高武都市"
+    ],
+    "action": "alias",
+    "rationale": "词序差异。"
+  },
+  {
+    "raw_tag": "废土重建",
+    "frequency": 3,
+    "canonical_tags": [
+      "废土重建"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "工业制造",
+    "frequency": 3,
+    "canonical_tags": [
+      "工业制造"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "竞技联赛",
+    "frequency": 3,
+    "canonical_tags": [
+      "竞技联赛"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "灵气复苏",
+    "frequency": 3,
+    "canonical_tags": [
+      "灵气复苏"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "日常单元剧",
+    "frequency": 3,
+    "canonical_tags": [
+      "日常单元剧"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "赛博朋克",
+    "frequency": 3,
+    "canonical_tags": [
+      "赛博朋克"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "现代都市",
+    "frequency": 3,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "校园",
+    "frequency": 3,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "教育阶段细节保留在原始标签，世界框架统一为校园青春。"
+  },
+  {
+    "raw_tag": "悬疑",
+    "frequency": 3,
+    "canonical_tags": [
+      "悬疑紧张"
+    ],
+    "action": "alias",
+    "rationale": "宽泛悬疑标签先落到基调轴；是否包含调查或案件需由其他标签决定。"
+  },
+  {
+    "raw_tag": "朝堂",
+    "frequency": 2,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "这些标签共同指向制度与权力博弈；具体时代和关系保留在原词。"
+  },
+  {
+    "raw_tag": "朝堂江湖",
+    "frequency": 2,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "这些标签共同指向制度与权力博弈；具体时代和关系保留在原词。"
+  },
+  {
+    "raw_tag": "创伤修复",
+    "frequency": 2,
+    "canonical_tags": [
+      "疗愈恢复"
+    ],
+    "action": "alias",
+    "rationale": "均属于关系或心理创伤的恢复。"
+  },
+  {
+    "raw_tag": "都市奇幻",
+    "frequency": 2,
+    "canonical_tags": [
+      "都市奇幻"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "都市生活",
+    "frequency": 2,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "泛现代城市背景统一到现有世界框架。"
+  },
+  {
+    "raw_tag": "多身份",
+    "frequency": 2,
+    "canonical_tags": [
+      "马甲多身份"
+    ],
+    "action": "alias",
+    "rationale": "均指主角同时经营多个社会身份。"
+  },
+  {
+    "raw_tag": "多周目信息",
+    "frequency": 2,
+    "canonical_tags": [
+      "多周目信息"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "非人主角",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "废土",
+    "frequency": 2,
+    "canonical_tags": [
+      "废土重建"
+    ],
+    "action": "alias",
+    "rationale": "简称映射至现有废土框架。"
+  },
+  {
+    "raw_tag": "古代市井",
+    "frequency": 2,
+    "canonical_tags": [
+      "古代市井"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "古代言情",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "国术",
+    "frequency": 2,
+    "canonical_tags": [
+      "国术现代"
+    ],
+    "action": "alias",
+    "rationale": "简称映射。"
+  },
+  {
+    "raw_tag": "黑色幽默",
+    "frequency": 2,
+    "canonical_tags": [
+      "黑色幽默"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "机甲",
+    "frequency": 2,
+    "canonical_tags": [
+      "机甲战争"
+    ],
+    "action": "alias",
+    "rationale": "装备简称映射至既有机甲世界框架。"
+  },
+  {
+    "raw_tag": "缉毒",
+    "frequency": 2,
+    "canonical_tags": [
+      "警察捕快",
+      "职业案件单元剧"
+    ],
+    "action": "alias",
+    "rationale": "语料中为执法职业及案件任务。"
+  },
+  {
+    "raw_tag": "架空历史",
+    "frequency": 2,
+    "canonical_tags": [
+      "架空历史"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "警察",
+    "frequency": 2,
+    "canonical_tags": [
+      "警察捕快"
+    ],
+    "action": "alias",
+    "rationale": "职业简称。"
+  },
+  {
+    "raw_tag": "警察捕快",
+    "frequency": 2,
+    "canonical_tags": [
+      "警察捕快"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "救赎",
+    "frequency": 2,
+    "canonical_tags": [
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "宽泛正向恢复基调归并。"
+  },
+  {
+    "raw_tag": "科幻玄幻融合",
+    "frequency": 2,
+    "canonical_tags": [
+      "近未来科幻",
+      "东方玄幻"
+    ],
+    "action": "alias",
+    "rationale": "复合题材由科幻与东方玄幻两轴组合。"
+  },
+  {
+    "raw_tag": "科研学术",
+    "frequency": 2,
+    "canonical_tags": [
+      "科研学术"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "克系修仙",
+    "frequency": 2,
+    "canonical_tags": [
+      "克系修仙"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "跨代叙事",
+    "frequency": 2,
+    "canonical_tags": [
+      "跨代叙事"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "历史可能性",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "领地建设",
+    "frequency": 2,
+    "canonical_tags": [
+      "领地建设"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "慢热",
+    "frequency": 2,
+    "canonical_tags": [
+      "慢热铺陈"
+    ],
+    "action": "alias",
+    "rationale": "同义节奏。"
+  },
+  {
+    "raw_tag": "门阀社会",
+    "frequency": 2,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "这些标签共同指向制度与权力博弈；具体时代和关系保留在原词。"
+  },
+  {
+    "raw_tag": "末日科幻",
+    "frequency": 2,
+    "canonical_tags": [
+      "近未来科幻",
+      "末日求生"
+    ],
+    "action": "alias",
+    "rationale": "复合标签拆为科幻框架与末日处境。"
+  },
+  {
+    "raw_tag": "末日求生",
+    "frequency": 2,
+    "canonical_tags": [
+      "末日求生"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "女性成长",
+    "frequency": 2,
+    "canonical_tags": [
+      "女性事业线",
+      "人格成长"
+    ],
+    "action": "alias",
+    "rationale": "拆为女性事业母题与人格成长。"
+  },
+  {
+    "raw_tag": "平行世界",
+    "frequency": 2,
+    "canonical_tags": [
+      "多元宇宙"
+    ],
+    "action": "alias",
+    "rationale": "平行世界是多元宇宙框架的常用表述。"
+  },
+  {
+    "raw_tag": "普通路人",
+    "frequency": 2,
+    "canonical_tags": [
+      "普通路人"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "普通人",
+    "frequency": 2,
+    "canonical_tags": [
+      "普通人类"
+    ],
+    "action": "alias",
+    "rationale": "这里描述身体/身份的普通性；是否为路人视角另行决定。"
+  },
+  {
+    "raw_tag": "轻松吐槽",
+    "frequency": 2,
+    "canonical_tags": [
+      "轻松吐槽"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "群体穿越",
+    "frequency": 2,
+    "canonical_tags": [
+      "群体穿越"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "热血",
+    "frequency": 2,
+    "canonical_tags": [
+      "热血王道"
+    ],
+    "action": "alias",
+    "rationale": "基调简称。"
+  },
+  {
+    "raw_tag": "热血王道",
+    "frequency": 2,
+    "canonical_tags": [
+      "热血王道"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "人工智能社会",
+    "frequency": 2,
+    "canonical_tags": [
+      "人工智能社会"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "赛博修仙",
+    "frequency": 2,
+    "canonical_tags": [
+      "赛博修仙"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "少年成长",
+    "frequency": 2,
+    "canonical_tags": [
+      "人格成长"
+    ],
+    "action": "alias",
+    "rationale": "年龄保留为原始限定，成长归入人格成长。"
+  },
+  {
+    "raw_tag": "生存",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "世界线变动",
+    "frequency": 2,
+    "canonical_tags": [
+      "分支世界线"
+    ],
+    "action": "new_candidate",
+    "rationale": "反复改写并比较多条世界线是稳定可复用的信息结构，区别于普通多元宇宙背景。"
+  },
+  {
+    "raw_tag": "数学",
+    "frequency": 2,
+    "canonical_tags": [
+      "科研学术"
+    ],
+    "action": "alias",
+    "rationale": "学科实例归入科研学术，竞赛或教育机制由其他标签补足。"
+  },
+  {
+    "raw_tag": "死亡循环",
+    "frequency": 2,
+    "canonical_tags": [
+      "死亡循环"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "喜剧",
+    "frequency": 2,
+    "canonical_tags": [
+      "轻喜剧"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体只有荒诞、误解、黑色幽默等子型，缺少可独立选择的低烈度喜剧基调。"
+  },
+  {
+    "raw_tag": "现代言情",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "现实言情",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "乡村田园",
+    "frequency": 2,
+    "canonical_tags": [
+      "乡村田园"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "刑侦",
+    "frequency": 2,
+    "canonical_tags": [
+      "职业案件单元剧"
+    ],
+    "action": "alias",
+    "rationale": "案件类型归入既有职业案件发动机。"
+  },
+  {
+    "raw_tag": "序列体系",
+    "frequency": 2,
+    "canonical_tags": [
+      "职业技能树",
+      "境界升级"
+    ],
+    "action": "alias",
+    "rationale": "序列既是分支能力树，也是分级成长体系。"
+  },
+  {
+    "raw_tag": "医生文",
+    "frequency": 2,
+    "canonical_tags": [
+      "医疗行业",
+      "职业文"
+    ],
+    "action": "alias",
+    "rationale": "市场类型拆为行业与职业文母题。"
+  },
+  {
+    "raw_tag": "游戏制作",
+    "frequency": 2,
+    "canonical_tags": [
+      "公司经营"
+    ],
+    "action": "alias",
+    "rationale": "作品以游戏开发团队/公司运作为主要任务链。"
+  },
+  {
+    "raw_tag": "战争",
+    "frequency": 2,
+    "canonical_tags": [
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "简称映射。"
+  },
+  {
+    "raw_tag": "战争局势",
+    "frequency": 2,
+    "canonical_tags": [
+      "战争局势"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "哲学思辨",
+    "frequency": 2,
+    "canonical_tags": [
+      "哲学思辨"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "蒸汽朋克",
+    "frequency": 2,
+    "canonical_tags": [
+      "蒸汽朋克"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "职业案件单元剧",
+    "frequency": 2,
+    "canonical_tags": [
+      "职业案件单元剧"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "重生",
+    "frequency": 2,
+    "canonical_tags": [
+      "重生回过去"
+    ],
+    "action": "alias",
+    "rationale": "中文网文常用简称。"
+  },
+  {
+    "raw_tag": "专业技术",
+    "frequency": 2,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "同义归并。"
+  },
+  {
+    "raw_tag": "爱情",
+    "frequency": 1,
+    "canonical_tags": [
+      "单一恋爱"
+    ],
+    "action": "alias",
+    "rationale": "未出现多角关系证据时映射为一般单线恋爱；原始词保留以便复核。"
+  },
+  {
+    "raw_tag": "暗恋",
+    "frequency": 1,
+    "canonical_tags": [
+      "慢热恋爱"
+    ],
+    "action": "alias",
+    "rationale": "暗恋通常以延迟确认关系推进。"
+  },
+  {
+    "raw_tag": "北伐",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "边军暗桩",
+    "frequency": 1,
+    "canonical_tags": [
+      "情报人员"
+    ],
+    "action": "new_candidate",
+    "rationale": "暗桩、卧底和情报中介共享潜伏、传递、验证与身份暴露风险，现有侦探/军师标签无法覆盖。"
+  },
+  {
+    "raw_tag": "不可靠史笔",
+    "frequency": 1,
+    "canonical_tags": [
+      "伪史料互文"
+    ],
+    "action": "new_candidate",
+    "rationale": "正文与互相冲突的仿史料共同塑造人物，是区别于一般档案拼贴的多层叙述方法。"
+  },
+  {
+    "raw_tag": "不可靠叙述",
+    "frequency": 1,
+    "canonical_tags": [
+      "不可靠叙述"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "不完美主角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "草根成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "凡人流"
+    ],
+    "action": "alias",
+    "rationale": "普通出身成长归入凡人流，不自动推断废柴。"
+  },
+  {
+    "raw_tag": "草根生计",
+    "frequency": 1,
+    "canonical_tags": [
+      "资源不足"
+    ],
+    "action": "alias",
+    "rationale": "草根生计首先体现持续资源约束，不自动推断阶层跃升。"
+  },
+  {
+    "raw_tag": "超能猫",
+    "frequency": 1,
+    "canonical_tags": [
+      "动物"
+    ],
+    "action": "alias",
+    "rationale": "超能力是附加机制，身体类型为动物。"
+  },
+  {
+    "raw_tag": "成人爱情",
+    "frequency": 1,
+    "canonical_tags": [
+      "慢热恋爱"
+    ],
+    "action": "alias",
+    "rationale": "强调成人现实磨合，归入慢热恋爱。"
+  },
+  {
+    "raw_tag": "城市记忆",
+    "frequency": 1,
+    "canonical_tags": [
+      "地域生活书写"
+    ],
+    "action": "new_candidate",
+    "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
+  },
+  {
+    "raw_tag": "程序员",
+    "frequency": 1,
+    "canonical_tags": [
+      "程序员黑客"
+    ],
+    "action": "alias",
+    "rationale": "同义职业归并。"
+  },
+  {
+    "raw_tag": "赤子型主角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "穿书",
+    "frequency": 1,
+    "canonical_tags": [
+      "原创角色进入原作"
+    ],
+    "action": "alias",
+    "rationale": "穿书通常指外来意识进入既有小说世界；若实际为原作角色转生需人工改标。"
+  },
+  {
+    "raw_tag": "传统技艺",
+    "frequency": 1,
+    "canonical_tags": [
+      "技艺传承"
+    ],
+    "action": "new_candidate",
+    "rationale": "教学、守艺与代际传承可以持续产生任务和关系变化，不能只归为静态职业背景。"
+  },
+  {
+    "raw_tag": "传统曲艺",
+    "frequency": 1,
+    "canonical_tags": [
+      "传统表演艺人"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有“演员偶像”偏现代娱乐业，不能准确覆盖曲艺、说唱和非遗表演职业。"
+  },
+  {
+    "raw_tag": "传统与现代",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "闯关",
+    "frequency": 1,
+    "canonical_tags": [
+      "副本循环"
+    ],
+    "action": "alias",
+    "rationale": "泛闯关/副本归入既有副本发动机。"
+  },
+  {
+    "raw_tag": "创伤",
+    "frequency": 1,
+    "canonical_tags": [
+      "疾病伤痛"
+    ],
+    "action": "alias",
+    "rationale": "心理或身体创伤先归入疾病伤痛，是否进入疗愈线由其他标签决定。"
+  },
+  {
+    "raw_tag": "创业就业",
+    "frequency": 1,
+    "canonical_tags": [
+      "公司经营",
+      "改行再就业"
+    ],
+    "action": "alias",
+    "rationale": "拆为经营任务和职业转换位置。"
+  },
+  {
+    "raw_tag": "大墟",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "大学",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "教育阶段细节保留在原始标签，世界框架统一为校园青春。"
+  },
+  {
+    "raw_tag": "大学生",
+    "frequency": 1,
+    "canonical_tags": [
+      "学生"
+    ],
+    "action": "alias",
+    "rationale": "教育阶段细节保留在原始标签。"
+  },
+  {
+    "raw_tag": "大学校园",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "教育阶段细节保留在原始标签，世界框架统一为校园青春。"
+  },
+  {
+    "raw_tag": "单一恋爱",
+    "frequency": 1,
+    "canonical_tags": [
+      "单一恋爱"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "单元怪谈",
+    "frequency": 1,
+    "canonical_tags": [
+      "单元剧"
+    ],
+    "action": "alias",
+    "rationale": "各类单元内容统一到篇章节奏“单元剧”，保留具体内容词。"
+  },
+  {
+    "raw_tag": "单元事件",
+    "frequency": 1,
+    "canonical_tags": [
+      "单元剧"
+    ],
+    "action": "alias",
+    "rationale": "各类单元内容统一到篇章节奏“单元剧”，保留具体内容词。"
+  },
+  {
+    "raw_tag": "单元异事",
+    "frequency": 1,
+    "canonical_tags": [
+      "单元剧"
+    ],
+    "action": "alias",
+    "rationale": "各类单元内容统一到篇章节奏“单元剧”，保留具体内容词。"
+  },
+  {
+    "raw_tag": "单元自救",
+    "frequency": 1,
+    "canonical_tags": [
+      "单元剧"
+    ],
+    "action": "alias",
+    "rationale": "各类单元内容统一到篇章节奏“单元剧”，保留具体内容词。"
+  },
+  {
+    "raw_tag": "档案拼贴",
+    "frequency": 1,
+    "canonical_tags": [
+      "档案拼贴"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "倒计时",
+    "frequency": 1,
+    "canonical_tags": [
+      "倒计时"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "地点作为主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "地点作为主角"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "地方民俗志",
+    "frequency": 1,
+    "canonical_tags": [
+      "地域生活书写"
+    ],
+    "action": "new_candidate",
+    "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
+  },
+  {
+    "raw_tag": "地方文化",
+    "frequency": 1,
+    "canonical_tags": [
+      "地域生活书写"
+    ],
+    "action": "new_candidate",
+    "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
+  },
+  {
+    "raw_tag": "地摊",
+    "frequency": 1,
+    "canonical_tags": [
+      "商人行商",
+      "店铺经营"
+    ],
+    "action": "alias",
+    "rationale": "拆为小商贩身份与经营发动机。"
+  },
+  {
+    "raw_tag": "地铁职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业技术人员"
+    ],
+    "action": "alias",
+    "rationale": "现有职业表暂无公共交通站务，先映射到宽泛职业技术位置并保留原词。"
+  },
+  {
+    "raw_tag": "迪化流",
+    "frequency": 1,
+    "canonical_tags": [
+      "迪化流"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "电子自习室",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "调查",
+    "frequency": 1,
+    "canonical_tags": [
+      "谜题调查"
+    ],
+    "action": "alias",
+    "rationale": "调查对象细节保留，发动机归入谜题调查。"
+  },
+  {
+    "raw_tag": "东方高武",
+    "frequency": 1,
+    "canonical_tags": [
+      "东方玄幻"
+    ],
+    "action": "alias",
+    "rationale": "高武是东方玄幻的强度限定，原始标签保留用于细分。"
+  },
+  {
+    "raw_tag": "东方仙侠",
+    "frequency": 1,
+    "canonical_tags": [
+      "古典仙侠"
+    ],
+    "action": "alias",
+    "rationale": "同义归并。"
+  },
+  {
+    "raw_tag": "东晋十六国",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "都市",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "泛现代城市背景统一到现有世界框架。"
+  },
+  {
+    "raw_tag": "都市灵异",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市",
+      "民俗志怪"
+    ],
+    "action": "alias",
+    "rationale": "复合标签拆为现代城市与灵异/志怪框架。"
+  },
+  {
+    "raw_tag": "都市修真",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代修仙"
+    ],
+    "action": "alias",
+    "rationale": "同义世界框架。"
+  },
+  {
+    "raw_tag": "短篇反套路",
+    "frequency": 1,
+    "canonical_tags": [
+      "短篇闭环",
+      "反套路流"
+    ],
+    "action": "alias",
+    "rationale": "拆为篇幅结构与反套路母题。"
+  },
+  {
+    "raw_tag": "多方博弈",
+    "frequency": 1,
+    "canonical_tags": [
+      "利益不同",
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "多方行动由利益差异和群像交叉结构组合。"
+  },
+  {
+    "raw_tag": "多关系线",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "多条关系线通常以交叉群像组织。"
+  },
+  {
+    "raw_tag": "多视角POV",
+    "frequency": 1,
+    "canonical_tags": [
+      "多视角POV"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "多体系",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "法力贷",
+    "frequency": 1,
+    "canonical_tags": [
+      "资源不足",
+      "市场竞争"
+    ],
+    "action": "alias",
+    "rationale": "具体金融设定拆为资源约束与市场规则。"
+  },
+  {
+    "raw_tag": "法医",
+    "frequency": 1,
+    "canonical_tags": [
+      "仵作法医"
+    ],
+    "action": "alias",
+    "rationale": "现代法医与既有仵作法医职业合并。"
+  },
+  {
+    "raw_tag": "凡人生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "生活流"
+    ],
+    "action": "new_candidate",
+    "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
+  },
+  {
+    "raw_tag": "反派攻略",
+    "frequency": 1,
+    "canonical_tags": [
+      "原作配角",
+      "快穿世界"
+    ],
+    "action": "alias",
+    "rationale": "语料中为穿书任务：目标角色位置与任务世界分别归一。"
+  },
+  {
+    "raw_tag": "反套路",
+    "frequency": 1,
+    "canonical_tags": [
+      "反套路流"
+    ],
+    "action": "alias",
+    "rationale": "同义母题归并。"
+  },
+  {
+    "raw_tag": "反套路流",
+    "frequency": 1,
+    "canonical_tags": [
+      "反套路流"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "反童话",
+    "frequency": 1,
+    "canonical_tags": [
+      "童话奇幻",
+      "冷峻现实"
+    ],
+    "action": "alias",
+    "rationale": "以童话母题外壳和现实解构组合表达。"
+  },
+  {
+    "raw_tag": "反系统",
+    "frequency": 1,
+    "canonical_tags": [
+      "反系统叙事"
+    ],
+    "action": "new_candidate",
+    "rationale": "主角反抗、利用漏洞或被迫逆向完成系统目标，与普通任务系统的顺从执行不同。"
+  },
+  {
+    "raw_tag": "反向系统",
+    "frequency": 1,
+    "canonical_tags": [
+      "反系统叙事"
+    ],
+    "action": "new_candidate",
+    "rationale": "主角反抗、利用漏洞或被迫逆向完成系统目标，与普通任务系统的顺从执行不同。"
+  },
+  {
+    "raw_tag": "返乡青年",
+    "frequency": 1,
+    "canonical_tags": [
+      "返乡再开始"
+    ],
+    "action": "new_candidate",
+    "rationale": "回到故乡或原社会重新就业、修复关系和参与社区，是区别于异世界/时间回归的现实来历。"
+  },
+  {
+    "raw_tag": "方言地域",
+    "frequency": 1,
+    "canonical_tags": [
+      "地域生活书写"
+    ],
+    "action": "new_candidate",
+    "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
+  },
+  {
+    "raw_tag": "非人感官视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "非人感官视角"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "非遗传承",
+    "frequency": 1,
+    "canonical_tags": [
+      "技艺传承"
+    ],
+    "action": "new_candidate",
+    "rationale": "教学、守艺与代际传承可以持续产生任务和关系变化，不能只归为静态职业背景。"
+  },
+  {
+    "raw_tag": "非重生穿越",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "废弃星系",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "封闭空间",
+    "frequency": 1,
+    "canonical_tags": [
+      "封闭空间"
+    ],
+    "action": "new_candidate",
+    "rationale": "空间边界持续限制资源、行动和信息，是可跨科幻、悬疑与现实题材复用的结构机制。"
+  },
+  {
+    "raw_tag": "讽刺寓言",
+    "frequency": 1,
+    "canonical_tags": [
+      "讽刺寓言"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "父女",
+    "frequency": 1,
+    "canonical_tags": [
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "家庭关系归并。"
+  },
+  {
+    "raw_tag": "负面情绪系统",
+    "frequency": 1,
+    "canonical_tags": [
+      "系统流"
+    ],
+    "action": "alias",
+    "rationale": "情绪计分是具体系统实现，保留原始细节但规范到系统流。"
+  },
+  {
+    "raw_tag": "副本",
+    "frequency": 1,
+    "canonical_tags": [
+      "副本循环"
+    ],
+    "action": "alias",
+    "rationale": "泛闯关/副本归入既有副本发动机。"
+  },
+  {
+    "raw_tag": "副本循环",
+    "frequency": 1,
+    "canonical_tags": [
+      "副本循环"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "港风",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "高人误会",
+    "frequency": 1,
+    "canonical_tags": [
+      "迪化流",
+      "迪化被误认强者"
+    ],
+    "action": "alias",
+    "rationale": "他人误认主角为高人，是迪化结构。"
+  },
+  {
+    "raw_tag": "高速升级",
+    "frequency": 1,
+    "canonical_tags": [
+      "境界升级",
+      "快速爽点"
+    ],
+    "action": "alias",
+    "rationale": "拆为成长方式与节奏。"
+  },
+  {
+    "raw_tag": "搞笑",
+    "frequency": 1,
+    "canonical_tags": [
+      "轻喜剧"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体只有荒诞、误解、黑色幽默等子型，缺少可独立选择的低烈度喜剧基调。"
+  },
+  {
+    "raw_tag": "革命",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "社会秩序变革与一般政治标签归入政治权力冲突。"
+  },
+  {
+    "raw_tag": "工人阶层",
+    "frequency": 1,
+    "canonical_tags": [
+      "基层劳动者"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有平台劳动者过窄；制造、建筑和一般体力劳动需要可跨行业复用的社会位置。"
+  },
+  {
+    "raw_tag": "工业化",
+    "frequency": 1,
+    "canonical_tags": [
+      "工业科技树"
+    ],
+    "action": "alias",
+    "rationale": "均属于技术体系扩散与工业化进程。"
+  },
+  {
+    "raw_tag": "工业科技树",
+    "frequency": 1,
+    "canonical_tags": [
+      "工业科技树"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "工业文",
+    "frequency": 1,
+    "canonical_tags": [
+      "工业制造",
+      "职业文"
+    ],
+    "action": "alias",
+    "rationale": "市场类型拆为行业与职业文母题。"
+  },
+  {
+    "raw_tag": "工业种田",
+    "frequency": 1,
+    "canonical_tags": [
+      "工业种田"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "公交车",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "公司经营",
+    "frequency": 1,
+    "canonical_tags": [
+      "公司经营"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "苟道",
+    "frequency": 1,
+    "canonical_tags": [
+      "苟道谨慎"
+    ],
+    "action": "alias",
+    "rationale": "中文网文常见同义表述。"
+  },
+  {
+    "raw_tag": "孤独",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "古代机械",
+    "frequency": 1,
+    "canonical_tags": [
+      "工业科技树"
+    ],
+    "action": "alias",
+    "rationale": "时代限定保留原词，机械扩散机制归入工业科技树。"
+  },
+  {
+    "raw_tag": "古代乱世",
+    "frequency": 1,
+    "canonical_tags": [
+      "架空历史",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "拆为古代架空背景与乱世战争。"
+  },
+  {
+    "raw_tag": "古代探案",
+    "frequency": 1,
+    "canonical_tags": [
+      "古代市井",
+      "职业案件单元剧"
+    ],
+    "action": "alias",
+    "rationale": "拆为古代生活场景与案件发动机。"
+  },
+  {
+    "raw_tag": "古代医疗",
+    "frequency": 1,
+    "canonical_tags": [
+      "古代市井",
+      "医疗行业"
+    ],
+    "action": "alias",
+    "rationale": "拆为时代场景与行业。"
+  },
+  {
+    "raw_tag": "古典仙侠",
+    "frequency": 1,
+    "canonical_tags": [
+      "古典仙侠"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "古典学知识",
+    "frequency": 1,
+    "canonical_tags": [
+      "知识优势"
+    ],
+    "action": "alias",
+    "rationale": "知识作为行动资源统一到知识优势。"
+  },
+  {
+    "raw_tag": "古典雅致",
+    "frequency": 1,
+    "canonical_tags": [
+      "古典雅致"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "古言穿越",
+    "frequency": 1,
+    "canonical_tags": [
+      "历史穿越"
+    ],
+    "action": "alias",
+    "rationale": "语料中的穿越目标为历史时代，统一到历史穿越。"
+  },
+  {
+    "raw_tag": "归国青年",
+    "frequency": 1,
+    "canonical_tags": [
+      "返乡再开始"
+    ],
+    "action": "new_candidate",
+    "rationale": "回到故乡或原社会重新就业、修复关系和参与社区，是区别于异世界/时间回归的现实来历。"
+  },
+  {
+    "raw_tag": "规则",
+    "frequency": 1,
+    "canonical_tags": [
+      "规则公开限制"
+    ],
+    "action": "alias",
+    "rationale": "泛规则标签不等同于怪谈，保守归入公开规则限制。"
+  },
+  {
+    "raw_tag": "规则怪谈",
+    "frequency": 1,
+    "canonical_tags": [
+      "规则怪谈"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "规则生存",
+    "frequency": 1,
+    "canonical_tags": [
+      "规则生存"
+    ],
+    "action": "new_candidate",
+    "rationale": "公开或可推理规则主导生存，但不必包含怪谈；比“规则怪谈”覆盖面更准确。"
+  },
+  {
+    "raw_tag": "诡秘宇宙",
+    "frequency": 1,
+    "canonical_tags": [
+      "克苏鲁神话",
+      "蒸汽朋克"
+    ],
+    "action": "alias",
+    "rationale": "作品宇宙专名拆为可复用的两类世界框架。"
+  },
+  {
+    "raw_tag": "鬼屋经营",
+    "frequency": 1,
+    "canonical_tags": [
+      "店铺经营"
+    ],
+    "action": "alias",
+    "rationale": "鬼屋是具体店铺业态。"
+  },
+  {
+    "raw_tag": "国企",
+    "frequency": 1,
+    "canonical_tags": [
+      "工业制造"
+    ],
+    "action": "alias",
+    "rationale": "归入工业制造行业，所有制细节保留原词。"
+  },
+  {
+    "raw_tag": "过门",
+    "frequency": 1,
+    "canonical_tags": [
+      "无限流"
+    ],
+    "action": "alias",
+    "rationale": "均为该作品无限流世界切换的内部叫法。"
+  },
+  {
+    "raw_tag": "汉藏人物",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "合租",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "黑科技",
+    "frequency": 1,
+    "canonical_tags": [
+      "科技研发"
+    ],
+    "action": "alias",
+    "rationale": "宽泛黑科技爽点归入研发成长。"
+  },
+  {
+    "raw_tag": "黑客",
+    "frequency": 1,
+    "canonical_tags": [
+      "程序员黑客"
+    ],
+    "action": "alias",
+    "rationale": "同义职业归并。"
+  },
+  {
+    "raw_tag": "洪荒",
+    "frequency": 1,
+    "canonical_tags": [
+      "东方玄幻"
+    ],
+    "action": "alias",
+    "rationale": "洪荒是东方玄幻的常见世界谱系。"
+  },
+  {
+    "raw_tag": "后启示录",
+    "frequency": 1,
+    "canonical_tags": [
+      "末日求生",
+      "灾后新文明"
+    ],
+    "action": "alias",
+    "rationale": "后启示录同时包含灾后生存和新秩序阶段。"
+  },
+  {
+    "raw_tag": "后山海经",
+    "frequency": 1,
+    "canonical_tags": [
+      "东方玄幻",
+      "武侠江湖"
+    ],
+    "action": "alias",
+    "rationale": "作品级时代命名拆为神话资源与武侠社会。"
+  },
+  {
+    "raw_tag": "皇帝",
+    "frequency": 1,
+    "canonical_tags": [
+      "领主君主"
+    ],
+    "action": "alias",
+    "rationale": "统治者身份归并。"
+  },
+  {
+    "raw_tag": "婚姻政治",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "这些标签共同指向制度与权力博弈；具体时代和关系保留在原词。"
+  },
+  {
+    "raw_tag": "伙伴收集",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队形成、协作和共同任务统一到团队成长。"
+  },
+  {
+    "raw_tag": "机构",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "机甲战争",
+    "frequency": 1,
+    "canonical_tags": [
+      "机甲战争"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "机械师",
+    "frequency": 1,
+    "canonical_tags": [
+      "工程维修"
+    ],
+    "action": "alias",
+    "rationale": "机械职业统一到工程维修。"
+  },
+  {
+    "raw_tag": "基层官吏",
+    "frequency": 1,
+    "canonical_tags": [
+      "政府基层"
+    ],
+    "action": "alias",
+    "rationale": "统一到基层公共机构位置。"
+  },
+  {
+    "raw_tag": "基层劳动",
+    "frequency": 1,
+    "canonical_tags": [
+      "基层劳动者"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有平台劳动者过窄；制造、建筑和一般体力劳动需要可跨行业复用的社会位置。"
+  },
+  {
+    "raw_tag": "基层视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "普通路人"
+    ],
+    "action": "alias",
+    "rationale": "强调非权力中心的普通叙事位置。"
+  },
+  {
+    "raw_tag": "基层医馆",
+    "frequency": 1,
+    "canonical_tags": [
+      "医疗行业"
+    ],
+    "action": "alias",
+    "rationale": "医疗场域与任务统一到医疗行业，具体专业保留原词。"
+  },
+  {
+    "raw_tag": "基建种田",
+    "frequency": 1,
+    "canonical_tags": [
+      "基建种田"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "基因技术",
+    "frequency": 1,
+    "canonical_tags": [
+      "生物朋克"
+    ],
+    "action": "alias",
+    "rationale": "基因改造作为世界核心技术时归入生物朋克。"
+  },
+  {
+    "raw_tag": "极简文风",
+    "frequency": 1,
+    "canonical_tags": [
+      "极简克制"
+    ],
+    "action": "alias",
+    "rationale": "同义文风。"
+  },
+  {
+    "raw_tag": "极致女强爽文",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "集体争取",
+    "frequency": 1,
+    "canonical_tags": [
+      "集体行动"
+    ],
+    "action": "new_candidate",
+    "rationale": "群体通过协商、组织和行动改变具体制度，是可跨现实、历史与幻想复用的发动机。"
+  },
+  {
+    "raw_tag": "记忆碎片",
+    "frequency": 1,
+    "canonical_tags": [
+      "碎片拼图"
+    ],
+    "action": "alias",
+    "rationale": "碎片化记忆通过拼合形成主线信息。"
+  },
+  {
+    "raw_tag": "纪念叙事",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "技术",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "技术扩散",
+    "frequency": 1,
+    "canonical_tags": [
+      "工业科技树"
+    ],
+    "action": "alias",
+    "rationale": "均属于技术体系扩散与工业化进程。"
+  },
+  {
+    "raw_tag": "技术流",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精",
+      "知识优势"
+    ],
+    "action": "alias",
+    "rationale": "技术作为爽点时同时体现专精与知识优势。"
+  },
+  {
+    "raw_tag": "寄生共生",
+    "frequency": 1,
+    "canonical_tags": [
+      "寄生共生"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "家国",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "家庭日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "生活流"
+    ],
+    "action": "new_candidate",
+    "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
+  },
+  {
+    "raw_tag": "家族",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "家族传承",
+    "frequency": 1,
+    "canonical_tags": [
+      "技艺传承"
+    ],
+    "action": "new_candidate",
+    "rationale": "教学、守艺与代际传承可以持续产生任务和关系变化，不能只归为静态职业背景。"
+  },
+  {
+    "raw_tag": "架空机构",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "架空盛世",
+    "frequency": 1,
+    "canonical_tags": [
+      "架空历史"
+    ],
+    "action": "alias",
+    "rationale": "盛世是该架空历史的局部状态。"
+  },
+  {
+    "raw_tag": "建设家乡",
+    "frequency": 1,
+    "canonical_tags": [
+      "城市建设",
+      "社区组织者"
+    ],
+    "action": "alias",
+    "rationale": "拆为地方建设发动机与社区行动位置。"
+  },
+  {
+    "raw_tag": "建筑女工",
+    "frequency": 1,
+    "canonical_tags": [
+      "基层劳动者"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有平台劳动者过窄；制造、建筑和一般体力劳动需要可跨行业复用的社会位置。"
+  },
+  {
+    "raw_tag": "角色扮演",
+    "frequency": 1,
+    "canonical_tags": [
+      "马甲身份"
+    ],
+    "action": "alias",
+    "rationale": "在该语料中角色扮演用于进入任务身份；若为表演活动需人工复核。"
+  },
+  {
+    "raw_tag": "教育",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "阶层",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "阶层结构及竞争统一到阶层差异冲突。"
+  },
+  {
+    "raw_tag": "阶层竞争",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "阶层结构及竞争统一到阶层差异冲突。"
+  },
+  {
+    "raw_tag": "近未来",
+    "frequency": 1,
+    "canonical_tags": [
+      "近未来科幻"
+    ],
+    "action": "alias",
+    "rationale": "简称映射。"
+  },
+  {
+    "raw_tag": "近现代跨度",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "经营",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "精神污染",
+    "frequency": 1,
+    "canonical_tags": [
+      "非人格异常",
+      "心理恐怖"
+    ],
+    "action": "alias",
+    "rationale": "拆为异常来源与心理影响。"
+  },
+  {
+    "raw_tag": "竞技",
+    "frequency": 1,
+    "canonical_tags": [
+      "竞技联赛"
+    ],
+    "action": "alias",
+    "rationale": "泛竞技/竞赛归入既有竞赛发动机，具体项目保留原词。"
+  },
+  {
+    "raw_tag": "竞赛",
+    "frequency": 1,
+    "canonical_tags": [
+      "竞技联赛"
+    ],
+    "action": "alias",
+    "rationale": "泛竞技/竞赛归入既有竞赛发动机，具体项目保留原词。"
+  },
+  {
+    "raw_tag": "九条时间线",
+    "frequency": 1,
+    "canonical_tags": [
+      "分支世界线"
+    ],
+    "action": "new_candidate",
+    "rationale": "反复改写并比较多条世界线是稳定可复用的信息结构，区别于普通多元宇宙背景。"
+  },
+  {
+    "raw_tag": "酒店经营",
+    "frequency": 1,
+    "canonical_tags": [
+      "店主经营者",
+      "店铺经营"
+    ],
+    "action": "alias",
+    "rationale": "拆为经营者身份与店铺经营。"
+  },
+  {
+    "raw_tag": "救亡事业",
+    "frequency": 1,
+    "canonical_tags": [
+      "战争局势",
+      "宇宙存在危机"
+    ],
+    "action": "alias",
+    "rationale": "救亡目标通常由战争和文明级风险共同产生。"
+  },
+  {
+    "raw_tag": "救援",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业难题"
+    ],
+    "action": "alias",
+    "rationale": "救援是具体任务类型，先归入职业难题并保留原词。"
+  },
+  {
+    "raw_tag": "聚居地",
+    "frequency": 1,
+    "canonical_tags": [
+      "灾后新文明"
+    ],
+    "action": "alias",
+    "rationale": "灾后聚居点是新文明组织形态，具体规模保留原词。"
+  },
+  {
+    "raw_tag": "军功",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "军校",
+    "frequency": 1,
+    "canonical_tags": [
+      "学生",
+      "佣兵军人"
+    ],
+    "action": "alias",
+    "rationale": "军校生同时具有学生与军事训练身份。"
+  },
+  {
+    "raw_tag": "郡主",
+    "frequency": 1,
+    "canonical_tags": [
+      "贵族家族"
+    ],
+    "action": "alias",
+    "rationale": "具体贵族头衔归入贵族家族。"
+  },
+  {
+    "raw_tag": "考试系统",
+    "frequency": 1,
+    "canonical_tags": [
+      "任务系统"
+    ],
+    "action": "alias",
+    "rationale": "都以系统下发、验收任务为核心。"
+  },
+  {
+    "raw_tag": "科幻修真",
+    "frequency": 1,
+    "canonical_tags": [
+      "近未来科幻",
+      "东方玄幻"
+    ],
+    "action": "alias",
+    "rationale": "复合题材由科幻与东方玄幻两轴组合。"
+  },
+  {
+    "raw_tag": "科技创业",
+    "frequency": 1,
+    "canonical_tags": [
+      "科研研发",
+      "公司经营"
+    ],
+    "action": "alias",
+    "rationale": "拆为研发与企业经营。"
+  },
+  {
+    "raw_tag": "科技伦理",
+    "frequency": 1,
+    "canonical_tags": [
+      "哲学思辨"
+    ],
+    "action": "alias",
+    "rationale": "这些标签均描述对技术、制度或现实边界的价值思考。"
+  },
+  {
+    "raw_tag": "科技强国",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "科技研发",
+    "frequency": 1,
+    "canonical_tags": [
+      "科技研发"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "科学家群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "这些是群像参与者或场域的作品级限定，统一到群像交叉线。"
+  },
+  {
+    "raw_tag": "科学史人物",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "科研",
+    "frequency": 1,
+    "canonical_tags": [
+      "研究者",
+      "科研研发"
+    ],
+    "action": "alias",
+    "rationale": "拆为研究职业与研发发动机。"
+  },
+  {
+    "raw_tag": "恐怖",
+    "frequency": 1,
+    "canonical_tags": [
+      "心理恐怖"
+    ],
+    "action": "alias",
+    "rationale": "宽泛恐怖先落到非宇宙型心理恐怖；有克苏鲁标签时由后者补足。"
+  },
+  {
+    "raw_tag": "恐怖副本",
+    "frequency": 1,
+    "canonical_tags": [
+      "副本循环",
+      "心理恐怖"
+    ],
+    "action": "alias",
+    "rationale": "拆为副本发动机和恐怖基调。"
+  },
+  {
+    "raw_tag": "跨时空关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "多元宇宙",
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "跨时空是世界结构，关系本身以成长轴表达。"
+  },
+  {
+    "raw_tag": "跨时空群聊",
+    "frequency": 1,
+    "canonical_tags": [
+      "聊天群",
+      "跨世界论坛"
+    ],
+    "action": "alias",
+    "rationale": "跨时空交流由聊天群媒介和跨世界连接组成。"
+  },
+  {
+    "raw_tag": "跨世界诸天",
+    "frequency": 1,
+    "canonical_tags": [
+      "跨世界诸天"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "捞尸职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "民俗职业"
+    ],
+    "action": "new_candidate",
+    "rationale": "丧葬、收尸、扎纸等可共享职业流程与地方知识，宜抽象为民俗职业而非逐项扩表。"
+  },
+  {
+    "raw_tag": "乐师",
+    "frequency": 1,
+    "canonical_tags": [
+      "演员偶像"
+    ],
+    "action": "alias",
+    "rationale": "本体暂无独立音乐表演职业，先映射到表演职业并保留原词。"
+  },
+  {
+    "raw_tag": "冷峻现实",
+    "frequency": 1,
+    "canonical_tags": [
+      "冷峻现实"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "理想主义",
+    "frequency": 1,
+    "canonical_tags": [
+      "希望朋克"
+    ],
+    "action": "alias",
+    "rationale": "以主动建设和互助对抗困境，接近既有希望朋克基调。"
+  },
+  {
+    "raw_tag": "历史",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "历史副本",
+    "frequency": 1,
+    "canonical_tags": [
+      "副本循环"
+    ],
+    "action": "alias",
+    "rationale": "具体副本题材统一到副本循环发动机。"
+  },
+  {
+    "raw_tag": "励志",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "连环案件",
+    "frequency": 1,
+    "canonical_tags": [
+      "案件串联",
+      "职业案件单元剧"
+    ],
+    "action": "alias",
+    "rationale": "拆为案件节奏与职业案件发动机。"
+  },
+  {
+    "raw_tag": "炼丹",
+    "frequency": 1,
+    "canonical_tags": [
+      "药师炼丹"
+    ],
+    "action": "alias",
+    "rationale": "具体修真职业归并。"
+  },
+  {
+    "raw_tag": "炼器",
+    "frequency": 1,
+    "canonical_tags": [
+      "炼器符阵"
+    ],
+    "action": "alias",
+    "rationale": "具体修真职业归并。"
+  },
+  {
+    "raw_tag": "凉州贤孝",
+    "frequency": 1,
+    "canonical_tags": [
+      "传统表演艺人"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有“演员偶像”偏现代娱乐业，不能准确覆盖曲艺、说唱和非遗表演职业。"
+  },
+  {
+    "raw_tag": "聊天群",
+    "frequency": 1,
+    "canonical_tags": [
+      "聊天群"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "聊天群流",
+    "frequency": 1,
+    "canonical_tags": [
+      "聊天群流"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "灵根租赁",
+    "frequency": 1,
+    "canonical_tags": [
+      "资源不足",
+      "市场竞争"
+    ],
+    "action": "alias",
+    "rationale": "具体金融设定拆为资源约束与市场规则。"
+  },
+  {
+    "raw_tag": "另类师徒",
+    "frequency": 1,
+    "canonical_tags": [
+      "师徒"
+    ],
+    "action": "alias",
+    "rationale": "“另类”是风格修饰，关系类型仍为师徒。"
+  },
+  {
+    "raw_tag": "流民",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "流民起点",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "旅行见闻",
+    "frequency": 1,
+    "canonical_tags": [
+      "旅行见闻"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "律法",
+    "frequency": 1,
+    "canonical_tags": [
+      "法律行业"
+    ],
+    "action": "alias",
+    "rationale": "法律知识与制度实践归入法律行业。"
+  },
+  {
+    "raw_tag": "律师",
+    "frequency": 1,
+    "canonical_tags": [
+      "律师法务"
+    ],
+    "action": "alias",
+    "rationale": "职业简称。"
+  },
+  {
+    "raw_tag": "乱世",
+    "frequency": 1,
+    "canonical_tags": [
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "乱世的核心公共冲突为持续战争与秩序崩解。"
+  },
+  {
+    "raw_tag": "轮回重置",
+    "frequency": 1,
+    "canonical_tags": [
+      "多周目轮回"
+    ],
+    "action": "alias",
+    "rationale": "反复重置并积累信息映射到多周目轮回。"
+  },
+  {
+    "raw_tag": "论坛帖子",
+    "frequency": 1,
+    "canonical_tags": [
+      "论坛帖子"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "埋尸人",
+    "frequency": 1,
+    "canonical_tags": [
+      "民俗职业"
+    ],
+    "action": "new_candidate",
+    "rationale": "丧葬、收尸、扎纸等可共享职业流程与地方知识，宜抽象为民俗职业而非逐项扩表。"
+  },
+  {
+    "raw_tag": "盲眼主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "身体残障"
+    ],
+    "action": "alias",
+    "rationale": "失明是既有身体残障的具体形式。"
+  },
+  {
+    "raw_tag": "盲艺人",
+    "frequency": 1,
+    "canonical_tags": [
+      "传统表演艺人",
+      "身体残障"
+    ],
+    "action": "new_candidate",
+    "rationale": "该标签同时揭示传统表演职业与身体经验；建议本体新增职业标签并组合既有身体标签。"
+  },
+  {
+    "raw_tag": "冒充士族",
+    "frequency": 1,
+    "canonical_tags": [
+      "马甲身份",
+      "贵族家族"
+    ],
+    "action": "alias",
+    "rationale": "拆为伪装身份发动机与目标社会阶层。"
+  },
+  {
+    "raw_tag": "冒险",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "美食",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮"
+    ],
+    "action": "alias",
+    "rationale": "题材简称映射。"
+  },
+  {
+    "raw_tag": "美食餐饮",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "萌宠",
+    "frequency": 1,
+    "canonical_tags": [
+      "动物",
+      "人与宠物伙伴"
+    ],
+    "action": "alias",
+    "rationale": "拆为身体类型与伙伴关系。"
+  },
+  {
+    "raw_tag": "梦境穿行",
+    "frequency": 1,
+    "canonical_tags": [
+      "梦境穿行"
+    ],
+    "action": "new_candidate",
+    "rationale": "梦境作为可反复进入、观察或传递信息的空间，是独立故事发动机而非普通预知。"
+  },
+  {
+    "raw_tag": "梦入未来",
+    "frequency": 1,
+    "canonical_tags": [
+      "梦境穿行"
+    ],
+    "action": "new_candidate",
+    "rationale": "梦境作为可反复进入、观察或传递信息的空间，是独立故事发动机而非普通预知。"
+  },
+  {
+    "raw_tag": "谜题闯关",
+    "frequency": 1,
+    "canonical_tags": [
+      "副本循环"
+    ],
+    "action": "alias",
+    "rationale": "具体副本题材统一到副本循环发动机。"
+  },
+  {
+    "raw_tag": "谜题调查",
+    "frequency": 1,
+    "canonical_tags": [
+      "谜题调查"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "免费平台爽文",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "属于平台、传播或市场表现元数据，不应进入叙事本体。"
+  },
+  {
+    "raw_tag": "民国",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "民间信仰",
+    "frequency": 1,
+    "canonical_tags": [
+      "香火神道"
+    ],
+    "action": "alias",
+    "rationale": "民间祭祀与信仰体系归入香火神道。"
+  },
+  {
+    "raw_tag": "民俗",
+    "frequency": 1,
+    "canonical_tags": [
+      "民俗志怪"
+    ],
+    "action": "alias",
+    "rationale": "泛民俗超常内容统一到民俗志怪，具体文化细节保留原词。"
+  },
+  {
+    "raw_tag": "民俗怪谈",
+    "frequency": 1,
+    "canonical_tags": [
+      "民俗志怪"
+    ],
+    "action": "alias",
+    "rationale": "同义题材归并。"
+  },
+  {
+    "raw_tag": "命运抗争",
+    "frequency": 1,
+    "canonical_tags": [
+      "价值观冲突"
+    ],
+    "action": "alias",
+    "rationale": "核心是不同责任、价值与个人选择之间的冲突。"
+  },
+  {
+    "raw_tag": "蘑菇",
+    "frequency": 1,
+    "canonical_tags": [
+      "菌群"
+    ],
+    "action": "alias",
+    "rationale": "物种实例映射至既有菌群身体类型。"
+  },
+  {
+    "raw_tag": "魔尊做家务",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "幕后辅助",
+    "frequency": 1,
+    "canonical_tags": [
+      "参谋军师",
+      "幕后流"
+    ],
+    "action": "alias",
+    "rationale": "拆为辅助位置与幕后成长结构。"
+  },
+  {
+    "raw_tag": "幕后经营",
+    "frequency": 1,
+    "canonical_tags": [
+      "幕后组织经营",
+      "幕后流"
+    ],
+    "action": "alias",
+    "rationale": "拆为组织经营发动机与幕后成长。"
+  },
+  {
+    "raw_tag": "奶爸文",
+    "frequency": 1,
+    "canonical_tags": [
+      "监护人家长",
+      "家庭养育",
+      "带娃养成"
+    ],
+    "action": "alias",
+    "rationale": "市场母题拆为家长位置、养育发动机与带娃关系。"
+  },
+  {
+    "raw_tag": "男主镶边",
+    "frequency": 1,
+    "canonical_tags": [
+      "伴侣辅助位"
+    ],
+    "action": "new_candidate",
+    "rationale": "伴侣仅承担支持或情感支线是一种稳定的叙事权力分配，不应绑定角色性别。"
+  },
+  {
+    "raw_tag": "南北朝投影",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "南齐",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "南宋",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "年代",
+    "frequency": 1,
+    "canonical_tags": [
+      "年代生活"
+    ],
+    "action": "alias",
+    "rationale": "市场简称映射。"
+  },
+  {
+    "raw_tag": "年代生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "年代生活"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "年代文",
+    "frequency": 1,
+    "canonical_tags": [
+      "年代文"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "女强",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "女巫",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "女性科幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "近未来科幻"
+    ],
+    "action": "alias",
+    "rationale": "未细分的科幻复合标签先归入近未来科幻，其他框架由并列标签补足。"
+  },
+  {
+    "raw_tag": "女性视角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "女性叙事权",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性事业线"
+    ],
+    "action": "alias",
+    "rationale": "本体暂无叙事权专轴，先归入女性主体事业线并保留原词。"
+  },
+  {
+    "raw_tag": "女性职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "未细分的职业能力标签归入职业专精，行业由其他标签决定。"
+  },
+  {
+    "raw_tag": "女性主导",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性事业线"
+    ],
+    "action": "alias",
+    "rationale": "先归入既有女性事业线；关系权力分配仍保留原始标签。"
+  },
+  {
+    "raw_tag": "女性主动选择",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性事业线",
+      "人格成长"
+    ],
+    "action": "alias",
+    "rationale": "强调女性主体选择与成长，不预设具体恋爱结构。"
+  },
+  {
+    "raw_tag": "女主视角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "贫困生",
+    "frequency": 1,
+    "canonical_tags": [
+      "学生",
+      "资源不足"
+    ],
+    "action": "alias",
+    "rationale": "拆为社会身份与资源冲突。"
+  },
+  {
+    "raw_tag": "贫穷主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "资源不足"
+    ],
+    "action": "alias",
+    "rationale": "贫穷首先产生资源约束，不自动推断人格或成长方式。"
+  },
+  {
+    "raw_tag": "平台劳动者",
+    "frequency": 1,
+    "canonical_tags": [
+      "平台劳动者"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "破镜重圆",
+    "frequency": 1,
+    "canonical_tags": [
+      "破镜重圆"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "棋道",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "千禧年代",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "前皇后",
+    "frequency": 1,
+    "canonical_tags": [
+      "贵族家族"
+    ],
+    "action": "alias",
+    "rationale": "具体贵族头衔归入贵族家族。"
+  },
+  {
+    "raw_tag": "强情节",
+    "frequency": 1,
+    "canonical_tags": [
+      "快速爽点"
+    ],
+    "action": "alias",
+    "rationale": "强调密集事件推进，先归入快速爽点节奏。"
+  },
+  {
+    "raw_tag": "强人物张力",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "亲子",
+    "frequency": 1,
+    "canonical_tags": [
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "家庭关系归并。"
+  },
+  {
+    "raw_tag": "秦代",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "青梅竹马",
+    "frequency": 1,
+    "canonical_tags": [
+      "青梅竹马"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "轻松日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "生活流"
+    ],
+    "action": "new_candidate",
+    "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
+  },
+  {
+    "raw_tag": "情报掮客",
+    "frequency": 1,
+    "canonical_tags": [
+      "情报人员"
+    ],
+    "action": "new_candidate",
+    "rationale": "暗桩、卧底和情报中介共享潜伏、传递、验证与身份暴露风险，现有侦探/军师标签无法覆盖。"
+  },
+  {
+    "raw_tag": "情感修复",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复"
+    ],
+    "action": "alias",
+    "rationale": "均属于关系或心理创伤的恢复。"
+  },
+  {
+    "raw_tag": "权谋",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "这些标签共同指向制度与权力博弈；具体时代和关系保留在原词。"
+  },
+  {
+    "raw_tag": "群臣群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "这些是群像参与者或场域的作品级限定，统一到群像交叉线。"
+  },
+  {
+    "raw_tag": "群像博弈",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "这些是群像参与者或场域的作品级限定，统一到群像交叉线。"
+  },
+  {
+    "raw_tag": "群像竞赛",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线",
+      "竞技联赛"
+    ],
+    "action": "alias",
+    "rationale": "由群像结构与竞赛发动机两条既有轴组合。"
+  },
+  {
+    "raw_tag": "群像轮换视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像轮换视角"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "群像热血",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线",
+      "热血王道"
+    ],
+    "action": "alias",
+    "rationale": "由群像结构与热血基调组合。"
+  },
+  {
+    "raw_tag": "群像治愈",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像生活流",
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "由群像生活结构与治愈基调组合。"
+  },
+  {
+    "raw_tag": "群雄群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "这些是群像参与者或场域的作品级限定，统一到群像交叉线。"
+  },
+  {
+    "raw_tag": "人工智能叛乱",
+    "frequency": 1,
+    "canonical_tags": [
+      "人工智能社会",
+      "价值观冲突"
+    ],
+    "action": "alias",
+    "rationale": "拆为AI社会框架与人机价值冲突。"
+  },
+  {
+    "raw_tag": "人类基地",
+    "frequency": 1,
+    "canonical_tags": [
+      "灾后新文明"
+    ],
+    "action": "alias",
+    "rationale": "灾后聚居点是新文明组织形态，具体规模保留原词。"
+  },
+  {
+    "raw_tag": "人类聚居地",
+    "frequency": 1,
+    "canonical_tags": [
+      "灾后新文明"
+    ],
+    "action": "alias",
+    "rationale": "灾后聚居点是新文明组织形态，具体规模保留原词。"
+  },
+  {
+    "raw_tag": "人外恋",
+    "frequency": 1,
+    "canonical_tags": [
+      "人外恋"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "人与宠物伙伴",
+    "frequency": 1,
+    "canonical_tags": [
+      "人与宠物伙伴"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "任务世界",
+    "frequency": 1,
+    "canonical_tags": [
+      "无限流"
+    ],
+    "action": "alias",
+    "rationale": "均为该作品无限流世界切换的内部叫法。"
+  },
+  {
+    "raw_tag": "日轻会话感",
+    "frequency": 1,
+    "canonical_tags": [
+      "日轻会话感"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "三次飞升",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "三重时空",
+    "frequency": 1,
+    "canonical_tags": [
+      "多时空并置"
+    ],
+    "action": "new_candidate",
+    "rationale": "同一地点或人物线在多个时代并置，是结构机制而非单纯穿越来历。"
+  },
+  {
+    "raw_tag": "少年药师",
+    "frequency": 1,
+    "canonical_tags": [
+      "药师炼丹"
+    ],
+    "action": "alias",
+    "rationale": "年龄保留为原始修饰，职业归入药师炼丹。"
+  },
+  {
+    "raw_tag": "社会派悬疑",
+    "frequency": 1,
+    "canonical_tags": [
+      "悬疑紧张",
+      "冷峻现实"
+    ],
+    "action": "alias",
+    "rationale": "拆为悬疑基调与现实观察。"
+  },
+  {
+    "raw_tag": "社会群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "这些是群像参与者或场域的作品级限定，统一到群像交叉线。"
+  },
+  {
+    "raw_tag": "身份博弈",
+    "frequency": 1,
+    "canonical_tags": [
+      "马甲身份",
+      "利益不同"
+    ],
+    "action": "alias",
+    "rationale": "身份伪装与多方利益共同驱动博弈。"
+  },
+  {
+    "raw_tag": "身份改造",
+    "frequency": 1,
+    "canonical_tags": [
+      "身体变形叙事"
+    ],
+    "action": "alias",
+    "rationale": "原始标签强调身体/身份被技术改变，归入既有身体变形叙事。"
+  },
+  {
+    "raw_tag": "身体变形叙事",
+    "frequency": 1,
+    "canonical_tags": [
+      "身体变形叙事"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "身体改造",
+    "frequency": 1,
+    "canonical_tags": [
+      "身体变形叙事"
+    ],
+    "action": "alias",
+    "rationale": "原始标签强调身体/身份被技术改变，归入既有身体变形叙事。"
+  },
+  {
+    "raw_tag": "神官",
+    "frequency": 1,
+    "canonical_tags": [
+      "宗教神职"
+    ],
+    "action": "alias",
+    "rationale": "社会身份映射。"
+  },
+  {
+    "raw_tag": "神话重构",
+    "frequency": 1,
+    "canonical_tags": [
+      "东方玄幻"
+    ],
+    "action": "alias",
+    "rationale": "神话资源的重构先归入东方玄幻，具体神谱保留原词。"
+  },
+  {
+    "raw_tag": "神灵化身",
+    "frequency": 1,
+    "canonical_tags": [
+      "神灵化身"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "审判者",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "生存成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "人格成长"
+    ],
+    "action": "alias",
+    "rationale": "未指定能力维度的成长先归入人格成长；职业、团队或关系成长由并列标签覆盖。"
+  },
+  {
+    "raw_tag": "生活流",
+    "frequency": 1,
+    "canonical_tags": [
+      "生活流"
+    ],
+    "action": "new_candidate",
+    "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
+  },
+  {
+    "raw_tag": "生物朋克",
+    "frequency": 1,
+    "canonical_tags": [
+      "生物朋克"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "失明经验",
+    "frequency": 1,
+    "canonical_tags": [
+      "身体残障"
+    ],
+    "action": "alias",
+    "rationale": "失明是既有身体残障的具体形式。"
+  },
+  {
+    "raw_tag": "失势主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "从巅峰跌落"
+    ],
+    "action": "alias",
+    "rationale": "由高位跌落是既有成长结构。"
+  },
+  {
+    "raw_tag": "师徒",
+    "frequency": 1,
+    "canonical_tags": [
+      "师徒"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "师兄",
+    "frequency": 1,
+    "canonical_tags": [
+      "导师前辈"
+    ],
+    "action": "alias",
+    "rationale": "同门前辈归入导师前辈位置。"
+  },
+  {
+    "raw_tag": "时间倒计时",
+    "frequency": 1,
+    "canonical_tags": [
+      "倒计时"
+    ],
+    "action": "alias",
+    "rationale": "同义节奏机制。"
+  },
+  {
+    "raw_tag": "时间回归",
+    "frequency": 1,
+    "canonical_tags": [
+      "时间回归"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "时间循环",
+    "frequency": 1,
+    "canonical_tags": [
+      "死亡循环"
+    ],
+    "action": "alias",
+    "rationale": "本语料对应以死亡或失败触发重置的循环结构。"
+  },
+  {
+    "raw_tag": "时空交错",
+    "frequency": 1,
+    "canonical_tags": [
+      "多时空并置"
+    ],
+    "action": "new_candidate",
+    "rationale": "同一地点或人物线在多个时代并置，是结构机制而非单纯穿越来历。"
+  },
+  {
+    "raw_tag": "世家皇权",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "这些标签共同指向制度与权力博弈；具体时代和关系保留在原词。"
+  },
+  {
+    "raw_tag": "世界线重构",
+    "frequency": 1,
+    "canonical_tags": [
+      "分支世界线"
+    ],
+    "action": "new_candidate",
+    "rationale": "反复改写并比较多条世界线是稳定可复用的信息结构，区别于普通多元宇宙背景。"
+  },
+  {
+    "raw_tag": "世界真相",
+    "frequency": 1,
+    "canonical_tags": [
+      "未知规律"
+    ],
+    "action": "alias",
+    "rationale": "世界底层真相在揭示前表现为未知规律。"
+  },
+  {
+    "raw_tag": "事业与感情并行",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "收养幼崽",
+    "frequency": 1,
+    "canonical_tags": [
+      "家庭养育",
+      "带娃养成"
+    ],
+    "action": "alias",
+    "rationale": "收养细节归入既有家庭养育和带娃关系。"
+  },
+  {
+    "raw_tag": "手术",
+    "frequency": 1,
+    "canonical_tags": [
+      "医生医师",
+      "医疗行业"
+    ],
+    "action": "alias",
+    "rationale": "具体医学内容归并到医生职业与医疗行业。"
+  },
+  {
+    "raw_tag": "受害者视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "受害者行动主体"
+    ],
+    "action": "new_candidate",
+    "rationale": "重点不是旁观受害经历，而是让受害者取得行动权和叙事权，适用于悬疑等多题材。"
+  },
+  {
+    "raw_tag": "书信",
+    "frequency": 1,
+    "canonical_tags": [
+      "书信日记"
+    ],
+    "action": "alias",
+    "rationale": "叙事载体简称映射。"
+  },
+  {
+    "raw_tag": "双向成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "双方在关系中共同变化。"
+  },
+  {
+    "raw_tag": "双向守护",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "互相保护是关系成长的具体表现。"
+  },
+  {
+    "raw_tag": "双主角穿越",
+    "frequency": 1,
+    "canonical_tags": [
+      "历史穿越"
+    ],
+    "action": "alias",
+    "rationale": "语料中的穿越目标为历史时代，统一到历史穿越。"
+  },
+  {
+    "raw_tag": "松弛修行",
+    "frequency": 1,
+    "canonical_tags": [
+      "不追求变强",
+      "悠闲慢生活"
+    ],
+    "action": "alias",
+    "rationale": "修行仍存在，但目标从功名战力转向松弛生活。"
+  },
+  {
+    "raw_tag": "塔罗会",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "太空",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "太空歌剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "太空歌剧"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "唐初",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "特殊家庭",
+    "frequency": 1,
+    "canonical_tags": [
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "家庭成员关系先归入亲子家庭。"
+  },
+  {
+    "raw_tag": "体育竞技",
+    "frequency": 1,
+    "canonical_tags": [
+      "体育竞技"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "头部作者回归",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "属于平台、传播或市场表现元数据，不应进入叙事本体。"
+  },
+  {
+    "raw_tag": "吐槽",
+    "frequency": 1,
+    "canonical_tags": [
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "同义基调归并。"
+  },
+  {
+    "raw_tag": "团队",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队形成、协作和共同任务统一到团队成长。"
+  },
+  {
+    "raw_tag": "团队关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "选择家庭"
+    ],
+    "action": "alias",
+    "rationale": "长线团队关系通常形成选择家庭；若只是临时合作需人工复核。"
+  },
+  {
+    "raw_tag": "团队事业",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队形成、协作和共同任务统一到团队成长。"
+  },
+  {
+    "raw_tag": "团队战",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队形成、协作和共同任务统一到团队成长。"
+  },
+  {
+    "raw_tag": "外科",
+    "frequency": 1,
+    "canonical_tags": [
+      "医生医师",
+      "医疗行业"
+    ],
+    "action": "alias",
+    "rationale": "具体医学内容归并到医生职业与医疗行业。"
+  },
+  {
+    "raw_tag": "外贸行业",
+    "frequency": 1,
+    "canonical_tags": [
+      "商业金融",
+      "商人行商"
+    ],
+    "action": "alias",
+    "rationale": "外贸兼具商业行业与交易职业属性。"
+  },
+  {
+    "raw_tag": "外星机器人",
+    "frequency": 1,
+    "canonical_tags": [
+      "机器人仿生人"
+    ],
+    "action": "alias",
+    "rationale": "外星来源保留为原始细节，身体类型统一为机器人仿生人。"
+  },
+  {
+    "raw_tag": "玩家沉浸",
+    "frequency": 1,
+    "canonical_tags": [
+      "游戏世界"
+    ],
+    "action": "alias",
+    "rationale": "玩家沉浸强调以游戏规则体验世界，先归入游戏世界。"
+  },
+  {
+    "raw_tag": "玩家降临",
+    "frequency": 1,
+    "canonical_tags": [
+      "玩家降临"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "万族",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "网络文化",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "枉死轮回",
+    "frequency": 1,
+    "canonical_tags": [
+      "死亡循环"
+    ],
+    "action": "alias",
+    "rationale": "死亡后反复进入救赎任务，归入死亡循环。"
+  },
+  {
+    "raw_tag": "危机互助",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性群像",
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "语料中为女性群体在危机中的互助成长。"
+  },
+  {
+    "raw_tag": "微群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线",
+      "群像生活流"
+    ],
+    "action": "alias",
+    "rationale": "小规模群像仍使用既有群像结构和生活流基调组合。"
+  },
+  {
+    "raw_tag": "伪史料互文",
+    "frequency": 1,
+    "canonical_tags": [
+      "伪史料互文"
+    ],
+    "action": "new_candidate",
+    "rationale": "正文与互相冲突的仿史料共同塑造人物，是区别于一般档案拼贴的多层叙述方法。"
+  },
+  {
+    "raw_tag": "未来学院",
+    "frequency": 1,
+    "canonical_tags": [
+      "近未来科幻",
+      "学院奇幻"
+    ],
+    "action": "alias",
+    "rationale": "复合标签拆为时代与学院框架。"
+  },
+  {
+    "raw_tag": "位置感成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "人格成长"
+    ],
+    "action": "alias",
+    "rationale": "属于对自我位置与选择的内在成长。"
+  },
+  {
+    "raw_tag": "温馨",
+    "frequency": 1,
+    "canonical_tags": [
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "宽泛正向恢复基调归并。"
+  },
+  {
+    "raw_tag": "温馨治愈",
+    "frequency": 1,
+    "canonical_tags": [
+      "温馨治愈"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "文明存续",
+    "frequency": 1,
+    "canonical_tags": [
+      "宇宙存在危机"
+    ],
+    "action": "alias",
+    "rationale": "均把冲突提升到文明/族群能否继续存在。"
+  },
+  {
+    "raw_tag": "文明倒退",
+    "frequency": 1,
+    "canonical_tags": [
+      "宇宙存在危机"
+    ],
+    "action": "alias",
+    "rationale": "均把冲突提升到文明/族群能否继续存在。"
+  },
+  {
+    "raw_tag": "文明抉择",
+    "frequency": 1,
+    "canonical_tags": [
+      "价值观冲突"
+    ],
+    "action": "alias",
+    "rationale": "核心是不同责任、价值与个人选择之间的冲突。"
+  },
+  {
+    "raw_tag": "文明师",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "文明史",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "文明余烬",
+    "frequency": 1,
+    "canonical_tags": [
+      "宇宙存在危机"
+    ],
+    "action": "alias",
+    "rationale": "均把冲突提升到文明/族群能否继续存在。"
+  },
+  {
+    "raw_tag": "文明战争",
+    "frequency": 1,
+    "canonical_tags": [
+      "战争局势",
+      "宇宙存在危机"
+    ],
+    "action": "alias",
+    "rationale": "拆为战争与文明级风险。"
+  },
+  {
+    "raw_tag": "稳健流",
+    "frequency": 1,
+    "canonical_tags": [
+      "苟道谨慎"
+    ],
+    "action": "alias",
+    "rationale": "中文网文常见同义表述。"
+  },
+  {
+    "raw_tag": "卧底",
+    "frequency": 1,
+    "canonical_tags": [
+      "情报人员"
+    ],
+    "action": "new_candidate",
+    "rationale": "暗桩、卧底和情报中介共享潜伏、传递、验证与身份暴露风险，现有侦探/军师标签无法覆盖。"
+  },
+  {
+    "raw_tag": "巫祝",
+    "frequency": 1,
+    "canonical_tags": [
+      "宗教神职"
+    ],
+    "action": "alias",
+    "rationale": "巫祝是具体宗教/祭仪职业。"
+  },
+  {
+    "raw_tag": "无传统娇宠",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "无救世主",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "无系统",
+    "frequency": 1,
+    "canonical_tags": [
+      "系统流"
+    ],
+    "action": "alias",
+    "rationale": "具体系统实现归入系统流，原始标签保留其特殊规则。"
+  },
+  {
+    "raw_tag": "无CP事业线",
+    "frequency": 1,
+    "canonical_tags": [
+      "无CP事业线"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "五代十国",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "仵作法医",
+    "frequency": 1,
+    "canonical_tags": [
+      "仵作法医"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "武侠",
+    "frequency": 1,
+    "canonical_tags": [
+      "武侠江湖"
+    ],
+    "action": "alias",
+    "rationale": "泛武侠映射至既有框架。"
+  },
+  {
+    "raw_tag": "舞台",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "舞台化战斗",
+    "frequency": 1,
+    "canonical_tags": [
+      "传统文化能力体系"
+    ],
+    "action": "new_candidate",
+    "rationale": "传统艺术的动作、程式和观念可直接生成能力规则，不能只归入表演职业或文化装饰。"
+  },
+  {
+    "raw_tag": "务实女主",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "误解流",
+    "frequency": 1,
+    "canonical_tags": [
+      "迪化流",
+      "误解喜剧"
+    ],
+    "action": "alias",
+    "rationale": "拆为母题与喜剧基调。"
+  },
+  {
+    "raw_tag": "误解喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "误解喜剧"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "误入超凡圈",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "西幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "西式奇幻"
+    ],
+    "action": "alias",
+    "rationale": "中文网文常用简称映射。"
+  },
+  {
+    "raw_tag": "西晋末年",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "西式奇幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "西式奇幻"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "戏曲能力",
+    "frequency": 1,
+    "canonical_tags": [
+      "传统文化能力体系"
+    ],
+    "action": "new_candidate",
+    "rationale": "传统艺术的动作、程式和观念可直接生成能力规则，不能只归入表演职业或文化装饰。"
+  },
+  {
+    "raw_tag": "系统焦虑",
+    "frequency": 1,
+    "canonical_tags": [
+      "规则公开限制"
+    ],
+    "action": "alias",
+    "rationale": "焦虑来自系统规则对行动空间的限制。"
+  },
+  {
+    "raw_tag": "系统任务",
+    "frequency": 1,
+    "canonical_tags": [
+      "任务系统"
+    ],
+    "action": "alias",
+    "rationale": "都以系统下发、验收任务为核心。"
+  },
+  {
+    "raw_tag": "仙侠田园",
+    "frequency": 1,
+    "canonical_tags": [
+      "凡俗仙侠",
+      "乡村田园"
+    ],
+    "action": "alias",
+    "rationale": "拆为低位仙侠生活与田园框架。"
+  },
+  {
+    "raw_tag": "现代",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "泛现代城市背景统一到现有世界框架。"
+  },
+  {
+    "raw_tag": "现代民俗",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市",
+      "民俗志怪"
+    ],
+    "action": "alias",
+    "rationale": "拆为时代场景与民俗框架。"
+  },
+  {
+    "raw_tag": "现代奇幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "都市奇幻"
+    ],
+    "action": "alias",
+    "rationale": "同义世界框架。"
+  },
+  {
+    "raw_tag": "现代武侠",
+    "frequency": 1,
+    "canonical_tags": [
+      "新武侠",
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "复合为现代背景与新武侠表达。"
+  },
+  {
+    "raw_tag": "现实案件转化",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业案件单元剧"
+    ],
+    "action": "alias",
+    "rationale": "案件类型归入既有职业案件发动机。"
+  },
+  {
+    "raw_tag": "现实关怀",
+    "frequency": 1,
+    "canonical_tags": [
+      "冷峻现实"
+    ],
+    "action": "alias",
+    "rationale": "强调现实问题与人物处境，归入现实基调。"
+  },
+  {
+    "raw_tag": "现实题材",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实主义"
+    ],
+    "action": "new_candidate",
+    "rationale": "本体有现实职业但缺少不依赖特定职业、强调生活经验与社会因果的总体创作取向。"
+  },
+  {
+    "raw_tag": "现实主义",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实主义"
+    ],
+    "action": "new_candidate",
+    "rationale": "本体有现实职业但缺少不依赖特定职业、强调生活经验与社会因果的总体创作取向。"
+  },
+  {
+    "raw_tag": "乡土经验",
+    "frequency": 1,
+    "canonical_tags": [
+      "地域生活书写"
+    ],
+    "action": "new_candidate",
+    "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
+  },
+  {
+    "raw_tag": "相声",
+    "frequency": 1,
+    "canonical_tags": [
+      "传统表演艺人"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有“演员偶像”偏现代娱乐业，不能准确覆盖曲艺、说唱和非遗表演职业。"
+  },
+  {
+    "raw_tag": "小城到都市",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "空间迁移细节保留原词，主要世界框架为现代都市。"
+  },
+  {
+    "raw_tag": "小人物",
+    "frequency": 1,
+    "canonical_tags": [
+      "普通路人"
+    ],
+    "action": "alias",
+    "rationale": "强调非权力中心的普通叙事位置。"
+  },
+  {
+    "raw_tag": "小镇日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "生活流"
+    ],
+    "action": "new_candidate",
+    "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
+  },
+  {
+    "raw_tag": "小镇现实",
+    "frequency": 1,
+    "canonical_tags": [
+      "地域生活书写"
+    ],
+    "action": "new_candidate",
+    "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
+  },
+  {
+    "raw_tag": "校园青春",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "心理",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "心理恐怖",
+    "frequency": 1,
+    "canonical_tags": [
+      "心理恐怖"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "心理压力",
+    "frequency": 1,
+    "canonical_tags": [
+      "疾病伤痛"
+    ],
+    "action": "alias",
+    "rationale": "心理或身体创伤先归入疾病伤痛，是否进入疗愈线由其他标签决定。"
+  },
+  {
+    "raw_tag": "星际殖民",
+    "frequency": 1,
+    "canonical_tags": [
+      "星际殖民"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "行业成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "职业能力随任务积累，归入职业专精。"
+  },
+  {
+    "raw_tag": "行业群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "这些是群像参与者或场域的作品级限定，统一到群像交叉线。"
+  },
+  {
+    "raw_tag": "兄妹/家庭",
+    "frequency": 1,
+    "canonical_tags": [
+      "兄弟姐妹",
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "复合标签拆为手足与家庭关系。"
+  },
+  {
+    "raw_tag": "休闲外壳反差",
+    "frequency": 1,
+    "canonical_tags": [
+      "戏剧反讽"
+    ],
+    "action": "alias",
+    "rationale": "读者预期与实际处境的反差属于戏剧反讽。"
+  },
+  {
+    "raw_tag": "修真教育",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代修仙",
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "拆为现代修真世界与教育场景。"
+  },
+  {
+    "raw_tag": "虚实边界",
+    "frequency": 1,
+    "canonical_tags": [
+      "哲学思辨"
+    ],
+    "action": "alias",
+    "rationale": "这些标签均描述对技术、制度或现实边界的价值思考。"
+  },
+  {
+    "raw_tag": "徐州地域",
+    "frequency": 1,
+    "canonical_tags": [
+      "地域生活书写"
+    ],
+    "action": "new_candidate",
+    "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
+  },
+  {
+    "raw_tag": "续作世界扩展",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "悬疑紧张",
+    "frequency": 1,
+    "canonical_tags": [
+      "悬疑紧张"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "选择家庭",
+    "frequency": 1,
+    "canonical_tags": [
+      "选择家庭"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "学霸",
+    "frequency": 1,
+    "canonical_tags": [
+      "学生",
+      "知识优势"
+    ],
+    "action": "alias",
+    "rationale": "学霸文的稳定结构是学生身份与知识优势。"
+  },
+  {
+    "raw_tag": "学霸文",
+    "frequency": 1,
+    "canonical_tags": [
+      "学生",
+      "知识优势"
+    ],
+    "action": "alias",
+    "rationale": "学霸文的稳定结构是学生身份与知识优势。"
+  },
+  {
+    "raw_tag": "学院",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "教育场景归入校园青春，具体阶段保留原词。"
+  },
+  {
+    "raw_tag": "学院奇幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "学院奇幻"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "寻找光明",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "衙门职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "政府基层"
+    ],
+    "action": "alias",
+    "rationale": "统一到基层公共机构位置。"
+  },
+  {
+    "raw_tag": "演员偶像",
+    "frequency": 1,
+    "canonical_tags": [
+      "演员偶像"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "医疗行业",
+    "frequency": 1,
+    "canonical_tags": [
+      "医疗行业"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "医生",
+    "frequency": 1,
+    "canonical_tags": [
+      "医生医师",
+      "医疗行业"
+    ],
+    "action": "alias",
+    "rationale": "具体医学内容归并到医生职业与医疗行业。"
+  },
+  {
+    "raw_tag": "医学",
+    "frequency": 1,
+    "canonical_tags": [
+      "医生医师",
+      "医疗行业"
+    ],
+    "action": "alias",
+    "rationale": "具体医学内容归并到医生职业与医疗行业。"
+  },
+  {
+    "raw_tag": "医院",
+    "frequency": 1,
+    "canonical_tags": [
+      "医疗行业"
+    ],
+    "action": "alias",
+    "rationale": "医疗场域与任务统一到医疗行业，具体专业保留原词。"
+  },
+  {
+    "raw_tag": "医院群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "这些是群像参与者或场域的作品级限定，统一到群像交叉线。"
+  },
+  {
+    "raw_tag": "异常调查",
+    "frequency": 1,
+    "canonical_tags": [
+      "异常收容",
+      "谜题调查"
+    ],
+    "action": "alias",
+    "rationale": "拆为异常世界框架与调查发动机。"
+  },
+  {
+    "raw_tag": "异常收容",
+    "frequency": 1,
+    "canonical_tags": [
+      "异常收容"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "异常灾害",
+    "frequency": 1,
+    "canonical_tags": [
+      "非人格异常"
+    ],
+    "action": "alias",
+    "rationale": "灾害性异常归入非人格异常冲突。"
+  },
+  {
+    "raw_tag": "异能",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "异世界",
+    "frequency": 1,
+    "canonical_tags": [
+      "异世界幻想"
+    ],
+    "action": "new_candidate",
+    "rationale": "本体已有异世界转移/转生来历，却缺少不预设主角来历的异世界世界框架。"
+  },
+  {
+    "raw_tag": "异兽血脉",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "意识上传",
+    "frequency": 1,
+    "canonical_tags": [
+      "上传意识"
+    ],
+    "action": "alias",
+    "rationale": "词序差异。"
+  },
+  {
+    "raw_tag": "阴谋调查",
+    "frequency": 1,
+    "canonical_tags": [
+      "谜题调查"
+    ],
+    "action": "alias",
+    "rationale": "调查对象细节保留，发动机归入谜题调查。"
+  },
+  {
+    "raw_tag": "硬科幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "硬科幻"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "永夜末世",
+    "frequency": 1,
+    "canonical_tags": [
+      "近未来科幻",
+      "末日求生"
+    ],
+    "action": "alias",
+    "rationale": "复合标签拆为科幻框架与末日处境。"
+  },
+  {
+    "raw_tag": "由乱至治",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "游历",
+    "frequency": 1,
+    "canonical_tags": [
+      "旅行见闻"
+    ],
+    "action": "alias",
+    "rationale": "同义故事发动机。"
+  },
+  {
+    "raw_tag": "游戏现实主义",
+    "frequency": 1,
+    "canonical_tags": [
+      "游戏现实主义"
+    ],
+    "action": "new_candidate",
+    "rationale": "游戏规则映射劳动、制度与现实焦虑，是近年来可复用的类型融合机制。"
+  },
+  {
+    "raw_tag": "游戏异界",
+    "frequency": 1,
+    "canonical_tags": [
+      "游戏世界"
+    ],
+    "action": "alias",
+    "rationale": "游戏化异世界统一到游戏世界框架，主角来历另行标注。"
+  },
+  {
+    "raw_tag": "友谊关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情"
+    ],
+    "action": "alias",
+    "rationale": "同义关系归并。"
+  },
+  {
+    "raw_tag": "有限场景",
+    "frequency": 1,
+    "canonical_tags": [
+      "短篇闭环"
+    ],
+    "action": "alias",
+    "rationale": "有限空间通常用于形成闭环结构；具体空间仍保留原词。"
+  },
+  {
+    "raw_tag": "有限视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "有限视角"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "娱乐圈",
+    "frequency": 1,
+    "canonical_tags": [
+      "娱乐行业"
+    ],
+    "action": "alias",
+    "rationale": "平台常用简称映射。"
+  },
+  {
+    "raw_tag": "娱乐行业",
+    "frequency": 1,
+    "canonical_tags": [
+      "娱乐行业"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "预犯罪",
+    "frequency": 1,
+    "canonical_tags": [
+      "未来记忆",
+      "谜题调查"
+    ],
+    "action": "alias",
+    "rationale": "由未来片段与调查行动组合。"
+  },
+  {
+    "raw_tag": "预知",
+    "frequency": 1,
+    "canonical_tags": [
+      "未来记忆"
+    ],
+    "action": "alias",
+    "rationale": "预先获得未来片段，归入未来信息。"
+  },
+  {
+    "raw_tag": "欲望",
+    "frequency": 1,
+    "canonical_tags": [
+      "自我欲望"
+    ],
+    "action": "alias",
+    "rationale": "简称映射。"
+  },
+  {
+    "raw_tag": "御兽流",
+    "frequency": 1,
+    "canonical_tags": [
+      "御兽流"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "员工群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "这些是群像参与者或场域的作品级限定，统一到群像交叉线。"
+  },
+  {
+    "raw_tag": "原作角色关系",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "灾厄",
+    "frequency": 1,
+    "canonical_tags": [
+      "非人格异常"
+    ],
+    "action": "alias",
+    "rationale": "灾害性异常归入非人格异常冲突。"
+  },
+  {
+    "raw_tag": "扎纸行当",
+    "frequency": 1,
+    "canonical_tags": [
+      "民俗职业"
+    ],
+    "action": "new_candidate",
+    "rationale": "丧葬、收尸、扎纸等可共享职业流程与地方知识，宜抽象为民俗职业而非逐项扩表。"
+  },
+  {
+    "raw_tag": "债务",
+    "frequency": 1,
+    "canonical_tags": [
+      "资源不足",
+      "市场竞争"
+    ],
+    "action": "alias",
+    "rationale": "具体金融设定拆为资源约束与市场规则。"
+  },
+  {
+    "raw_tag": "长征",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "时代、地域、作品内专名或过细情节设定，适合做局部修饰词，不宜成为跨作品本体标签。"
+  },
+  {
+    "raw_tag": "哲思",
+    "frequency": 1,
+    "canonical_tags": [
+      "哲学思辨"
+    ],
+    "action": "alias",
+    "rationale": "简称映射。"
+  },
+  {
+    "raw_tag": "阵营",
+    "frequency": 1,
+    "canonical_tags": [
+      "利益不同"
+    ],
+    "action": "alias",
+    "rationale": "阵营差异先归入利益不同，不自动判定善恶。"
+  },
+  {
+    "raw_tag": "征服任务反转",
+    "frequency": 1,
+    "canonical_tags": [
+      "两个目标冲突"
+    ],
+    "action": "alias",
+    "rationale": "原始征服目标与养育/共情目标发生冲突。"
+  },
+  {
+    "raw_tag": "政府基层",
+    "frequency": 1,
+    "canonical_tags": [
+      "政府基层"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "政治",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "社会秩序变革与一般政治标签归入政治权力冲突。"
+  },
+  {
+    "raw_tag": "政治思辨",
+    "frequency": 1,
+    "canonical_tags": [
+      "哲学思辨"
+    ],
+    "action": "alias",
+    "rationale": "这些标签均描述对技术、制度或现实边界的价值思考。"
+  },
+  {
+    "raw_tag": "知识传授",
+    "frequency": 1,
+    "canonical_tags": [
+      "技艺传承"
+    ],
+    "action": "new_candidate",
+    "rationale": "教学、守艺与代际传承可以持续产生任务和关系变化，不能只归为静态职业背景。"
+  },
+  {
+    "raw_tag": "知识升级",
+    "frequency": 1,
+    "canonical_tags": [
+      "知识优势",
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "知识获取同时形成优势与专精成长。"
+  },
+  {
+    "raw_tag": "直播",
+    "frequency": 1,
+    "canonical_tags": [
+      "直播弹幕",
+      "直播文"
+    ],
+    "action": "alias",
+    "rationale": "拆为叙事媒介与中国网文母题。"
+  },
+  {
+    "raw_tag": "直播游戏",
+    "frequency": 1,
+    "canonical_tags": [
+      "直播弹幕",
+      "直播文"
+    ],
+    "action": "alias",
+    "rationale": "拆为叙事媒介与中国网文母题。"
+  },
+  {
+    "raw_tag": "职场",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "泛职场背景归入现实职业。"
+  },
+  {
+    "raw_tag": "职业成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "职业能力随任务积累，归入职业专精。"
+  },
+  {
+    "raw_tag": "职业格斗",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "未细分的职业能力标签归入职业专精，行业由其他标签决定。"
+  },
+  {
+    "raw_tag": "职业技能树",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业技能树"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "职业坚守",
+    "frequency": 1,
+    "canonical_tags": [
+      "人格成长",
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "职业伦理与能力积累共同构成成长。"
+  },
+  {
+    "raw_tag": "职业教育",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "未细分的职业能力标签归入职业专精，行业由其他标签决定。"
+  },
+  {
+    "raw_tag": "职业文",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业文"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "职业写实",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业写实"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "职业行规",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "未细分的职业能力标签归入职业专精，行业由其他标签决定。"
+  },
+  {
+    "raw_tag": "植物",
+    "frequency": 1,
+    "canonical_tags": [
+      "植物"
+    ],
+    "action": "existing",
+    "rationale": "与现有本体标签完全一致。"
+  },
+  {
+    "raw_tag": "志怪",
+    "frequency": 1,
+    "canonical_tags": [
+      "民俗志怪"
+    ],
+    "action": "alias",
+    "rationale": "泛民俗超常内容统一到民俗志怪，具体文化细节保留原词。"
+  },
+  {
+    "raw_tag": "制度",
+    "frequency": 1,
+    "canonical_tags": [
+      "流程官僚"
+    ],
+    "action": "alias",
+    "rationale": "未细分制度冲突先映射为流程规则。"
+  },
+  {
+    "raw_tag": "制度生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "流程官僚",
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "制度既表现为流程，也形成结构性处境。"
+  },
+  {
+    "raw_tag": "制度性困境",
+    "frequency": 1,
+    "canonical_tags": [
+      "流程官僚",
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "制度既表现为流程，也形成结构性处境。"
+  },
+  {
+    "raw_tag": "制造业",
+    "frequency": 1,
+    "canonical_tags": [
+      "工业制造"
+    ],
+    "action": "alias",
+    "rationale": "归入工业制造行业，所有制细节保留原词。"
+  },
+  {
+    "raw_tag": "治愈",
+    "frequency": 1,
+    "canonical_tags": [
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "宽泛正向恢复基调归并。"
+  },
+  {
+    "raw_tag": "中国神怪",
+    "frequency": 1,
+    "canonical_tags": [
+      "民俗志怪"
+    ],
+    "action": "alias",
+    "rationale": "泛民俗超常内容统一到民俗志怪，具体文化细节保留原词。"
+  },
+  {
+    "raw_tag": "中国神话",
+    "frequency": 1,
+    "canonical_tags": [
+      "东方玄幻"
+    ],
+    "action": "alias",
+    "rationale": "神话资源的重构先归入东方玄幻，具体神谱保留原词。"
+  },
+  {
+    "raw_tag": "中年穿越者",
+    "frequency": 1,
+    "canonical_tags": [
+      "中年主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "主角年龄会系统性影响欲望、职业经验和关系结构，值得独立于穿越机制建模。"
+  },
+  {
+    "raw_tag": "中式怪诞",
+    "frequency": 1,
+    "canonical_tags": [
+      "中式怪诞"
+    ],
+    "action": "new_candidate",
+    "rationale": "以中国地方经验、戏曲或民俗意象制造怪诞感，不能完全等同于克苏鲁或传统志怪。"
+  },
+  {
+    "raw_tag": "忠义抉择",
+    "frequency": 1,
+    "canonical_tags": [
+      "价值观冲突"
+    ],
+    "action": "alias",
+    "rationale": "核心是不同责任、价值与个人选择之间的冲突。"
+  },
+  {
+    "raw_tag": "重逢",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级人物特征、局部设定或低频修饰语；尚不足以证明需要扩充跨作品本体。"
+  },
+  {
+    "raw_tag": "诸天无限",
+    "frequency": 1,
+    "canonical_tags": [
+      "跨世界诸天",
+      "无限流"
+    ],
+    "action": "alias",
+    "rationale": "拆为跨世界框架与无限流发动机。"
+  },
+  {
+    "raw_tag": "诸天战场",
+    "frequency": 1,
+    "canonical_tags": [
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "战争场景和局势统一到既有冲突来源。"
+  },
+  {
+    "raw_tag": "主线串联",
+    "frequency": 1,
+    "canonical_tags": [
+      "中篇阶段主线"
+    ],
+    "action": "alias",
+    "rationale": "多个单元被一条阶段性主线连接。"
+  },
+  {
+    "raw_tag": "转世重修",
+    "frequency": 1,
+    "canonical_tags": [
+      "觉醒前世记忆",
+      "从出生重新成长"
+    ],
+    "action": "alias",
+    "rationale": "拆为前世记忆与重新成长两个既有来历机制。"
+  },
+  {
+    "raw_tag": "追妻火葬场",
+    "frequency": 1,
+    "canonical_tags": [
+      "追妻追夫"
+    ],
+    "action": "alias",
+    "rationale": "网文母题简称映射。"
+  },
+  {
+    "raw_tag": "捉妖",
+    "frequency": 1,
+    "canonical_tags": [
+      "民俗志怪"
+    ],
+    "action": "alias",
+    "rationale": "泛民俗超常内容统一到民俗志怪，具体文化细节保留原词。"
+  },
+  {
+    "raw_tag": "资本规则",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "阶层结构及竞争统一到阶层差异冲突。"
+  },
+  {
+    "raw_tag": "资本隐喻",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "经济与阶层处境统一到阶层差异，具体机制保留原词。"
+  },
+  {
+    "raw_tag": "自我修正",
+    "frequency": 1,
+    "canonical_tags": [
+      "人格成长"
+    ],
+    "action": "alias",
+    "rationale": "属于对自我位置与选择的内在成长。"
+  },
+  {
+    "raw_tag": "宗门",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "宗门日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "生活流"
+    ],
+    "action": "new_candidate",
+    "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
+  },
+  {
+    "raw_tag": "族群存亡",
+    "frequency": 1,
+    "canonical_tags": [
+      "宇宙存在危机"
+    ],
+    "action": "alias",
+    "rationale": "均把冲突提升到文明/族群能否继续存在。"
+  },
+  {
+    "raw_tag": "组织",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "标签过宽或跨越多个正交轴，自动归一会写死世界、来历、身体或剧情机制；保留并要求录入时拆分。"
+  },
+  {
+    "raw_tag": "NPC视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "NPC视角"
+    ],
+    "action": "new_candidate",
+    "rationale": "NPC可作为独立叙事位置，不必预设已经觉醒自我，也不同于玩家困入世界。"
+  }
+]

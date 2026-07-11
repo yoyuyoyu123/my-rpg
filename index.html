@@ -2139,17 +2139,29 @@ async function loadResearchDB(){
   TAG_DB_LOADING=true;
   var stats=document.getElementById('tag-db-stats');
   try{
-    TAG_ONTO=await (await fetch('research/tag_ontology.json')).json();
-    var files=['research/china_works_2016_2020.json','research/china_works_2021_2024.json','research/china_works_2025_2026.json','research/japan_works_2016_2020.json','research/japan_works_2021_2026.json','research/manga_works_2016_2020.json','research/manga_works_2021_2026.json'];
-    for(var i=0;i<files.length;i++){
-      try{
-        var w=await (await fetch(files[i])).json();
-        var arr=Array.isArray(w)?w:(Array.isArray(w.works)?w.works:Object.keys(w).map(function(k){return w[k];}));
-        TAG_WORKS=TAG_WORKS.concat(arr.filter(function(x){return x&&x.title;}));
-      }catch(e){}
+    // 优先读聚合库（含归一化标签与内嵌ontology），失败再退回7个原始文件
+    try{
+      var master=await (await fetch('research/research_db.json')).json();
+      if(master&&master.ontology&&Array.isArray(master.works)&&master.works.length){
+        TAG_ONTO=master.ontology;
+        TAG_WORKS=master.works.map(function(w){
+          return {title:w.title,year:(w.recognition_years&&w.recognition_years[0])||w.year||'',platform:w.platform_or_publisher||'',medium:w.medium||'',tags:((w.canonical_tags&&w.canonical_tags.length)?w.canonical_tags:(w.raw_tags||w.tags||[])),why_included:w.why_included||'',popularity_basis:w.popularity_basis||''};
+        });
+      }
+    }catch(e){}
+    if(!TAG_ONTO){
+      TAG_ONTO=await (await fetch('research/tag_ontology.json')).json();
+      var files=['research/china_works_2016_2020.json','research/china_works_2021_2024.json','research/china_works_2025_2026.json','research/japan_works_2016_2020.json','research/japan_works_2021_2026.json','research/manga_works_2016_2020.json','research/manga_works_2021_2026.json'];
+      for(var i=0;i<files.length;i++){
+        try{
+          var w=await (await fetch(files[i])).json();
+          var arr=Array.isArray(w)?w:(Array.isArray(w.works)?w.works:Object.keys(w).map(function(k){return w[k];}));
+          TAG_WORKS=TAG_WORKS.concat(arr.filter(function(x){return x&&x.title;}));
+        }catch(e){}
+      }
+      var seen={};
+      TAG_WORKS=TAG_WORKS.filter(function(x){ if(seen[x.title])return false; seen[x.title]=1; return true; });
     }
-    var seen={};
-    TAG_WORKS=TAG_WORKS.filter(function(x){ if(seen[x.title])return false; seen[x.title]=1; return true; });
     var tagCount=TAG_ONTO.categories.reduce(function(a,c){return a+(c.tags||[]).length;},0);
     if(stats)stats.textContent=TAG_ONTO.categories.length+'类 · '+tagCount+'标签 · '+TAG_WORKS.length+'部作品样本';
     var sel=document.getElementById('tag-db-category');

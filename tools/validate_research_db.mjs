@@ -10,6 +10,7 @@ const files = fs.readdirSync(researchDir)
 const required = ['year', 'title', 'author', 'tags', 'protagonist_role', 'narrative_features', 'why_included', 'sources'];
 const all = [];
 const errors = [];
+const warnings = [];
 
 for (const name of files) {
   const filename = path.join(researchDir, name);
@@ -41,7 +42,7 @@ for (const name of files) {
 const seen = new Map();
 for (const row of all) {
   const key = `${row._medium}\u0000${row.title}`.toLocaleLowerCase();
-  if (seen.has(key)) errors.push(`duplicate: ${row.title} (${seen.get(key)} / ${row._source_file})`);
+  if (seen.has(key)) warnings.push(`cross-file duplicate merged in master DB: ${row.title} (${seen.get(key)} / ${row._source_file})`);
   else seen.set(key, row._source_file);
 }
 
@@ -53,5 +54,5 @@ for (const row of all) {
   regions[region] = (regions[region] || 0) + 1;
 }
 
-console.log(JSON.stringify({ files, works: all.length, years, regions, errors }, null, 2));
+console.log(JSON.stringify({ files, works: all.length, years, regions, errors, warnings }, null, 2));
 if (errors.length) process.exitCode = 1;

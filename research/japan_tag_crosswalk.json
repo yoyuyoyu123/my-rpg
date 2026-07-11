@@ -1,0 +1,8278 @@
+[
+  {
+    "raw_tag": "群像",
+    "frequency": 10,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "泛称群像，归到跨角色故事发动机；不自动推断多视角。"
+  },
+  {
+    "raw_tag": "异世界转生",
+    "frequency": 10,
+    "canonical_tags": [
+      "异世界转生"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "喜剧",
+    "frequency": 8,
+    "canonical_tags": [
+      "喜剧"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有基调只有若干喜剧子型，无法无损承接未指定子型的泛喜剧。"
+  },
+  {
+    "raw_tag": "女性主角",
+    "frequency": 6,
+    "canonical_tags": [
+      "女性主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体缺少独立的主角性别／性别呈现轴；不应靠关系类型反推。"
+  },
+  {
+    "raw_tag": "创作",
+    "frequency": 5,
+    "canonical_tags": [
+      "创作活动"
+    ],
+    "action": "new_candidate",
+    "rationale": "创作可能是音乐、绘画、写作或节目，现有作家职业过窄。"
+  },
+  {
+    "raw_tag": "校园恋爱",
+    "frequency": 5,
+    "canonical_tags": [
+      "校园青春",
+      "单一恋爱"
+    ],
+    "action": "alias",
+    "rationale": "拆分为世界场景与关系轴，避免把校园和固定恋爱模板绑死。"
+  },
+  {
+    "raw_tag": "乙女游戏转生",
+    "frequency": 5,
+    "canonical_tags": [
+      "乙女游戏世界",
+      "原作角色转生"
+    ],
+    "action": "alias",
+    "rationale": "拆分原作媒介与主角来历。"
+  },
+  {
+    "raw_tag": "政治",
+    "frequency": 5,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "泛称政治冲突，归到政治权力来源。"
+  },
+  {
+    "raw_tag": "恋爱",
+    "frequency": 4,
+    "canonical_tags": [
+      "恋爱要素"
+    ],
+    "action": "new_candidate",
+    "rationale": "泛恋爱不能安全归为单一恋爱、后宫或其他具体结构。"
+  },
+  {
+    "raw_tag": "领地经营",
+    "frequency": 4,
+    "canonical_tags": [
+      "领地建设",
+      "领地发展"
+    ],
+    "action": "alias",
+    "rationale": "同时标记故事发动机与成长反馈。"
+  },
+  {
+    "raw_tag": "旅行",
+    "frequency": 4,
+    "canonical_tags": [
+      "旅行见闻"
+    ],
+    "action": "alias",
+    "rationale": "旅行推进的表述变体。"
+  },
+  {
+    "raw_tag": "慢热",
+    "frequency": 4,
+    "canonical_tags": [
+      "慢热铺陈"
+    ],
+    "action": "alias",
+    "rationale": "节奏标签的简称。"
+  },
+  {
+    "raw_tag": "魔女",
+    "frequency": 4,
+    "canonical_tags": [
+      "魔女"
+    ],
+    "action": "new_candidate",
+    "rationale": "魔女不是必然等同魔族，且在日轻中是稳定身份母题。"
+  },
+  {
+    "raw_tag": "青春",
+    "frequency": 4,
+    "canonical_tags": [
+      "青春成长"
+    ],
+    "action": "new_candidate",
+    "rationale": "青春不必等于校园或固定酸甜基调，建议独立主题标签。"
+  },
+  {
+    "raw_tag": "生活流",
+    "frequency": 4,
+    "canonical_tags": [
+      "生活流"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有“群像生活流”过窄，单主角生活流需要上位标签。"
+  },
+  {
+    "raw_tag": "校园",
+    "frequency": 4,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "校园场景的表述变体。"
+  },
+  {
+    "raw_tag": "百合",
+    "frequency": 3,
+    "canonical_tags": [
+      "百合"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "成长",
+    "frequency": 3,
+    "canonical_tags": [
+      "成长叙事"
+    ],
+    "action": "new_candidate",
+    "rationale": "原始标签未说明人格、能力或团队方向，需保留上位概念。"
+  },
+  {
+    "raw_tag": "单元剧",
+    "frequency": 3,
+    "canonical_tags": [
+      "单元剧"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "复仇",
+    "frequency": 3,
+    "canonical_tags": [
+      "复仇血债"
+    ],
+    "action": "alias",
+    "rationale": "复仇冲突的简称。"
+  },
+  {
+    "raw_tag": "疾病",
+    "frequency": 3,
+    "canonical_tags": [
+      "疾病伤痛"
+    ],
+    "action": "alias",
+    "rationale": "疾病冲突的简称。"
+  },
+  {
+    "raw_tag": "历史改写",
+    "frequency": 3,
+    "canonical_tags": [
+      "架空历史"
+    ],
+    "action": "alias",
+    "rationale": "历史或架空历史框架。"
+  },
+  {
+    "raw_tag": "恋爱喜剧",
+    "frequency": 3,
+    "canonical_tags": [
+      "单一恋爱",
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "明确包含恋爱关系；多角／后宫标签由其他规则覆盖。 喜剧基调。"
+  },
+  {
+    "raw_tag": "慢生活",
+    "frequency": 3,
+    "canonical_tags": [
+      "スローライフ",
+      "悠闲慢生活"
+    ],
+    "action": "alias",
+    "rationale": "日式母题与中文基调双轴归一。"
+  },
+  {
+    "raw_tag": "内政",
+    "frequency": 3,
+    "canonical_tags": [
+      "内政治理"
+    ],
+    "action": "new_candidate",
+    "rationale": "领地建设与战争经营不能完整覆盖财政、官僚和公共治理。"
+  },
+  {
+    "raw_tag": "女性关系",
+    "frequency": 3,
+    "canonical_tags": [
+      "女性关系中心"
+    ],
+    "action": "new_candidate",
+    "rationale": "女性中心关系不一定是百合或女性群像，需保留开放性。"
+  },
+  {
+    "raw_tag": "轻喜剧",
+    "frequency": 3,
+    "canonical_tags": [
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "泛轻喜剧归到低压力喜剧基调。"
+  },
+  {
+    "raw_tag": "师徒",
+    "frequency": 3,
+    "canonical_tags": [
+      "师徒"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "双重身份",
+    "frequency": 3,
+    "canonical_tags": [
+      "马甲身份"
+    ],
+    "action": "alias",
+    "rationale": "归入多身份发动机；人格医学含义仍由原始标签保留。"
+  },
+  {
+    "raw_tag": "异世界转移",
+    "frequency": 3,
+    "canonical_tags": [
+      "异世界转移"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "音乐",
+    "frequency": 3,
+    "canonical_tags": [
+      "音乐题材"
+    ],
+    "action": "new_candidate",
+    "rationale": "音乐兼具职业、关系和世界机制，现有本体没有通用音乐标签。"
+  },
+  {
+    "raw_tag": "病态依恋",
+    "frequency": 2,
+    "canonical_tags": [
+      "病态依恋"
+    ],
+    "action": "new_candidate",
+    "rationale": "关系强度与控制欲是稳定母题，不能简化为普通多角关系。"
+  },
+  {
+    "raw_tag": "不死者",
+    "frequency": 2,
+    "canonical_tags": [
+      "不死族"
+    ],
+    "action": "alias",
+    "rationale": "存在形态同义。"
+  },
+  {
+    "raw_tag": "成年女性",
+    "frequency": 2,
+    "canonical_tags": [
+      "成年主角",
+      "女性主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "年龄阶段和性别应成为独立、可组合的主角档案字段。"
+  },
+  {
+    "raw_tag": "成人恋爱",
+    "frequency": 2,
+    "canonical_tags": [
+      "成人关系"
+    ],
+    "action": "new_candidate",
+    "rationale": "成年人的经济、工作和长期责任会改变恋爱结构。"
+  },
+  {
+    "raw_tag": "创伤",
+    "frequency": 2,
+    "canonical_tags": [
+      "心理创伤"
+    ],
+    "action": "new_candidate",
+    "rationale": "心理创伤是持续冲突，不等同一般疾病伤痛或已经开始疗愈。"
+  },
+  {
+    "raw_tag": "代际关系",
+    "frequency": 2,
+    "canonical_tags": [
+      "代际差异"
+    ],
+    "action": "alias",
+    "rationale": "代际冲突与差异的同义归并。"
+  },
+  {
+    "raw_tag": "帝国",
+    "frequency": 2,
+    "canonical_tags": [
+      "领主君主",
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "统治者／王族身份。 政治制度冲突。"
+  },
+  {
+    "raw_tag": "店铺经营",
+    "frequency": 2,
+    "canonical_tags": [
+      "店铺经营"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "都市传说",
+    "frequency": 2,
+    "canonical_tags": [
+      "现代怪谈"
+    ],
+    "action": "new_candidate",
+    "rationale": "都市奇幻过宽，地方性怪谈与传播链值得独立世界标签。"
+  },
+  {
+    "raw_tag": "多角关系",
+    "frequency": 2,
+    "canonical_tags": [
+      "多角关系"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "多种族",
+    "frequency": 2,
+    "canonical_tags": [
+      "多种族社会"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有身体标签无法表达多族群制度与政治。"
+  },
+  {
+    "raw_tag": "多周目",
+    "frequency": 2,
+    "canonical_tags": [
+      "多周目轮回"
+    ],
+    "action": "alias",
+    "rationale": "多轮人生的简称。"
+  },
+  {
+    "raw_tag": "恶役令嬢",
+    "frequency": 2,
+    "canonical_tags": [
+      "恶役令嬢"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "恶役千金",
+    "frequency": 2,
+    "canonical_tags": [
+      "恶役千金"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "反勇者",
+    "frequency": 2,
+    "canonical_tags": [
+      "反英雄身份"
+    ],
+    "action": "new_candidate",
+    "rationale": "反勇者可能是制度批判或身份反转，不等同勇者队非勇者。"
+  },
+  {
+    "raw_tag": "公路片",
+    "frequency": 2,
+    "canonical_tags": [
+      "公路旅行"
+    ],
+    "action": "alias",
+    "rationale": "媒介风格归到公路旅行世界框架。"
+  },
+  {
+    "raw_tag": "宫廷",
+    "frequency": 2,
+    "canonical_tags": [
+      "宫廷生存"
+    ],
+    "action": "alias",
+    "rationale": "宫廷场景归入现有发动机。"
+  },
+  {
+    "raw_tag": "孤独",
+    "frequency": 2,
+    "canonical_tags": [
+      "孤独处境"
+    ],
+    "action": "new_candidate",
+    "rationale": "孤独是持续人物处境，不等同失忆或社会退出。"
+  },
+  {
+    "raw_tag": "广播节目",
+    "frequency": 2,
+    "canonical_tags": [
+      "广播叙事"
+    ],
+    "action": "new_candidate",
+    "rationale": "广播及来信是稳定的信息结构，不能等同直播弹幕。"
+  },
+  {
+    "raw_tag": "国家经营",
+    "frequency": 2,
+    "canonical_tags": [
+      "内政治理"
+    ],
+    "action": "new_candidate",
+    "rationale": "领地建设与战争经营不能完整覆盖财政、官僚和公共治理。"
+  },
+  {
+    "raw_tag": "黑暗奇幻",
+    "frequency": 2,
+    "canonical_tags": [
+      "黑暗奇幻"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "黑色幽默",
+    "frequency": 2,
+    "canonical_tags": [
+      "黑色幽默"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "互损",
+    "frequency": 2,
+    "canonical_tags": [
+      "欢喜冤家"
+    ],
+    "action": "alias",
+    "rationale": "互损式对话通常是欢喜冤家的关系表现。"
+  },
+  {
+    "raw_tag": "回归",
+    "frequency": 2,
+    "canonical_tags": [
+      "时间回归"
+    ],
+    "action": "alias",
+    "rationale": "时间回归的简称。"
+  },
+  {
+    "raw_tag": "机甲",
+    "frequency": 2,
+    "canonical_tags": [
+      "机甲战争"
+    ],
+    "action": "alias",
+    "rationale": "机甲题材归入现有世界框架。"
+  },
+  {
+    "raw_tag": "记忆",
+    "frequency": 2,
+    "canonical_tags": [
+      "记忆主题"
+    ],
+    "action": "new_candidate",
+    "rationale": "记忆作为主题不一定对应失忆、未来记忆或叙事倒序。"
+  },
+  {
+    "raw_tag": "家庭",
+    "frequency": 2,
+    "canonical_tags": [
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "家庭关系上位归一；具体结构保留在原始标签。"
+  },
+  {
+    "raw_tag": "架空战争",
+    "frequency": 2,
+    "canonical_tags": [
+      "佣兵军人",
+      "战争局势",
+      "架空历史"
+    ],
+    "action": "alias",
+    "rationale": "军事职业与战争冲突。 历史或架空历史框架。"
+  },
+  {
+    "raw_tag": "跨媒体",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "传播与出版元数据，应进入 adaptation 或 media 元数据层。"
+  },
+  {
+    "raw_tag": "魔法教育",
+    "frequency": 2,
+    "canonical_tags": [
+      "教师"
+    ],
+    "action": "alias",
+    "rationale": "教育职业。"
+  },
+  {
+    "raw_tag": "女性向",
+    "frequency": 2,
+    "canonical_tags": [
+      "女性向"
+    ],
+    "action": "new_candidate",
+    "rationale": "这是市场／受众元数据，应新增独立 audience 轴而非混入世界框架。"
+  },
+  {
+    "raw_tag": "女性向幻想",
+    "frequency": 2,
+    "canonical_tags": [
+      "女性向"
+    ],
+    "action": "new_candidate",
+    "rationale": "这是市场／受众元数据，应新增独立 audience 轴而非混入世界框架。"
+  },
+  {
+    "raw_tag": "女性职业",
+    "frequency": 2,
+    "canonical_tags": [
+      "女性职业成长"
+    ],
+    "action": "alias",
+    "rationale": "日轻市场母题的简称。"
+  },
+  {
+    "raw_tag": "破灭回避",
+    "frequency": 2,
+    "canonical_tags": [
+      "破灭Flag回避",
+      "避开破灭结局"
+    ],
+    "action": "alias",
+    "rationale": "归到日轻母题与长期方向。"
+  },
+  {
+    "raw_tag": "青春后日谈",
+    "frequency": 2,
+    "canonical_tags": [
+      "后日谈"
+    ],
+    "action": "new_candidate",
+    "rationale": "原故事完成后的生活与调查不一定是第二人生或退休。"
+  },
+  {
+    "raw_tag": "善恶错位",
+    "frequency": 2,
+    "canonical_tags": [
+      "认知规范错位"
+    ],
+    "action": "new_candidate",
+    "rationale": "社会常识或善恶评价错位是误解喜剧之外的制度机制。"
+  },
+  {
+    "raw_tag": "身份伪装",
+    "frequency": 2,
+    "canonical_tags": [
+      "马甲身份"
+    ],
+    "action": "alias",
+    "rationale": "公开身份与真实身份分离。"
+  },
+  {
+    "raw_tag": "身份重建",
+    "frequency": 2,
+    "canonical_tags": [
+      "人格成长"
+    ],
+    "action": "alias",
+    "rationale": "身份与自我的长期重建归入人格成长。"
+  },
+  {
+    "raw_tag": "生存",
+    "frequency": 2,
+    "canonical_tags": [
+      "生存追逃"
+    ],
+    "action": "alias",
+    "rationale": "生存或逃亡冲突。"
+  },
+  {
+    "raw_tag": "实验",
+    "frequency": 2,
+    "canonical_tags": [
+      "科研研发"
+    ],
+    "action": "alias",
+    "rationale": "实验活动归入研发发动机。"
+  },
+  {
+    "raw_tag": "双视角",
+    "frequency": 2,
+    "canonical_tags": [
+      "多视角POV"
+    ],
+    "action": "alias",
+    "rationale": "视角数量的同义表达。"
+  },
+  {
+    "raw_tag": "死亡回归",
+    "frequency": 2,
+    "canonical_tags": [
+      "死亡循环"
+    ],
+    "action": "alias",
+    "rationale": "死亡触发回档的同义表达。"
+  },
+  {
+    "raw_tag": "同居",
+    "frequency": 2,
+    "canonical_tags": [
+      "共同生活"
+    ],
+    "action": "new_candidate",
+    "rationale": "共同居住不必构成选择家庭，建议保留独立关系状态。"
+  },
+  {
+    "raw_tag": "团队协作",
+    "frequency": 2,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队合作归入团队成长，原始标签保留协作方式。"
+  },
+  {
+    "raw_tag": "外交",
+    "frequency": 2,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "委托",
+    "frequency": 2,
+    "canonical_tags": [
+      "公会委托"
+    ],
+    "action": "alias",
+    "rationale": "委托推进的通用发动机；原始标签保留是否属于公会。"
+  },
+  {
+    "raw_tag": "现代迷宫",
+    "frequency": 2,
+    "canonical_tags": [
+      "现代迷宫"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "现代日常",
+    "frequency": 2,
+    "canonical_tags": [
+      "现代都市",
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "拆分时代背景与篇章节奏。"
+  },
+  {
+    "raw_tag": "现代异能",
+    "frequency": 2,
+    "canonical_tags": [
+      "现代都市",
+      "都市异能"
+    ],
+    "action": "alias",
+    "rationale": "现代世界框架。 现代异能／超常。"
+  },
+  {
+    "raw_tag": "性别错位",
+    "frequency": 2,
+    "canonical_tags": [
+      "性别身份错位"
+    ],
+    "action": "new_candidate",
+    "rationale": "身份呈现错位不一定发生身体性转。"
+  },
+  {
+    "raw_tag": "乙女游戏",
+    "frequency": 2,
+    "canonical_tags": [
+      "乙女游戏"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "义兄妹",
+    "frequency": 2,
+    "canonical_tags": [
+      "兄弟姐妹"
+    ],
+    "action": "alias",
+    "rationale": "家庭关系的具体变体。"
+  },
+  {
+    "raw_tag": "异世界美食",
+    "frequency": 2,
+    "canonical_tags": [
+      "异世界餐厅",
+      "美食制作"
+    ],
+    "action": "alias",
+    "rationale": "拆分世界母题与实际循环。"
+  },
+  {
+    "raw_tag": "异世界召唤",
+    "frequency": 2,
+    "canonical_tags": [
+      "異世界転移",
+      "西式奇幻"
+    ],
+    "action": "alias",
+    "rationale": "异世界移动／召唤母题。 未指定细分的异世界先归到西式奇幻上位框架。"
+  },
+  {
+    "raw_tag": "异种转生",
+    "frequency": 2,
+    "canonical_tags": [
+      "人外转生",
+      "異世界転生"
+    ],
+    "action": "alias",
+    "rationale": "拆分非人身体与异世界来历。"
+  },
+  {
+    "raw_tag": "隐藏强者",
+    "frequency": 2,
+    "canonical_tags": [
+      "隐藏强者"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "游戏世界",
+    "frequency": 2,
+    "canonical_tags": [
+      "游戏世界"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "游戏转生",
+    "frequency": 2,
+    "canonical_tags": [
+      "游戏世界",
+      "原作角色转生"
+    ],
+    "action": "alias",
+    "rationale": "拆分世界媒介与来历。"
+  },
+  {
+    "raw_tag": "元叙事",
+    "frequency": 2,
+    "canonical_tags": [
+      "元叙事"
+    ],
+    "action": "new_candidate",
+    "rationale": "角色意识到类型规则或媒介结构，现有本体缺少对应信息标签。"
+  },
+  {
+    "raw_tag": "原作知识",
+    "frequency": 2,
+    "canonical_tags": [
+      "原作知识"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "债务",
+    "frequency": 2,
+    "canonical_tags": [
+      "资源不足"
+    ],
+    "action": "alias",
+    "rationale": "债务是资源不足的制度化形式。"
+  },
+  {
+    "raw_tag": "战争",
+    "frequency": 2,
+    "canonical_tags": [
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "泛称战争冲突归到冲突来源。"
+  },
+  {
+    "raw_tag": "正统幻想",
+    "frequency": 2,
+    "canonical_tags": [
+      "西式奇幻"
+    ],
+    "action": "alias",
+    "rationale": "西式幻想世界的表述变体。"
+  },
+  {
+    "raw_tag": "中年主角",
+    "frequency": 2,
+    "canonical_tags": [
+      "中年主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "中年经验与身体年龄错位频繁出现，值得独立于成年统称。"
+  },
+  {
+    "raw_tag": "转生",
+    "frequency": 2,
+    "canonical_tags": [
+      "異世界転生"
+    ],
+    "action": "alias",
+    "rationale": "转生母题；原始标签保留是否明确异世界。"
+  },
+  {
+    "raw_tag": "BL",
+    "frequency": 2,
+    "canonical_tags": [
+      "BL"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "Galgame转生",
+    "frequency": 2,
+    "canonical_tags": [
+      "Galgame世界",
+      "原作角色转生"
+    ],
+    "action": "alias",
+    "rationale": "拆分游戏类型与来历。"
+  },
+  {
+    "raw_tag": "VTuber",
+    "frequency": 2,
+    "canonical_tags": [
+      "VTuber直播",
+      "主播UP主"
+    ],
+    "action": "alias",
+    "rationale": "同时标记日轻母题与职业。"
+  },
+  {
+    "raw_tag": "25年后",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "具体时间钩子，适合检索但不应成为通用本体标签。"
+  },
+  {
+    "raw_tag": "哀伤修复",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复",
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "拆分成长方向与基调。"
+  },
+  {
+    "raw_tag": "暗君",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "暗色青春",
+    "frequency": 1,
+    "canonical_tags": [
+      "青春酸甜"
+    ],
+    "action": "alias",
+    "rationale": "青春情感基调。"
+  },
+  {
+    "raw_tag": "百合可能",
+    "frequency": 1,
+    "canonical_tags": [
+      "百合"
+    ],
+    "action": "alias",
+    "rationale": "弱显性百合信号归入关系轴，强度由原始标签保留。"
+  },
+  {
+    "raw_tag": "百合气息",
+    "frequency": 1,
+    "canonical_tags": [
+      "百合"
+    ],
+    "action": "alias",
+    "rationale": "弱显性百合信号归入关系轴，强度由原始标签保留。"
+  },
+  {
+    "raw_tag": "败犬女主",
+    "frequency": 1,
+    "canonical_tags": [
+      "败犬角色"
+    ],
+    "action": "alias",
+    "rationale": "失败恋爱角色的同义表达。"
+  },
+  {
+    "raw_tag": "搬家职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "搬迁物流"
+    ],
+    "action": "new_candidate",
+    "rationale": "搬家和空间整理不能无损归入快递信使。"
+  },
+  {
+    "raw_tag": "保护孩子",
+    "frequency": 1,
+    "canonical_tags": [
+      "全职照顾者",
+      "监护人家长"
+    ],
+    "action": "alias",
+    "rationale": "照护责任归到职业与叙事位置。"
+  },
+  {
+    "raw_tag": "报告书",
+    "frequency": 1,
+    "canonical_tags": [
+      "档案文书"
+    ],
+    "action": "alias",
+    "rationale": "文档型叙事形式归一。"
+  },
+  {
+    "raw_tag": "卑鄙战术",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "悲剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "悲剧结局",
+      "压抑黑暗"
+    ],
+    "action": "alias",
+    "rationale": "悲剧情绪与结局倾向双轴。"
+  },
+  {
+    "raw_tag": "悲恋",
+    "frequency": 1,
+    "canonical_tags": [
+      "悲剧结局",
+      "压抑黑暗"
+    ],
+    "action": "alias",
+    "rationale": "悲剧情绪与结局倾向双轴。"
+  },
+  {
+    "raw_tag": "被背叛",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "被弃公爵夫人",
+    "frequency": 1,
+    "canonical_tags": [
+      "离婚后生活"
+    ],
+    "action": "new_candidate",
+    "rationale": "婚姻结束后的生活重建不同于婚约破弃或追妻。"
+  },
+  {
+    "raw_tag": "被召唤者",
+    "frequency": 1,
+    "canonical_tags": [
+      "異世界転移"
+    ],
+    "action": "alias",
+    "rationale": "异世界移动／召唤母题。"
+  },
+  {
+    "raw_tag": "比赛",
+    "frequency": 1,
+    "canonical_tags": [
+      "竞技联赛"
+    ],
+    "action": "alias",
+    "rationale": "竞技赛制的上位归一。"
+  },
+  {
+    "raw_tag": "笔记",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "边界",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系边界协商"
+    ],
+    "action": "new_candidate",
+    "rationale": "近年关系文大量依靠明确协商而非误会，需要独立机制。"
+  },
+  {
+    "raw_tag": "边界感",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系边界协商"
+    ],
+    "action": "new_candidate",
+    "rationale": "近年关系文大量依靠明确协商而非误会，需要独立机制。"
+  },
+  {
+    "raw_tag": "边界协商",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系边界协商"
+    ],
+    "action": "new_candidate",
+    "rationale": "近年关系文大量依靠明确协商而非误会，需要独立机制。"
+  },
+  {
+    "raw_tag": "边境",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "边境贵族次子",
+    "frequency": 1,
+    "canonical_tags": [
+      "贵族家族"
+    ],
+    "action": "alias",
+    "rationale": "贵族社会身份。"
+  },
+  {
+    "raw_tag": "边境建设",
+    "frequency": 1,
+    "canonical_tags": [
+      "领地建设"
+    ],
+    "action": "alias",
+    "rationale": "空间建设的上位归一。"
+  },
+  {
+    "raw_tag": "边境领主",
+    "frequency": 1,
+    "canonical_tags": [
+      "领主君主",
+      "领地管理者"
+    ],
+    "action": "alias",
+    "rationale": "领主身份与管理位置双轴。"
+  },
+  {
+    "raw_tag": "不对称关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系变化上位归一。"
+  },
+  {
+    "raw_tag": "不可靠叙述",
+    "frequency": 1,
+    "canonical_tags": [
+      "不可靠叙述"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "不死敌人",
+    "frequency": 1,
+    "canonical_tags": [
+      "不死族"
+    ],
+    "action": "alias",
+    "rationale": "不死存在形态。"
+  },
+  {
+    "raw_tag": "不死劳动",
+    "frequency": 1,
+    "canonical_tags": [
+      "不死族"
+    ],
+    "action": "alias",
+    "rationale": "不死存在形态。"
+  },
+  {
+    "raw_tag": "不体面主角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "不完全解释",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "不稳定亲密",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "不追求顶点",
+    "frequency": 1,
+    "canonical_tags": [
+      "不追求变强"
+    ],
+    "action": "alias",
+    "rationale": "不以力量增长为目标。"
+  },
+  {
+    "raw_tag": "部下群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "多角色共同承担叙事。 组织／队伍群像。"
+  },
+  {
+    "raw_tag": "才能与努力",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "材料采集",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "餐馆",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮",
+      "美食制作"
+    ],
+    "action": "alias",
+    "rationale": "餐饮题材与制作循环归一。"
+  },
+  {
+    "raw_tag": "残酷战争",
+    "frequency": 1,
+    "canonical_tags": [
+      "冷峻现实",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "战争题材的现实基调与冲突来源。"
+  },
+  {
+    "raw_tag": "插画师",
+    "frequency": 1,
+    "canonical_tags": [
+      "作家创作者"
+    ],
+    "action": "alias",
+    "rationale": "内容创作职业的上位归一。"
+  },
+  {
+    "raw_tag": "超常案件",
+    "frequency": 1,
+    "canonical_tags": [
+      "都市异能"
+    ],
+    "action": "alias",
+    "rationale": "现代异能／超常。"
+  },
+  {
+    "raw_tag": "超现实",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "臣下视角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "成年搭档",
+    "frequency": 1,
+    "canonical_tags": [
+      "搭档关系"
+    ],
+    "action": "new_candidate",
+    "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
+  },
+  {
+    "raw_tag": "成年男性视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "男性主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体缺少主角性别轴；职业或文风不能替代性别记录。"
+  },
+  {
+    "raw_tag": "成年人",
+    "frequency": 1,
+    "canonical_tags": [
+      "成年主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "成年阶段是近年轻小说区别少年模板的重要维度。"
+  },
+  {
+    "raw_tag": "成年新人",
+    "frequency": 1,
+    "canonical_tags": [
+      "成年主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "成年阶段是近年轻小说区别少年模板的重要维度。"
+  },
+  {
+    "raw_tag": "成年主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "成年主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "成年阶段是近年轻小说区别少年模板的重要维度。"
+  },
+  {
+    "raw_tag": "成人生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "成人关系"
+    ],
+    "action": "new_candidate",
+    "rationale": "成年人的经济、工作和长期责任会改变恋爱结构。"
+  },
+  {
+    "raw_tag": "成长阶段",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "程序化危机",
+    "frequency": 1,
+    "canonical_tags": [
+      "异常收容",
+      "职业案件单元剧"
+    ],
+    "action": "alias",
+    "rationale": "异常被机构化处理。"
+  },
+  {
+    "raw_tag": "初恋",
+    "frequency": 1,
+    "canonical_tags": [
+      "单一恋爱",
+      "青春酸甜"
+    ],
+    "action": "alias",
+    "rationale": "明确包含恋爱关系；多角／后宫标签由其他规则覆盖。 青春情感基调。"
+  },
+  {
+    "raw_tag": "处刑回避",
+    "frequency": 1,
+    "canonical_tags": [
+      "避开破灭结局"
+    ],
+    "action": "alias",
+    "rationale": "避免既定坏结局的长期方向。"
+  },
+  {
+    "raw_tag": "处刑回归",
+    "frequency": 1,
+    "canonical_tags": [
+      "重生回过去"
+    ],
+    "action": "alias",
+    "rationale": "回到过去重开人生。"
+  },
+  {
+    "raw_tag": "传奇",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "创伤不消失",
+    "frequency": 1,
+    "canonical_tags": [
+      "心理创伤"
+    ],
+    "action": "new_candidate",
+    "rationale": "心理创伤是持续冲突，不等同一般疾病伤痛或已经开始疗愈。"
+  },
+  {
+    "raw_tag": "创伤恢复",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复",
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "拆分成长方向与基调。"
+  },
+  {
+    "raw_tag": "创业",
+    "frequency": 1,
+    "canonical_tags": [
+      "商人行商",
+      "公司经营"
+    ],
+    "action": "alias",
+    "rationale": "商业身份与经营发动机双轴。"
+  },
+  {
+    "raw_tag": "创作行业",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。"
+  },
+  {
+    "raw_tag": "创作者日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "作家创作者"
+    ],
+    "action": "alias",
+    "rationale": "内容创作职业的上位归一。"
+  },
+  {
+    "raw_tag": "错过浪潮",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "搭档",
+    "frequency": 1,
+    "canonical_tags": [
+      "搭档关系"
+    ],
+    "action": "new_candidate",
+    "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
+  },
+  {
+    "raw_tag": "大小姐人设",
+    "frequency": 1,
+    "canonical_tags": [
+      "马甲身份"
+    ],
+    "action": "alias",
+    "rationale": "身份分层。"
+  },
+  {
+    "raw_tag": "大学青春",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "青春题材的场景上位归一；原始标签保留是否大学。"
+  },
+  {
+    "raw_tag": "大学生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "学生"
+    ],
+    "action": "alias",
+    "rationale": "学生身份。"
+  },
+  {
+    "raw_tag": "单卷叙事",
+    "frequency": 1,
+    "canonical_tags": [
+      "短篇闭环"
+    ],
+    "action": "alias",
+    "rationale": "单卷内完成主要闭环。"
+  },
+  {
+    "raw_tag": "单恋",
+    "frequency": 1,
+    "canonical_tags": [
+      "单一恋爱"
+    ],
+    "action": "alias",
+    "rationale": "明确包含恋爱关系；多角／后宫标签由其他规则覆盖。"
+  },
+  {
+    "raw_tag": "单刷Boss",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "弹幕",
+    "frequency": 1,
+    "canonical_tags": [
+      "直播弹幕"
+    ],
+    "action": "alias",
+    "rationale": "弹幕表现形式归一。"
+  },
+  {
+    "raw_tag": "弹幕叙事",
+    "frequency": 1,
+    "canonical_tags": [
+      "直播弹幕"
+    ],
+    "action": "alias",
+    "rationale": "弹幕表现形式归一。"
+  },
+  {
+    "raw_tag": "档案感",
+    "frequency": 1,
+    "canonical_tags": [
+      "档案文书"
+    ],
+    "action": "alias",
+    "rationale": "文档型叙事形式归一。"
+  },
+  {
+    "raw_tag": "导师",
+    "frequency": 1,
+    "canonical_tags": [
+      "教师",
+      "导师前辈"
+    ],
+    "action": "alias",
+    "rationale": "教育职业与导师位置。"
+  },
+  {
+    "raw_tag": "岛屿社会",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "道德创伤",
+    "frequency": 1,
+    "canonical_tags": [
+      "心理创伤"
+    ],
+    "action": "new_candidate",
+    "rationale": "心理创伤是持续冲突，不等同一般疾病伤痛或已经开始疗愈。"
+  },
+  {
+    "raw_tag": "道德灰度",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系伦理灰度"
+    ],
+    "action": "new_candidate",
+    "rationale": "需要记录非理想化、非犯罪化的关系伦理灰区。"
+  },
+  {
+    "raw_tag": "道德难题",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "地方风俗",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "地方感",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "地方见闻",
+    "frequency": 1,
+    "canonical_tags": [
+      "旅行见闻"
+    ],
+    "action": "alias",
+    "rationale": "旅行推进的表述变体。"
+  },
+  {
+    "raw_tag": "地方社会",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "地方社区",
+    "frequency": 1,
+    "canonical_tags": [
+      "社区邻里"
+    ],
+    "action": "alias",
+    "rationale": "社区关系的表述变体。"
+  },
+  {
+    "raw_tag": "地方生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "市井烟火"
+    ],
+    "action": "alias",
+    "rationale": "地方／社区生活基调。"
+  },
+  {
+    "raw_tag": "地方探索",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "地方政治",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "地味令嬢",
+    "frequency": 1,
+    "canonical_tags": [
+      "贵族家族"
+    ],
+    "action": "alias",
+    "rationale": "贵族社会身份。"
+  },
+  {
+    "raw_tag": "地下城直播",
+    "frequency": 1,
+    "canonical_tags": [
+      "直播弹幕",
+      "主播UP主",
+      "地下城社会"
+    ],
+    "action": "alias",
+    "rationale": "直播表现形式与主播职业。 地下城世界框架。"
+  },
+  {
+    "raw_tag": "地下城主",
+    "frequency": 1,
+    "canonical_tags": [
+      "迷宫经营",
+      "迷宫核心"
+    ],
+    "action": "alias",
+    "rationale": "拆分经营循环与身份形态。"
+  },
+  {
+    "raw_tag": "低冲突",
+    "frequency": 1,
+    "canonical_tags": [
+      "低压力叙事"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有悠闲慢生活仍可能有目标压力，建议独立压力等级。"
+  },
+  {
+    "raw_tag": "低等级",
+    "frequency": 1,
+    "canonical_tags": [
+      "废柴逆袭"
+    ],
+    "action": "alias",
+    "rationale": "低起点成长。"
+  },
+  {
+    "raw_tag": "低级怪物",
+    "frequency": 1,
+    "canonical_tags": [
+      "魔物"
+    ],
+    "action": "alias",
+    "rationale": "魔物存在或生态。"
+  },
+  {
+    "raw_tag": "低欲望",
+    "frequency": 1,
+    "canonical_tags": [
+      "低压力叙事"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有悠闲慢生活仍可能有目标压力，建议独立压力等级。"
+  },
+  {
+    "raw_tag": "敌对关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "敌对关系"
+    ],
+    "action": "new_candidate",
+    "rationale": "敌对并不必然发展成恋爱或宿敌，现有关系轴缺少中性上位项。"
+  },
+  {
+    "raw_tag": "敌国",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "敌国皇太子",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "敌营潜伏",
+    "frequency": 1,
+    "canonical_tags": [
+      "潜伏谍报"
+    ],
+    "action": "new_candidate",
+    "rationale": "谍报潜伏是独立职业／发动机。"
+  },
+  {
+    "raw_tag": "底层少年",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "底层职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。"
+  },
+  {
+    "raw_tag": "第二可爱",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级角色排序设定，不具备稳定跨作品语义。"
+  },
+  {
+    "raw_tag": "第二恋人",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "第一人称记录",
+    "frequency": 1,
+    "canonical_tags": [
+      "书信日记"
+    ],
+    "action": "alias",
+    "rationale": "日记／记录形式归一。"
+  },
+  {
+    "raw_tag": "第一人称亲密",
+    "frequency": 1,
+    "canonical_tags": [
+      "有限视角"
+    ],
+    "action": "alias",
+    "rationale": "贴身第一人称是有限视角的一种。"
+  },
+  {
+    "raw_tag": "动作",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "都市青春",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "青春题材的场景上位归一；原始标签保留是否大学。"
+  },
+  {
+    "raw_tag": "都市异能",
+    "frequency": 1,
+    "canonical_tags": [
+      "都市异能"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "断罪未来",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "队伍经营",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "队伍经营归入团队成长。"
+  },
+  {
+    "raw_tag": "队伍培育",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "队伍经营归入团队成长。"
+  },
+  {
+    "raw_tag": "队伍日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长",
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "团队成长。 日常节奏。 团队／领导成长。"
+  },
+  {
+    "raw_tag": "队伍协作",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队合作归入团队成长，原始标签保留协作方式。"
+  },
+  {
+    "raw_tag": "队友创伤",
+    "frequency": 1,
+    "canonical_tags": [
+      "心理创伤"
+    ],
+    "action": "new_candidate",
+    "rationale": "心理创伤是持续冲突，不等同一般疾病伤痛或已经开始疗愈。"
+  },
+  {
+    "raw_tag": "队友互坑",
+    "frequency": 1,
+    "canonical_tags": [
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "喜剧基调。"
+  },
+  {
+    "raw_tag": "队长误解",
+    "frequency": 1,
+    "canonical_tags": [
+      "误解喜剧"
+    ],
+    "action": "alias",
+    "rationale": "认知错位与误解结构。"
+  },
+  {
+    "raw_tag": "对话驱动",
+    "frequency": 1,
+    "canonical_tags": [
+      "日轻会话感"
+    ],
+    "action": "alias",
+    "rationale": "以会话推进的文风归一。"
+  },
+  {
+    "raw_tag": "多女主",
+    "frequency": 1,
+    "canonical_tags": [
+      "多角关系"
+    ],
+    "action": "alias",
+    "rationale": "多方恋爱结构。"
+  },
+  {
+    "raw_tag": "多视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "多视角POV"
+    ],
+    "action": "alias",
+    "rationale": "视角数量的同义表达。"
+  },
+  {
+    "raw_tag": "多视角印象",
+    "frequency": 1,
+    "canonical_tags": [
+      "多视角POV"
+    ],
+    "action": "alias",
+    "rationale": "多个视角组织信息。"
+  },
+  {
+    "raw_tag": "多证词",
+    "frequency": 1,
+    "canonical_tags": [
+      "同一事件多次重述",
+      "多视角POV"
+    ],
+    "action": "alias",
+    "rationale": "访谈证词需要多视角重述。"
+  },
+  {
+    "raw_tag": "多族群",
+    "frequency": 1,
+    "canonical_tags": [
+      "多种族社会"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有身体标签无法表达多族群制度与政治。"
+  },
+  {
+    "raw_tag": "恶逆皇女",
+    "frequency": 1,
+    "canonical_tags": [
+      "恶役千金",
+      "反派视角"
+    ],
+    "action": "alias",
+    "rationale": "女性贵族反派位置归一。"
+  },
+  {
+    "raw_tag": "恶役令嬢志愿",
+    "frequency": 1,
+    "canonical_tags": [
+      "恶役千金",
+      "反派视角"
+    ],
+    "action": "alias",
+    "rationale": "女性贵族反派位置归一。"
+  },
+  {
+    "raw_tag": "恶役思想侵入",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "儿童领主",
+    "frequency": 1,
+    "canonical_tags": [
+      "儿童主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "儿童身体和社会能力限制会显著改变玩法。"
+  },
+  {
+    "raw_tag": "儿童与成人",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "反差喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "喜剧基调。"
+  },
+  {
+    "raw_tag": "反后宫",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "反模板",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "反男性幻想",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "反派配角",
+    "frequency": 1,
+    "canonical_tags": [
+      "原作配角"
+    ],
+    "action": "alias",
+    "rationale": "原作配角成为叙事中心。"
+  },
+  {
+    "raw_tag": "反派自认",
+    "frequency": 1,
+    "canonical_tags": [
+      "反派视角"
+    ],
+    "action": "alias",
+    "rationale": "反派位置或视角。"
+  },
+  {
+    "raw_tag": "反圣女",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "反套路喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "喜剧基调。"
+  },
+  {
+    "raw_tag": "反乌托邦",
+    "frequency": 1,
+    "canonical_tags": [
+      "反乌托邦"
+    ],
+    "action": "new_candidate",
+    "rationale": "近现代制度性压迫需要独立世界框架。"
+  },
+  {
+    "raw_tag": "反向经验值",
+    "frequency": 1,
+    "canonical_tags": [
+      "能力有代价",
+      "规则公开限制"
+    ],
+    "action": "alias",
+    "rationale": "成长条件本身构成公开代价。"
+  },
+  {
+    "raw_tag": "反英雄",
+    "frequency": 1,
+    "canonical_tags": [
+      "反英雄身份"
+    ],
+    "action": "new_candidate",
+    "rationale": "反勇者可能是制度批判或身份反转，不等同勇者队非勇者。"
+  },
+  {
+    "raw_tag": "反治愈外挂",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "这是对自动治愈模板的否定，不应映射为温馨治愈或疗愈已经发生。"
+  },
+  {
+    "raw_tag": "反转",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "返乡",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "防卫战",
+    "frequency": 1,
+    "canonical_tags": [
+      "战争经营"
+    ],
+    "action": "alias",
+    "rationale": "战争中的防卫与后勤经营。"
+  },
+  {
+    "raw_tag": "访谈体",
+    "frequency": 1,
+    "canonical_tags": [
+      "同一事件多次重述",
+      "多视角POV"
+    ],
+    "action": "alias",
+    "rationale": "访谈证词需要多视角重述。"
+  },
+  {
+    "raw_tag": "非单一主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "多角色共同承担叙事。"
+  },
+  {
+    "raw_tag": "非幻想",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "非幻想现代题材归到现代世界框架。"
+  },
+  {
+    "raw_tag": "非极端特长",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "非救世",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "非理想化爱情",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系伦理灰度"
+    ],
+    "action": "new_candidate",
+    "rationale": "需要记录非理想化、非犯罪化的关系伦理灰区。"
+  },
+  {
+    "raw_tag": "非理想君主",
+    "frequency": 1,
+    "canonical_tags": [
+      "领主君主"
+    ],
+    "action": "alias",
+    "rationale": "统治者／王族身份。"
+  },
+  {
+    "raw_tag": "非美型",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "非人关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "人与非人关系"
+    ],
+    "action": "alias",
+    "rationale": "这是人与非人主体的关系标签，不应误判为非人叙述视角。"
+  },
+  {
+    "raw_tag": "非人女主",
+    "frequency": 1,
+    "canonical_tags": [
+      "非人主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体有非人形态，却缺少明确的主角位置标签。"
+  },
+  {
+    "raw_tag": "非人视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "非人感官视角"
+    ],
+    "action": "alias",
+    "rationale": "非人叙述视角的简称。"
+  },
+  {
+    "raw_tag": "非人主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "非人主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体有非人形态，却缺少明确的主角位置标签。"
+  },
+  {
+    "raw_tag": "非讨伐目标",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "非线性回忆",
+    "frequency": 1,
+    "canonical_tags": [
+      "倒叙插叙"
+    ],
+    "action": "alias",
+    "rationale": "回忆与现在交错的结构归一。"
+  },
+  {
+    "raw_tag": "非异世界转生",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "否定型分类不应反向映射到异世界转生；保留原文作为排除条件。"
+  },
+  {
+    "raw_tag": "非勇者",
+    "frequency": 1,
+    "canonical_tags": [
+      "勇者队非勇者"
+    ],
+    "action": "alias",
+    "rationale": "勇者队中的非勇者位置。"
+  },
+  {
+    "raw_tag": "非战斗",
+    "frequency": 1,
+    "canonical_tags": [
+      "不追求变强"
+    ],
+    "action": "alias",
+    "rationale": "不以力量增长为目标。"
+  },
+  {
+    "raw_tag": "非中心人物",
+    "frequency": 1,
+    "canonical_tags": [
+      "普通路人"
+    ],
+    "action": "alias",
+    "rationale": "非中心角色位置归一。"
+  },
+  {
+    "raw_tag": "非中心主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "普通路人"
+    ],
+    "action": "alias",
+    "rationale": "非中心角色位置归一。"
+  },
+  {
+    "raw_tag": "废柴小队",
+    "frequency": 1,
+    "canonical_tags": [
+      "废柴逆袭"
+    ],
+    "action": "alias",
+    "rationale": "低起点成长。"
+  },
+  {
+    "raw_tag": "废墟",
+    "frequency": 1,
+    "canonical_tags": [
+      "末日求生"
+    ],
+    "action": "alias",
+    "rationale": "末日世界。"
+  },
+  {
+    "raw_tag": "废墟生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "废土重建"
+    ],
+    "action": "alias",
+    "rationale": "灾后生活与重建归入废土框架。"
+  },
+  {
+    "raw_tag": "讽刺",
+    "frequency": 1,
+    "canonical_tags": [
+      "讽刺寓言"
+    ],
+    "action": "alias",
+    "rationale": "讽刺／寓言风格归一。"
+  },
+  {
+    "raw_tag": "服务业",
+    "frequency": 1,
+    "canonical_tags": [
+      "服务业职业"
+    ],
+    "action": "new_candidate",
+    "rationale": "现实职业过宽，服务业的客户与情绪劳动值得独立职业类。"
+  },
+  {
+    "raw_tag": "服装设计",
+    "frequency": 1,
+    "canonical_tags": [
+      "裁缝设计"
+    ],
+    "action": "alias",
+    "rationale": "职业同义归一。"
+  },
+  {
+    "raw_tag": "父权社会",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "复仇恋爱计划",
+    "frequency": 1,
+    "canonical_tags": [
+      "单一恋爱",
+      "复仇血债"
+    ],
+    "action": "alias",
+    "rationale": "明确包含恋爱关系；多角／后宫标签由其他规则覆盖。 复仇冲突。"
+  },
+  {
+    "raw_tag": "概念SF",
+    "frequency": 1,
+    "canonical_tags": [
+      "近未来科幻"
+    ],
+    "action": "alias",
+    "rationale": "泛科技／宇宙题材先归到近未来科幻，原始标签保留细分。"
+  },
+  {
+    "raw_tag": "感官描写",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "感知替代",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "高风险探索",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "高湿度关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "病态依恋"
+    ],
+    "action": "new_candidate",
+    "rationale": "关系强度与控制欲是稳定母题，不能简化为普通多角关系。"
+  },
+  {
+    "raw_tag": "歌曲改编",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "歌舞兵器",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "工坊",
+    "frequency": 1,
+    "canonical_tags": [
+      "工匠铁匠"
+    ],
+    "action": "alias",
+    "rationale": "制作职业的上位归一。"
+  },
+  {
+    "raw_tag": "工匠",
+    "frequency": 1,
+    "canonical_tags": [
+      "工匠铁匠"
+    ],
+    "action": "alias",
+    "rationale": "制作职业的上位归一。"
+  },
+  {
+    "raw_tag": "工艺",
+    "frequency": 1,
+    "canonical_tags": [
+      "工匠铁匠"
+    ],
+    "action": "alias",
+    "rationale": "制作职业的上位归一。"
+  },
+  {
+    "raw_tag": "工艺经营",
+    "frequency": 1,
+    "canonical_tags": [
+      "工匠铁匠",
+      "店铺经营"
+    ],
+    "action": "alias",
+    "rationale": "制造职业。 店铺或商业经营。"
+  },
+  {
+    "raw_tag": "公会日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "公会后勤"
+    ],
+    "action": "alias",
+    "rationale": "公会组织生活归到公会后勤。"
+  },
+  {
+    "raw_tag": "公会职员",
+    "frequency": 1,
+    "canonical_tags": [
+      "公会职员"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "公路",
+    "frequency": 1,
+    "canonical_tags": [
+      "旅行站点式"
+    ],
+    "action": "alias",
+    "rationale": "站点式旅行节奏。"
+  },
+  {
+    "raw_tag": "公路冒险",
+    "frequency": 1,
+    "canonical_tags": [
+      "旅行站点式"
+    ],
+    "action": "alias",
+    "rationale": "站点式旅行节奏。"
+  },
+  {
+    "raw_tag": "公主",
+    "frequency": 1,
+    "canonical_tags": [
+      "领主君主"
+    ],
+    "action": "alias",
+    "rationale": "统治者／王族身份。"
+  },
+  {
+    "raw_tag": "攻略对象群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线",
+      "迷宫攻略"
+    ],
+    "action": "alias",
+    "rationale": "多角色共同承担叙事。 攻略循环。"
+  },
+  {
+    "raw_tag": "宫廷乐团",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "共犯关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系变化上位归一。"
+  },
+  {
+    "raw_tag": "故障诊断",
+    "frequency": 1,
+    "canonical_tags": [
+      "工程维修",
+      "炼器符阵"
+    ],
+    "action": "alias",
+    "rationale": "拆分维修职业与奇幻制造体系。"
+  },
+  {
+    "raw_tag": "怪物",
+    "frequency": 1,
+    "canonical_tags": [
+      "魔物"
+    ],
+    "action": "alias",
+    "rationale": "魔物存在或生态。"
+  },
+  {
+    "raw_tag": "怪物少女",
+    "frequency": 1,
+    "canonical_tags": [
+      "魔物"
+    ],
+    "action": "alias",
+    "rationale": "魔物存在或生态。"
+  },
+  {
+    "raw_tag": "怪物生态",
+    "frequency": 1,
+    "canonical_tags": [
+      "魔物"
+    ],
+    "action": "alias",
+    "rationale": "魔物存在或生态。"
+  },
+  {
+    "raw_tag": "关卡攻略",
+    "frequency": 1,
+    "canonical_tags": [
+      "迷宫攻略",
+      "副本阶段式"
+    ],
+    "action": "alias",
+    "rationale": "关卡式推进拆为发动机与篇章节奏。"
+  },
+  {
+    "raw_tag": "关系变化",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系变化上位归一。"
+  },
+  {
+    "raw_tag": "关系反噬",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系变化上位归一。"
+  },
+  {
+    "raw_tag": "关系喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "轻松吐槽",
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "喜剧基调。 关系变化上位归一。"
+  },
+  {
+    "raw_tag": "关系协商",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系边界协商"
+    ],
+    "action": "new_candidate",
+    "rationale": "近年关系文大量依靠明确协商而非误会，需要独立机制。"
+  },
+  {
+    "raw_tag": "关系修复",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系改变的成长轴归一。"
+  },
+  {
+    "raw_tag": "关系重构",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系改变的成长轴归一。"
+  },
+  {
+    "raw_tag": "关系重建",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系改变的成长轴归一。"
+  },
+  {
+    "raw_tag": "关系重启",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系改变的成长轴归一。"
+  },
+  {
+    "raw_tag": "观测",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "观察者主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "旁观者视角"
+    ],
+    "action": "alias",
+    "rationale": "观察／旁观叙述位置归一。"
+  },
+  {
+    "raw_tag": "官僚组织",
+    "frequency": 1,
+    "canonical_tags": [
+      "公务行政",
+      "流程官僚"
+    ],
+    "action": "alias",
+    "rationale": "组织身份与流程冲突双轴。"
+  },
+  {
+    "raw_tag": "规则推演",
+    "frequency": 1,
+    "canonical_tags": [
+      "规则公开限制"
+    ],
+    "action": "alias",
+    "rationale": "公开规则限制。"
+  },
+  {
+    "raw_tag": "规则映射",
+    "frequency": 1,
+    "canonical_tags": [
+      "规则公开限制"
+    ],
+    "action": "alias",
+    "rationale": "公开规则限制。"
+  },
+  {
+    "raw_tag": "贵族社交",
+    "frequency": 1,
+    "canonical_tags": [
+      "贵族家族",
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "贵族身份与政治冲突双轴。"
+  },
+  {
+    "raw_tag": "贵族政治",
+    "frequency": 1,
+    "canonical_tags": [
+      "贵族家族",
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "贵族身份与政治冲突双轴。"
+  },
+  {
+    "raw_tag": "贵族制度",
+    "frequency": 1,
+    "canonical_tags": [
+      "贵族家族",
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "贵族身份与政治冲突双轴。"
+  },
+  {
+    "raw_tag": "航空",
+    "frequency": 1,
+    "canonical_tags": [
+      "司机船员"
+    ],
+    "action": "alias",
+    "rationale": "航空运输职业的上位归一。"
+  },
+  {
+    "raw_tag": "航空舰队",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "合租",
+    "frequency": 1,
+    "canonical_tags": [
+      "共同生活"
+    ],
+    "action": "new_candidate",
+    "rationale": "共同居住不必构成选择家庭，建议保留独立关系状态。"
+  },
+  {
+    "raw_tag": "和风幻想",
+    "frequency": 1,
+    "canonical_tags": [
+      "和风幻想"
+    ],
+    "action": "new_candidate",
+    "rationale": "和风幻想不总是民俗志怪，建议保留独立美学框架。"
+  },
+  {
+    "raw_tag": "黑暗幻想",
+    "frequency": 1,
+    "canonical_tags": [
+      "黑暗奇幻"
+    ],
+    "action": "alias",
+    "rationale": "中日常见译法归一。"
+  },
+  {
+    "raw_tag": "黑色讽刺",
+    "frequency": 1,
+    "canonical_tags": [
+      "讽刺寓言"
+    ],
+    "action": "alias",
+    "rationale": "讽刺／寓言风格归一。"
+  },
+  {
+    "raw_tag": "黑色喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "喜剧基调。"
+  },
+  {
+    "raw_tag": "后末日",
+    "frequency": 1,
+    "canonical_tags": [
+      "废土重建"
+    ],
+    "action": "alias",
+    "rationale": "灾后生活与重建归入废土框架。"
+  },
+  {
+    "raw_tag": "后勤",
+    "frequency": 1,
+    "canonical_tags": [
+      "队伍后勤"
+    ],
+    "action": "alias",
+    "rationale": "后勤叙事位置。"
+  },
+  {
+    "raw_tag": "后日谈",
+    "frequency": 1,
+    "canonical_tags": [
+      "后日谈"
+    ],
+    "action": "new_candidate",
+    "rationale": "原故事完成后的生活与调查不一定是第二人生或退休。"
+  },
+  {
+    "raw_tag": "惚药委托",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "具体单元事件，不应污染通用本体。"
+  },
+  {
+    "raw_tag": "蝴蝶效应",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "互联网文化",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "护卫任务",
+    "frequency": 1,
+    "canonical_tags": [
+      "护卫安保"
+    ],
+    "action": "new_candidate",
+    "rationale": "护卫、警戒和路线规划需要独立职业循环。"
+  },
+  {
+    "raw_tag": "环境异变",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "荒诞",
+    "frequency": 1,
+    "canonical_tags": [
+      "荒诞喜剧"
+    ],
+    "action": "alias",
+    "rationale": "荒诞喜剧基调。"
+  },
+  {
+    "raw_tag": "荒诞喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "荒诞喜剧"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "回复魔法",
+    "frequency": 1,
+    "canonical_tags": [
+      "治疗辅助"
+    ],
+    "action": "alias",
+    "rationale": "医疗与治疗功能。"
+  },
+  {
+    "raw_tag": "回忆",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "回忆与现在",
+    "frequency": 1,
+    "canonical_tags": [
+      "倒叙插叙"
+    ],
+    "action": "alias",
+    "rationale": "回忆与现在交错的结构归一。"
+  },
+  {
+    "raw_tag": "会话剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "日轻会话感"
+    ],
+    "action": "alias",
+    "rationale": "以会话推进的文风归一。"
+  },
+  {
+    "raw_tag": "婚约",
+    "frequency": 1,
+    "canonical_tags": [
+      "婚姻契约"
+    ],
+    "action": "alias",
+    "rationale": "婚姻或婚约关系。"
+  },
+  {
+    "raw_tag": "婚约解除",
+    "frequency": 1,
+    "canonical_tags": [
+      "婚约破弃"
+    ],
+    "action": "alias",
+    "rationale": "婚约破弃的同义表达。"
+  },
+  {
+    "raw_tag": "伙伴群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线",
+      "职业搭档"
+    ],
+    "action": "alias",
+    "rationale": "多角色共同承担叙事。 组织／队伍群像。 搭档关系先归到职业搭档；原始标签保留非职业语义。"
+  },
+  {
+    "raw_tag": "基础设施生命",
+    "frequency": 1,
+    "canonical_tags": [
+      "建筑生命"
+    ],
+    "action": "alias",
+    "rationale": "基础设施拥有生命的上位归一。"
+  },
+  {
+    "raw_tag": "技能构筑",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业技能树"
+    ],
+    "action": "alias",
+    "rationale": "技能树与构筑式成长归一。"
+  },
+  {
+    "raw_tag": "技能吸收",
+    "frequency": 1,
+    "canonical_tags": [
+      "复制掠夺"
+    ],
+    "action": "alias",
+    "rationale": "吸收他者技能归入复制掠夺。"
+  },
+  {
+    "raw_tag": "技术无双",
+    "frequency": 1,
+    "canonical_tags": [
+      "天才成长"
+    ],
+    "action": "alias",
+    "rationale": "高能力成长上位归一。"
+  },
+  {
+    "raw_tag": "季节拟人",
+    "frequency": 1,
+    "canonical_tags": [
+      "元素生命"
+    ],
+    "action": "alias",
+    "rationale": "自然概念人格化归入元素生命。"
+  },
+  {
+    "raw_tag": "家臣团",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "家庭路线",
+    "frequency": 1,
+    "canonical_tags": [
+      "改变原作结局",
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "围绕原作路线改写。 家庭关系上位归一；具体结构保留在原始标签。"
+  },
+  {
+    "raw_tag": "家庭期待",
+    "frequency": 1,
+    "canonical_tags": [
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "家庭关系上位归一；具体结构保留在原始标签。"
+  },
+  {
+    "raw_tag": "家庭喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "亲子家庭",
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "家庭关系上位归一；具体结构保留在原始标签。 喜剧基调。"
+  },
+  {
+    "raw_tag": "家务",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "家族",
+    "frequency": 1,
+    "canonical_tags": [
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "家庭关系上位归一；具体结构保留在原始标签。"
+  },
+  {
+    "raw_tag": "家族情感",
+    "frequency": 1,
+    "canonical_tags": [
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "家庭关系上位归一；具体结构保留在原始标签。"
+  },
+  {
+    "raw_tag": "架空大战",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "架空冷战",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "架空历史",
+    "frequency": 1,
+    "canonical_tags": [
+      "架空历史"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "架空欧洲",
+    "frequency": 1,
+    "canonical_tags": [
+      "西式奇幻"
+    ],
+    "action": "alias",
+    "rationale": "西式幻想世界的表述变体。"
+  },
+  {
+    "raw_tag": "间谍",
+    "frequency": 1,
+    "canonical_tags": [
+      "潜伏谍报"
+    ],
+    "action": "new_candidate",
+    "rationale": "谍报潜伏是独立职业／发动机。"
+  },
+  {
+    "raw_tag": "监控社会",
+    "frequency": 1,
+    "canonical_tags": [
+      "反乌托邦"
+    ],
+    "action": "new_candidate",
+    "rationale": "近现代制度性压迫需要独立世界框架。"
+  },
+  {
+    "raw_tag": "建设",
+    "frequency": 1,
+    "canonical_tags": [
+      "领地建设"
+    ],
+    "action": "alias",
+    "rationale": "空间建设的上位归一。"
+  },
+  {
+    "raw_tag": "剑士",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "剑与魔法",
+    "frequency": 1,
+    "canonical_tags": [
+      "西式奇幻"
+    ],
+    "action": "alias",
+    "rationale": "西式幻想世界的表述变体。"
+  },
+  {
+    "raw_tag": "角色驱动",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "教程前",
+    "frequency": 1,
+    "canonical_tags": [
+      "原作开局前"
+    ],
+    "action": "new_candidate",
+    "rationale": "在原作开始前行动已成为独立的时间位置母题。"
+  },
+  {
+    "raw_tag": "教师主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "教师"
+    ],
+    "action": "alias",
+    "rationale": "教育职业归一。"
+  },
+  {
+    "raw_tag": "教育",
+    "frequency": 1,
+    "canonical_tags": [
+      "教师"
+    ],
+    "action": "alias",
+    "rationale": "教育职业归一。"
+  },
+  {
+    "raw_tag": "阶层流动",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "阶层结构冲突。"
+  },
+  {
+    "raw_tag": "阶层社会",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "阶层结构冲突。"
+  },
+  {
+    "raw_tag": "阶层跃迁",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "阶层结构冲突。"
+  },
+  {
+    "raw_tag": "阶级",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "阶层结构冲突。"
+  },
+  {
+    "raw_tag": "街头文化",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "截稿",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "金钱契约",
+    "frequency": 1,
+    "canonical_tags": [
+      "非婚关系契约"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有婚姻契约无法覆盖友情、雇佣和试用恋人。"
+  },
+  {
+    "raw_tag": "锦标赛",
+    "frequency": 1,
+    "canonical_tags": [
+      "竞技联赛"
+    ],
+    "action": "alias",
+    "rationale": "竞技赛制的上位归一。"
+  },
+  {
+    "raw_tag": "近代战争",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人",
+      "战争局势",
+      "架空历史"
+    ],
+    "action": "alias",
+    "rationale": "军事职业与战争冲突。 历史或架空历史框架。"
+  },
+  {
+    "raw_tag": "近距离心理",
+    "frequency": 1,
+    "canonical_tags": [
+      "心理关系剧"
+    ],
+    "action": "new_candidate",
+    "rationale": "以内在与关系变化为核心，不等同悬疑或哲学思辨。"
+  },
+  {
+    "raw_tag": "进化树",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业技能树"
+    ],
+    "action": "alias",
+    "rationale": "技能树与构筑式成长归一。"
+  },
+  {
+    "raw_tag": "精神异音",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "竞技",
+    "frequency": 1,
+    "canonical_tags": [
+      "竞技联赛"
+    ],
+    "action": "alias",
+    "rationale": "竞技赛制的上位归一。"
+  },
+  {
+    "raw_tag": "静态叙事",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "旧友",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情"
+    ],
+    "action": "alias",
+    "rationale": "友情关系。"
+  },
+  {
+    "raw_tag": "救援后果",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "居酒屋",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮",
+      "美食制作"
+    ],
+    "action": "alias",
+    "rationale": "餐饮题材与制作循环归一。"
+  },
+  {
+    "raw_tag": "拒绝加班",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "拒绝上学",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "剧情开始前",
+    "frequency": 1,
+    "canonical_tags": [
+      "原作开局前"
+    ],
+    "action": "new_candidate",
+    "rationale": "在原作开始前行动已成为独立的时间位置母题。"
+  },
+  {
+    "raw_tag": "据点经营",
+    "frequency": 1,
+    "canonical_tags": [
+      "领地建设"
+    ],
+    "action": "alias",
+    "rationale": "空间建设的上位归一。"
+  },
+  {
+    "raw_tag": "军官",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人"
+    ],
+    "action": "alias",
+    "rationale": "武装职业的上位归一。"
+  },
+  {
+    "raw_tag": "军事",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人"
+    ],
+    "action": "alias",
+    "rationale": "武装职业的上位归一。"
+  },
+  {
+    "raw_tag": "军事女主",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "军事职业与战争冲突。"
+  },
+  {
+    "raw_tag": "军事奇幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "军事职业与战争冲突。"
+  },
+  {
+    "raw_tag": "军事群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线",
+      "佣兵军人",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "多角色共同承担叙事。 组织／队伍群像。 军事职业与战争冲突。"
+  },
+  {
+    "raw_tag": "军事史",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人",
+      "战争局势",
+      "架空历史"
+    ],
+    "action": "alias",
+    "rationale": "军事职业与战争冲突。 历史或架空历史框架。"
+  },
+  {
+    "raw_tag": "军事行动",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "军事职业与战争冲突。"
+  },
+  {
+    "raw_tag": "菌类幻想",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "考试",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "科幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "科幻（未指定子类）"
+    ],
+    "action": "new_candidate",
+    "rationale": "信息不足时不应强行归入硬科幻或近未来科幻。"
+  },
+  {
+    "raw_tag": "科幻战争",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人",
+      "战争局势",
+      "近未来科幻"
+    ],
+    "action": "alias",
+    "rationale": "军事职业与战争冲突。 泛科技／宇宙题材先归到近未来科幻，原始标签保留细分。"
+  },
+  {
+    "raw_tag": "科学幻想",
+    "frequency": 1,
+    "canonical_tags": [
+      "近未来科幻"
+    ],
+    "action": "alias",
+    "rationale": "这里描述的是科幻类型，不自动推断角色从事科研。"
+  },
+  {
+    "raw_tag": "科学推理",
+    "frequency": 1,
+    "canonical_tags": [
+      "科研学术",
+      "谜题调查"
+    ],
+    "action": "alias",
+    "rationale": "拆分科学场景与推理发动机。"
+  },
+  {
+    "raw_tag": "克制恋爱",
+    "frequency": 1,
+    "canonical_tags": [
+      "极简克制"
+    ],
+    "action": "alias",
+    "rationale": "克制表达的文风归一。"
+  },
+  {
+    "raw_tag": "克制男主",
+    "frequency": 1,
+    "canonical_tags": [
+      "男性主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体缺少主角性别轴；职业或文风不能替代性别记录。"
+  },
+  {
+    "raw_tag": "客户故事",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "客户人生",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "客户需求",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "空间整理",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "空虚",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "口耳传播",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "口是心非",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "苦劳人",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "跨界门户",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "跨世界门户",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "跨种族恋爱",
+    "frequency": 1,
+    "canonical_tags": [
+      "人外恋"
+    ],
+    "action": "alias",
+    "rationale": "跨种族亲密关系归入人外恋。"
+  },
+  {
+    "raw_tag": "辣妹",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "劳动问题",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "乐队",
+    "frequency": 1,
+    "canonical_tags": [
+      "演员偶像"
+    ],
+    "action": "alias",
+    "rationale": "表演与娱乐职业。"
+  },
+  {
+    "raw_tag": "乐观",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "类型自觉",
+    "frequency": 1,
+    "canonical_tags": [
+      "元叙事"
+    ],
+    "action": "new_candidate",
+    "rationale": "角色意识到类型规则或媒介结构，现有本体缺少对应信息标签。"
+  },
+  {
+    "raw_tag": "冷静叙事",
+    "frequency": 1,
+    "canonical_tags": [
+      "极简克制"
+    ],
+    "action": "alias",
+    "rationale": "克制表达的文风归一。"
+  },
+  {
+    "raw_tag": "离婚后",
+    "frequency": 1,
+    "canonical_tags": [
+      "离婚后生活"
+    ],
+    "action": "new_candidate",
+    "rationale": "婚姻结束后的生活重建不同于婚约破弃或追妻。"
+  },
+  {
+    "raw_tag": "离家",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "离家少女",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "理科大学",
+    "frequency": 1,
+    "canonical_tags": [
+      "科研学术"
+    ],
+    "action": "alias",
+    "rationale": "大学科研场景归入科研学术框架。"
+  },
+  {
+    "raw_tag": "理性与神秘",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "历史风",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "历史感",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "历史叙事",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "历史转生",
+    "frequency": 1,
+    "canonical_tags": [
+      "異世界転生",
+      "架空历史"
+    ],
+    "action": "alias",
+    "rationale": "转生母题；原始标签保留是否明确异世界。 历史或架空历史框架。"
+  },
+  {
+    "raw_tag": "立场反转",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "炼金术",
+    "frequency": 1,
+    "canonical_tags": [
+      "药师炼丹"
+    ],
+    "action": "alias",
+    "rationale": "炼金制药与现有药师炼丹上位归一。"
+  },
+  {
+    "raw_tag": "恋爱败者群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "败犬角色"
+    ],
+    "action": "alias",
+    "rationale": "失败恋爱角色的同义表达。"
+  },
+  {
+    "raw_tag": "恋人试用",
+    "frequency": 1,
+    "canonical_tags": [
+      "非婚关系契约"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有婚姻契约无法覆盖友情、雇佣和试用恋人。"
+  },
+  {
+    "raw_tag": "料理",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮",
+      "美食制作"
+    ],
+    "action": "alias",
+    "rationale": "餐饮题材与制作循环归一。"
+  },
+  {
+    "raw_tag": "邻居",
+    "frequency": 1,
+    "canonical_tags": [
+      "社区邻里"
+    ],
+    "action": "alias",
+    "rationale": "社区关系的表述变体。"
+  },
+  {
+    "raw_tag": "领袖成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队／领导成长。"
+  },
+  {
+    "raw_tag": "龙",
+    "frequency": 1,
+    "canonical_tags": [
+      "龙族"
+    ],
+    "action": "alias",
+    "rationale": "龙族身份归一。"
+  },
+  {
+    "raw_tag": "龙帝",
+    "frequency": 1,
+    "canonical_tags": [
+      "龙族"
+    ],
+    "action": "alias",
+    "rationale": "龙族身份归一。"
+  },
+  {
+    "raw_tag": "龙骑士",
+    "frequency": 1,
+    "canonical_tags": [
+      "龙族",
+      "佣兵军人",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "龙族相关存在。 军事职业与战争冲突。"
+  },
+  {
+    "raw_tag": "龙养女",
+    "frequency": 1,
+    "canonical_tags": [
+      "监护人家长"
+    ],
+    "action": "alias",
+    "rationale": "照护／家长位置。"
+  },
+  {
+    "raw_tag": "路人",
+    "frequency": 1,
+    "canonical_tags": [
+      "普通路人"
+    ],
+    "action": "alias",
+    "rationale": "非中心角色位置归一。"
+  },
+  {
+    "raw_tag": "路人视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "普通路人",
+      "旁观者视角"
+    ],
+    "action": "alias",
+    "rationale": "拆分身份与视角。"
+  },
+  {
+    "raw_tag": "路人主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "普通路人"
+    ],
+    "action": "alias",
+    "rationale": "非中心角色位置归一。"
+  },
+  {
+    "raw_tag": "路线罢工",
+    "frequency": 1,
+    "canonical_tags": [
+      "拒绝原作路线"
+    ],
+    "action": "new_candidate",
+    "rationale": "关键角色主动退出路线不同于主角单纯改写结局。"
+  },
+  {
+    "raw_tag": "路线偏航",
+    "frequency": 1,
+    "canonical_tags": [
+      "改变原作结局"
+    ],
+    "action": "alias",
+    "rationale": "围绕原作路线改写。"
+  },
+  {
+    "raw_tag": "路线误判",
+    "frequency": 1,
+    "canonical_tags": [
+      "改变原作结局"
+    ],
+    "action": "alias",
+    "rationale": "围绕原作路线改写。"
+  },
+  {
+    "raw_tag": "路线自由",
+    "frequency": 1,
+    "canonical_tags": [
+      "改变原作结局",
+      "开放沙盒",
+      "玩家决定推进"
+    ],
+    "action": "alias",
+    "rationale": "围绕原作路线改写。 开放式推进。"
+  },
+  {
+    "raw_tag": "乱码",
+    "frequency": 1,
+    "canonical_tags": [
+      "故障文本"
+    ],
+    "action": "new_candidate",
+    "rationale": "界面损坏、乱码和污染是数字原生叙事形式。"
+  },
+  {
+    "raw_tag": "落后生团队",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队成长。 团队／领导成长。"
+  },
+  {
+    "raw_tag": "慢关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系变化上位归一。"
+  },
+  {
+    "raw_tag": "慢热恋爱",
+    "frequency": 1,
+    "canonical_tags": [
+      "慢热恋爱"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "慢热友情",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情"
+    ],
+    "action": "alias",
+    "rationale": "友情关系。"
+  },
+  {
+    "raw_tag": "盲人女主",
+    "frequency": 1,
+    "canonical_tags": [
+      "身体残障"
+    ],
+    "action": "alias",
+    "rationale": "身体感知差异归一；性别由原始标签保留。"
+  },
+  {
+    "raw_tag": "盲人主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "身体残障"
+    ],
+    "action": "alias",
+    "rationale": "身体感知差异归一；性别由原始标签保留。"
+  },
+  {
+    "raw_tag": "冒险",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "冒险者",
+    "frequency": 1,
+    "canonical_tags": [
+      "猎人冒险者"
+    ],
+    "action": "alias",
+    "rationale": "冒险职业的上位归一。"
+  },
+  {
+    "raw_tag": "冒险者公会",
+    "frequency": 1,
+    "canonical_tags": [
+      "公会后勤"
+    ],
+    "action": "alias",
+    "rationale": "公会组织生活归到公会后勤。"
+  },
+  {
+    "raw_tag": "冒险者日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "日常节奏。"
+  },
+  {
+    "raw_tag": "媒体",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "美食",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮",
+      "美食制作"
+    ],
+    "action": "alias",
+    "rationale": "餐饮题材与制作循环归一。"
+  },
+  {
+    "raw_tag": "迷宫都市",
+    "frequency": 1,
+    "canonical_tags": [
+      "地下城社会"
+    ],
+    "action": "alias",
+    "rationale": "围绕迷宫形成城市社会。"
+  },
+  {
+    "raw_tag": "迷宫生存",
+    "frequency": 1,
+    "canonical_tags": [
+      "地下城社会",
+      "生存追逃"
+    ],
+    "action": "alias",
+    "rationale": "地下城世界框架。 生存或逃亡冲突。"
+  },
+  {
+    "raw_tag": "谜题",
+    "frequency": 1,
+    "canonical_tags": [
+      "悬疑紧张",
+      "谜题调查"
+    ],
+    "action": "alias",
+    "rationale": "悬疑与调查发动机。"
+  },
+  {
+    "raw_tag": "谜样艺术家",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "具体角色包装，缺乏稳定跨作品定义。"
+  },
+  {
+    "raw_tag": "秘密公开",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "秘密团队",
+    "frequency": 1,
+    "canonical_tags": [
+      "幕后组织经营"
+    ],
+    "action": "alias",
+    "rationale": "幕后组织结构归一；不代表所有世界默认有阴谋。"
+  },
+  {
+    "raw_tag": "秘密往来",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "秘密组织",
+    "frequency": 1,
+    "canonical_tags": [
+      "幕后组织经营"
+    ],
+    "action": "alias",
+    "rationale": "幕后组织结构归一；不代表所有世界默认有阴谋。"
+  },
+  {
+    "raw_tag": "明暗交替",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "命运改写",
+    "frequency": 1,
+    "canonical_tags": [
+      "改变原作结局"
+    ],
+    "action": "alias",
+    "rationale": "原作路线被行动改变。"
+  },
+  {
+    "raw_tag": "魔导具",
+    "frequency": 1,
+    "canonical_tags": [
+      "炼器符阵",
+      "工匠铁匠"
+    ],
+    "action": "alias",
+    "rationale": "奇幻器具制造归入炼器与工匠职业。"
+  },
+  {
+    "raw_tag": "魔道具修理",
+    "frequency": 1,
+    "canonical_tags": [
+      "工程维修",
+      "炼器符阵"
+    ],
+    "action": "alias",
+    "rationale": "拆分维修职业与奇幻制造体系。"
+  },
+  {
+    "raw_tag": "魔法物流",
+    "frequency": 1,
+    "canonical_tags": [
+      "搬迁物流"
+    ],
+    "action": "new_candidate",
+    "rationale": "搬家和空间整理不能无损归入快递信使。"
+  },
+  {
+    "raw_tag": "魔法学习",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "魔法学园",
+    "frequency": 1,
+    "canonical_tags": [
+      "学院奇幻"
+    ],
+    "action": "alias",
+    "rationale": "魔法教育场景的世界框架归一。"
+  },
+  {
+    "raw_tag": "魔法学院",
+    "frequency": 1,
+    "canonical_tags": [
+      "学院奇幻"
+    ],
+    "action": "alias",
+    "rationale": "魔法教育场景的世界框架归一。"
+  },
+  {
+    "raw_tag": "魔法研究",
+    "frequency": 1,
+    "canonical_tags": [
+      "研究者",
+      "科研研发"
+    ],
+    "action": "alias",
+    "rationale": "研究身份与研发循环双轴。"
+  },
+  {
+    "raw_tag": "魔法杖工匠",
+    "frequency": 1,
+    "canonical_tags": [
+      "炼器符阵",
+      "工匠铁匠"
+    ],
+    "action": "alias",
+    "rationale": "奇幻器具制造归入炼器与工匠职业。"
+  },
+  {
+    "raw_tag": "魔兽伙伴",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业搭档"
+    ],
+    "action": "alias",
+    "rationale": "搭档关系先归到职业搭档；原始标签保留非职业语义。"
+  },
+  {
+    "raw_tag": "魔术学园",
+    "frequency": 1,
+    "canonical_tags": [
+      "学院奇幻"
+    ],
+    "action": "alias",
+    "rationale": "魔法教育场景的世界框架归一。"
+  },
+  {
+    "raw_tag": "魔术研究",
+    "frequency": 1,
+    "canonical_tags": [
+      "研究者",
+      "科研研发"
+    ],
+    "action": "alias",
+    "rationale": "研究身份与研发循环双轴。"
+  },
+  {
+    "raw_tag": "魔王视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "反派视角"
+    ],
+    "action": "alias",
+    "rationale": "魔王叙述位置归入反派视角，不自动等同最终Boss。"
+  },
+  {
+    "raw_tag": "魔王阵营",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "魔物国家",
+    "frequency": 1,
+    "canonical_tags": [
+      "魔物",
+      "领地建设"
+    ],
+    "action": "alias",
+    "rationale": "拆分物种与国家建设。"
+  },
+  {
+    "raw_tag": "魔族王子",
+    "frequency": 1,
+    "canonical_tags": [
+      "妖族魔族",
+      "贵族家族"
+    ],
+    "action": "alias",
+    "rationale": "拆分非人种族与王族身份。"
+  },
+  {
+    "raw_tag": "末日",
+    "frequency": 1,
+    "canonical_tags": [
+      "末日求生"
+    ],
+    "action": "alias",
+    "rationale": "末日世界的表述变体。"
+  },
+  {
+    "raw_tag": "末日管理",
+    "frequency": 1,
+    "canonical_tags": [
+      "异常收容",
+      "职业案件单元剧"
+    ],
+    "action": "alias",
+    "rationale": "异常被机构化处理。"
+  },
+  {
+    "raw_tag": "末日日本",
+    "frequency": 1,
+    "canonical_tags": [
+      "末日求生"
+    ],
+    "action": "alias",
+    "rationale": "末日世界的表述变体。"
+  },
+  {
+    "raw_tag": "末世",
+    "frequency": 1,
+    "canonical_tags": [
+      "末日求生"
+    ],
+    "action": "alias",
+    "rationale": "末日世界的表述变体。"
+  },
+  {
+    "raw_tag": "母亲超强",
+    "frequency": 1,
+    "canonical_tags": [
+      "监护人家长"
+    ],
+    "action": "alias",
+    "rationale": "照护／家长位置。"
+  },
+  {
+    "raw_tag": "母亲主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "监护人家长"
+    ],
+    "action": "alias",
+    "rationale": "母亲是监护人型叙事位置。"
+  },
+  {
+    "raw_tag": "母子冒险",
+    "frequency": 1,
+    "canonical_tags": [
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "家庭关系上位归一；具体结构保留在原始标签。"
+  },
+  {
+    "raw_tag": "幕后救援",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "幕后强者",
+    "frequency": 1,
+    "canonical_tags": [
+      "隐藏强者"
+    ],
+    "action": "alias",
+    "rationale": "隐藏实力的表述变体。"
+  },
+  {
+    "raw_tag": "幕后日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "日常节奏。"
+  },
+  {
+    "raw_tag": "幕后支援",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "幕后主角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "男女搭档",
+    "frequency": 1,
+    "canonical_tags": [
+      "搭档关系"
+    ],
+    "action": "new_candidate",
+    "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
+  },
+  {
+    "raw_tag": "男女双向",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "男性恋爱",
+    "frequency": 1,
+    "canonical_tags": [
+      "BL"
+    ],
+    "action": "alias",
+    "rationale": "男性同性恋爱市场标签归一。"
+  },
+  {
+    "raw_tag": "男性路人",
+    "frequency": 1,
+    "canonical_tags": [
+      "普通路人"
+    ],
+    "action": "alias",
+    "rationale": "非中心角色位置归一。"
+  },
+  {
+    "raw_tag": "男性友情",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情",
+      "男性群像"
+    ],
+    "action": "alias",
+    "rationale": "拆分关系性质与群体性别。"
+  },
+  {
+    "raw_tag": "男性主播",
+    "frequency": 1,
+    "canonical_tags": [
+      "男性主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体缺少主角性别轴；职业或文风不能替代性别记录。"
+  },
+  {
+    "raw_tag": "内容创作",
+    "frequency": 1,
+    "canonical_tags": [
+      "作家创作者"
+    ],
+    "action": "alias",
+    "rationale": "内容创作职业的上位归一。"
+  },
+  {
+    "raw_tag": "能力规则",
+    "frequency": 1,
+    "canonical_tags": [
+      "规则公开限制"
+    ],
+    "action": "alias",
+    "rationale": "公开规则限制。"
+  },
+  {
+    "raw_tag": "能力互补",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队合作归入团队成长，原始标签保留协作方式。"
+  },
+  {
+    "raw_tag": "能力战",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "逆后宫",
+    "frequency": 1,
+    "canonical_tags": [
+      "逆后宫"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "溺爱",
+    "frequency": 1,
+    "canonical_tags": [
+      "溺爱"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "年龄差",
+    "frequency": 1,
+    "canonical_tags": [
+      "年龄差"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "年龄差错位",
+    "frequency": 1,
+    "canonical_tags": [
+      "年龄差"
+    ],
+    "action": "alias",
+    "rationale": "年龄差关系的具体变体。"
+  },
+  {
+    "raw_tag": "年龄差群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "年龄差"
+    ],
+    "action": "alias",
+    "rationale": "年龄差关系的具体变体。"
+  },
+  {
+    "raw_tag": "年龄成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "长时间跳跃"
+    ],
+    "action": "alias",
+    "rationale": "跨较长时间推进的节奏归一。"
+  },
+  {
+    "raw_tag": "年下男主",
+    "frequency": 1,
+    "canonical_tags": [
+      "年龄差"
+    ],
+    "action": "alias",
+    "rationale": "年龄差关系的具体变体。"
+  },
+  {
+    "raw_tag": "扭曲恋爱",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系伦理灰度"
+    ],
+    "action": "new_candidate",
+    "rationale": "需要记录非理想化、非犯罪化的关系伦理灰区。"
+  },
+  {
+    "raw_tag": "努力型女主",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "女性搭档",
+    "frequency": 1,
+    "canonical_tags": [
+      "搭档关系"
+    ],
+    "action": "new_candidate",
+    "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
+  },
+  {
+    "raw_tag": "女性第一人称",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体缺少独立的主角性别／性别呈现轴；不应靠关系类型反推。"
+  },
+  {
+    "raw_tag": "女性工匠",
+    "frequency": 1,
+    "canonical_tags": [
+      "工匠铁匠"
+    ],
+    "action": "alias",
+    "rationale": "制作职业的上位归一。"
+  },
+  {
+    "raw_tag": "女性群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性群像"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "女性身体",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "女性声优",
+    "frequency": 1,
+    "canonical_tags": [
+      "娱乐行业",
+      "演员偶像"
+    ],
+    "action": "alias",
+    "rationale": "娱乐职业的具体行业归一。"
+  },
+  {
+    "raw_tag": "女性视角",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体缺少独立的主角性别／性别呈现轴；不应靠关系类型反推。"
+  },
+  {
+    "raw_tag": "女性双人",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性关系中心"
+    ],
+    "action": "new_candidate",
+    "rationale": "女性中心关系不一定是百合或女性群像，需保留开放性。"
+  },
+  {
+    "raw_tag": "女性向奇幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性向"
+    ],
+    "action": "new_candidate",
+    "rationale": "这是市场／受众元数据，应新增独立 audience 轴而非混入世界框架。"
+  },
+  {
+    "raw_tag": "女性优势社会",
+    "frequency": 1,
+    "canonical_tags": [
+      "性别秩序反转"
+    ],
+    "action": "new_candidate",
+    "rationale": "这是完整社会制度变量，不只是主角性转。"
+  },
+  {
+    "raw_tag": "女性指挥官",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "女主护卫",
+    "frequency": 1,
+    "canonical_tags": [
+      "护卫安保"
+    ],
+    "action": "new_candidate",
+    "rationale": "护卫、警戒和路线规划需要独立职业循环。"
+  },
+  {
+    "raw_tag": "女主群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线",
+      "女性群像"
+    ],
+    "action": "alias",
+    "rationale": "多角色共同承担叙事。 女性群像关系。"
+  },
+  {
+    "raw_tag": "女主幼驯染",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "女装误会",
+    "frequency": 1,
+    "canonical_tags": [
+      "性别身份错位"
+    ],
+    "action": "new_candidate",
+    "rationale": "身份呈现错位不一定发生身体性转。"
+  },
+  {
+    "raw_tag": "偶像战争",
+    "frequency": 1,
+    "canonical_tags": [
+      "演员偶像",
+      "佣兵军人",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "表演与娱乐职业。 军事职业与战争冲突。"
+  },
+  {
+    "raw_tag": "旁观者",
+    "frequency": 1,
+    "canonical_tags": [
+      "旁观者视角"
+    ],
+    "action": "alias",
+    "rationale": "观察／旁观叙述位置归一。"
+  },
+  {
+    "raw_tag": "配角中心",
+    "frequency": 1,
+    "canonical_tags": [
+      "原作配角"
+    ],
+    "action": "alias",
+    "rationale": "原作配角成为叙事中心。"
+  },
+  {
+    "raw_tag": "配角主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "原作配角"
+    ],
+    "action": "alias",
+    "rationale": "原作配角成为叙事中心。"
+  },
+  {
+    "raw_tag": "朋友关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情"
+    ],
+    "action": "alias",
+    "rationale": "友情核心关系的表述变体。"
+  },
+  {
+    "raw_tag": "朋友妹妹",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "具体人物关系称谓，缺乏稳定叙事功能。"
+  },
+  {
+    "raw_tag": "朋友起步",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情"
+    ],
+    "action": "alias",
+    "rationale": "友情关系。"
+  },
+  {
+    "raw_tag": "朋友契约",
+    "frequency": 1,
+    "canonical_tags": [
+      "非婚关系契约"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有婚姻契约无法覆盖友情、雇佣和试用恋人。"
+  },
+  {
+    "raw_tag": "朋友小团体",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情"
+    ],
+    "action": "alias",
+    "rationale": "友情关系。"
+  },
+  {
+    "raw_tag": "朋友以上",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情"
+    ],
+    "action": "alias",
+    "rationale": "友情关系。"
+  },
+  {
+    "raw_tag": "偏居生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "悠闲慢生活"
+    ],
+    "action": "alias",
+    "rationale": "慢生活基调。"
+  },
+  {
+    "raw_tag": "贫民窟",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶层差异",
+      "资源不足"
+    ],
+    "action": "alias",
+    "rationale": "阶层结构冲突。 资源稀缺冲突。"
+  },
+  {
+    "raw_tag": "平静生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "低压力叙事"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有悠闲慢生活仍可能有目标压力，建议独立压力等级。"
+  },
+  {
+    "raw_tag": "平均型角色",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "评论互动",
+    "frequency": 1,
+    "canonical_tags": [
+      "舆论压力"
+    ],
+    "action": "alias",
+    "rationale": "公众反馈压力。"
+  },
+  {
+    "raw_tag": "普通店主",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "奇观世界",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "骑士",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人"
+    ],
+    "action": "alias",
+    "rationale": "武装职业的上位归一。"
+  },
+  {
+    "raw_tag": "契约",
+    "frequency": 1,
+    "canonical_tags": [
+      "婚姻契约"
+    ],
+    "action": "alias",
+    "rationale": "契约关系近似映射；非婚契约另列新增候选。"
+  },
+  {
+    "raw_tag": "契约关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "非婚关系契约"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有婚姻契约无法覆盖友情、雇佣和试用恋人。"
+  },
+  {
+    "raw_tag": "契约同居",
+    "frequency": 1,
+    "canonical_tags": [
+      "选择家庭"
+    ],
+    "action": "alias",
+    "rationale": "共同居住形成选择家庭；契约强度保留在原始标签。"
+  },
+  {
+    "raw_tag": "契约陷阱",
+    "frequency": 1,
+    "canonical_tags": [
+      "婚姻契约"
+    ],
+    "action": "alias",
+    "rationale": "契约关系近似映射；非婚契约另列新增候选。"
+  },
+  {
+    "raw_tag": "前关系后果",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系变化上位归一。"
+  },
+  {
+    "raw_tag": "前任",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "前世知识",
+    "frequency": 1,
+    "canonical_tags": [
+      "知识优势"
+    ],
+    "action": "alias",
+    "rationale": "前世经验形成知识优势。"
+  },
+  {
+    "raw_tag": "前线与后方",
+    "frequency": 1,
+    "canonical_tags": [
+      "战争经营"
+    ],
+    "action": "alias",
+    "rationale": "战争中的防卫与后勤经营。"
+  },
+  {
+    "raw_tag": "前佣兵",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "军事职业与战争冲突。"
+  },
+  {
+    "raw_tag": "枪战",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "强女主",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体缺少独立的主角性别／性别呈现轴；不应靠关系类型反推。"
+  },
+  {
+    "raw_tag": "青春告别",
+    "frequency": 1,
+    "canonical_tags": [
+      "青春酸甜"
+    ],
+    "action": "alias",
+    "rationale": "青春情感基调。"
+  },
+  {
+    "raw_tag": "青春科幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "青春酸甜",
+      "近未来科幻"
+    ],
+    "action": "alias",
+    "rationale": "青春情感基调。 泛科技／宇宙题材先归到近未来科幻，原始标签保留细分。"
+  },
+  {
+    "raw_tag": "青春群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线",
+      "青春酸甜"
+    ],
+    "action": "alias",
+    "rationale": "多角色共同承担叙事。 青春情感基调。"
+  },
+  {
+    "raw_tag": "青春伤痛",
+    "frequency": 1,
+    "canonical_tags": [
+      "青春酸甜"
+    ],
+    "action": "alias",
+    "rationale": "青春情感基调。"
+  },
+  {
+    "raw_tag": "青梅竹马",
+    "frequency": 1,
+    "canonical_tags": [
+      "青梅竹马"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "青年",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "清扫工",
+    "frequency": 1,
+    "canonical_tags": [
+      "清洁维护"
+    ],
+    "action": "new_candidate",
+    "rationale": "清扫与维护是近年边缘职业主角的重要循环。"
+  },
+  {
+    "raw_tag": "情报差",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "情感重建",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复"
+    ],
+    "action": "alias",
+    "rationale": "恢复型成长。"
+  },
+  {
+    "raw_tag": "全灭回避",
+    "frequency": 1,
+    "canonical_tags": [
+      "避开破灭结局"
+    ],
+    "action": "alias",
+    "rationale": "避免既定坏结局的长期方向。"
+  },
+  {
+    "raw_tag": "全员好感",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "全员强者",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "群像恋爱",
+    "frequency": 1,
+    "canonical_tags": [
+      "单一恋爱",
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "明确包含恋爱关系；多角／后宫标签由其他规则覆盖。 多角色共同承担叙事。"
+  },
+  {
+    "raw_tag": "群像战斗",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "多角色共同承担叙事。"
+  },
+  {
+    "raw_tag": "热血",
+    "frequency": 1,
+    "canonical_tags": [
+      "热血王道"
+    ],
+    "action": "alias",
+    "rationale": "热血风格归一。"
+  },
+  {
+    "raw_tag": "人工制造剧情",
+    "frequency": 1,
+    "canonical_tags": [
+      "人工智能",
+      "工匠铁匠"
+    ],
+    "action": "alias",
+    "rationale": "人工智能或人工生命。 制造职业。"
+  },
+  {
+    "raw_tag": "人类厌恶",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "人类勇者转生",
+    "frequency": 1,
+    "canonical_tags": [
+      "異世界転生"
+    ],
+    "action": "alias",
+    "rationale": "转生母题；原始标签保留是否明确异世界。"
+  },
+  {
+    "raw_tag": "人龙羁绊",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "人情",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "人生重来",
+    "frequency": 1,
+    "canonical_tags": [
+      "重生回过去"
+    ],
+    "action": "alias",
+    "rationale": "回到过去重开人生。"
+  },
+  {
+    "raw_tag": "人外",
+    "frequency": 1,
+    "canonical_tags": [
+      "非人主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体有非人形态，却缺少明确的主角位置标签。"
+  },
+  {
+    "raw_tag": "人外亲情",
+    "frequency": 1,
+    "canonical_tags": [
+      "人与非人关系",
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "拆分人外关系与家庭结构。"
+  },
+  {
+    "raw_tag": "人外学生",
+    "frequency": 1,
+    "canonical_tags": [
+      "学生",
+      "人与非人关系"
+    ],
+    "action": "alias",
+    "rationale": "拆分学生身份与跨种族关系。"
+  },
+  {
+    "raw_tag": "任务骗局",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "日本战国",
+    "frequency": 1,
+    "canonical_tags": [
+      "架空历史"
+    ],
+    "action": "alias",
+    "rationale": "历史或架空历史框架。"
+  },
+  {
+    "raw_tag": "日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "日常叙事节奏归一。"
+  },
+  {
+    "raw_tag": "日常侵蚀",
+    "frequency": 1,
+    "canonical_tags": [
+      "都市奇幻",
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "日常场景被异常逐步侵入。"
+  },
+  {
+    "raw_tag": "日常生存",
+    "frequency": 1,
+    "canonical_tags": [
+      "生存追逃",
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "生存或逃亡冲突。 日常节奏。"
+  },
+  {
+    "raw_tag": "日常物异化",
+    "frequency": 1,
+    "canonical_tags": [
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "日常节奏。"
+  },
+  {
+    "raw_tag": "日常心理",
+    "frequency": 1,
+    "canonical_tags": [
+      "心理关系剧"
+    ],
+    "action": "new_candidate",
+    "rationale": "以内在与关系变化为核心，不等同悬疑或哲学思辨。"
+  },
+  {
+    "raw_tag": "日记暴露",
+    "frequency": 1,
+    "canonical_tags": [
+      "书信日记"
+    ],
+    "action": "alias",
+    "rationale": "日记／记录形式归一。"
+  },
+  {
+    "raw_tag": "日记感",
+    "frequency": 1,
+    "canonical_tags": [
+      "书信日记"
+    ],
+    "action": "alias",
+    "rationale": "日记／记录形式归一。"
+  },
+  {
+    "raw_tag": "弱小领主",
+    "frequency": 1,
+    "canonical_tags": [
+      "领主君主",
+      "领地管理者"
+    ],
+    "action": "alias",
+    "rationale": "领主身份与管理位置双轴。"
+  },
+  {
+    "raw_tag": "弱者主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "废柴逆袭"
+    ],
+    "action": "alias",
+    "rationale": "低起点成长。"
+  },
+  {
+    "raw_tag": "赛博废土",
+    "frequency": 1,
+    "canonical_tags": [
+      "赛博朋克",
+      "废土重建"
+    ],
+    "action": "alias",
+    "rationale": "拆分技术审美与灾后世界。"
+  },
+  {
+    "raw_tag": "三角关系变体",
+    "frequency": 1,
+    "canonical_tags": [
+      "多角关系",
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "多方恋爱结构。 关系变化上位归一。"
+  },
+  {
+    "raw_tag": "商会",
+    "frequency": 1,
+    "canonical_tags": [
+      "商人行商",
+      "公司经营"
+    ],
+    "action": "alias",
+    "rationale": "商业身份与经营发动机双轴。"
+  },
+  {
+    "raw_tag": "商业",
+    "frequency": 1,
+    "canonical_tags": [
+      "商人行商",
+      "公司经营"
+    ],
+    "action": "alias",
+    "rationale": "商业身份与经营发动机双轴。"
+  },
+  {
+    "raw_tag": "少年成长",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "少年搭档",
+    "frequency": 1,
+    "canonical_tags": [
+      "搭档关系"
+    ],
+    "action": "new_candidate",
+    "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
+  },
+  {
+    "raw_tag": "少女弟子",
+    "frequency": 1,
+    "canonical_tags": [
+      "师徒"
+    ],
+    "action": "alias",
+    "rationale": "师徒关系。"
+  },
+  {
+    "raw_tag": "设施建设",
+    "frequency": 1,
+    "canonical_tags": [
+      "领地建设"
+    ],
+    "action": "alias",
+    "rationale": "空间建设的上位归一。"
+  },
+  {
+    "raw_tag": "社会边缘",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "社会常识错位",
+    "frequency": 1,
+    "canonical_tags": [
+      "认知规范错位"
+    ],
+    "action": "new_candidate",
+    "rationale": "社会常识或善恶评价错位是误解喜剧之外的制度机制。"
+  },
+  {
+    "raw_tag": "社会适应",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "社会退出",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复"
+    ],
+    "action": "alias",
+    "rationale": "社会退缩后的恢复方向。"
+  },
+  {
+    "raw_tag": "社交复归",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "社交焦虑",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复"
+    ],
+    "action": "alias",
+    "rationale": "社会退缩后的恢复方向。"
+  },
+  {
+    "raw_tag": "社交恐惧",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复"
+    ],
+    "action": "alias",
+    "rationale": "社会退缩后的恢复方向。"
+  },
+  {
+    "raw_tag": "社交能力",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "社交退缩",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复"
+    ],
+    "action": "alias",
+    "rationale": "社会退缩后的恢复方向。"
+  },
+  {
+    "raw_tag": "社交养成",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系能力的长期成长。"
+  },
+  {
+    "raw_tag": "身份表演",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "身份差",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "身份对立",
+    "frequency": 1,
+    "canonical_tags": [
+      "敌对关系"
+    ],
+    "action": "new_candidate",
+    "rationale": "敌对并不必然发展成恋爱或宿敌，现有关系轴缺少中性上位项。"
+  },
+  {
+    "raw_tag": "身份反差",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "身份谜题",
+    "frequency": 1,
+    "canonical_tags": [
+      "悬疑紧张",
+      "谜题调查"
+    ],
+    "action": "alias",
+    "rationale": "悬疑与调查发动机。"
+  },
+  {
+    "raw_tag": "身份逆转",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "身份认同",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "身份撕裂",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "身体感",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "身体融合",
+    "frequency": 1,
+    "canonical_tags": [
+      "双魂一体"
+    ],
+    "action": "alias",
+    "rationale": "两个主体／身份共享身体的上位归一。"
+  },
+  {
+    "raw_tag": "身体政治",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "神罚",
+    "frequency": 1,
+    "canonical_tags": [
+      "非人格异常"
+    ],
+    "action": "alias",
+    "rationale": "超自然规则型压力。"
+  },
+  {
+    "raw_tag": "神官",
+    "frequency": 1,
+    "canonical_tags": [
+      "宗教神职"
+    ],
+    "action": "alias",
+    "rationale": "神职职业归一。"
+  },
+  {
+    "raw_tag": "神话重写",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "神谕误认",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "神职代理",
+    "frequency": 1,
+    "canonical_tags": [
+      "宗教神职"
+    ],
+    "action": "alias",
+    "rationale": "神职职业归一。"
+  },
+  {
+    "raw_tag": "升学",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "生产魔术",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "生存竞技",
+    "frequency": 1,
+    "canonical_tags": [
+      "死亡游戏"
+    ],
+    "action": "new_candidate",
+    "rationale": "死亡游戏是稳定故事发动机，不能完全等同无限流或副本循环。"
+  },
+  {
+    "raw_tag": "生存喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "生存追逃",
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "生存或逃亡冲突。 喜剧基调。"
+  },
+  {
+    "raw_tag": "生存职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业",
+      "生存追逃"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。 生存或逃亡冲突。"
+  },
+  {
+    "raw_tag": "生化生态",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "生活感",
+    "frequency": 1,
+    "canonical_tags": [
+      "生活流"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有“群像生活流”过窄，单主角生活流需要上位标签。"
+  },
+  {
+    "raw_tag": "生活技能",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "生活系",
+    "frequency": 1,
+    "canonical_tags": [
+      "生活流"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有“群像生活流”过窄，单主角生活流需要上位标签。"
+  },
+  {
+    "raw_tag": "生活重建",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复",
+      "阶段目标完成"
+    ],
+    "action": "alias",
+    "rationale": "恢复型成长。 重新开始型阶段目标。"
+  },
+  {
+    "raw_tag": "生死",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "生者与死者",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "声音记忆",
+    "frequency": 1,
+    "canonical_tags": [
+      "记忆主题"
+    ],
+    "action": "new_candidate",
+    "rationale": "记忆作为主题不一定对应失忆、未来记忆或叙事倒序。"
+  },
+  {
+    "raw_tag": "声优行业",
+    "frequency": 1,
+    "canonical_tags": [
+      "娱乐行业",
+      "演员偶像"
+    ],
+    "action": "alias",
+    "rationale": "娱乐职业的具体行业归一。"
+  },
+  {
+    "raw_tag": "失败与悔改",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "失去",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "时间差",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "时间改写",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "时间回溯",
+    "frequency": 1,
+    "canonical_tags": [
+      "重生回过去"
+    ],
+    "action": "alias",
+    "rationale": "回到过去重开人生。"
+  },
+  {
+    "raw_tag": "时间循环",
+    "frequency": 1,
+    "canonical_tags": [
+      "死亡循环",
+      "循环重置"
+    ],
+    "action": "alias",
+    "rationale": "循环式时间结构。 循环节奏。"
+  },
+  {
+    "raw_tag": "时间异常",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "时间准备",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "实验对象",
+    "frequency": 1,
+    "canonical_tags": [
+      "研究者",
+      "科研研发"
+    ],
+    "action": "alias",
+    "rationale": "研究职业与研发循环。"
+  },
+  {
+    "raw_tag": "食品恐怖",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮",
+      "心理恐怖"
+    ],
+    "action": "alias",
+    "rationale": "餐饮题材。 恐怖基调；具体怪谈世界由其他规则决定。"
+  },
+  {
+    "raw_tag": "食物",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮",
+      "美食制作"
+    ],
+    "action": "alias",
+    "rationale": "餐饮题材与制作循环归一。"
+  },
+  {
+    "raw_tag": "史莱姆",
+    "frequency": 1,
+    "canonical_tags": [
+      "史莱姆"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "史诗",
+    "frequency": 1,
+    "canonical_tags": [
+      "史诗宏大"
+    ],
+    "action": "alias",
+    "rationale": "史诗风格归一。"
+  },
+  {
+    "raw_tag": "世界崩坏",
+    "frequency": 1,
+    "canonical_tags": [
+      "废土重建"
+    ],
+    "action": "alias",
+    "rationale": "灾后生活与重建归入废土框架。"
+  },
+  {
+    "raw_tag": "世界危机",
+    "frequency": 1,
+    "canonical_tags": [
+      "宇宙存在危机"
+    ],
+    "action": "alias",
+    "rationale": "世界尺度危机。"
+  },
+  {
+    "raw_tag": "世界终末",
+    "frequency": 1,
+    "canonical_tags": [
+      "末日求生"
+    ],
+    "action": "alias",
+    "rationale": "末日世界的表述变体。"
+  },
+  {
+    "raw_tag": "市井群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线",
+      "市井烟火"
+    ],
+    "action": "alias",
+    "rationale": "多角色共同承担叙事。 地方／社区生活基调。"
+  },
+  {
+    "raw_tag": "侍女",
+    "frequency": 1,
+    "canonical_tags": [
+      "侍从管家"
+    ],
+    "action": "alias",
+    "rationale": "侍从职业归一。"
+  },
+  {
+    "raw_tag": "视角拼图",
+    "frequency": 1,
+    "canonical_tags": [
+      "碎片拼图",
+      "多视角POV"
+    ],
+    "action": "alias",
+    "rationale": "多视角碎片共同重建事件。"
+  },
+  {
+    "raw_tag": "收容",
+    "frequency": 1,
+    "canonical_tags": [
+      "异常收容",
+      "职业案件单元剧"
+    ],
+    "action": "alias",
+    "rationale": "异常被机构化处理。"
+  },
+  {
+    "raw_tag": "手艺成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "以职业实践积累专精。"
+  },
+  {
+    "raw_tag": "守城",
+    "frequency": 1,
+    "canonical_tags": [
+      "战争经营"
+    ],
+    "action": "alias",
+    "rationale": "战争中的防卫与后勤经营。"
+  },
+  {
+    "raw_tag": "受迫害部队",
+    "frequency": 1,
+    "canonical_tags": [
+      "身份偏见"
+    ],
+    "action": "alias",
+    "rationale": "身份污名与迫害。"
+  },
+  {
+    "raw_tag": "兽人国家",
+    "frequency": 1,
+    "canonical_tags": [
+      "多种族社会"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有身体标签无法表达多族群制度与政治。"
+  },
+  {
+    "raw_tag": "抒情",
+    "frequency": 1,
+    "canonical_tags": [
+      "诗意抒情"
+    ],
+    "action": "alias",
+    "rationale": "抒情文风。"
+  },
+  {
+    "raw_tag": "舒适圈",
+    "frequency": 1,
+    "canonical_tags": [
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "温柔治愈基调。"
+  },
+  {
+    "raw_tag": "双剑",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "双女主",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性关系中心"
+    ],
+    "action": "new_candidate",
+    "rationale": "女性中心关系不一定是百合或女性群像，需保留开放性。"
+  },
+  {
+    "raw_tag": "双人",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "双人搭档",
+    "frequency": 1,
+    "canonical_tags": [
+      "搭档关系"
+    ],
+    "action": "new_candidate",
+    "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
+  },
+  {
+    "raw_tag": "双人调查",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "双向疗愈",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复",
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "拆分成长方向与基调。"
+  },
+  {
+    "raw_tag": "双重人格",
+    "frequency": 1,
+    "canonical_tags": [
+      "马甲身份"
+    ],
+    "action": "alias",
+    "rationale": "归入多身份发动机；人格医学含义仍由原始标签保留。"
+  },
+  {
+    "raw_tag": "双重人格形象",
+    "frequency": 1,
+    "canonical_tags": [
+      "双魂一体"
+    ],
+    "action": "alias",
+    "rationale": "共享身体或多主体。"
+  },
+  {
+    "raw_tag": "双主角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "死亡回避",
+    "frequency": 1,
+    "canonical_tags": [
+      "避开破灭结局"
+    ],
+    "action": "alias",
+    "rationale": "避免既定坏结局的长期方向。"
+  },
+  {
+    "raw_tag": "死亡结局回避",
+    "frequency": 1,
+    "canonical_tags": [
+      "避开破灭结局"
+    ],
+    "action": "alias",
+    "rationale": "避免既定坏结局的长期方向。"
+  },
+  {
+    "raw_tag": "死亡游戏",
+    "frequency": 1,
+    "canonical_tags": [
+      "死亡游戏"
+    ],
+    "action": "new_candidate",
+    "rationale": "死亡游戏是稳定故事发动机，不能完全等同无限流或副本循环。"
+  },
+  {
+    "raw_tag": "死亡游戏职业化",
+    "frequency": 1,
+    "canonical_tags": [
+      "死亡游戏"
+    ],
+    "action": "new_candidate",
+    "rationale": "死亡游戏是稳定故事发动机，不能完全等同无限流或副本循环。"
+  },
+  {
+    "raw_tag": "太空竞赛",
+    "frequency": 1,
+    "canonical_tags": [
+      "近未来科幻",
+      "太空歌剧"
+    ],
+    "action": "alias",
+    "rationale": "泛科技／宇宙题材先归到近未来科幻，原始标签保留细分。 宇宙尺度冒险。"
+  },
+  {
+    "raw_tag": "逃亡",
+    "frequency": 1,
+    "canonical_tags": [
+      "生存追逃"
+    ],
+    "action": "alias",
+    "rationale": "生存或逃亡冲突。"
+  },
+  {
+    "raw_tag": "替妹牺牲",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "天才",
+    "frequency": 1,
+    "canonical_tags": [
+      "天才成长"
+    ],
+    "action": "alias",
+    "rationale": "高能力成长上位归一。"
+  },
+  {
+    "raw_tag": "天然主角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "甜系",
+    "frequency": 1,
+    "canonical_tags": [
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "温柔治愈基调。"
+  },
+  {
+    "raw_tag": "听众来信",
+    "frequency": 1,
+    "canonical_tags": [
+      "广播叙事"
+    ],
+    "action": "new_candidate",
+    "rationale": "广播及来信是稳定的信息结构，不能等同直播弹幕。"
+  },
+  {
+    "raw_tag": "庭院地下城",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代迷宫"
+    ],
+    "action": "alias",
+    "rationale": "现代社会出现地下城的同义表达。"
+  },
+  {
+    "raw_tag": "通信",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "通信关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系变化上位归一。"
+  },
+  {
+    "raw_tag": "同伴失踪",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "同世界支线",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "同学",
+    "frequency": 1,
+    "canonical_tags": [
+      "学生"
+    ],
+    "action": "alias",
+    "rationale": "学生身份。"
+  },
+  {
+    "raw_tag": "同学关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "学生",
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "学生身份。 关系变化上位归一。"
+  },
+  {
+    "raw_tag": "统治伦理",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "涂鸦艺术",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "屠龙",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "吐槽系男主",
+    "frequency": 1,
+    "canonical_tags": [
+      "男性主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有本体缺少主角性别轴；职业或文风不能替代性别记录。"
+  },
+  {
+    "raw_tag": "团队策划",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队成长。 团队／领导成长。"
+  },
+  {
+    "raw_tag": "团队运营",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "队伍经营归入团队成长。"
+  },
+  {
+    "raw_tag": "团队招募",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "队伍经营归入团队成长。"
+  },
+  {
+    "raw_tag": "团队制作",
+    "frequency": 1,
+    "canonical_tags": [
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "团队成长。 团队／领导成长。"
+  },
+  {
+    "raw_tag": "退队后",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "退隐愿望",
+    "frequency": 1,
+    "canonical_tags": [
+      "不追求变强"
+    ],
+    "action": "alias",
+    "rationale": "不以力量增长为目标。"
+  },
+  {
+    "raw_tag": "完全沉浸",
+    "frequency": 1,
+    "canonical_tags": [
+      "虚拟现实"
+    ],
+    "action": "alias",
+    "rationale": "沉浸式技术的上位归一。"
+  },
+  {
+    "raw_tag": "玩家社会",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "玩家自由",
+    "frequency": 1,
+    "canonical_tags": [
+      "开放沙盒",
+      "玩家决定推进"
+    ],
+    "action": "alias",
+    "rationale": "开放式推进。"
+  },
+  {
+    "raw_tag": "王女",
+    "frequency": 1,
+    "canonical_tags": [
+      "领主君主"
+    ],
+    "action": "alias",
+    "rationale": "统治者／王族身份。"
+  },
+  {
+    "raw_tag": "王子退场",
+    "frequency": 1,
+    "canonical_tags": [
+      "拒绝原作路线"
+    ],
+    "action": "new_candidate",
+    "rationale": "关键角色主动退出路线不同于主角单纯改写结局。"
+  },
+  {
+    "raw_tag": "王族",
+    "frequency": 1,
+    "canonical_tags": [
+      "领主君主"
+    ],
+    "action": "alias",
+    "rationale": "统治者／王族身份。"
+  },
+  {
+    "raw_tag": "网购技能",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "网络爆红",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "网络人格",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "网络投稿",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "网络文化",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "网络舆论",
+    "frequency": 1,
+    "canonical_tags": [
+      "舆论压力"
+    ],
+    "action": "alias",
+    "rationale": "网络舆论形成冲突。 公众反馈压力。"
+  },
+  {
+    "raw_tag": "网站档案",
+    "frequency": 1,
+    "canonical_tags": [
+      "档案文书"
+    ],
+    "action": "alias",
+    "rationale": "文档型叙事形式归一。"
+  },
+  {
+    "raw_tag": "妄想喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "喜剧基调。"
+  },
+  {
+    "raw_tag": "忘关直播",
+    "frequency": 1,
+    "canonical_tags": [
+      "直播弹幕",
+      "主播UP主"
+    ],
+    "action": "alias",
+    "rationale": "直播表现形式与主播职业。"
+  },
+  {
+    "raw_tag": "危险教育",
+    "frequency": 1,
+    "canonical_tags": [
+      "教师"
+    ],
+    "action": "alias",
+    "rationale": "教育职业。"
+  },
+  {
+    "raw_tag": "微小变化",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "伪纪录片",
+    "frequency": 1,
+    "canonical_tags": [
+      "伪纪录片"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "委托单元剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业案件单元剧",
+      "单元剧"
+    ],
+    "action": "alias",
+    "rationale": "职业委托与篇章结构双轴。"
+  },
+  {
+    "raw_tag": "委员会",
+    "frequency": 1,
+    "canonical_tags": [
+      "公务行政",
+      "流程官僚"
+    ],
+    "action": "alias",
+    "rationale": "组织身份与流程冲突双轴。"
+  },
+  {
+    "raw_tag": "卫生兵",
+    "frequency": 1,
+    "canonical_tags": [
+      "护士照护",
+      "治疗辅助"
+    ],
+    "action": "alias",
+    "rationale": "拆分医疗职业与队伍功能。"
+  },
+  {
+    "raw_tag": "温泉经营",
+    "frequency": 1,
+    "canonical_tags": [
+      "店铺经营"
+    ],
+    "action": "alias",
+    "rationale": "店铺或商业经营。"
+  },
+  {
+    "raw_tag": "温柔",
+    "frequency": 1,
+    "canonical_tags": [
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "温柔治愈基调。"
+  },
+  {
+    "raw_tag": "文档叙事",
+    "frequency": 1,
+    "canonical_tags": [
+      "档案文书"
+    ],
+    "action": "alias",
+    "rationale": "文档型叙事形式归一。"
+  },
+  {
+    "raw_tag": "文化差异",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "文化交流",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "文字解读",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "文字游戏",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "污名",
+    "frequency": 1,
+    "canonical_tags": [
+      "身份偏见"
+    ],
+    "action": "alias",
+    "rationale": "身份污名与迫害。"
+  },
+  {
+    "raw_tag": "巫妖主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "不死族"
+    ],
+    "action": "alias",
+    "rationale": "巫妖存在形态归一。"
+  },
+  {
+    "raw_tag": "屋台经营",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮",
+      "店铺经营"
+    ],
+    "action": "alias",
+    "rationale": "街头餐饮与店铺经营双轴。"
+  },
+  {
+    "raw_tag": "无告别逃亡",
+    "frequency": 1,
+    "canonical_tags": [
+      "生存追逃"
+    ],
+    "action": "alias",
+    "rationale": "生存或逃亡冲突。"
+  },
+  {
+    "raw_tag": "无人机谎言",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "具体情节装置，不适合作为通用标签。"
+  },
+  {
+    "raw_tag": "无使命",
+    "frequency": 1,
+    "canonical_tags": [
+      "不追求变强"
+    ],
+    "action": "alias",
+    "rationale": "不以力量增长为目标。"
+  },
+  {
+    "raw_tag": "无天赋",
+    "frequency": 1,
+    "canonical_tags": [
+      "废柴逆袭"
+    ],
+    "action": "alias",
+    "rationale": "低起点成长。"
+  },
+  {
+    "raw_tag": "无意最强",
+    "frequency": 1,
+    "canonical_tags": [
+      "无自觉强者"
+    ],
+    "action": "alias",
+    "rationale": "无自觉强者的同义表达。"
+  },
+  {
+    "raw_tag": "无英雄光环",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "无咏唱魔术",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "无障碍体验",
+    "frequency": 1,
+    "canonical_tags": [
+      "身体残障"
+    ],
+    "action": "alias",
+    "rationale": "身体差异与无障碍。"
+  },
+  {
+    "raw_tag": "物理学",
+    "frequency": 1,
+    "canonical_tags": [
+      "研究者",
+      "科研研发"
+    ],
+    "action": "alias",
+    "rationale": "研究身份与研发循环双轴。"
+  },
+  {
+    "raw_tag": "物拟人",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "误解",
+    "frequency": 1,
+    "canonical_tags": [
+      "误解喜剧"
+    ],
+    "action": "alias",
+    "rationale": "认知错位与误解结构。"
+  },
+  {
+    "raw_tag": "误解喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "误解喜剧"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "误解系",
+    "frequency": 1,
+    "canonical_tags": [
+      "误解喜剧"
+    ],
+    "action": "alias",
+    "rationale": "认知错位与误解结构。"
+  },
+  {
+    "raw_tag": "吸血鬼",
+    "frequency": 1,
+    "canonical_tags": [
+      "不死族"
+    ],
+    "action": "alias",
+    "rationale": "吸血鬼归入不死族上位类。"
+  },
+  {
+    "raw_tag": "戏中戏",
+    "frequency": 1,
+    "canonical_tags": [
+      "剧中剧"
+    ],
+    "action": "alias",
+    "rationale": "戏中戏与剧中剧同义。"
+  },
+  {
+    "raw_tag": "现充主角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "现代",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "现代世界框架。"
+  },
+  {
+    "raw_tag": "现代地下城",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代迷宫"
+    ],
+    "action": "alias",
+    "rationale": "现代社会出现地下城的同义表达。"
+  },
+  {
+    "raw_tag": "现代怪谈",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代怪谈"
+    ],
+    "action": "new_candidate",
+    "rationale": "都市奇幻过宽，地方性怪谈与传播链值得独立世界标签。"
+  },
+  {
+    "raw_tag": "现代怪异",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代怪谈"
+    ],
+    "action": "new_candidate",
+    "rationale": "都市奇幻过宽，地方性怪谈与传播链值得独立世界标签。"
+  },
+  {
+    "raw_tag": "现代恋爱",
+    "frequency": 1,
+    "canonical_tags": [
+      "恋爱要素"
+    ],
+    "action": "new_candidate",
+    "rationale": "泛恋爱不能安全归为单一恋爱、后宫或其他具体结构。"
+  },
+  {
+    "raw_tag": "现代魔法",
+    "frequency": 1,
+    "canonical_tags": [
+      "都市奇幻"
+    ],
+    "action": "alias",
+    "rationale": "现代社会中的魔法／奇幻同义归一。"
+  },
+  {
+    "raw_tag": "现代奇幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "都市奇幻"
+    ],
+    "action": "alias",
+    "rationale": "现代社会中的魔法／奇幻同义归一。"
+  },
+  {
+    "raw_tag": "现代青春",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "青春题材的场景上位归一；原始标签保留是否大学。"
+  },
+  {
+    "raw_tag": "现代文学",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "现代世界框架。"
+  },
+  {
+    "raw_tag": "现实攻略",
+    "frequency": 1,
+    "canonical_tags": [
+      "迷宫攻略"
+    ],
+    "action": "alias",
+    "rationale": "攻略循环。"
+  },
+  {
+    "raw_tag": "现实青春",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "青春题材的场景上位归一；原始标签保留是否大学。"
+  },
+  {
+    "raw_tag": "现实情感",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "现实题材",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "非幻想现代题材归到现代世界框架。"
+  },
+  {
+    "raw_tag": "现实校园",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "校园场景的表述变体。"
+  },
+  {
+    "raw_tag": "现实与游戏双线",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "乡居",
+    "frequency": 1,
+    "canonical_tags": [
+      "悠闲慢生活"
+    ],
+    "action": "alias",
+    "rationale": "慢生活基调。"
+  },
+  {
+    "raw_tag": "乡镇",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "小规模探索",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "小人物",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "小生意",
+    "frequency": 1,
+    "canonical_tags": [
+      "商人行商",
+      "公司经营"
+    ],
+    "action": "alias",
+    "rationale": "商业身份与经营发动机双轴。"
+  },
+  {
+    "raw_tag": "校园安保",
+    "frequency": 1,
+    "canonical_tags": [
+      "护卫安保"
+    ],
+    "action": "new_candidate",
+    "rationale": "护卫、警戒和路线规划需要独立职业循环。"
+  },
+  {
+    "raw_tag": "校园竞争",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春",
+      "竞争关系"
+    ],
+    "action": "alias",
+    "rationale": "校园竞争不一定采用体育或锦标联赛赛制。"
+  },
+  {
+    "raw_tag": "校园恋爱喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春",
+      "单一恋爱"
+    ],
+    "action": "alias",
+    "rationale": "拆分为世界场景与关系轴，避免把校园和固定恋爱模板绑死。"
+  },
+  {
+    "raw_tag": "校园群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春",
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "包含校园场景。 多角色共同承担叙事。"
+  },
+  {
+    "raw_tag": "校园日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "校园场景的表述变体。"
+  },
+  {
+    "raw_tag": "校园生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "校园场景的表述变体。"
+  },
+  {
+    "raw_tag": "校园音乐",
+    "frequency": 1,
+    "canonical_tags": [
+      "音乐题材"
+    ],
+    "action": "new_candidate",
+    "rationale": "音乐兼具职业、关系和世界机制，现有本体没有通用音乐标签。"
+  },
+  {
+    "raw_tag": "心理崩溃",
+    "frequency": 1,
+    "canonical_tags": [
+      "疾病伤痛"
+    ],
+    "action": "alias",
+    "rationale": "心理伤痛先归入伤痛冲突。"
+  },
+  {
+    "raw_tag": "心理剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "心理关系剧"
+    ],
+    "action": "new_candidate",
+    "rationale": "以内在与关系变化为核心，不等同悬疑或哲学思辨。"
+  },
+  {
+    "raw_tag": "心理奇幻",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "信息污染",
+    "frequency": 1,
+    "canonical_tags": [
+      "故障文本"
+    ],
+    "action": "new_candidate",
+    "rationale": "界面损坏、乱码和污染是数字原生叙事形式。"
+  },
+  {
+    "raw_tag": "星际领主",
+    "frequency": 1,
+    "canonical_tags": [
+      "领主君主",
+      "领地管理者"
+    ],
+    "action": "alias",
+    "rationale": "领主身份与管理位置双轴。"
+  },
+  {
+    "raw_tag": "刑罚制度",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "行业细节",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。"
+  },
+  {
+    "raw_tag": "行业小说",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。"
+  },
+  {
+    "raw_tag": "性别规范反转",
+    "frequency": 1,
+    "canonical_tags": [
+      "性别秩序反转"
+    ],
+    "action": "new_candidate",
+    "rationale": "这是完整社会制度变量，不只是主角性转。"
+  },
+  {
+    "raw_tag": "性产业",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "性转",
+    "frequency": 1,
+    "canonical_tags": [
+      "性别转换",
+      "TS性转"
+    ],
+    "action": "alias",
+    "rationale": "性转的存在形态与日轻母题归一。"
+  },
+  {
+    "raw_tag": "兄弟",
+    "frequency": 1,
+    "canonical_tags": [
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "家庭关系上位归一；具体结构保留在原始标签。"
+  },
+  {
+    "raw_tag": "修道女追放",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "悬疑动作",
+    "frequency": 1,
+    "canonical_tags": [
+      "悬疑紧张",
+      "谜题调查"
+    ],
+    "action": "alias",
+    "rationale": "悬疑与调查发动机。"
+  },
+  {
+    "raw_tag": "选择后果",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "选择家庭",
+    "frequency": 1,
+    "canonical_tags": [
+      "选择家庭"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "学历社会",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶层差异"
+    ],
+    "action": "alias",
+    "rationale": "阶层结构冲突。"
+  },
+  {
+    "raw_tag": "学术成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "以职业实践积累专精。"
+  },
+  {
+    "raw_tag": "学术日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "科研学术"
+    ],
+    "action": "alias",
+    "rationale": "大学科研场景归入科研学术框架。"
+  },
+  {
+    "raw_tag": "学园潜入",
+    "frequency": 1,
+    "canonical_tags": [
+      "学生"
+    ],
+    "action": "alias",
+    "rationale": "学生身份。"
+  },
+  {
+    "raw_tag": "学院",
+    "frequency": 1,
+    "canonical_tags": [
+      "学院奇幻"
+    ],
+    "action": "alias",
+    "rationale": "魔法教育场景的世界框架归一。"
+  },
+  {
+    "raw_tag": "巡礼",
+    "frequency": 1,
+    "canonical_tags": [
+      "旅行站点式"
+    ],
+    "action": "alias",
+    "rationale": "站点式旅行节奏。"
+  },
+  {
+    "raw_tag": "训练",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "驯服失败",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "烟花",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "炎上",
+    "frequency": 1,
+    "canonical_tags": [
+      "舆论压力"
+    ],
+    "action": "alias",
+    "rationale": "网络舆论形成冲突。 公众反馈压力。"
+  },
+  {
+    "raw_tag": "研究",
+    "frequency": 1,
+    "canonical_tags": [
+      "研究者",
+      "科研研发"
+    ],
+    "action": "alias",
+    "rationale": "研究身份与研发循环双轴。"
+  },
+  {
+    "raw_tag": "研究室",
+    "frequency": 1,
+    "canonical_tags": [
+      "科研学术"
+    ],
+    "action": "alias",
+    "rationale": "大学科研场景归入科研学术框架。"
+  },
+  {
+    "raw_tag": "演出",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "演艺圈",
+    "frequency": 1,
+    "canonical_tags": [
+      "娱乐行业",
+      "演员偶像"
+    ],
+    "action": "alias",
+    "rationale": "娱乐职业的具体行业归一。"
+  },
+  {
+    "raw_tag": "养成",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "妖精",
+    "frequency": 1,
+    "canonical_tags": [
+      "妖精族"
+    ],
+    "action": "new_candidate",
+    "rationale": "妖精不宜无条件并入元素生命或亚人。"
+  },
+  {
+    "raw_tag": "业界日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "日常节奏。"
+  },
+  {
+    "raw_tag": "业界职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。"
+  },
+  {
+    "raw_tag": "一册完结感",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "已可由短篇闭环近似，但原词仍偏评论性元数据。"
+  },
+  {
+    "raw_tag": "一生传记",
+    "frequency": 1,
+    "canonical_tags": [
+      "传记体"
+    ],
+    "action": "new_candidate",
+    "rationale": "传记跨越一生，与一般长时间跳跃不同。"
+  },
+  {
+    "raw_tag": "医疗后勤",
+    "frequency": 1,
+    "canonical_tags": [
+      "护士照护",
+      "治疗辅助"
+    ],
+    "action": "alias",
+    "rationale": "拆分医疗职业与队伍功能。"
+  },
+  {
+    "raw_tag": "医院",
+    "frequency": 1,
+    "canonical_tags": [
+      "医疗行业"
+    ],
+    "action": "alias",
+    "rationale": "医疗场景归一。"
+  },
+  {
+    "raw_tag": "遗迹都市",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "现代世界框架。"
+  },
+  {
+    "raw_tag": "遗迹猎人",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "遗志继承",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "乙女游戏式世界",
+    "frequency": 1,
+    "canonical_tags": [
+      "乙女游戏世界",
+      "乙女游戏"
+    ],
+    "action": "alias",
+    "rationale": "乙女游戏世界与日轻母题。"
+  },
+  {
+    "raw_tag": "异大陆",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "异界守门",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "异世界产业",
+    "frequency": 1,
+    "canonical_tags": [
+      "西式奇幻"
+    ],
+    "action": "alias",
+    "rationale": "未指定细分的异世界先归到西式奇幻上位框架。"
+  },
+  {
+    "raw_tag": "异世界旅行",
+    "frequency": 1,
+    "canonical_tags": [
+      "异世界旅行"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "异世界生活",
+    "frequency": 1,
+    "canonical_tags": [
+      "异世界生活"
+    ],
+    "action": "new_candidate",
+    "rationale": "原始标签没有说明转生、转移或世界魔法强度，需上位生活标签。"
+  },
+  {
+    "raw_tag": "异种族",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "抑郁",
+    "frequency": 1,
+    "canonical_tags": [
+      "疾病伤痛"
+    ],
+    "action": "alias",
+    "rationale": "心理伤痛先归入伤痛冲突。"
+  },
+  {
+    "raw_tag": "意外获得神兵",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "音乐世界观",
+    "frequency": 1,
+    "canonical_tags": [
+      "音乐题材"
+    ],
+    "action": "new_candidate",
+    "rationale": "音乐兼具职业、关系和世界机制，现有本体没有通用音乐标签。"
+  },
+  {
+    "raw_tag": "音乐组合",
+    "frequency": 1,
+    "canonical_tags": [
+      "音乐题材"
+    ],
+    "action": "new_candidate",
+    "rationale": "音乐兼具职业、关系和世界机制，现有本体没有通用音乐标签。"
+  },
+  {
+    "raw_tag": "隐藏战力",
+    "frequency": 1,
+    "canonical_tags": [
+      "隐藏强者"
+    ],
+    "action": "alias",
+    "rationale": "隐藏实力的表述变体。"
+  },
+  {
+    "raw_tag": "隐居皇子",
+    "frequency": 1,
+    "canonical_tags": [
+      "领主君主"
+    ],
+    "action": "alias",
+    "rationale": "统治者／王族身份。"
+  },
+  {
+    "raw_tag": "英雄传记",
+    "frequency": 1,
+    "canonical_tags": [
+      "传记体"
+    ],
+    "action": "new_candidate",
+    "rationale": "传记跨越一生，与一般长时间跳跃不同。"
+  },
+  {
+    "raw_tag": "婴儿开局",
+    "frequency": 1,
+    "canonical_tags": [
+      "儿童主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "儿童身体和社会能力限制会显著改变玩法。"
+  },
+  {
+    "raw_tag": "营业人设",
+    "frequency": 1,
+    "canonical_tags": [
+      "马甲身份"
+    ],
+    "action": "alias",
+    "rationale": "公开身份与真实身份分离。"
+  },
+  {
+    "raw_tag": "佣兵",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人"
+    ],
+    "action": "alias",
+    "rationale": "武装职业的上位归一。"
+  },
+  {
+    "raw_tag": "勇者伙伴",
+    "frequency": 1,
+    "canonical_tags": [
+      "勇者挚友",
+      "职业搭档"
+    ],
+    "action": "alias",
+    "rationale": "勇者关系中的挚友位置。 搭档关系先归到职业搭档；原始标签保留非职业语义。"
+  },
+  {
+    "raw_tag": "勇者死后",
+    "frequency": 1,
+    "canonical_tags": [
+      "后日谈"
+    ],
+    "action": "new_candidate",
+    "rationale": "原故事完成后的生活与调查不一定是第二人生或退休。"
+  },
+  {
+    "raw_tag": "勇者挚友",
+    "frequency": 1,
+    "canonical_tags": [
+      "勇者挚友"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "游戏店",
+    "frequency": 1,
+    "canonical_tags": [
+      "桌游社交"
+    ],
+    "action": "new_candidate",
+    "rationale": "桌游规则和线下社交不同于电子游戏世界。"
+  },
+  {
+    "raw_tag": "游戏开发",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "游戏伦理",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "游戏实况",
+    "frequency": 1,
+    "canonical_tags": [
+      "主播UP主",
+      "直播弹幕"
+    ],
+    "action": "alias",
+    "rationale": "直播职业与表现形式双轴归一。"
+  },
+  {
+    "raw_tag": "游戏思维",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "游戏系统",
+    "frequency": 1,
+    "canonical_tags": [
+      "游戏世界"
+    ],
+    "action": "alias",
+    "rationale": "游戏化世界框架。"
+  },
+  {
+    "raw_tag": "游戏直播",
+    "frequency": 1,
+    "canonical_tags": [
+      "主播UP主",
+      "直播弹幕"
+    ],
+    "action": "alias",
+    "rationale": "直播职业与表现形式双轴归一。"
+  },
+  {
+    "raw_tag": "友情",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情"
+    ],
+    "action": "alias",
+    "rationale": "友情核心关系的表述变体。"
+  },
+  {
+    "raw_tag": "友情先行",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情"
+    ],
+    "action": "alias",
+    "rationale": "友情核心关系的表述变体。"
+  },
+  {
+    "raw_tag": "有限时间",
+    "frequency": 1,
+    "canonical_tags": [
+      "倒计时"
+    ],
+    "action": "alias",
+    "rationale": "时限结构。"
+  },
+  {
+    "raw_tag": "幼女军官",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "军事职业与战争冲突。"
+  },
+  {
+    "raw_tag": "幼女主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "儿童主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "儿童身体和社会能力限制会显著改变玩法。"
+  },
+  {
+    "raw_tag": "余韵",
+    "frequency": 1,
+    "canonical_tags": [
+      "诗意抒情"
+    ],
+    "action": "alias",
+    "rationale": "抒情文风。"
+  },
+  {
+    "raw_tag": "宇宙",
+    "frequency": 1,
+    "canonical_tags": [
+      "近未来科幻",
+      "太空歌剧"
+    ],
+    "action": "alias",
+    "rationale": "泛科技／宇宙题材先归到近未来科幻，原始标签保留细分。 宇宙尺度冒险。"
+  },
+  {
+    "raw_tag": "语言",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "语音互动",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "浴缸生活",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "欲望喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "喜剧基调。"
+  },
+  {
+    "raw_tag": "寓言",
+    "frequency": 1,
+    "canonical_tags": [
+      "讽刺寓言"
+    ],
+    "action": "alias",
+    "rationale": "讽刺／寓言风格归一。"
+  },
+  {
+    "raw_tag": "原女主拒绝攻略",
+    "frequency": 1,
+    "canonical_tags": [
+      "拒绝原作路线"
+    ],
+    "action": "new_candidate",
+    "rationale": "关键角色主动退出路线不同于主角单纯改写结局。"
+  },
+  {
+    "raw_tag": "原作崩坏",
+    "frequency": 1,
+    "canonical_tags": [
+      "改变原作结局"
+    ],
+    "action": "alias",
+    "rationale": "原作路线被行动改变。"
+  },
+  {
+    "raw_tag": "原作改写",
+    "frequency": 1,
+    "canonical_tags": [
+      "改变原作结局"
+    ],
+    "action": "alias",
+    "rationale": "原作路线被行动改变。"
+  },
+  {
+    "raw_tag": "原作幕后",
+    "frequency": 1,
+    "canonical_tags": [
+      "改变原作结局"
+    ],
+    "action": "alias",
+    "rationale": "围绕原作路线改写。"
+  },
+  {
+    "raw_tag": "原作失效",
+    "frequency": 1,
+    "canonical_tags": [
+      "改变原作结局"
+    ],
+    "action": "alias",
+    "rationale": "原作路线被行动改变。"
+  },
+  {
+    "raw_tag": "远距离关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "关系变化上位归一。"
+  },
+  {
+    "raw_tag": "愿望",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "运营生态",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "杂务",
+    "frequency": 1,
+    "canonical_tags": [
+      "清洁维护"
+    ],
+    "action": "new_candidate",
+    "rationale": "清扫与维护是近年边缘职业主角的重要循环。"
+  },
+  {
+    "raw_tag": "杂鱼狩猎",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "灾后重建",
+    "frequency": 1,
+    "canonical_tags": [
+      "废土重建"
+    ],
+    "action": "alias",
+    "rationale": "灾后生活与重建归入废土框架。"
+  },
+  {
+    "raw_tag": "再婚家庭",
+    "frequency": 1,
+    "canonical_tags": [
+      "继母继父",
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "拆分家庭结构与关系。"
+  },
+  {
+    "raw_tag": "再起",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶段目标完成"
+    ],
+    "action": "alias",
+    "rationale": "重新开始型阶段目标。"
+  },
+  {
+    "raw_tag": "造纸",
+    "frequency": 1,
+    "canonical_tags": [
+      "工业制造"
+    ],
+    "action": "alias",
+    "rationale": "具体制造业归到工业框架。"
+  },
+  {
+    "raw_tag": "增强现实",
+    "frequency": 1,
+    "canonical_tags": [
+      "增强现实"
+    ],
+    "action": "new_candidate",
+    "rationale": "增强现实与完全沉浸虚拟现实的空间逻辑不同。"
+  },
+  {
+    "raw_tag": "宅兴趣",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "战斗",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "战后架空",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "战术",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "战术准备",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "战争后勤",
+    "frequency": 1,
+    "canonical_tags": [
+      "战争经营"
+    ],
+    "action": "alias",
+    "rationale": "战争中的防卫与后勤经营。"
+  },
+  {
+    "raw_tag": "战争日记",
+    "frequency": 1,
+    "canonical_tags": [
+      "书信日记",
+      "佣兵军人",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "日记或记录体叙事。 军事职业与战争冲突。"
+  },
+  {
+    "raw_tag": "长期成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "长时间跳跃"
+    ],
+    "action": "alias",
+    "rationale": "跨较长时间推进的节奏归一。"
+  },
+  {
+    "raw_tag": "长期孤独",
+    "frequency": 1,
+    "canonical_tags": [
+      "孤独处境"
+    ],
+    "action": "new_candidate",
+    "rationale": "孤独是持续人物处境，不等同失忆或社会退出。"
+  },
+  {
+    "raw_tag": "长生种",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "长时段",
+    "frequency": 1,
+    "canonical_tags": [
+      "长时间跳跃"
+    ],
+    "action": "alias",
+    "rationale": "跨较长时间推进的节奏归一。"
+  },
+  {
+    "raw_tag": "招聘骗局",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "照顾者",
+    "frequency": 1,
+    "canonical_tags": [
+      "全职照顾者",
+      "监护人家长"
+    ],
+    "action": "alias",
+    "rationale": "照护责任归到职业与叙事位置。"
+  },
+  {
+    "raw_tag": "照料日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "日常节奏。"
+  },
+  {
+    "raw_tag": "贞操逆转",
+    "frequency": 1,
+    "canonical_tags": [
+      "性别秩序反转"
+    ],
+    "action": "new_candidate",
+    "rationale": "这是完整社会制度变量，不只是主角性转。"
+  },
+  {
+    "raw_tag": "侦探已死",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "接近作品命题式短语，保留原文用于检索。"
+  },
+  {
+    "raw_tag": "政略婚姻",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治联姻"
+    ],
+    "action": "alias",
+    "rationale": "政治目的婚姻的表述变体。"
+  },
+  {
+    "raw_tag": "政治改革",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "政治婚姻",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治联姻"
+    ],
+    "action": "alias",
+    "rationale": "政治目的婚姻的表述变体。"
+  },
+  {
+    "raw_tag": "政治婚约",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治联姻"
+    ],
+    "action": "alias",
+    "rationale": "政治目的婚姻的表述变体。"
+  },
+  {
+    "raw_tag": "政治判断",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "政治宣传",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "政治与艺术",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "支配与边界",
+    "frequency": 1,
+    "canonical_tags": [
+      "病态依恋"
+    ],
+    "action": "new_candidate",
+    "rationale": "关系强度与控制欲是稳定母题，不能简化为普通多角关系。"
+  },
+  {
+    "raw_tag": "知识传播",
+    "frequency": 1,
+    "canonical_tags": [
+      "知识优势"
+    ],
+    "action": "alias",
+    "rationale": "知识型优势。"
+  },
+  {
+    "raw_tag": "蜘蛛",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "执着",
+    "frequency": 1,
+    "canonical_tags": [
+      "病态依恋"
+    ],
+    "action": "new_candidate",
+    "rationale": "关系强度与控制欲是稳定母题，不能简化为普通多角关系。"
+  },
+  {
+    "raw_tag": "直播",
+    "frequency": 1,
+    "canonical_tags": [
+      "直播弹幕",
+      "主播UP主"
+    ],
+    "action": "alias",
+    "rationale": "直播表现形式与主播职业。"
+  },
+  {
+    "raw_tag": "直播时代背景",
+    "frequency": 1,
+    "canonical_tags": [
+      "直播弹幕",
+      "主播UP主"
+    ],
+    "action": "alias",
+    "rationale": "直播表现形式与主播职业。"
+  },
+  {
+    "raw_tag": "直播事故",
+    "frequency": 1,
+    "canonical_tags": [
+      "直播弹幕",
+      "主播UP主"
+    ],
+    "action": "alias",
+    "rationale": "直播表现形式与主播职业。"
+  },
+  {
+    "raw_tag": "直播文本",
+    "frequency": 1,
+    "canonical_tags": [
+      "直播弹幕"
+    ],
+    "action": "alias",
+    "rationale": "弹幕表现形式归一。"
+  },
+  {
+    "raw_tag": "职场喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业",
+      "轻松吐槽"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。 喜剧基调。"
+  },
+  {
+    "raw_tag": "职场转型",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。"
+  },
+  {
+    "raw_tag": "职场转折",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。"
+  },
+  {
+    "raw_tag": "职业成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "以职业实践积累专精。"
+  },
+  {
+    "raw_tag": "职业构筑",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业",
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。 职业能力成长。"
+  },
+  {
+    "raw_tag": "职业伙伴",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业",
+      "职业搭档"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。 搭档关系先归到职业搭档；原始标签保留非职业语义。"
+  },
+  {
+    "raw_tag": "职业将棋",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。"
+  },
+  {
+    "raw_tag": "职业经验",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业",
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。 职业能力成长。"
+  },
+  {
+    "raw_tag": "职业经验继承",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业",
+      "职业专精"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。 职业能力成长。"
+  },
+  {
+    "raw_tag": "职业流",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。"
+  },
+  {
+    "raw_tag": "职业伦理",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。"
+  },
+  {
+    "raw_tag": "职业群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "群像交叉线",
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "多角色共同承担叙事。 职业题材上位标签。"
+  },
+  {
+    "raw_tag": "职业日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业",
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "职业题材上位标签。 日常节奏。"
+  },
+  {
+    "raw_tag": "职业音乐",
+    "frequency": 1,
+    "canonical_tags": [
+      "音乐题材"
+    ],
+    "action": "new_candidate",
+    "rationale": "音乐兼具职业、关系和世界机制，现有本体没有通用音乐标签。"
+  },
+  {
+    "raw_tag": "职责与个人",
+    "frequency": 1,
+    "canonical_tags": [
+      "责任与自由"
+    ],
+    "action": "alias",
+    "rationale": "责任和个人选择冲突。"
+  },
+  {
+    "raw_tag": "制度",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "制度暴力",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "制度成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "制度模拟",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "制度压迫",
+    "frequency": 1,
+    "canonical_tags": [
+      "政治权力"
+    ],
+    "action": "alias",
+    "rationale": "政治制度冲突。"
+  },
+  {
+    "raw_tag": "制造",
+    "frequency": 1,
+    "canonical_tags": [
+      "工匠铁匠"
+    ],
+    "action": "alias",
+    "rationale": "制作职业的上位归一。"
+  },
+  {
+    "raw_tag": "治愈",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复",
+      "温馨治愈"
+    ],
+    "action": "alias",
+    "rationale": "拆分成长方向与基调。"
+  },
+  {
+    "raw_tag": "挚友",
+    "frequency": 1,
+    "canonical_tags": [
+      "挚友情"
+    ],
+    "action": "alias",
+    "rationale": "友情核心关系的表述变体。"
+  },
+  {
+    "raw_tag": "智斗",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "中二病",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "中坚冒险者",
+    "frequency": 1,
+    "canonical_tags": [
+      "猎人冒险者"
+    ],
+    "action": "alias",
+    "rationale": "冒险职业的上位归一。"
+  },
+  {
+    "raw_tag": "中年内心",
+    "frequency": 1,
+    "canonical_tags": [
+      "中年主角"
+    ],
+    "action": "new_candidate",
+    "rationale": "中年经验与身体年龄错位频繁出现，值得独立于成年统称。"
+  },
+  {
+    "raw_tag": "忠诚",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "种族政治",
+    "frequency": 1,
+    "canonical_tags": [
+      "多种族社会"
+    ],
+    "action": "new_candidate",
+    "rationale": "现有身体标签无法表达多族群制度与政治。"
+  },
+  {
+    "raw_tag": "重逢",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "重新出发",
+    "frequency": 1,
+    "canonical_tags": [
+      "阶段目标完成"
+    ],
+    "action": "alias",
+    "rationale": "重新开始型阶段目标。"
+  },
+  {
+    "raw_tag": "重组家庭",
+    "frequency": 1,
+    "canonical_tags": [
+      "继母继父",
+      "亲子家庭"
+    ],
+    "action": "alias",
+    "rationale": "拆分家庭结构与关系。"
+  },
+  {
+    "raw_tag": "主从关系",
+    "frequency": 1,
+    "canonical_tags": [
+      "主从关系"
+    ],
+    "action": "existing",
+    "rationale": "与 tag_ontology.json 中的现有标签完全一致。"
+  },
+  {
+    "raw_tag": "助手视角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "专职冒险者",
+    "frequency": 1,
+    "canonical_tags": [
+      "猎人冒险者"
+    ],
+    "action": "alias",
+    "rationale": "冒险职业的上位归一。"
+  },
+  {
+    "raw_tag": "转生诈骗",
+    "frequency": 1,
+    "canonical_tags": [
+      "異世界転生"
+    ],
+    "action": "alias",
+    "rationale": "转生母题；原始标签保留是否明确异世界。"
+  },
+  {
+    "raw_tag": "装备成长",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "追想录",
+    "frequency": 1,
+    "canonical_tags": [
+      "倒叙插叙"
+    ],
+    "action": "alias",
+    "rationale": "回忆与现在交错的结构归一。"
+  },
+  {
+    "raw_tag": "桌游",
+    "frequency": 1,
+    "canonical_tags": [
+      "桌游社交"
+    ],
+    "action": "new_candidate",
+    "rationale": "桌游规则和线下社交不同于电子游戏世界。"
+  },
+  {
+    "raw_tag": "资源管理",
+    "frequency": 1,
+    "canonical_tags": [
+      "资源不足"
+    ],
+    "action": "alias",
+    "rationale": "资源管理由稀缺性驱动。"
+  },
+  {
+    "raw_tag": "自保动机",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "自我表达",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "自我改造",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "自我塑造",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "自我牺牲",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "自我增殖车站",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "高度具体的作品核心意象，应留在作品层而非本体层。"
+  },
+  {
+    "raw_tag": "自我重建",
+    "frequency": 1,
+    "canonical_tags": [
+      "人格成长"
+    ],
+    "action": "alias",
+    "rationale": "身份与自我的长期重建归入人格成长。"
+  },
+  {
+    "raw_tag": "诅咒",
+    "frequency": 1,
+    "canonical_tags": [
+      "非人格异常"
+    ],
+    "action": "alias",
+    "rationale": "超自然规则型压力。"
+  },
+  {
+    "raw_tag": "组织官僚",
+    "frequency": 1,
+    "canonical_tags": [
+      "公务行政",
+      "流程官僚"
+    ],
+    "action": "alias",
+    "rationale": "组织身份与流程冲突双轴。"
+  },
+  {
+    "raw_tag": "最强魔女",
+    "frequency": 1,
+    "canonical_tags": [
+      "魔女"
+    ],
+    "action": "new_candidate",
+    "rationale": "魔女不是必然等同魔族，且在日轻中是稳定身份母题。"
+  },
+  {
+    "raw_tag": "最强朋友",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "作品级宣传短语，语义不足以可靠归一。"
+  },
+  {
+    "raw_tag": "最弱主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "废柴逆袭"
+    ],
+    "action": "alias",
+    "rationale": "低起点成长。"
+  },
+  {
+    "raw_tag": "罪犯小队",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "低频且高度具体的角色、场景或情节描述；保留用于作品检索，不提升为通用本体。"
+  },
+  {
+    "raw_tag": "AI搭档",
+    "frequency": 1,
+    "canonical_tags": [
+      "人工智能",
+      "人与AI关系"
+    ],
+    "action": "alias",
+    "rationale": "拆分存在形态与关系。"
+  },
+  {
+    "raw_tag": "AI居民",
+    "frequency": 1,
+    "canonical_tags": [
+      "人工智能"
+    ],
+    "action": "alias",
+    "rationale": "AI存在形态归一。"
+  },
+  {
+    "raw_tag": "MMO困入",
+    "frequency": 1,
+    "canonical_tags": [
+      "MMO世界",
+      "游戏玩家困入世界"
+    ],
+    "action": "alias",
+    "rationale": "拆分世界与主角来历。"
+  },
+  {
+    "raw_tag": "SF",
+    "frequency": 1,
+    "canonical_tags": [
+      "科幻（未指定子类）"
+    ],
+    "action": "new_candidate",
+    "rationale": "信息不足时不应强行归入硬科幻或近未来科幻。"
+  },
+  {
+    "raw_tag": "SF青春",
+    "frequency": 1,
+    "canonical_tags": [
+      "青春酸甜",
+      "近未来科幻"
+    ],
+    "action": "alias",
+    "rationale": "青春情感基调。 泛科技／宇宙题材先归到近未来科幻，原始标签保留细分。"
+  },
+  {
+    "raw_tag": "TRPG感",
+    "frequency": 1,
+    "canonical_tags": [
+      "TRPG模组世界"
+    ],
+    "action": "alias",
+    "rationale": "TRPG式规则与世界框架。"
+  },
+  {
+    "raw_tag": "TS转生",
+    "frequency": 1,
+    "canonical_tags": [
+      "TS性转",
+      "異世界転生"
+    ],
+    "action": "alias",
+    "rationale": "拆分性转母题与转生来历。"
+  },
+  {
+    "raw_tag": "VRMMO",
+    "frequency": 1,
+    "canonical_tags": [
+      "MMO世界",
+      "虚拟现实"
+    ],
+    "action": "alias",
+    "rationale": "拆分游戏类型与技术框架。"
+  },
+  {
+    "raw_tag": "Web连载钩子",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "出版／连载分析元数据，应与内容本体分离。"
+  }
+]
