@@ -3,444 +3,1559 @@
     "year": 2016,
     "title": "オーバーロード",
     "author": "丸山くがね",
-    "platform": "Arcadia／小説家になろう→エンターブレイン",
     "popularity_basis": "BOOKOFF 2016年ライトノベル総合3位；同年“人外转生”潮流的代表作",
-    "tags": ["异世界转移", "非人主角", "不死者", "魔王视角", "据点经营", "部下群像", "善恶错位", "黑色幽默"],
+    "tags": [
+      "异世界转移",
+      "非人主角",
+      "不死者",
+      "魔王视角",
+      "据点经营",
+      "部下群像",
+      "善恶错位",
+      "黑色幽默"
+    ],
     "protagonist_role": "滞留游戏世界、以不死者大坟墓统治者身份行动的普通上班族",
     "narrative_features": "以压倒性强者和其部下的误解链推动剧情，兼具势力经营、征服叙事与异族社会观察。",
     "why_included": "证明异世界主角不必是人类勇者，也可从魔王、组织首领和误解型统治者展开。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2016"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2016"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "Arcadia／小説家になろう→エンターブレイン"
   },
   {
     "year": 2016,
     "title": "Re:ゼロから始める異世界生活",
     "author": "長月達平",
-    "platform": "小説家になろう→MF文庫J",
     "popularity_basis": "BOOKOFF 2016年综合14位、循环类第1位",
-    "tags": ["异世界召唤", "死亡回归", "时间循环", "弱者主角", "心理崩溃", "多周目", "关系重建"],
+    "tags": [
+      "异世界召唤",
+      "死亡回归",
+      "时间循环",
+      "弱者主角",
+      "心理崩溃",
+      "多周目",
+      "关系重建"
+    ],
     "protagonist_role": "无战斗外挂、只能用死亡回归收集信息的异世界来访者",
     "narrative_features": "以失败成本、记忆孤独和不同周目中的关系差异制造强烈心理戏。",
     "why_included": "代表“能力很强但使用代价极高”的循环结构，反驳转生必然轻松无双。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2016"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2016"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→MF文庫J"
   },
   {
     "year": 2016,
     "title": "無職転生 ～異世界行ったら本気だす～",
     "author": "理不尽な孫の手",
-    "platform": "小説家になろう→MFブックス",
     "popularity_basis": "BOOKOFF 2016年综合24位",
-    "tags": ["异世界转生", "婴儿开局", "一生传记", "成长", "家庭", "魔法学习", "失败与悔改"],
+    "tags": [
+      "异世界转生",
+      "婴儿开局",
+      "一生传记",
+      "成长",
+      "家庭",
+      "魔法学习",
+      "失败与悔改"
+    ],
     "protagonist_role": "带着前世失败记忆、从婴儿重新长大的本地居民",
     "narrative_features": "不是单场冒险而是跨越童年、求学、旅行、婚姻与家庭责任的人生叙事。",
     "why_included": "提供从出生到成家的长期人生模拟模板，而非只围绕打魔王。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2016"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2016"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→MFブックス"
   },
   {
     "year": 2016,
     "title": "この素晴らしい世界に祝福を！",
     "author": "暁なつめ",
-    "platform": "小説家になろう→角川スニーカー文庫",
     "popularity_basis": "BOOKOFF 2016年综合25位",
-    "tags": ["异世界转生", "废柴小队", "反英雄", "冒险者日常", "喜剧", "债务", "队友互坑"],
+    "tags": [
+      "异世界转生",
+      "废柴小队",
+      "反英雄",
+      "冒险者日常",
+      "喜剧",
+      "债务",
+      "队友互坑"
+    ],
     "protagonist_role": "能力普通、精于小聪明的低级冒险者兼吐槽役",
     "narrative_features": "用经济窘迫、职业副作用和队伍缺陷拆解传统勇者小队，日常回与任务回并重。",
     "why_included": "是“非完美队伍也能长期好玩”的重要范本，适合生成低压冒险喜剧。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2016"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2016"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→角川スニーカー文庫"
   },
   {
     "year": 2016,
     "title": "幼女戦記",
     "author": "カルロ・ゼン",
-    "platform": "Arcadia→エンターブレイン",
     "popularity_basis": "BOOKOFF 2016年战记类第5位，并被点名为翌年动画话题作",
-    "tags": ["异世界转生", "性转", "幼女军官", "架空大战", "组织官僚", "军事", "神罚", "黑色讽刺"],
+    "tags": [
+      "异世界转生",
+      "性转",
+      "幼女军官",
+      "架空大战",
+      "组织官僚",
+      "军事",
+      "神罚",
+      "黑色讽刺"
+    ],
     "protagonist_role": "转生成少女、在近代魔法军队中谋求安全后方的职业军人",
     "narrative_features": "个人理性选择不断被组织误读为忠勇，结合战术、军政与官僚讽刺。",
     "why_included": "扩展转生后的年龄、性别、职业与政治位置，并示范制度比个人更能驱动剧情。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2016"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2016"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "Arcadia→エンターブレイン"
   },
   {
     "year": 2016,
     "title": "蜘蛛ですが、なにか？",
     "author": "馬場翁",
-    "platform": "小説家になろう→カドカワBOOKS",
     "popularity_basis": "BOOKOFF 2016年度编辑推荐；2016趋势页将蜘蛛列为人外转生热潮",
-    "tags": ["异种转生", "蜘蛛", "迷宫生存", "进化树", "技能构筑", "多视角", "身份谜题"],
+    "tags": [
+      "异种转生",
+      "蜘蛛",
+      "迷宫生存",
+      "进化树",
+      "技能构筑",
+      "多视角",
+      "身份谜题"
+    ],
     "protagonist_role": "出生在迷宫底层、必须捕食与进化才能活下去的小蜘蛛",
     "narrative_features": "前期是资源紧缺的单人求生，中后期通过并行视角重构时间线与身份认知。",
     "why_included": "是非人身体真正改变感官、移动、交流和成长方式的核心案例。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2016"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2016"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→カドカワBOOKS"
   },
   {
     "year": 2016,
     "title": "弱キャラ友崎くん",
     "author": "屋久ユウキ",
-    "platform": "ガガガ文庫",
     "popularity_basis": "BOOKOFF编辑评为2016年最佳作品",
-    "tags": ["现实青春", "校园", "社交养成", "游戏思维", "自我改造", "朋友关系", "非幻想"],
+    "tags": [
+      "现实青春",
+      "校园",
+      "社交养成",
+      "游戏思维",
+      "自我改造",
+      "朋友关系",
+      "非幻想"
+    ],
     "protagonist_role": "顶级游戏玩家、现实社交能力低下的高中生",
     "narrative_features": "把现实目标拆成可练习任务，但持续质疑“人生攻略化”是否会抹掉真诚。",
     "why_included": "为AI游戏提供无魔法的属性成长、社交训练和价值冲突模板。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2016"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2016"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "ガガガ文庫"
   },
   {
     "year": 2016,
     "title": "ゴブリンスレイヤー",
     "author": "蝸牛くも",
-    "platform": "やる夫スレ系投稿→GA文庫",
     "popularity_basis": "BOOKOFF编辑2016年五选之一",
-    "tags": ["黑暗奇幻", "低级怪物", "专职冒险者", "战术准备", "创伤", "TRPG感", "团队协作"],
+    "tags": [
+      "黑暗奇幻",
+      "低级怪物",
+      "专职冒险者",
+      "战术准备",
+      "创伤",
+      "TRPG感",
+      "团队协作"
+    ],
     "protagonist_role": "拒绝宏大使命、只处理哥布林委托的基层专业冒险者",
     "narrative_features": "强调情报、装备、地形和预案，人物多用职业称谓，形成桌游跑团质感。",
     "why_included": "展示专注小威胁和职业专长也能构成长线，不必不断升级到灭世阴谋。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2016"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2016"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "やる夫スレ系投稿→GA文庫"
   },
   {
     "year": 2016,
     "title": "田中～年齢イコール彼女いない歴の魔法使い～",
     "author": "ぶんころり",
-    "platform": "小説家になろう→GCノベルズ",
     "popularity_basis": "BOOKOFF编辑列为2016年话题作与年度五选",
-    "tags": ["异世界转生", "中年主角", "非美型", "回复魔法", "炼金术", "欲望喜剧", "不体面主角"],
+    "tags": [
+      "异世界转生",
+      "中年主角",
+      "非美型",
+      "回复魔法",
+      "炼金术",
+      "欲望喜剧",
+      "不体面主角"
+    ],
     "protagonist_role": "外貌普通、恋爱失败的中年转生者兼回复术士",
     "narrative_features": "故意保留主角的尴尬、算计与欲望，用反理想化人物制造喜剧和不适感。",
     "why_included": "证明主角可不年轻、不英俊、不高洁，身份自由度不应被英雄模板限制。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2016"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2016"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→GCノベルズ"
   },
   {
     "year": 2016,
     "title": "ざるそば（かわいい）",
     "author": "つちせ八十八",
-    "platform": "MF文庫J",
     "popularity_basis": "BOOKOFF编辑2016年五选，并称其为年度最具话题性的荒诞作品之一",
-    "tags": ["物拟人", "非人女主", "荒诞喜剧", "文字游戏", "日常", "超现实", "一册完结感"],
+    "tags": [
+      "物拟人",
+      "非人女主",
+      "荒诞喜剧",
+      "文字游戏",
+      "日常",
+      "超现实",
+      "一册完结感"
+    ],
     "protagonist_role": "与突然成为少女的笊篱荞麦面相遇的普通青年",
     "narrative_features": "把一句无理设定贯彻到底，以语言节奏和一本正经的世界反应制造笑料。",
     "why_included": "作为小众创新样本，提醒生成器允许器物、食物与概念生命，而非只列常见种族。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2016"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2016"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "MF文庫J"
   },
   {
     "year": 2016,
     "title": "誰にでもできる影から助ける魔王討伐",
     "author": "槻影",
-    "platform": "カクヨム→ファミ通文庫",
     "popularity_basis": "第1回カクヨムWeb小説コンテスト幻想部门大赏",
-    "tags": ["勇者伙伴", "幕后支援", "神官", "队伍培育", "苦劳人", "非中心主角", "Web连载钩子"],
+    "tags": [
+      "勇者伙伴",
+      "幕后支援",
+      "神官",
+      "队伍培育",
+      "苦劳人",
+      "非中心主角",
+      "Web连载钩子"
+    ],
     "protagonist_role": "被选入勇者队、实际在暗处修正队伍问题的治疗者与后勤者",
     "narrative_features": "把传统勇者叙事移到能力成熟的支援者视角，冲突来自难带的勇者和团队成长。",
     "why_included": "直接支持“勇者朋友、队伍后勤、非勇者本人”的可玩身份。",
-    "sources": ["https://kakuyomu.jp/contests/kakuyomu_web_novel_001"]
+    "sources": [
+      "https://kakuyomu.jp/contests/kakuyomu_web_novel_001"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "カクヨム→ファミ通文庫"
   },
   {
     "year": 2016,
     "title": "横浜駅SF",
     "author": "柞刈湯葉",
-    "platform": "カクヨム→カドカワBOOKS",
     "popularity_basis": "第1回カクヨムWeb小説コンテストSF部门大赏；后列入2017新作榜第2位",
-    "tags": ["概念SF", "自我增殖车站", "基础设施生命", "监控社会", "公路片", "日常物异化", "荒诞"],
+    "tags": [
+      "概念SF",
+      "自我增殖车站",
+      "基础设施生命",
+      "监控社会",
+      "公路片",
+      "日常物异化",
+      "荒诞"
+    ],
     "protagonist_role": "生活在站外、持限时车票潜入覆盖本州之横滨站的青年",
     "narrative_features": "从人人熟悉的车站设施推演完整生态、制度与边境，兼具旅行和社会讽刺。",
     "why_included": "示范世界观可以从一个日常概念极端推演，不必依赖剑与魔法或阴谋模板。",
-    "sources": ["https://kakuyomu.jp/contests/kakuyomu_web_novel_001", "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://kakuyomu.jp/contests/kakuyomu_web_novel_001",
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "カクヨム→カドカワBOOKS"
   },
   {
     "year": 2017,
     "title": "通常攻撃が全体攻撃で二回攻撃のお母さんは好きですか？",
     "author": "井中だちま",
-    "platform": "富士見ファンタジア文庫",
     "popularity_basis": "BOOKOFF 2017新作轻小说第1位；年度趋势点名“母性/甘宠”",
-    "tags": ["游戏世界", "母子冒险", "母亲超强", "家庭喜剧", "代际关系", "反后宫", "队伍日常"],
+    "tags": [
+      "游戏世界",
+      "母子冒险",
+      "母亲超强",
+      "家庭喜剧",
+      "代际关系",
+      "反后宫",
+      "队伍日常"
+    ],
     "protagonist_role": "希望独立冒险、却必须与强得离谱的母亲组队的少年",
     "narrative_features": "把家庭沟通问题放入RPG任务，用“母亲是队伍最强者”反转少年英雄幻想。",
     "why_included": "扩展同伴关系为亲子和监护人，并保留喜剧、成长与家庭修复。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "富士見ファンタジア文庫"
   },
   {
     "year": 2017,
     "title": "86―エイティシックス―",
     "author": "安里アサト",
-    "platform": "電撃文庫",
     "popularity_basis": "BOOKOFF 2017新作第3位及编辑年度五选；电击小说大奖大赏作",
-    "tags": ["科幻战争", "受迫害部队", "无人机谎言", "双主角", "前线与后方", "制度暴力", "通信关系"],
+    "tags": [
+      "科幻战争",
+      "受迫害部队",
+      "无人机谎言",
+      "双主角",
+      "前线与后方",
+      "制度暴力",
+      "通信关系"
+    ],
     "protagonist_role": "被国家视作非人的前线队长，与在后方指挥的贵族少女",
     "narrative_features": "以空间分离的双视角和无线通信建立关系，将战争日常、歧视制度与幸存者创伤并置。",
     "why_included": "提供非异世界的军事群像、远程关系和制度性冲突模板。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "電撃文庫"
   },
   {
     "year": 2017,
     "title": "ドイツェン宮廷楽団譜",
     "author": "永瀬さらさ",
-    "platform": "角川ビーンズ文庫",
     "popularity_basis": "BOOKOFF 2017新作第4位",
-    "tags": ["架空欧洲", "宫廷乐团", "职业音乐", "女性向", "政治与艺术", "伙伴群像", "成长"],
+    "tags": [
+      "架空欧洲",
+      "宫廷乐团",
+      "职业音乐",
+      "女性向",
+      "政治与艺术",
+      "伙伴群像",
+      "成长"
+    ],
     "protagonist_role": "进入宫廷乐团、以音乐技能立足的年轻演奏者",
     "narrative_features": "把职业技艺、排练协作与宫廷人际结合，而非让主角靠战斗升级。",
     "why_included": "是职业型世界展开的代表，适合扩充音乐、艺术与幕后工作人员身份。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "角川ビーンズ文庫"
   },
   {
     "year": 2017,
     "title": "竜騎士のお気に入り",
     "author": "織川あさぎ",
-    "platform": "小説家になろう→一迅社文庫アイリス",
     "popularity_basis": "BOOKOFF 2017新作第5位",
-    "tags": ["女性向幻想", "龙骑士", "侍女", "人龙羁绊", "职场转折", "身份差", "恋爱"],
+    "tags": [
+      "女性向幻想",
+      "龙骑士",
+      "侍女",
+      "人龙羁绊",
+      "职场转折",
+      "身份差",
+      "恋爱"
+    ],
     "protagonist_role": "喜爱龙、在城中担任侍女并进入龙骑士生活圈的女性",
     "narrative_features": "浪漫线与龙群生态、照料劳动和组织生活并行，亲密关系由长期相处建立。",
     "why_included": "提供侍女、照料者、龙之友等非战斗身份，避免女性向只剩恶役千金。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→一迅社文庫アイリス"
   },
   {
     "year": 2017,
     "title": "とんでもスキルで異世界放浪メシ",
     "author": "江口連",
-    "platform": "小説家になろう→オーバーラップノベルス",
     "popularity_basis": "BOOKOFF 2017新作第6位；当年料理类轻小说热潮的代表",
-    "tags": ["异世界召唤", "非勇者", "网购技能", "料理", "旅行", "魔兽伙伴", "生活系", "契约"],
+    "tags": [
+      "异世界召唤",
+      "非勇者",
+      "网购技能",
+      "料理",
+      "旅行",
+      "魔兽伙伴",
+      "生活系",
+      "契约"
+    ],
     "protagonist_role": "被误召、靠现代网购与做饭旅行的普通上班族",
     "narrative_features": "食材采购、烹饪和旅途构成回合节奏，强力伙伴因食物结缘而非命定使命。",
     "why_included": "说明生活技能和移动商旅足以驱动长期故事，不必承担勇者职责。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→オーバーラップノベルス"
   },
   {
     "year": 2017,
     "title": "マリエル・クララックの婚約",
     "author": "桃春花",
-    "platform": "小説家になろう→アイリスNEO",
     "popularity_basis": "BOOKOFF 2017新作第9位",
-    "tags": ["女性向", "地味令嬢", "观察者主角", "婚约", "妄想喜剧", "贵族社交", "恋爱"],
+    "tags": [
+      "女性向",
+      "地味令嬢",
+      "观察者主角",
+      "婚约",
+      "妄想喜剧",
+      "贵族社交",
+      "恋爱"
+    ],
     "protagonist_role": "外表不起眼、热衷观察和脑补他人关系的贵族小姐",
     "narrative_features": "用旁观者式兴趣和内心吐槽观看社交场，再让本人逐步成为恋爱事件当事人。",
     "why_included": "提供“路人观察者/同人脑”叙事位置，不强制主角一开始就是社交中心。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→アイリスNEO"
   },
   {
     "year": 2017,
     "title": "女神の勇者を倒すゲスな方法",
     "author": "笹木さくま",
-    "platform": "ファミ通文庫",
     "popularity_basis": "BOOKOFF编辑评为2017年度最印象深刻作品",
-    "tags": ["魔王阵营", "被召唤者", "反勇者", "智斗", "不死敌人", "卑鄙战术", "反套路喜剧"],
+    "tags": [
+      "魔王阵营",
+      "被召唤者",
+      "反勇者",
+      "智斗",
+      "不死敌人",
+      "卑鄙战术",
+      "反套路喜剧"
+    ],
     "protagonist_role": "被魔王召唤、负责用非常规方法击退不死勇者的人类参谋",
     "narrative_features": "正面战斗不可行，故事依靠规则漏洞、谈判、心理与“下作但有效”的方案推进。",
     "why_included": "扩展阵营与职业自由：主角可以是魔王顾问、策士或问题解决者。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "ファミ通文庫"
   },
   {
     "year": 2017,
     "title": "14歳とイラストレーター",
     "author": "むらさきゆきや",
-    "platform": "MF文庫J",
     "popularity_basis": "BOOKOFF编辑2017年度五选",
-    "tags": ["行业小说", "插画师", "创作者日常", "合租", "截稿", "互联网文化", "职业群像"],
+    "tags": [
+      "行业小说",
+      "插画师",
+      "创作者日常",
+      "合租",
+      "截稿",
+      "互联网文化",
+      "职业群像"
+    ],
     "protagonist_role": "以商业插画为生、处理委托与同行关系的年轻创作者",
     "narrative_features": "将接单、收入、截稿和创作者社交写成主要事件，弱化宏大冲突。",
     "why_included": "为现代职业、创作行业和日常型剧情提供可直接复用的情境。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "MF文庫J"
   },
   {
     "year": 2017,
     "title": "月とライカと吸血姫",
     "author": "牧野圭祐",
-    "platform": "ガガガ文庫",
     "popularity_basis": "BOOKOFF 2017年度编辑推荐，并列为翌年值得关注的热血题材",
-    "tags": ["架空冷战", "太空竞赛", "吸血鬼", "实验对象", "训练", "跨种族恋爱", "历史改写"],
+    "tags": [
+      "架空冷战",
+      "太空竞赛",
+      "吸血鬼",
+      "实验对象",
+      "训练",
+      "跨种族恋爱",
+      "历史改写"
+    ],
     "protagonist_role": "负责训练秘密吸血鬼宇航员的人类候补生，与被当作实验体的女主",
     "narrative_features": "以训练日志和政治竞赛推动亲密关系，把非人种族歧视嵌入科技史。",
     "why_included": "把吸血鬼、航天职业与历史架空融合，证明标签可跨题材组合。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "ガガガ文庫"
   },
   {
     "year": 2017,
     "title": "<Infinite Dendrogram>-インフィニット・デンドログラム-",
     "author": "海道左近",
-    "platform": "小説家になろう→HJ文庫",
     "popularity_basis": "新作ラノベ総选举2018第1位",
-    "tags": ["VRMMO", "完全沉浸", "玩家自由", "职业构筑", "AI居民", "兄弟", "冒险", "游戏伦理"],
+    "tags": [
+      "VRMMO",
+      "完全沉浸",
+      "玩家自由",
+      "职业构筑",
+      "AI居民",
+      "兄弟",
+      "冒险",
+      "游戏伦理"
+    ],
     "protagonist_role": "首次进入高度自由VR世界、按自身选择成长的新玩家",
     "narrative_features": "游戏居民近似真实生命，任务与玩家行为产生持续后果，强调个性化职业路线。",
     "why_included": "是开放式游戏世界、玩家身份构筑与NPC主体性的代表。",
-    "sources": ["https://prtimes.jp/a/?c=1227&f=d1227-904-pdf-0.pdf&r=904"]
+    "sources": [
+      "https://prtimes.jp/a/?c=1227&f=d1227-904-pdf-0.pdf&r=904"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→HJ文庫"
   },
   {
     "year": 2017,
     "title": "異世界食堂",
     "author": "犬塚惇平",
-    "platform": "小説家になろう→ヒーロー文庫",
     "popularity_basis": "BOOKOFF 2017趋势报告称其动画与料理描写推动食物类人气",
-    "tags": ["异世界美食", "店铺经营", "群像", "单元剧", "跨世界门户", "普通店主", "文化交流"],
+    "tags": [
+      "异世界美食",
+      "店铺经营",
+      "群像",
+      "单元剧",
+      "跨世界门户",
+      "普通店主",
+      "文化交流"
+    ],
     "protagonist_role": "每周一次接待异世界客人的现代西餐店店主，以及轮换客人群像",
     "narrative_features": "每道菜连接一位客人的生活史，世界观通过口味、阶层和来店路径自然展开。",
     "why_included": "是店铺据点、轮换视角和低冲突世界展开的经典模型。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→ヒーロー文庫"
   },
   {
     "year": 2017,
     "title": "異世界居酒屋「のぶ」",
     "author": "蝉川夏哉",
-    "platform": "小説家になろう→宝島社",
     "popularity_basis": "BOOKOFF 2017趋势报告将其列为料理题材下一年重点作品",
-    "tags": ["异世界美食", "居酒屋", "店铺经营", "市井群像", "跨界门户", "人情", "地方政治"],
+    "tags": [
+      "异世界美食",
+      "居酒屋",
+      "店铺经营",
+      "市井群像",
+      "跨界门户",
+      "人情",
+      "地方政治"
+    ],
     "protagonist_role": "在异世界古都开门营业的居酒屋老板与服务员",
     "narrative_features": "从常客、食材、商会和城市规章逐层延展社会，主线建立在重复日常与人际积累上。",
     "why_included": "适合作为“固定据点＋熟客关系＋小事件积累”的AI游戏节奏模板。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→宝島社"
   },
   {
     "year": 2017,
     "title": "クラスのギャルとゲーム実況",
     "author": "琴平稜",
-    "platform": "富士見ファンタジア文庫",
     "popularity_basis": "BOOKOFF编辑2017年度五选，点名“评论文化/游戏实况”",
-    "tags": ["游戏直播", "校园", "辣妹", "内容创作", "评论互动", "团队运营", "轻喜剧"],
+    "tags": [
+      "游戏直播",
+      "校园",
+      "辣妹",
+      "内容创作",
+      "评论互动",
+      "团队运营",
+      "轻喜剧"
+    ],
     "protagonist_role": "向人气女同学学习如何经营游戏实况的普通学生",
     "narrative_features": "把选题、录制、观众反馈和合作者关系写进校园喜剧。",
     "why_included": "提前体现后来VTuber/直播文的核心机制，是现代媒体身份的重要来源。",
-    "sources": ["https://shopping.bookoff.co.jp/lightnovel/ranking/2017"]
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/ranking/2017"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "富士見ファンタジア文庫"
   },
   {
     "year": 2018,
     "title": "錆喰いビスコ",
     "author": "瘤久保慎司",
-    "platform": "電撃文庫",
     "popularity_basis": "《这本轻小说真厉害！2019》文库综合与新作双第1位",
-    "tags": ["末日日本", "菌类幻想", "公路冒险", "少年搭档", "疾病", "环境异变", "奇观世界", "热血"],
+    "tags": [
+      "末日日本",
+      "菌类幻想",
+      "公路冒险",
+      "少年搭档",
+      "疾病",
+      "环境异变",
+      "奇观世界",
+      "热血"
+    ],
     "protagonist_role": "被通缉的蘑菇守护者与为救姐姐同行的少年医生",
     "narrative_features": "把锈蚀灾害、巨型生物与日本地理重组为高密度奇观，核心由双男主公路关系推进。",
     "why_included": "是摆脱模板化中世纪异世界、以原创生态和伙伴关系取胜的代表。",
-    "sources": ["https://www.kadokawa.co.jp/topics/2634/", "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"]
+    "sources": [
+      "https://www.kadokawa.co.jp/topics/2634/",
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "電撃文庫"
   },
   {
     "year": 2018,
     "title": "りゅうおうのおしごと！",
     "author": "白鳥士郎",
-    "platform": "GA文庫",
     "popularity_basis": "《这本轻小说真厉害！2019》文库第2位；《2017版》文库第1位",
-    "tags": ["职业将棋", "师徒", "竞技", "才能与努力", "年龄差群像", "比赛", "行业细节"],
+    "tags": [
+      "职业将棋",
+      "师徒",
+      "竞技",
+      "才能与努力",
+      "年龄差群像",
+      "比赛",
+      "行业细节"
+    ],
     "protagonist_role": "年轻职业棋士“龙王”，同时成为小学生棋手的师父",
     "narrative_features": "大量真实棋界结构、比赛心理与师徒责任，让职业技艺本身成为战斗系统。",
     "why_included": "为竞技、师徒与职业成长提供比“升级打怪”更细密的叙事模型。",
-    "sources": ["https://books.rakuten.co.jp/e-book/article/2018/11/konorano/", "https://www.e-hon.ne.jp/bec/SA/Detail?refISBN=9784800263452"]
+    "sources": [
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/",
+      "https://www.e-hon.ne.jp/bec/SA/Detail?refISBN=9784800263452"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "GA文庫"
   },
   {
     "year": 2018,
     "title": "ひげを剃る。そして女子高生を拾う。",
     "author": "しめさば",
-    "platform": "カクヨム→角川スニーカー文庫",
     "popularity_basis": "《这本轻小说真厉害！2019》文库第4位",
-    "tags": ["现实题材", "同居", "离家少女", "社会边缘", "成年男性视角", "边界感", "慢关系"],
+    "tags": [
+      "现实题材",
+      "同居",
+      "离家少女",
+      "社会边缘",
+      "成年男性视角",
+      "边界感",
+      "慢关系"
+    ],
     "protagonist_role": "让无家可归少女暂住的普通上班族",
     "narrative_features": "用家务、工作与逐步揭露的过去建立关系，重心是伦理边界、创伤和生活恢复。",
     "why_included": "代表无超自然设定下的照料关系与现实社会题材，但使用时需严格处理年龄和权力差。",
-    "sources": ["https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"]
+    "sources": [
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "カクヨム→角川スニーカー文庫"
   },
   {
     "year": 2018,
     "title": "ぼくたちのリメイク",
     "author": "木緒なち",
-    "platform": "MF文庫J",
     "popularity_basis": "《这本轻小说真厉害！2019》文库第7位",
-    "tags": ["时间回溯", "大学生活", "创作行业", "团队制作", "人生重来", "选择后果", "群像"],
+    "tags": [
+      "时间回溯",
+      "大学生活",
+      "创作行业",
+      "团队制作",
+      "人生重来",
+      "选择后果",
+      "群像"
+    ],
     "protagonist_role": "事业受挫后回到大学时代、重新选择艺术学校的游戏制作人",
     "narrative_features": "把时间重来与团队创作结合，并追问主角的成功是否会夺走伙伴原本的人生。",
     "why_included": "适合人生模拟、创作小组和“改变历史也有代价”的长期分支。",
-    "sources": ["https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"]
+    "sources": [
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "MF文庫J"
   },
   {
     "year": 2018,
     "title": "三角の距離は限りないゼロ",
     "author": "岬鷺宮",
-    "platform": "電撃文庫",
     "popularity_basis": "《这本轻小说真厉害！2019》文库第8位",
-    "tags": ["校园恋爱", "双重人格", "三角关系变体", "身份认同", "青春", "第一人称亲密"],
+    "tags": [
+      "校园恋爱",
+      "双重人格",
+      "三角关系变体",
+      "身份认同",
+      "青春",
+      "第一人称亲密"
+    ],
     "protagonist_role": "同时面对同一身体中两个人格、无法用普通恋爱框架选择的高中生",
     "narrative_features": "把看似三角恋的问题转成主体性与人格连续性的讨论，情感推进依靠细节而非事件轰炸。",
     "why_included": "展示关系标签可围绕身份结构创新，而非机械增加更多攻略对象。",
-    "sources": ["https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"]
+    "sources": [
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "電撃文庫"
   },
   {
     "year": 2018,
     "title": "本好きの下剋上～司書になるためには手段を選んでいられません～",
     "author": "香月美夜",
-    "platform": "小説家になろう→TOブックス",
     "popularity_basis": "《这本轻小说真厉害！2019》单行本第1位",
-    "tags": ["异世界转生", "幼女主角", "造纸", "知识传播", "阶层社会", "家族", "工艺经营", "制度成长"],
+    "tags": [
+      "异世界转生",
+      "幼女主角",
+      "造纸",
+      "知识传播",
+      "阶层社会",
+      "家族",
+      "工艺经营",
+      "制度成长"
+    ],
     "protagonist_role": "病弱贫民幼女，以制作书本为目标逐步进入商人、神殿与贵族社会",
     "narrative_features": "每阶段由材料、工艺、商业和制度门槛自然升级；家庭、劳动和阶层限制持续有效。",
     "why_included": "是“个人小目标逐步撬动完整世界”的标杆，可防止剧情无缘无故直奔世界危机。",
-    "sources": ["https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"]
+    "sources": [
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→TOブックス"
   },
   {
     "year": 2018,
     "title": "海辺の病院で彼女と話した幾つかのこと",
     "author": "石川博品",
-    "platform": "カクヨム／NOVEL 0",
     "popularity_basis": "《这本轻小说真厉害！2019》单行本第2位",
-    "tags": ["末日", "医院", "疾病", "会话剧", "回忆", "青年", "生死", "抒情"],
+    "tags": [
+      "末日",
+      "医院",
+      "疾病",
+      "会话剧",
+      "回忆",
+      "青年",
+      "生死",
+      "抒情"
+    ],
     "protagonist_role": "在海边医院与少女交谈、回望灾变与个人选择的青年",
     "narrative_features": "以有限空间和对话承载世界毁灭，不靠不断出现的新敌人维持张力。",
     "why_included": "作为安静末日与会话型叙事样本，纠正“末日必然战斗刷怪”的限制。",
-    "sources": ["https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"]
+    "sources": [
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "カクヨム／NOVEL 0"
   },
   {
     "year": 2018,
     "title": "転生したらスライムだった件",
     "author": "伏瀬",
-    "platform": "小説家になろう→GCノベルズ",
     "popularity_basis": "《这本轻小说真厉害！2019》单行本第5位",
-    "tags": ["异种转生", "史莱姆", "技能吸收", "魔物国家", "建设", "外交", "多种族", "领袖成长"],
+    "tags": [
+      "异种转生",
+      "史莱姆",
+      "技能吸收",
+      "魔物国家",
+      "建设",
+      "外交",
+      "多种族",
+      "领袖成长"
+    ],
     "protagonist_role": "从弱小史莱姆发展为多种族聚落与国家领导者的前上班族",
     "narrative_features": "将身体进化、伙伴收编、城市建设、外交与战争逐层组合。",
     "why_included": "非人转生与国家经营的关键案例，也提醒异种风潮不应只停留在外观换皮。",
-    "sources": ["https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"]
+    "sources": [
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→GCノベルズ"
   },
   {
     "year": 2018,
     "title": "魔女の旅々",
     "author": "白石定規",
-    "platform": "个人电子出版→GAノベル",
     "popularity_basis": "《这本轻小说真厉害！2019》单行本第6位",
-    "tags": ["旅行", "魔女", "单元剧", "旁观者", "寓言", "明暗交替", "地方风俗", "非救世"],
+    "tags": [
+      "旅行",
+      "魔女",
+      "单元剧",
+      "旁观者",
+      "寓言",
+      "明暗交替",
+      "地方风俗",
+      "非救世"
+    ],
     "protagonist_role": "以见闻和自我兴趣为目的周游各国的年轻魔女",
     "narrative_features": "每个国家有独立规则与情绪色彩；主角有时介入、有时旁观，并非必须解决一切。",
     "why_included": "是旅行型、短篇单元与非救世主角的重要模板。",
-    "sources": ["https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"]
+    "sources": [
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "个人电子出版→GAノベル"
   },
   {
     "year": 2018,
     "title": "JKハルは異世界で娼婦になった",
     "author": "平鳥コウ",
-    "platform": "小説家になろう→早川書房",
     "popularity_basis": "《这本轻小说真厉害！2019》单行本第7位",
-    "tags": ["异世界转移", "女性视角", "性产业", "父权社会", "生存", "阶级", "身体政治", "反男性幻想"],
+    "tags": [
+      "异世界转移",
+      "女性视角",
+      "性产业",
+      "父权社会",
+      "生存",
+      "阶级",
+      "身体政治",
+      "反男性幻想"
+    ],
     "protagonist_role": "没有战斗外挂、靠观察与劳动在异世界性产业中求生的女高中生",
     "narrative_features": "从被传统异世界叙事边缘化的女性劳动者角度重写穿越，含明确成人与创伤主题。",
     "why_included": "是“谁被英雄故事忽略”这一叙事位置的典型，但在游戏中必须由玩家主动选择并提供内容警告。",
-    "sources": ["https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"]
+    "sources": [
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→早川書房"
   },
   {
     "year": 2018,
     "title": "スライム倒して300年、知らないうちにレベルMAXになってました",
     "author": "森田季節",
-    "platform": "小説家になろう→GAノベル",
     "popularity_basis": "《这本轻小说真厉害！2019》单行本第9位",
-    "tags": ["异世界转生", "慢生活", "长生种", "女性主角", "选择家庭", "轻喜剧", "无意最强", "乡居"],
+    "tags": [
+      "异世界转生",
+      "慢生活",
+      "长生种",
+      "女性主角",
+      "选择家庭",
+      "轻喜剧",
+      "无意最强",
+      "乡居"
+    ],
     "protagonist_role": "过劳死后转生为不老魔女、只想在高原过安稳生活的女性",
     "narrative_features": "强大不是目标而是日常麻烦，剧情由邻居、收养关系、节庆和小旅行组成。",
     "why_included": "提供无高压主线、女性选择家庭与长期日常的范本。",
-    "sources": ["https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"]
+    "sources": [
+      "https://books.rakuten.co.jp/e-book/article/2018/11/konorano/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→GAノベル"
   },
   {
     "year": 2018,
     "title": "乙女ゲームの破滅フラグしかない悪役令嬢に転生してしまった…",
     "author": "山口悟",
-    "platform": "小説家になろう→一迅社文庫アイリス",
     "popularity_basis": "2018年连续推出第6、7卷；一迅社官方称其为大人气破灭回避喜剧",
-    "tags": ["乙女游戏转生", "恶役千金", "破灭回避", "全员好感", "男女双向", "天然主角", "逆后宫", "喜剧"],
+    "tags": [
+      "乙女游戏转生",
+      "恶役千金",
+      "破灭回避",
+      "全员好感",
+      "男女双向",
+      "天然主角",
+      "逆后宫",
+      "喜剧"
+    ],
     "protagonist_role": "发现自己是乙女游戏恶役、用种田和交朋友回避死亡结局的公爵小姐",
     "narrative_features": "不按攻略路线抢夺对象，而用真诚行动改变包括原女主在内的全部关系。",
     "why_included": "恶役令嬢范式的核心样本，也为乙女游戏、男女混合好感和不攻略玩法提供依据。",
-    "sources": ["https://www.ichijinsha.co.jp/iris/otomegame/"]
+    "sources": [
+      "https://www.ichijinsha.co.jp/iris/otomegame/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→一迅社文庫アイリス"
+  },
+  {
+    "year": 2019,
+    "title": "七つの魔剣が支配する",
+    "author": "宇野朴人",
+    "popularity_basis": "《这本轻小说真厉害！2020》文库综合与新作双第1位",
+    "tags": [
+      "魔法学院",
+      "剑与魔法",
+      "群像",
+      "复仇",
+      "危险教育",
+      "校园生活",
+      "能力战",
+      "黑暗幻想"
+    ],
+    "protagonist_role": "带着隐秘目的进入高死亡率魔法学校的新生与同伴群",
+    "narrative_features": "课堂、社团、迷宫和同学关系构成校园日常，复仇线作为长期底色而非每回合强行推进。",
+    "why_included": "示范学院世界可同时容纳日常学习、群像和深线目标，不必全员谜语人。",
+    "sources": [
+      "https://www.kadokawa.co.jp/topics/3914/",
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "電撃文庫"
+  },
+  {
+    "year": 2019,
+    "title": "幼なじみが絶対に負けないラブコメ",
+    "author": "二丸修一",
+    "popularity_basis": "《这本轻小说真厉害！2020》文库新作2位、综合5位",
+    "tags": [
+      "校园恋爱",
+      "青梅竹马",
+      "初恋",
+      "复仇恋爱计划",
+      "多角关系",
+      "演艺圈",
+      "轻喜剧"
+    ],
+    "protagonist_role": "失恋后与青梅竹马合作反击、却卷入复杂关系的高中生",
+    "narrative_features": "关系逆转和公开活动构成钩子，夸张恋爱战术与青春不成熟感并存。",
+    "why_included": "用于调查2019年前后高概念校园恋爱标题与关系博弈的流行。",
+    "sources": [
+      "https://www.kadokawa.co.jp/topics/3914/",
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "電撃文庫"
+  },
+  {
+    "year": 2019,
+    "title": "継母の連れ子が元カノだった",
+    "author": "紙城境介",
+    "popularity_basis": "第3回カクヨムWeb小说赛恋爱喜剧部门大赏；《这本轻小说真厉害！2020》新作3位",
+    "tags": [
+      "校园恋爱",
+      "前任",
+      "重组家庭",
+      "义兄妹",
+      "同居",
+      "口是心非",
+      "关系重启"
+    ],
+    "protagonist_role": "分手后因父母再婚成为同住义兄妹的一对前恋人",
+    "narrative_features": "在家庭公共空间与旧恋爱记忆之间来回拉扯，冲突来自边界与未整理的感情。",
+    "why_included": "以身份关系变化而非新世界设定制造持续剧情，是日常互动模板。",
+    "sources": [
+      "https://kakuyomu.jp/contests/kakuyomu_web_novel_003",
+      "https://www.kadokawa.co.jp/topics/3914/"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "カクヨム→角川スニーカー文庫"
+  },
+  {
+    "year": 2019,
+    "title": "キミの忘れかたを教えて",
+    "author": "あまさきみりと",
+    "popularity_basis": "《这本轻小说真厉害！2020》文库新作4位、综合8位",
+    "tags": [
+      "返乡",
+      "青春伤痛",
+      "旧友",
+      "疾病",
+      "音乐",
+      "地方生活",
+      "重新出发",
+      "恋爱"
+    ],
+    "protagonist_role": "人生停滞后回到故乡、重逢重要旧友的青年",
+    "narrative_features": "以地方空间、过去承诺和有限未来组织情绪，节奏偏抒情而非事件密集。",
+    "why_included": "覆盖返乡、疗愈和地方生活风格，避免恋爱只剩攻略或甜宠。",
+    "sources": [
+      "https://www.kadokawa.co.jp/topics/3914/",
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "角川スニーカー文庫"
+  },
+  {
+    "year": 2019,
+    "title": "夏へのトンネル、さよならの出口",
+    "author": "八目迷",
+    "popularity_basis": "《这本轻小说真厉害！2020》文库第9位",
+    "tags": [
+      "青春科幻",
+      "时间异常",
+      "愿望",
+      "乡镇",
+      "双人调查",
+      "失去",
+      "单卷叙事"
+    ],
+    "protagonist_role": "发现能实现愿望却夺走外界时间之隧道的两名高中生",
+    "narrative_features": "清楚的超自然规则与个人失去相连，调查、契约和情感选择形成紧凑闭环。",
+    "why_included": "是低设定密度、高情感回报的单卷青春SF范本。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "ガガガ文庫"
+  },
+  {
+    "year": 2019,
+    "title": "お隣の天使様にいつの間にか駄目人間にされていた件",
+    "author": "佐伯さん",
+    "popularity_basis": "《这本轻小说真厉害！2020》文库第10位",
+    "tags": [
+      "校园恋爱",
+      "邻居",
+      "照料日常",
+      "慢热",
+      "家务",
+      "双向疗愈",
+      "低冲突",
+      "甜系"
+    ],
+    "protagonist_role": "独居且生活散漫的男高中生与住在隔壁的模范女生",
+    "narrative_features": "做饭、打扫、放学和节日等微事件累积信任，几乎不依靠恶意配角。",
+    "why_included": "是“普通日常也能持续推进关系”的强案例，可用于压低无关危机。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→GA文庫"
+  },
+  {
+    "year": 2019,
+    "title": "友達の妹が俺にだけウザい",
+    "author": "三河ごーすと",
+    "popularity_basis": "《这本轻小说真厉害！2020》文库第14位",
+    "tags": [
+      "校园恋爱喜剧",
+      "朋友妹妹",
+      "互损",
+      "游戏开发",
+      "秘密团队",
+      "语音互动",
+      "双重身份"
+    ],
+    "protagonist_role": "在校保持普通形象、校外管理独立游戏团队的高中生",
+    "narrative_features": "损友式对白与创作团队任务交替，角色在学校和网络创作圈有不同身份。",
+    "why_included": "把校园、行业协作和网络身份组合，为现代多场域玩法提供标签。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "GA文庫"
+  },
+  {
+    "year": 2019,
+    "title": "千歳くんはラムネ瓶のなか",
+    "author": "裕夢",
+    "popularity_basis": "《这本轻小说真厉害！2020》文库第19位，随后成为2021年度文库第1位",
+    "tags": [
+      "现充主角",
+      "校园群像",
+      "朋友小团体",
+      "委托",
+      "多视角印象",
+      "青春",
+      "社交能力"
+    ],
+    "protagonist_role": "在班级社交中心、受教师委托帮助拒学同学的高中生",
+    "narrative_features": "从传统“边缘男主”切换为社交强者视角，同时让他面对他人敌意和群体责任。",
+    "why_included": "证明校园主角不必阴沉边缘，也可扮演组织者、朋友核心和调解人。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020",
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2022"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "ガガガ文庫"
+  },
+  {
+    "year": 2019,
+    "title": "Unnamed Memory",
+    "author": "古宮九時",
+    "popularity_basis": "《这本轻小说真厉害！2020》单行本第1位",
+    "tags": [
+      "正统幻想",
+      "魔女",
+      "诅咒",
+      "王族",
+      "契约同居",
+      "时间改写",
+      "成人恋爱",
+      "长时段"
+    ],
+    "protagonist_role": "为解除无后诅咒拜访最强魔女的王，与接受契约的长生魔女",
+    "narrative_features": "成熟角色的试探与共同生活连接宫廷事件，时间与记忆变化重构整部关系史。",
+    "why_included": "提供非转生的正统幻想、成年人关系及时间跨度叙事。",
+    "sources": [
+      "https://www.kadokawa.co.jp/topics/3914/",
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "个人网站→電撃の新文芸"
+  },
+  {
+    "year": 2019,
+    "title": "陰の実力者になりたくて！",
+    "author": "逢沢大介",
+    "popularity_basis": "《这本轻小说真厉害！2020》单行本新作2位、部门第3位",
+    "tags": [
+      "异世界转生",
+      "幕后强者",
+      "误解",
+      "中二病",
+      "双重身份",
+      "秘密组织",
+      "戏中戏",
+      "喜剧"
+    ],
+    "protagonist_role": "故意扮演路人、暗中扮演神秘强者的转生少年",
+    "narrative_features": "主角随口编造的设定恰好为真，旁人严肃理解与本人表演欲形成双层叙事。",
+    "why_included": "是幕后流与误解喜剧的代表；应用时应作为玩家可选机制，不能污染所有世界。",
+    "sources": [
+      "https://www.kadokawa.co.jp/topics/3914/",
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→エンターブレイン"
+  },
+  {
+    "year": 2019,
+    "title": "リビルドワールド",
+    "author": "ナフセ",
+    "popularity_basis": "《这本轻小说真厉害！2020》单行本新作3位、部门第5位",
+    "tags": [
+      "赛博废土",
+      "遗迹猎人",
+      "增强现实",
+      "AI搭档",
+      "枪战",
+      "贫民窟",
+      "装备成长",
+      "委托"
+    ],
+    "protagonist_role": "出身贫民窟、依靠神秘AI导航成为遗迹猎人的少年",
+    "narrative_features": "委托经济、装备差距和信息优势共同决定胜负，AI只对主角可见造成社会认知落差。",
+    "why_included": "是赛博朋克中基层劳动、技术伙伴和阶层上升的可玩模型。",
+    "sources": [
+      "https://www.kadokawa.co.jp/topics/3914/",
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "カクヨム／小説家になろう→電撃の新文芸"
+  },
+  {
+    "year": 2019,
+    "title": "乙女ゲー世界はモブに厳しい世界です",
+    "author": "三嶋与夢",
+    "popularity_basis": "《这本轻小说真厉害！2020》单行本第8位",
+    "tags": [
+      "乙女游戏转生",
+      "男性路人",
+      "女性优势社会",
+      "机甲",
+      "学院",
+      "原作知识",
+      "讽刺",
+      "身份逆转"
+    ],
+    "protagonist_role": "转生成乙女游戏里无名男性路人、试图过普通生活的地方贵族",
+    "narrative_features": "把乙女游戏攻略世界从边缘男性角色观察，并混合机甲战、婚姻制度和阶层讽刺。",
+    "why_included": "直接扩充“穿到乙女游戏但不是女主/恶役”的叙事位置。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→GCノベルズ"
+  },
+  {
+    "year": 2019,
+    "title": "ツンデレ悪役令嬢リーゼロッテと実況の遠藤くんと解説の小林さん",
+    "author": "恵ノ島すず",
+    "popularity_basis": "《这本轻小说真厉害！2020》单行本新作4位、部门第10位",
+    "tags": [
+      "乙女游戏",
+      "恶役千金",
+      "游戏实况",
+      "现实与游戏双线",
+      "神谕误认",
+      "破灭回避",
+      "群像恋爱"
+    ],
+    "protagonist_role": "实况乙女游戏的两名学生，其声音被游戏王子当作神谕",
+    "narrative_features": "玩家评论直接进入世界并改变角色理解，以现实双人关系和游戏内群像并行。",
+    "why_included": "是观众/评论者介入原作世界的创新机制，适合游戏内“旁观者也能行动”。",
+    "sources": [
+      "https://www.kadokawa.co.jp/topics/3914/",
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→カドカワBOOKS"
+  },
+  {
+    "year": 2019,
+    "title": "ヒトの時代は終わったけれど、それでもお腹は減りますか？",
+    "author": "新八角",
+    "popularity_basis": "《这本轻小说真厉害！2020》文库第20位",
+    "tags": [
+      "后末日",
+      "美食",
+      "女性双人",
+      "餐馆",
+      "遗迹都市",
+      "生化生态",
+      "日常生存",
+      "科幻"
+    ],
+    "protagonist_role": "在人类文明衰退后的城市经营食堂、寻找食材的两名女性",
+    "narrative_features": "末日奇观围绕采购、烹饪和来客展开，高危世界与温暖店铺形成反差。",
+    "why_included": "把赛博末日、百合式搭档和经营日常组合，是有趣的小众类型融合。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2020"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "電撃文庫"
+  },
+  {
+    "year": 2020,
+    "title": "スパイ教室",
+    "author": "竹町",
+    "popularity_basis": "《这本轻小说真厉害！2021》文库第2位",
+    "tags": [
+      "间谍",
+      "落后生团队",
+      "导师",
+      "群像",
+      "任务骗局",
+      "能力互补",
+      "战后架空",
+      "反转"
+    ],
+    "protagonist_role": "由七名问题学生组成的间谍小队及不擅长教学的天才导师",
+    "narrative_features": "利用读者信息盲区与团队成员能力制造任务反转，但长期魅力来自同伴磨合。",
+    "why_included": "是职业小队、导师失败与多成员轮换聚焦的成熟结构。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "富士見ファンタジア文庫"
+  },
+  {
+    "year": 2020,
+    "title": "探偵はもう、死んでいる。",
+    "author": "二語十",
+    "popularity_basis": "《这本轻小说真厉害！2021》文库第4位",
+    "tags": [
+      "侦探已死",
+      "助手视角",
+      "回忆与现在",
+      "超常案件",
+      "遗志继承",
+      "多女主",
+      "悬疑动作"
+    ],
+    "protagonist_role": "传奇侦探死后试图回归普通生活、却继续被她遗留关系卷入的前助手",
+    "narrative_features": "通过过去冒险与现在事件拼接侦探缺席后的影响，核心是角色遗产而非单一谜底。",
+    "why_included": "提供“重要人物已经离场、主角是助手/继承者”的叙事位置。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "MF文庫J"
+  },
+  {
+    "year": 2020,
+    "title": "楽園ノイズ",
+    "author": "杉井光",
+    "popularity_basis": "《这本轻小说真厉害！2021》文库第6位",
+    "tags": [
+      "校园音乐",
+      "网络投稿",
+      "女装误会",
+      "乐队",
+      "创作",
+      "青春群像",
+      "演出"
+    ],
+    "protagonist_role": "匿名上传女装演奏视频后被误认成女生、继而组织乐队的男学生",
+    "narrative_features": "排练、编曲、演出和网络身份推动关系，成员各自的音乐欲望比阴谋更重要。",
+    "why_included": "扩充音乐、网络身份、女装与群体创作标签。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "電撃文庫"
+  },
+  {
+    "year": 2020,
+    "title": "プロペラオペラ",
+    "author": "犬村小六",
+    "popularity_basis": "《这本轻小说真厉害！2021》文库第9位",
+    "tags": [
+      "架空战争",
+      "航空舰队",
+      "女性指挥官",
+      "政治婚约",
+      "战术",
+      "历史风",
+      "群像"
+    ],
+    "protagonist_role": "在大国战争中指挥航空舰队、承担国家与私人关系双重责任的皇女",
+    "narrative_features": "将舰队调度、国家利益和私人情感交织，主角明确拥有职位与制度义务。",
+    "why_included": "提供女性军政领导者与架空科技战记，不把女性身份限定为被保护者。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "ガガガ文庫"
+  },
+  {
+    "year": 2020,
+    "title": "声優ラジオのウラオモテ",
+    "author": "二月公",
+    "popularity_basis": "《这本轻小说真厉害！2021》文库第14位",
+    "tags": [
+      "声优行业",
+      "广播节目",
+      "双女主",
+      "营业人设",
+      "互损",
+      "职业成长",
+      "女性关系",
+      "媒体"
+    ],
+    "protagonist_role": "台前扮演亲密同学、台后性格不合却必须合作的两名新人女声优",
+    "narrative_features": "营业形象与真实自我持续碰撞，工作现场、舆论和专业竞争推进双主角关系。",
+    "why_included": "是女性职业搭档、媒体人设和可解释为友情或百合张力的代表。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "電撃文庫"
+  },
+  {
+    "year": 2020,
+    "title": "さよなら異世界、またきて明日",
+    "author": "風見鶏",
+    "popularity_basis": "《这本轻小说真厉害！2021》文库第17位",
+    "tags": [
+      "异世界旅行",
+      "世界终末",
+      "公路片",
+      "双人",
+      "废墟",
+      "温柔",
+      "无使命",
+      "地方见闻"
+    ],
+    "protagonist_role": "驾驶车辆穿行于逐渐空无的异世界、沿途相遇又告别的旅人",
+    "narrative_features": "以路线、补给、短暂相遇和景色构成低声量末日，不追求拯救世界。",
+    "why_included": "适合“世界已无法挽救但仍可旅行生活”的非英雄路线。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "カクヨム→富士見ファンタジア文庫"
+  },
+  {
+    "year": 2020,
+    "title": "現実でラブコメできないとだれが決めた？",
+    "author": "初鹿野創",
+    "popularity_basis": "《这本轻小说真厉害！2021》文库第18位",
+    "tags": [
+      "校园恋爱",
+      "元叙事",
+      "人工制造剧情",
+      "团队策划",
+      "现实攻略",
+      "喜剧",
+      "类型自觉"
+    ],
+    "protagonist_role": "认为现实缺少恋爱喜剧条件、于是招募伙伴主动设计情节的学生",
+    "narrative_features": "角色把轻小说套路当作项目管理目标，计划与真实感情不断冲突。",
+    "why_included": "是对标签和套路本身进行游戏化的元叙事，可用于高自由自觉型世界。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "ガガガ文庫"
+  },
+  {
+    "year": 2020,
+    "title": "オーバーライト",
+    "author": "池田明季哉",
+    "popularity_basis": "《这本轻小说真厉害！2021》文库第20位",
+    "tags": [
+      "涂鸦艺术",
+      "都市青春",
+      "街头文化",
+      "创作",
+      "谜样艺术家",
+      "自我表达",
+      "地方探索"
+    ],
+    "protagonist_role": "被街头涂鸦吸引、追寻创作者并寻找自身表达方式的少年",
+    "narrative_features": "城市墙面、视觉作品和青年文化本身构成地图与线索，冲突围绕创作归属。",
+    "why_included": "扩展美术、街头文化与城市探索的非战斗玩法。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "電撃文庫"
+  },
+  {
+    "year": 2020,
+    "title": "異修羅",
+    "author": "珪素",
+    "popularity_basis": "《这本轻小说真厉害！2021》单行本与新作双第1位、该部门当时最高票",
+    "tags": [
+      "群像战斗",
+      "全员强者",
+      "非单一主角",
+      "锦标赛",
+      "多种族",
+      "政治",
+      "能力规则",
+      "史诗"
+    ],
+    "protagonist_role": "魔王死后争夺真正勇者称号的多名顶级强者，没有唯一中心人物",
+    "narrative_features": "先以人物短篇建立能力、欲望与阵营，再让政治和比赛交汇。",
+    "why_included": "是彻底群像、可切换主角与多阵营世界的代表，适合解除单主角中心限制。",
+    "sources": [
+      "https://dengekibunko.jp/special/konorano2021/",
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "カクヨム／小説家になろう→電撃の新文芸"
+  },
+  {
+    "year": 2020,
+    "title": "Babel",
+    "author": "古宮九時",
+    "popularity_basis": "《这本轻小说真厉害！2021》单行本前5；与同作者Unnamed Memory同时入围前5",
+    "tags": [
+      "异世界转移",
+      "语言",
+      "文字解读",
+      "旅行",
+      "魔法研究",
+      "男女搭档",
+      "正统幻想"
+    ],
+    "protagonist_role": "被转移到异世界、以语言学兴趣寻找归途的女大学生与同行魔法师",
+    "narrative_features": "语言不通不是一章解决的装饰，而是旅途、研究、交涉和世界理解的核心。",
+    "why_included": "提醒生成器让语言、翻译和知识职业真正影响异世界体验。",
+    "sources": [
+      "https://dengekibunko.jp/special/konorano2021/",
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "个人网站→電撃の新文芸"
+  },
+  {
+    "year": 2020,
+    "title": "ティアムーン帝国物語",
+    "author": "餅月望",
+    "popularity_basis": "《这本轻小说真厉害！2021》单行本第6位",
+    "tags": [
+      "处刑回归",
+      "公主",
+      "误解喜剧",
+      "政治改革",
+      "自保动机",
+      "历史改写",
+      "女性主角",
+      "帝国"
+    ],
+    "protagonist_role": "被革命处刑后回到少女时代、为了保命开始改变国家的任性公主",
+    "narrative_features": "主角的小心眼自保被周围解释为圣明，笑料与饥荒、财政、外交等真实治理问题并行。",
+    "why_included": "展示政治改革可由不高尚的个人动机启动，也可写成轻喜剧而非阴谋剧。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→TOブックス"
+  },
+  {
+    "year": 2020,
+    "title": "嘆きの亡霊は引退したい～最弱ハンターによる最強パーティ育成術～",
+    "author": "槻影",
+    "popularity_basis": "《这本轻小说真厉害！2021》单行本第7位",
+    "tags": [
+      "冒险者公会",
+      "队长误解",
+      "最弱主角",
+      "最强朋友",
+      "退隐愿望",
+      "队伍经营",
+      "喜剧"
+    ],
+    "protagonist_role": "战斗力最弱、只想退休，却被视为深谋远虑领袖的最强队伍队长",
+    "narrative_features": "主角与童年伙伴实力极端错位，委托在误解和朋友过度执行中升级。",
+    "why_included": "支持“强者的朋友/队长但本人不强”和退隐流，身份比数值更重要。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→GCノベルズ"
+  },
+  {
+    "year": 2020,
+    "title": "淡海乃海 水面が揺れる時",
+    "author": "イスラーフィール",
+    "popularity_basis": "《这本轻小说真厉害！2021》单行本第8位",
+    "tags": [
+      "历史转生",
+      "日本战国",
+      "弱小领主",
+      "内政",
+      "家臣团",
+      "外交",
+      "长期成长",
+      "历史改写"
+    ],
+    "protagonist_role": "转生为战国小领主朽木家继承人，从幼年经营家族与领地",
+    "narrative_features": "依据地缘、粮秣、婚姻与家臣利益逐年推进，个人知识受时代资源约束。",
+    "why_included": "是历史、领地经营和非名人小势力视角的代表。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→TOブックス"
+  },
+  {
+    "year": 2020,
+    "title": "魔導具師ダリヤはうつむかない～今日から自由な職人ライフ～",
+    "author": "甘岸久弥",
+    "popularity_basis": "《这本轻小说真厉害！2021》单行本第9位",
+    "tags": [
+      "异世界转生",
+      "女性工匠",
+      "婚约解除",
+      "魔导具",
+      "创业",
+      "职业伙伴",
+      "商会",
+      "成人生活"
+    ],
+    "protagonist_role": "结束压抑婚约后继承工坊、以魔导具师身份独立生活的女性",
+    "narrative_features": "产品研发、供应链、商会关系和朋友聚餐持续驱动剧情，恋爱慢于职业成长。",
+    "why_included": "是退婚后不急于复仇、转向职业自由与成年人友谊的关键样本。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→MFブックス"
+  },
+  {
+    "year": 2020,
+    "title": "どうも、好きな人に惚れ薬を依頼された魔女です。",
+    "author": "六つ花えいこ",
+    "popularity_basis": "《这本轻小说真厉害！2021》单行本第13位",
+    "tags": [
+      "女性向幻想",
+      "魔女",
+      "惚药委托",
+      "单恋",
+      "偏居生活",
+      "慢热",
+      "职业日常",
+      "成人恋爱"
+    ],
+    "protagonist_role": "独居湖畔、接到暗恋对象委托制作惚药的年轻魔女",
+    "narrative_features": "采药、交货和短暂来访逐步改变孤独生活，以克制交流建立恋爱。",
+    "why_included": "提供小据点、职业委托和低事件密度恋爱，适合温和AI剧情。",
+    "sources": [
+      "https://shopping.bookoff.co.jp/lightnovel/feature/konorano/2021"
+    ],
+    "region": "日本",
+    "platform_or_publisher": "小説家になろう→Mノベルスf"
   }
 ]

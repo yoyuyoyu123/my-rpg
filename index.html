@@ -2140,14 +2140,16 @@ async function loadResearchDB(){
   var stats=document.getElementById('tag-db-stats');
   try{
     TAG_ONTO=await (await fetch('research/tag_ontology.json')).json();
-    var files=['research/china_works_2016_2020.json','research/china_works_2021_2024.json','research/japan_works_2016_2020.json','research/manga_works_2016_2020.json'];
+    var files=['research/china_works_2016_2020.json','research/china_works_2021_2024.json','research/china_works_2025_2026.json','research/japan_works_2016_2020.json','research/japan_works_2021_2026.json','research/manga_works_2016_2020.json','research/manga_works_2021_2026.json'];
     for(var i=0;i<files.length;i++){
       try{
         var w=await (await fetch(files[i])).json();
-        var arr=Array.isArray(w)?w:Object.keys(w).map(function(k){return w[k];});
+        var arr=Array.isArray(w)?w:(Array.isArray(w.works)?w.works:Object.keys(w).map(function(k){return w[k];}));
         TAG_WORKS=TAG_WORKS.concat(arr.filter(function(x){return x&&x.title;}));
       }catch(e){}
     }
+    var seen={};
+    TAG_WORKS=TAG_WORKS.filter(function(x){ if(seen[x.title])return false; seen[x.title]=1; return true; });
     var tagCount=TAG_ONTO.categories.reduce(function(a,c){return a+(c.tags||[]).length;},0);
     if(stats)stats.textContent=TAG_ONTO.categories.length+'类 · '+tagCount+'标签 · '+TAG_WORKS.length+'部作品样本';
     var sel=document.getElementById('tag-db-category');
