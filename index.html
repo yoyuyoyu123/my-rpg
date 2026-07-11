@@ -2055,7 +2055,110 @@ var GEN_WORLD = null; // stores generated world prompt
 function openGenerator() {
   document.getElementById('wscreen').classList.add('hidden');
   document.getElementById('genscreen').classList.remove('hidden');
+  loadResearchDB();
 }
+
+// ── RESEARCH TAG DB ──
+var TAG_ONTO=null, TAG_WORKS=[], SELECTED_TAGS=[], TAG_DB_LOADING=false;
+async function loadResearchDB(){
+  if(TAG_ONTO||TAG_DB_LOADING) return;
+  TAG_DB_LOADING=true;
+  var stats=document.getElementById('tag-db-stats');
+  try{
+    TAG_ONTO=await (await fetch('research/tag_ontology.json')).json();
+    var files=['research/china_works_2016_2020.json','research/china_works_2021_2024.json','research/japan_works_2016_2020.json','research/manga_works_2016_2020.json'];
+    for(var i=0;i<files.length;i++){
+      try{
+        var w=await (await fetch(files[i])).json();
+        var arr=Array.isArray(w)?w:Object.keys(w).map(function(k){return w[k];});
+        TAG_WORKS=TAG_WORKS.concat(arr.filter(function(x){return x&&x.title;}));
+      }catch(e){}
+    }
+    var tagCount=TAG_ONTO.categories.reduce(function(a,c){return a+(c.tags||[]).length;},0);
+    if(stats)stats.textContent=TAG_ONTO.categories.length+'类 · '+tagCount+'标签 · '+TAG_WORKS.length+'部作品样本';
+    var sel=document.getElementById('tag-db-category');
+    if(sel&&sel.options.length<=1){
+      TAG_ONTO.categories.forEach(function(c){
+        var o=document.createElement('option'); o.value=c.id; o.textContent=c.label||c.id; sel.appendChild(o);
+      });
+    }
+    renderTagResults();
+  }catch(e){
+    if(stats)stats.textContent='研究数据加载失败：需通过网页地址访问（GitHub Pages或本地服务），不能双击文件直接打开';
+  }
+  TAG_DB_LOADING=false;
+}
+function renderTagResults(){
+  var box=document.getElementById('tag-db-results');
+  if(!box||!TAG_ONTO)return;
+  var q=(document.getElementById('tag-db-search').value||'').trim().toLowerCase();
+  var cat=document.getElementById('tag-db-category').value;
+  box.innerHTML='';
+  var shown=0;
+  TAG_ONTO.categories.forEach(function(c){
+    if(cat&&c.id!==cat)return;
+    (c.tags||[]).forEach(function(t){
+      if(q&&t.toLowerCase().indexOf(q)<0)return;
+      if(shown>=140)return;
+      shown++;
+      var d=document.createElement('div');
+      d.className='chip'+(SELECTED_TAGS.indexOf(t)>=0?' on':'');
+      d.textContent=t;
+      d.title=c.label||c.id;
+      d.onclick=function(){
+        var idx=SELECTED_TAGS.indexOf(t);
+        if(idx>=0)SELECTED_TAGS.splice(idx,1); else SELECTED_TAGS.push(t);
+        renderSelectedTags(); renderTagResults();
+      };
+      box.appendChild(d);
+    });
+  });
+  if(!shown)box.innerHTML='<span class="no-quest">— 没有匹配的标签 —</span>';
+}
+function renderSelectedTags(){
+  var box=document.getElementById('tag-db-selected');
+  if(!box)return;
+  if(!SELECTED_TAGS.length){box.textContent='尚未选择研究标签';renderTagWorks();return;}
+  box.innerHTML='';
+  SELECTED_TAGS.forEach(function(t){
+    var sp=document.createElement('span');
+    sp.className='sel-tag'; sp.textContent=t+' ✕'; sp.style.cursor='pointer';
+    sp.onclick=function(){var i=SELECTED_TAGS.indexOf(t);if(i>=0)SELECTED_TAGS.splice(i,1);renderSelectedTags();renderTagResults();};
+    box.appendChild(sp);
+  });
+  renderTagWorks();
+}
+function renderTagWorks(){
+  var box=document.getElementById('tag-db-work-results');
+  if(!box)return;
+  if(!SELECTED_TAGS.length){box.textContent='选择标签后显示匹配的代表作品。';return;}
+  var hits=TAG_WORKS.map(function(w){
+    var score=(w.tags||[]).filter(function(t){return SELECTED_TAGS.indexOf(t)>=0;}).length;
+    return {w:w,score:score};
+  }).filter(function(x){return x.score>0;}).sort(function(a,b){return b.score-a.score;}).slice(0,8);
+  if(!hits.length){box.textContent='暂无同时带这些标签的作品样本（标签仍会注入生成器）。';return;}
+  box.innerHTML='';
+  hits.forEach(function(h){
+    var d=document.createElement('div'); d.className='tag-work';
+    d.innerHTML='<b>'+esc(h.w.title)+'</b>（'+esc(String(h.w.year||''))+' · '+esc(h.w.platform||h.w.medium||'')+'）<br>'+esc(String(h.w.why_included||h.w.popularity_basis||'').substring(0,90));
+    box.appendChild(d);
+  });
+}
+function suggestResearchTags(){
+  if(!TAG_ONTO){loadResearchDB();return;}
+  SELECTED_TAGS=[];
+  var pickFrom=['world_frame','story_engine','tone','growth_mode','relationship'];
+  pickFrom.forEach(function(cid){
+    var c=TAG_ONTO.categories.find(function(x){return x.id===cid;});
+    if(c&&c.tags&&c.tags.length)SELECTED_TAGS.push(c.tags[Math.floor(Math.random()*c.tags.length)]);
+  });
+  renderSelectedTags(); renderTagResults();
+}
+function clearResearchTags(){ SELECTED_TAGS=[]; renderSelectedTags(); renderTagResults(); }
+(function(){
+  var si=document.getElementById('tag-db-search'); if(si)si.addEventListener('input',renderTagResults);
+  var sc=document.getElementById('tag-db-category'); if(sc)sc.addEventListener('change',renderTagResults);
+})();
 
 function resetGen() {
   document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
@@ -2067,6 +2170,7 @@ function resetGen() {
   document.getElementById('gen-confirm').style.display = 'none';
   document.getElementById('gen-status').textContent = '';
   GEN_WORLD = null;
+  if (typeof clearResearchTags === 'function') clearResearchTags();
 }
 
 // Chip click handler - single select groups
@@ -2074,6 +2178,7 @@ document.addEventListener('click', function(e) {
   var chip = e.target.closest('.chip');
   if (!chip) return;
   var group = chip.dataset.group;
+  if (!group) return;
   var isMulti = chip.classList.contains('multi');
   if (isMulti) {
     chip.classList.toggle('on');
@@ -2103,6 +2208,7 @@ function getGenSelections() {
       result[k].push(el.value.trim());
     }
   });
+  if (typeof SELECTED_TAGS !== 'undefined' && SELECTED_TAGS.length) result.research_tags = SELECTED_TAGS.slice();
   var extra = document.getElementById('custom-extra');
   if (extra && extra.value.trim()) result.extra = extra.value.trim();
   return result;
@@ -2120,6 +2226,10 @@ function buildMetaPrompt(sel) {
   };
 
   Object.keys(sel).forEach(function(k) {
+    if (k === 'research_tags') {
+      parts.push('叙事标签（选自2016-2024中日热门作品研究库，生成的世界观与叙事风格必须充分体现这些标签的类型特征）：' + sel[k].join('、'));
+      return;
+    }
     if (k === 'extra') {
       parts.push('额外要求：' + sel[k]);
     } else if (labels[k] && sel[k]) {
