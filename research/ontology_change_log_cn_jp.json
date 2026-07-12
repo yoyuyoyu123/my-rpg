@@ -1,0 +1,613 @@
+[
+  {
+    "tag": "生活流",
+    "action": "added",
+    "category": "pacing",
+    "total_frequency": 16,
+    "regions": [
+      "日本",
+      "中国"
+    ],
+    "rationale": "中日两区合计支持最高；它是篇章组织方式，不等同群像、慢生活或完全无冲突。"
+  },
+  {
+    "tag": "喜剧",
+    "action": "added",
+    "category": "tone",
+    "total_frequency": 8,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "现有本体只有若干喜剧子型；上位标签可在子型未知时避免强行推断吐槽、误解或荒诞。"
+  },
+  {
+    "tag": "地域生活书写",
+    "action": "added",
+    "category": "tone",
+    "total_frequency": 7,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "强调方言、城市记忆、地方文化与乡土经验，能显著改变场景细节和NPC生活方式。"
+  },
+  {
+    "tag": "音乐题材",
+    "action": "added",
+    "category": "world_frame",
+    "total_frequency": 7,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "覆盖乐队、校园音乐、职业音乐与音乐世界机制；比单一演员职业更广且可复用。"
+  },
+  {
+    "tag": "搭档关系",
+    "action": "added",
+    "category": "relationship",
+    "total_frequency": 6,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "搭档不必是职业同事、恋人或挚友，独立关系标签可与这些轴自由组合。"
+  },
+  {
+    "tag": "病态依恋",
+    "action": "added",
+    "category": "relationship",
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "高依赖、控制欲与执着会直接改变NPC决策，且不能无损归入普通恋爱或多角关系。"
+  },
+  {
+    "tag": "创作活动",
+    "action": "added",
+    "category": "story_engine",
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "创作可以是写作、绘画、音乐或节目制作，适合作为可重复的故事循环。"
+  },
+  {
+    "tag": "多种族社会",
+    "action": "added",
+    "category": "world_frame",
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "表达族群制度、政治与共居方式；单独的身体物种标签无法生成社会结构。"
+  },
+  {
+    "tag": "恋爱要素",
+    "action": "added",
+    "category": "relationship",
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "作为恋爱开关而不预设单一恋爱、后宫、百合或BL，能提升关系自由度。"
+  },
+  {
+    "tag": "魔女",
+    "action": "added",
+    "category": "profession",
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "作为魔法实践者与社会身份处理，比误并入魔族更安全；可与人类、长生种等身体轴组合。"
+  },
+  {
+    "tag": "内政治理",
+    "action": "added",
+    "category": "story_engine",
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "财政、官僚、公共服务与制度改革不等同领地建设或战争经营。"
+  },
+  {
+    "tag": "女性关系中心",
+    "action": "added",
+    "category": "relationship",
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "允许女性双人或多人的关系成为中心，但不自动判定百合或女性群像。"
+  },
+  {
+    "tag": "心理创伤",
+    "action": "added",
+    "category": "conflict_source",
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "创伤是持续冲突来源，不等同一般疾病，也不表示角色已经进入疗愈阶段。"
+  },
+  {
+    "tag": "非婚关系契约",
+    "action": "added",
+    "category": "relationship",
+    "total_frequency": 4,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "覆盖友情、雇佣、金钱和试用恋人契约；现有婚姻契约过窄。"
+  },
+  {
+    "tag": "分支世界线",
+    "action": "added",
+    "category": "information_structure",
+    "total_frequency": 4,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "多条可变世界线与普通时间回归不同，会改变因果展示和玩家选择后果。"
+  },
+  {
+    "tag": "关系边界协商",
+    "action": "added",
+    "category": "relationship",
+    "total_frequency": 4,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "以同意、边界与规则谈判推进关系，能抑制靠误会和强制情节推动的默认模式。"
+  },
+  {
+    "tag": "后日谈",
+    "action": "added",
+    "category": "pacing",
+    "total_frequency": 4,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "原主线结束后的生活、调查和关系变化是一种稳定篇章位置，不等同退休或第二人生。"
+  },
+  {
+    "tag": "技艺传承",
+    "action": "added",
+    "category": "growth_mode",
+    "total_frequency": 4,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "强调跨代学习、守成与再创造，区别单人职业专精和知识优势。"
+  },
+  {
+    "tag": "双主角",
+    "action": "added",
+    "category": "information_structure",
+    "total_frequency": 4,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "双主角不必双视角，但会改变信息分配与篇章重心，适合作为小说结构标签。"
+  },
+  {
+    "tag": "现代怪谈",
+    "action": "added",
+    "category": "world_frame",
+    "total_frequency": 4,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "比都市奇幻更聚焦口耳传播、社区与网络怪谈，又不必默认规则怪谈或幕后组织。"
+  },
+  {
+    "tag": "成人关系",
+    "action": "added",
+    "category": "relationship",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "经济、工作、同居和长期责任使成年关系与校园恋爱拥有不同约束。"
+  },
+  {
+    "tag": "低压力叙事",
+    "action": "added",
+    "category": "tone",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "压力等级与是否生活流、是否有目标相互独立，是抑制强行危机的重要控制项。"
+  },
+  {
+    "tag": "反英雄身份",
+    "action": "added",
+    "category": "narrative_position",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "反勇者与反英雄位置会改写任务正当性和社会评价，不等同勇者队中的非勇者。"
+  },
+  {
+    "tag": "共同生活",
+    "action": "added",
+    "category": "relationship",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "同居与合租不必自动形成家庭或恋爱，独立标签能保持关系开放。"
+  },
+  {
+    "tag": "孤独处境",
+    "action": "added",
+    "category": "conflict_source",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "长期孤独会影响信息、支持网络和关系需求，是稳定冲突而非单次情绪。"
+  },
+  {
+    "tag": "关系伦理灰度",
+    "action": "added",
+    "category": "relationship",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "允许不理想但非单纯敌对的关系伦理，避免所有亲密关系自动理想化。"
+  },
+  {
+    "tag": "广播叙事",
+    "action": "added",
+    "category": "information_structure",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "广播、听众来信和录音节目具有不同于直播弹幕的延迟互动与声音结构。"
+  },
+  {
+    "tag": "护卫安保",
+    "action": "added",
+    "category": "profession",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "警戒、路线规划、风险评估与保护目标构成清晰且跨世界可复用的职业循环。"
+  },
+  {
+    "tag": "基层劳动者",
+    "action": "added",
+    "category": "profession",
+    "total_frequency": 3,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "决定社会位置、资源与日常动作，能补足职业库偏精英化的问题。"
+  },
+  {
+    "tag": "拒绝原作路线",
+    "action": "added",
+    "category": "story_engine",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "关键NPC主动拒绝攻略或退出路线，不等同玩家单方面改变原作结局。"
+  },
+  {
+    "tag": "民俗职业",
+    "action": "added",
+    "category": "profession",
+    "total_frequency": 3,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "作为捞尸、扎纸、仪式服务等地方行当的上位生成入口，避免把每种行当写死为独立本体。"
+  },
+  {
+    "tag": "情报人员",
+    "action": "added",
+    "category": "profession",
+    "total_frequency": 3,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "暗桩、情报掮客与卧底共享收集、验证、交易和保密循环，是可复用职业。"
+  },
+  {
+    "tag": "认知规范错位",
+    "action": "added",
+    "category": "conflict_source",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "善恶或社会常识错位可以驱动制度冲突与喜剧，不应一律化为普通误会。"
+  },
+  {
+    "tag": "死亡游戏",
+    "action": "added",
+    "category": "story_engine",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "死亡游戏可一次性、职业化或直播化，不能完整并入无限流或迷宫副本。"
+  },
+  {
+    "tag": "心理关系剧",
+    "action": "added",
+    "category": "tone",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "以人物内在与近距离关系为主要戏剧张力，区别悬疑、纯恋爱喜剧和哲学思辨。"
+  },
+  {
+    "tag": "性别身份错位",
+    "action": "added",
+    "category": "conflict_source",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "社会呈现、角色身份与他人认知错位不等于身体性转，需单独表示。"
+  },
+  {
+    "tag": "性别秩序反转",
+    "action": "added",
+    "category": "world_frame",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "它改变婚姻、继承、劳动与名誉制度，是社会世界变量而非主角性转。"
+  },
+  {
+    "tag": "元叙事",
+    "action": "added",
+    "category": "information_structure",
+    "total_frequency": 3,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "角色或叙述意识到类型、媒介和故事规则，会直接改变信息层。"
+  },
+  {
+    "tag": "传记体",
+    "action": "added",
+    "category": "information_structure",
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "按人物一生重建事件不同于普通长时间跳跃，可容纳证词、史料和阶段回顾。"
+  },
+  {
+    "tag": "传统文化能力体系",
+    "action": "added",
+    "category": "story_engine",
+    "total_frequency": 2,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "把戏曲、曲艺等技艺转换为规则化能力，能产生训练、表演与战斗的复合循环。"
+  },
+  {
+    "tag": "敌对关系",
+    "action": "added",
+    "category": "relationship",
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "敌对不必发展为恋爱或长期宿敌，需保留中性上位关系。"
+  },
+  {
+    "tag": "多时空并置",
+    "action": "added",
+    "category": "information_structure",
+    "total_frequency": 2,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "同时呈现多个时间层不同于单纯倒叙或一次时间跳跃。"
+  },
+  {
+    "tag": "反乌托邦",
+    "action": "added",
+    "category": "world_frame",
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "制度压迫与社会控制是稳定世界框架，不能只由监控或公司压迫标签拼凑。"
+  },
+  {
+    "tag": "反系统叙事",
+    "action": "added",
+    "category": "constraint_policy",
+    "total_frequency": 2,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "不仅是没有系统，而是主动质疑、拒绝或反转系统奖励逻辑。"
+  },
+  {
+    "tag": "返乡再开始",
+    "action": "added",
+    "category": "provenance",
+    "total_frequency": 2,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "返乡者带着外部经验重新进入熟人社会，区别普通移居和故事结尾的归隐。"
+  },
+  {
+    "tag": "故障文本",
+    "action": "added",
+    "category": "information_structure",
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "乱码、损坏UI和信息污染是数字原生叙事手段，能直接用于HTML表现。"
+  },
+  {
+    "tag": "离婚后生活",
+    "action": "added",
+    "category": "provenance",
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "婚姻结束后的资源、身份与关系重建是稳定开局，不能用婚约破弃替代。"
+  },
+  {
+    "tag": "梦境穿行",
+    "action": "added",
+    "category": "story_engine",
+    "total_frequency": 2,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "梦境可作为访问其他时间、世界和心理空间的重复入口。"
+  },
+  {
+    "tag": "潜伏谍报",
+    "action": "added",
+    "category": "story_engine",
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "身份维持、情报交换与暴露风险构成跨题材可复用的行动循环。"
+  },
+  {
+    "tag": "伪史料互文",
+    "action": "added",
+    "category": "information_structure",
+    "total_frequency": 2,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "伪史料与不可靠史笔通过文献互证生成真相，明显区别一般档案文书。"
+  },
+  {
+    "tag": "现实主义",
+    "action": "added",
+    "category": "tone",
+    "total_frequency": 2,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "强调因果、制度和生活成本，可约束幻想世界也保持现实质感，不等同职业写实。"
+  },
+  {
+    "tag": "原作开局前",
+    "action": "added",
+    "category": "story_engine",
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "在教程或主剧情开始前行动会改变资源与关系，是独立于原作知识的时间窗口。"
+  },
+  {
+    "tag": "桌游社交",
+    "action": "added",
+    "category": "story_engine",
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "桌游规则、胜负和谈判可重复驱动关系，不等同电子游戏世界。"
+  },
+  {
+    "tag": "封闭空间",
+    "action": "added",
+    "category": "world_frame",
+    "total_frequency": 1,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "空间封闭会限制资源、移动与社交，虽支持量低但机制高度通用且可执行。"
+  },
+  {
+    "tag": "和风幻想",
+    "action": "added",
+    "category": "world_frame",
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "和风幻想不必是民俗志怪，作为文化审美框架可与高魔、日常等轴组合。"
+  },
+  {
+    "tag": "受害者行动主体",
+    "action": "added",
+    "category": "narrative_position",
+    "total_frequency": 1,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "把受害者设为决策者而非线索或奖励，能显著改变叙事伦理和任务设计。"
+  },
+  {
+    "tag": "妖精族",
+    "action": "added",
+    "category": "embodiment",
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "妖精既不总是元素生命也不等同亚人，是高复用的独立存在形态。"
+  },
+  {
+    "tag": "异世界幻想",
+    "action": "added",
+    "category": "world_frame",
+    "total_frequency": 1,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "现有本体缺少不预设魔法强度、文化原型和主角来历的通用异世界框架。"
+  },
+  {
+    "tag": "增强现实",
+    "action": "added",
+    "category": "world_frame",
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "rationale": "增强现实叠加现实空间，与完全沉浸式虚拟现实有不同移动和社会机制。"
+  },
+  {
+    "tag": "中式怪诞",
+    "action": "added",
+    "category": "tone",
+    "total_frequency": 1,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "结合本土现实、民俗与荒诞感，不应强制归入喜剧或克苏鲁。"
+  },
+  {
+    "tag": "NPC视角",
+    "action": "added",
+    "category": "narrative_position",
+    "total_frequency": 1,
+    "regions": [
+      "中国"
+    ],
+    "rationale": "NPC作为主角不必觉醒自我，也不必是原作配角；该位置能改变信息边界。"
+  }
+]

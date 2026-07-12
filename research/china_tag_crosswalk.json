@@ -48,9 +48,9 @@
     "raw_tag": "轻喜剧",
     "frequency": 6,
     "canonical_tags": [
-      "轻喜剧"
+      "喜剧"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有本体只有荒诞、误解、黑色幽默等子型，缺少可独立选择的低烈度喜剧基调。"
   },
   {
@@ -172,7 +172,7 @@
     "canonical_tags": [
       "生活流"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
   },
   {
@@ -190,7 +190,7 @@
     "canonical_tags": [
       "双主角"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "双主角是叙事结构，不应自动等同于BL；性别与关系类型应由其他轴单独决定。"
   },
   {
@@ -686,7 +686,7 @@
     "canonical_tags": [
       "分支世界线"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "反复改写并比较多条世界线是稳定可复用的信息结构，区别于普通多元宇宙背景。"
   },
   {
@@ -711,9 +711,9 @@
     "raw_tag": "喜剧",
     "frequency": 2,
     "canonical_tags": [
-      "轻喜剧"
+      "喜剧"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "现有本体只有荒诞、误解、黑色幽默等子型，缺少可独立选择的低烈度喜剧基调。"
   },
   {
@@ -871,7 +871,7 @@
     "canonical_tags": [
       "情报人员"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "暗桩、卧底和情报中介共享潜伏、传递、验证与身份暴露风险，现有侦探/军师标签无法覆盖。"
   },
   {
@@ -880,7 +880,7 @@
     "canonical_tags": [
       "伪史料互文"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "正文与互相冲突的仿史料共同塑造人物，是区别于一般档案拼贴的多层叙述方法。"
   },
   {
@@ -941,7 +941,7 @@
     "canonical_tags": [
       "地域生活书写"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
   },
   {
@@ -975,16 +975,16 @@
     "canonical_tags": [
       "技艺传承"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "教学、守艺与代际传承可以持续产生任务和关系变化，不能只归为静态职业背景。"
   },
   {
     "raw_tag": "传统曲艺",
     "frequency": 1,
     "canonical_tags": [
-      "传统表演艺人"
+      "演员偶像"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有“演员偶像”偏现代娱乐业，不能准确覆盖曲艺、说唱和非遗表演职业。"
   },
   {
@@ -1134,7 +1134,7 @@
     "canonical_tags": [
       "地域生活书写"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
   },
   {
@@ -1143,7 +1143,7 @@
     "canonical_tags": [
       "地域生活书写"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
   },
   {
@@ -1313,7 +1313,7 @@
     "canonical_tags": [
       "生活流"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
   },
   {
@@ -1360,7 +1360,7 @@
     "canonical_tags": [
       "反系统叙事"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "主角反抗、利用漏洞或被迫逆向完成系统目标，与普通任务系统的顺从执行不同。"
   },
   {
@@ -1369,7 +1369,7 @@
     "canonical_tags": [
       "反系统叙事"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "主角反抗、利用漏洞或被迫逆向完成系统目标，与普通任务系统的顺从执行不同。"
   },
   {
@@ -1378,7 +1378,7 @@
     "canonical_tags": [
       "返乡再开始"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "回到故乡或原社会重新就业、修复关系和参与社区，是区别于异世界/时间回归的现实来历。"
   },
   {
@@ -1387,7 +1387,7 @@
     "canonical_tags": [
       "地域生活书写"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
   },
   {
@@ -1405,7 +1405,7 @@
     "canonical_tags": [
       "技艺传承"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "教学、守艺与代际传承可以持续产生任务和关系变化，不能只归为静态职业背景。"
   },
   {
@@ -1428,7 +1428,7 @@
     "canonical_tags": [
       "封闭空间"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "空间边界持续限制资源、行动和信息，是可跨科幻、悬疑与现实题材复用的结构机制。"
   },
   {
@@ -1507,9 +1507,9 @@
     "raw_tag": "搞笑",
     "frequency": 1,
     "canonical_tags": [
-      "轻喜剧"
+      "喜剧"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有本体只有荒诞、误解、黑色幽默等子型，缺少可独立选择的低烈度喜剧基调。"
   },
   {
@@ -1527,7 +1527,7 @@
     "canonical_tags": [
       "基层劳动者"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有平台劳动者过窄；制造、建筑和一般体力劳动需要可跨行业复用的社会位置。"
   },
   {
@@ -1680,7 +1680,7 @@
     "canonical_tags": [
       "返乡再开始"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "回到故乡或原社会重新就业、修复关系和参与社区，是区别于异世界/时间回归的现实来历。"
   },
   {
@@ -1705,9 +1705,10 @@
     "raw_tag": "规则生存",
     "frequency": 1,
     "canonical_tags": [
-      "规则生存"
+      "规则公开限制",
+      "生存追逃"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "公开或可推理规则主导生存，但不必包含怪谈；比“规则怪谈”覆盖面更准确。"
   },
   {
@@ -1875,7 +1876,7 @@
     "canonical_tags": [
       "基层劳动者"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有平台劳动者过窄；制造、建筑和一般体力劳动需要可跨行业复用的社会位置。"
   },
   {
@@ -1933,10 +1934,8 @@
   {
     "raw_tag": "集体争取",
     "frequency": 1,
-    "canonical_tags": [
-      "集体行动"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "群体通过协商、组织和行动改变具体制度，是可跨现实、历史与幻想复用的发动机。"
   },
   {
@@ -2003,7 +2002,7 @@
     "canonical_tags": [
       "生活流"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
   },
   {
@@ -2019,7 +2018,7 @@
     "canonical_tags": [
       "技艺传承"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "教学、守艺与代际传承可以持续产生任务和关系变化，不能只归为静态职业背景。"
   },
   {
@@ -2054,7 +2053,7 @@
     "canonical_tags": [
       "基层劳动者"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有平台劳动者过窄；制造、建筑和一般体力劳动需要可跨行业复用的社会位置。"
   },
   {
@@ -2148,7 +2147,7 @@
     "canonical_tags": [
       "分支世界线"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "反复改写并比较多条世界线是稳定可复用的信息结构，区别于普通多元宇宙背景。"
   },
   {
@@ -2349,7 +2348,7 @@
     "canonical_tags": [
       "民俗职业"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "丧葬、收尸、扎纸等可共享职业流程与地方知识，宜抽象为民俗职业而非逐项扩表。"
   },
   {
@@ -2434,9 +2433,9 @@
     "raw_tag": "凉州贤孝",
     "frequency": 1,
     "canonical_tags": [
-      "传统表演艺人"
+      "演员偶像"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有“演员偶像”偏现代娱乐业，不能准确覆盖曲艺、说唱和非遗表演职业。"
   },
   {
@@ -2550,7 +2549,7 @@
     "canonical_tags": [
       "民俗职业"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "丧葬、收尸、扎纸等可共享职业流程与地方知识，宜抽象为民俗职业而非逐项扩表。"
   },
   {
@@ -2566,10 +2565,10 @@
     "raw_tag": "盲艺人",
     "frequency": 1,
     "canonical_tags": [
-      "传统表演艺人",
+      "演员偶像",
       "身体残障"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "该标签同时揭示传统表演职业与身体经验；建议本体新增职业标签并组合既有身体标签。"
   },
   {
@@ -2623,7 +2622,7 @@
     "canonical_tags": [
       "梦境穿行"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "梦境作为可反复进入、观察或传递信息的空间，是独立故事发动机而非普通预知。"
   },
   {
@@ -2632,7 +2631,7 @@
     "canonical_tags": [
       "梦境穿行"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "梦境作为可反复进入、观察或传递信息的空间，是独立故事发动机而非普通预知。"
   },
   {
@@ -2753,10 +2752,8 @@
   {
     "raw_tag": "男主镶边",
     "frequency": 1,
-    "canonical_tags": [
-      "伴侣辅助位"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "伴侣仅承担支持或情感支线是一种稳定的叙事权力分配，不应绑定角色性别。"
   },
   {
@@ -2988,7 +2985,7 @@
     "canonical_tags": [
       "生活流"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
   },
   {
@@ -2997,7 +2994,7 @@
     "canonical_tags": [
       "情报人员"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "暗桩、卧底和情报中介共享潜伏、传递、验证与身份暴露风险，现有侦探/军师标签无法覆盖。"
   },
   {
@@ -3161,7 +3158,7 @@
     "canonical_tags": [
       "多时空并置"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "同一地点或人物线在多个时代并置，是结构机制而非单纯穿越来历。"
   },
   {
@@ -3278,7 +3275,7 @@
     "canonical_tags": [
       "生活流"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
   },
   {
@@ -3359,7 +3356,7 @@
     "canonical_tags": [
       "多时空并置"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "同一地点或人物线在多个时代并置，是结构机制而非单纯穿越来历。"
   },
   {
@@ -3377,7 +3374,7 @@
     "canonical_tags": [
       "分支世界线"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "反复改写并比较多条世界线是稳定可复用的信息结构，区别于普通多元宇宙背景。"
   },
   {
@@ -3422,7 +3419,7 @@
     "canonical_tags": [
       "受害者行动主体"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "重点不是旁观受害经历，而是让受害者取得行动权和叙事权，适用于悬疑等多题材。"
   },
   {
@@ -3667,7 +3664,7 @@
     "canonical_tags": [
       "伪史料互文"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "正文与互相冲突的仿史料共同塑造人物，是区别于一般档案拼贴的多层叙述方法。"
   },
   {
@@ -3782,7 +3779,7 @@
     "canonical_tags": [
       "情报人员"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "暗桩、卧底和情报中介共享潜伏、传递、验证与身份暴露风险，现有侦探/军师标签无法覆盖。"
   },
   {
@@ -3864,7 +3861,7 @@
     "canonical_tags": [
       "传统文化能力体系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "传统艺术的动作、程式和观念可直接生成能力规则，不能只归入表演职业或文化装饰。"
   },
   {
@@ -3931,7 +3928,7 @@
     "canonical_tags": [
       "传统文化能力体系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "传统艺术的动作、程式和观念可直接生成能力规则，不能只归入表演职业或文化装饰。"
   },
   {
@@ -4024,7 +4021,7 @@
     "canonical_tags": [
       "现实主义"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "本体有现实职业但缺少不依赖特定职业、强调生活经验与社会因果的总体创作取向。"
   },
   {
@@ -4033,7 +4030,7 @@
     "canonical_tags": [
       "现实主义"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "本体有现实职业但缺少不依赖特定职业、强调生活经验与社会因果的总体创作取向。"
   },
   {
@@ -4042,16 +4039,16 @@
     "canonical_tags": [
       "地域生活书写"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
   },
   {
     "raw_tag": "相声",
     "frequency": 1,
     "canonical_tags": [
-      "传统表演艺人"
+      "演员偶像"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有“演员偶像”偏现代娱乐业，不能准确覆盖曲艺、说唱和非遗表演职业。"
   },
   {
@@ -4078,7 +4075,7 @@
     "canonical_tags": [
       "生活流"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
   },
   {
@@ -4087,7 +4084,7 @@
     "canonical_tags": [
       "地域生活书写"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
   },
   {
@@ -4195,7 +4192,7 @@
     "canonical_tags": [
       "地域生活书写"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "方言、饮食、行业与城市记忆共同塑造地方日常，是跨现实与幻想题材都可复用的表达轴。"
   },
   {
@@ -4374,7 +4371,7 @@
     "canonical_tags": [
       "异世界幻想"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "本体已有异世界转移/转生来历，却缺少不预设主角来历的异世界世界框架。"
   },
   {
@@ -4441,9 +4438,10 @@
     "raw_tag": "游戏现实主义",
     "frequency": 1,
     "canonical_tags": [
-      "游戏现实主义"
+      "游戏世界",
+      "职业写实"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "游戏规则映射劳动、制度与现实焦虑，是近年来可复用的类型融合机制。"
   },
   {
@@ -4568,7 +4566,7 @@
     "canonical_tags": [
       "民俗职业"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "丧葬、收尸、扎纸等可共享职业流程与地方知识，宜抽象为民俗职业而非逐项扩表。"
   },
   {
@@ -4648,7 +4646,7 @@
     "canonical_tags": [
       "技艺传承"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "教学、守艺与代际传承可以持续产生任务和关系变化，不能只归为静态职业背景。"
   },
   {
@@ -4849,10 +4847,8 @@
   {
     "raw_tag": "中年穿越者",
     "frequency": 1,
-    "canonical_tags": [
-      "中年主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "主角年龄会系统性影响欲望、职业经验和关系结构，值得独立于穿越机制建模。"
   },
   {
@@ -4861,7 +4857,7 @@
     "canonical_tags": [
       "中式怪诞"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "以中国地方经验、戏曲或民俗意象制造怪诞感，不能完全等同于克苏鲁或传统志怪。"
   },
   {
@@ -4976,7 +4972,7 @@
     "canonical_tags": [
       "生活流"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "“生活流”可跨仙侠、家庭与小镇题材复用，且不等同于单元剧或悠闲慢生活。"
   },
   {
@@ -5001,7 +4997,7 @@
     "canonical_tags": [
       "NPC视角"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "NPC可作为独立叙事位置，不必预设已经觉醒自我，也不同于玩家困入世界。"
   }
 ]

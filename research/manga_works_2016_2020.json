@@ -13,11 +13,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2016大赏；官方评语特别强调阿伊努狩猎、饮食与多方寻金死斗的结合。",
-      "tags": ["明治末期", "北海道", "阿伊努文化", "退伍军人", "寻金", "狩猎料理", "多势力群像", "公路冒险", "历史考据", "黑色幽默"],
+      "tags": [
+        "明治末期",
+        "北海道",
+        "阿伊努文化",
+        "退伍军人",
+        "寻金",
+        "狩猎料理",
+        "多势力群像",
+        "公路冒险",
+        "历史考据",
+        "黑色幽默"
+      ],
       "protagonist_role": "日俄战争退伍兵杉元与阿伊努少女阿席莉帕组成互补搭档，而非单一救世主。",
       "narrative_features": "用藏宝图式长线目标串起地域文化、食物、军事残党、罪犯与原住民群体；敌我不断重组，配角也有完整欲望。",
       "why_included": "证明历史冒险可以同时容纳职业技能、地方知识、料理日常和高密度群像，而不必只走门派或王朝争霸。",
-      "sources": ["https://www.mangataisho.com/archives/2016.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2016.html"
+      ]
     },
     {
       "region": "日本",
@@ -28,11 +42,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2016第2名，并在随后多年持续进入漫画大赏候选。",
-      "tags": ["地下城生态", "魔物料理", "资源循环", "团队职业", "救援任务", "世界规则", "生物学想象", "反勇者模板", "群像", "黑色幽默"],
+      "tags": [
+        "地下城生态",
+        "魔物料理",
+        "资源循环",
+        "团队职业",
+        "救援任务",
+        "世界规则",
+        "生物学想象",
+        "反勇者模板",
+        "群像",
+        "黑色幽默"
+      ],
       "protagonist_role": "缺钱缺粮的救援小队；核心能力来自战士、厨师、锁匠与魔法师的分工。",
       "narrative_features": "每次料理既解决生存问题又解释生态与文明，局部单元逐步拼成地下城整体机制。",
       "why_included": "是把常见RPG素材改造成生态学、料理与团队后勤叙事的代表，可直接扩展游戏中的非战斗行动。",
-      "sources": ["https://www.mangataisho.com/archives/2016.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2016.html"
+      ]
     },
     {
       "region": "日本",
@@ -43,11 +71,24 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2016第5名。",
-      "tags": ["巨大迷宫", "女性双主角", "电子游戏逻辑", "空间谜题", "规则发现", "探索生存", "日常物件异化", "无固定职业", "封闭世界"],
+      "tags": [
+        "巨大迷宫",
+        "女性双主角",
+        "电子游戏逻辑",
+        "空间谜题",
+        "规则发现",
+        "探索生存",
+        "日常物件异化",
+        "无固定职业",
+        "封闭世界"
+      ],
       "protagonist_role": "被困在无限和室中的两名游戏测试相关女性，以观察和试错而非战力推进。",
       "narrative_features": "让空间本身成为角色；从门、房间、道具和系统残迹推断世界规则，具有强烈关卡设计感。",
       "why_included": "为AI游戏提供“先发现规则、再定义世界”的开放世界模板，主角身份不必预先锁死。",
-      "sources": ["https://www.mangataisho.com/archives/2016.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2016.html"
+      ]
     },
     {
       "region": "日本",
@@ -58,11 +99,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2016第6名、2017第5名、2020第4名，显示成年职业题材的持续认可。",
-      "tags": ["电台职业", "成年女性", "失败人生", "即兴广播", "都市职场", "口述叙事", "强声线主角", "北海道", "荒诞喜剧"],
+      "tags": [
+        "电台职业",
+        "成年女性",
+        "失败人生",
+        "即兴广播",
+        "都市职场",
+        "口述叙事",
+        "强声线主角",
+        "北海道",
+        "荒诞喜剧"
+      ],
       "protagonist_role": "失恋又失业边缘的餐厅女店员，凭失控般的口才误入广播行业。",
       "narrative_features": "对白、独白、广播剧与现实事件互相改写；把“说话能力”变成职业行动与剧情战斗。",
       "why_included": "扩展了现代世界的可玩身份：主播、编辑、制作人、餐饮从业者都能成为主角，而非只能侦探或战士。",
-      "sources": ["https://www.mangataisho.com/archives/2016.html", "https://www.mangataisho.com/archives/2020.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2016.html",
+        "https://www.mangataisho.com/archives/2020.html"
+      ]
     },
     {
       "region": "日本",
@@ -73,11 +128,23 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2016第11名。",
-      "tags": ["家业继承", "餐饮职业", "DJ文化", "跨行业类比", "青年成长", "都市夜生活", "技能修行", "喜剧"],
+      "tags": [
+        "家业继承",
+        "餐饮职业",
+        "DJ文化",
+        "跨行业类比",
+        "青年成长",
+        "都市夜生活",
+        "技能修行",
+        "喜剧"
+      ],
       "protagonist_role": "炸猪排店继承人，同时成为新人DJ；不是放弃日常职业去冒险，而是让两种职业互相解释。",
       "narrative_features": "把油锅控温、上菜节奏与舞池控场并置，靠结构类比制造成长与爽感。",
       "why_included": "提示职业组合本身就能形成新类型，标签系统应允许“餐饮×音乐”“家业×夜生活”等自由拼接。",
-      "sources": ["https://www.mangataisho.com/archives/2016.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2016.html"
+      ]
     },
     {
       "region": "日本",
@@ -88,11 +155,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "入围2016“下一部漫画大赏”Web部门；新潮社官方将其定义为在巨大废墟中珍惜汤、机器与微小体验的“温和反乌托邦”。",
-      "tags": ["末日", "少女双人", "废墟旅行", "低事件密度", "物资生存", "生活哲学", "载具", "无宏大使命", "治愈与虚无"],
+      "tags": [
+        "末日",
+        "少女双人",
+        "废墟旅行",
+        "低事件密度",
+        "物资生存",
+        "生活哲学",
+        "载具",
+        "无宏大使命",
+        "治愈与虚无"
+      ],
       "protagonist_role": "文明末期的两名普通少女旅行者，目标只是继续移动、寻找食物并理解遗迹。",
       "narrative_features": "以微小日常承载终末感，允许沉默、空镜和哲学对话，冲突不是每回合都升级。",
       "why_included": "为末日题材提供“没有阴谋、没有救世任务也能成立”的低压力玩法范本。",
-      "sources": ["https://tsugimanga.jp/winner/2016/web", "https://www.shinchosha.co.jp/book/771781/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2016/web",
+        "https://www.shinchosha.co.jp/book/771781/"
+      ]
     },
     {
       "region": "日本",
@@ -103,11 +184,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "列入漫画大赏2016一次选考；讲谈社官方称其为连载首回即获强烈反响的细胞拟人化作品，系列后来突破千万部。",
-      "tags": ["人体拟人", "细胞视角", "职业群像", "微观世界", "教育娱乐", "灾害处置", "岗位协作", "单元剧", "系统性世界观"],
+      "tags": [
+        "人体拟人",
+        "细胞视角",
+        "职业群像",
+        "微观世界",
+        "教育娱乐",
+        "灾害处置",
+        "岗位协作",
+        "单元剧",
+        "系统性世界观"
+      ],
       "protagonist_role": "红细胞、白细胞等无数岗位人员构成群体主角，人体是城市也是世界。",
       "narrative_features": "真实生理过程被翻译成物流、治安、工程与战争；每个器官和细胞都可成为独立职业线。",
       "why_included": "说明任何系统都能被角色化和职业化，适合生成城市、飞船、宗门、企业内部的多岗位叙事。",
-      "sources": ["https://www.mangataisho.com/archives/2016.html", "https://www.kodansha.co.jp/titles/1000025976"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2016.html",
+        "https://www.kodansha.co.jp/titles/1000025976"
+      ]
     },
     {
       "region": "日本",
@@ -118,11 +213,25 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "讲谈社官方称原Web小说创下记录性PV并由原作者完全监修漫画化；漫画后来获第46回讲谈社漫画赏少年部门。",
-      "tags": ["非人转生", "史莱姆", "捕食复制", "魔物共同体", "建国", "领地经营", "外交", "种族进化", "技能系统", "文明建设"],
+      "tags": [
+        "非人转生",
+        "史莱姆",
+        "捕食复制",
+        "魔物共同体",
+        "建国",
+        "领地经营",
+        "外交",
+        "种族进化",
+        "技能系统",
+        "文明建设"
+      ],
       "protagonist_role": "低阶魔物身体中的前上班族，逐渐成为多种族聚落的协调者与统治者。",
       "narrative_features": "从身体能力试验扩张到命名、生产、外交和国家治理；成长不仅是战力，也是组织规模。",
       "why_included": "是异种转生由“猎奇身份”转向共同体经营的关键范本，适合拆出身体、种族、治理三个独立标签轴。",
-      "sources": ["https://www.kodansha.co.jp/titles/1000026036"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.kodansha.co.jp/titles/1000026036"
+      ]
     },
     {
       "region": "日本",
@@ -133,11 +242,26 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "KADOKAWA官方漫画第1卷于2016年7月出版，并标明原作获“成为小说家吧”2015年度榜第1。",
-      "tags": ["异种转生", "蜘蛛主角", "地下迷宫", "弱小开局", "技能进化", "单人生存", "内心吐槽", "捕食", "平行时间线", "非人感官"],
+      "tags": [
+        "异种转生",
+        "蜘蛛主角",
+        "地下迷宫",
+        "弱小开局",
+        "技能进化",
+        "单人生存",
+        "内心吐槽",
+        "捕食",
+        "平行时间线",
+        "非人感官"
+      ],
       "protagonist_role": "转生为迷宫底层小蜘蛛的女高中生，早期几乎没有人类社交资源。",
       "narrative_features": "用单人内心戏、环境利用和进化树支撑长段生存；后期通过多线时间差重构世界真相。",
       "why_included": "适合抽取“身体限制真正参与玩法”的非人模板，而不是只换外观仍按人类行动。",
-      "sources": ["https://www.kadokawa.co.jp/product/321603000483/", "https://kumo-anime.com/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.kadokawa.co.jp/product/321603000483/",
+        "https://kumo-anime.com/"
+      ]
     },
     {
       "region": "日本",
@@ -148,11 +272,26 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "KADOKAWA官方漫画第1卷于2016年12月出版，随后2017年动画化。",
-      "tags": ["性别转换转生", "幼女身体", "架空世界大战", "军队组织", "官僚制", "现代职业伦理", "反神", "军事后勤", "不可靠自我评价", "黑色讽刺"],
+      "tags": [
+        "性别转换转生",
+        "幼女身体",
+        "架空世界大战",
+        "军队组织",
+        "官僚制",
+        "现代职业伦理",
+        "反神",
+        "军事后勤",
+        "不可靠自我评价",
+        "黑色讽刺"
+      ],
       "protagonist_role": "现代精英上班族转生为帝国幼女军官，追求安全后方却不断被制度推上前线。",
       "narrative_features": "主角主观目标、上级解读与客观后果三者错位；军事行动与文书、晋升、资源同等重要。",
       "why_included": "扩展了转生后的年龄、性别与社会制度错位，也展示“误解型上升”可用于严肃架空史。",
-      "sources": ["https://www.kadokawa.co.jp/product/321608000490/", "https://license.kadokawa.co.jp/anime/2017winter/entry-772.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.kadokawa.co.jp/product/321608000490/",
+        "https://license.kadokawa.co.jp/anime/2017winter/entry-772.html"
+      ]
     },
     {
       "region": "日本",
@@ -163,11 +302,24 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2016第3名。",
-      "tags": ["爵士乐", "职业梦想", "乐器训练", "地方青年", "都市迁移", "现场演出", "团队磨合", "无超能力成长", "热血职业"],
+      "tags": [
+        "爵士乐",
+        "职业梦想",
+        "乐器训练",
+        "地方青年",
+        "都市迁移",
+        "现场演出",
+        "团队磨合",
+        "无超能力成长",
+        "热血职业"
+      ],
       "protagonist_role": "从仙台出发、自学萨克斯的普通高中生，以演奏者而非偶像或天才作曲家身份成长。",
       "narrative_features": "用画面节奏、观众反应与反复练习表现无法直接听见的音乐；失败演出也是成长节点。",
       "why_included": "说明纯职业技能与身体训练也能产生少年漫画式升级感，可迁移到音乐、舞台、手艺和竞技叙事。",
-      "sources": ["https://www.mangataisho.com/archives/2016.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2016.html"
+      ]
     },
     {
       "region": "日本",
@@ -178,11 +330,24 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2017大赏。",
-      "tags": ["天才作家", "出版行业", "编辑职业", "文学奖", "创作者生态", "强势女主", "反社会性", "媒体关注", "才能与伦理"],
+      "tags": [
+        "天才作家",
+        "出版行业",
+        "编辑职业",
+        "文学奖",
+        "创作者生态",
+        "强势女主",
+        "反社会性",
+        "媒体关注",
+        "才能与伦理"
+      ],
       "protagonist_role": "拒绝被行业规范驯化的高中生小说天才；编辑、作家与媒体共同构成职业群像。",
       "narrative_features": "将创作才能带来的快感与人格冲突并列，行业流程本身持续制造剧情。",
       "why_included": "表明“写作者、编辑、出版人”也能形成高张力世界，现代职业线不必依赖犯罪阴谋。",
-      "sources": ["https://www.mangataisho.com/archives/2017.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2017.html"
+      ]
     },
     {
       "region": "日本",
@@ -193,11 +358,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2018第5名，作品于2016末至2017形成首轮单行本可见度。",
-      "tags": ["非人主角", "不死", "形态继承", "观察人类", "跨世代", "旅行", "记忆载体", "文明变迁", "失去与学习", "长时间尺度"],
+      "tags": [
+        "非人主角",
+        "不死",
+        "形态继承",
+        "观察人类",
+        "跨世代",
+        "旅行",
+        "记忆载体",
+        "文明变迁",
+        "失去与学习",
+        "长时间尺度"
+      ],
       "protagonist_role": "最初没有人格的球体，通过接触与死亡继承形态，逐步学习成为“人”。",
       "narrative_features": "主角身份不断改变，配角的一生可成为一段完整章节；死亡既是损失也是记忆写入。",
       "why_included": "为非人、长生与跨时代主角提供真正开放的身份模型，角色不需固定种族或职业。",
-      "sources": ["https://www.mangataisho.com/archives/2018.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2018.html"
+      ]
     },
     {
       "region": "日本",
@@ -208,11 +387,24 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2018第11名。",
-      "tags": ["儿童群像", "封闭设施", "智斗逃亡", "照护制度", "反乌托邦", "信息差", "集体决策", "地图探索", "无成人救世主"],
+      "tags": [
+        "儿童群像",
+        "封闭设施",
+        "智斗逃亡",
+        "照护制度",
+        "反乌托邦",
+        "信息差",
+        "集体决策",
+        "地图探索",
+        "无成人救世主"
+      ],
       "protagonist_role": "福利院儿童作为集体行动者，知识、年龄、体能与照护责任彼此冲突。",
       "narrative_features": "先将熟悉日常重新解释为制度恐怖，再以计划、伪装、训练和信任推进。",
       "why_included": "提供“弱势群体凭组织与信息行动”的模板，身份限制能成为玩法而非简单惩罚。",
-      "sources": ["https://www.mangataisho.com/archives/2018.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2018.html"
+      ]
     },
     {
       "region": "日本",
@@ -223,11 +415,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "“下一部漫画大赏2018”纸本部门第2名，官方称其为恢复人类科学的工艺冒险。",
-      "tags": ["文明重建", "科学生产链", "知识型主角", "石器时代", "团队分工", "工艺升级", "资源勘探", "科技树", "社会制度", "科普"],
+      "tags": [
+        "文明重建",
+        "科学生产链",
+        "知识型主角",
+        "石器时代",
+        "团队分工",
+        "工艺升级",
+        "资源勘探",
+        "科技树",
+        "社会制度",
+        "科普"
+      ],
       "protagonist_role": "科学少年不是独自全能，而是依靠采集、工匠、体力、航海和沟通人才建立团队。",
       "narrative_features": "目标被拆成可视化科技树，每项发明都需要前置材料、工具与社会协作。",
       "why_included": "非常适合作为游戏中的生产链、研究、聚落升级和知识职业模板。",
-      "sources": ["https://tsugimanga.jp/winner/2018/comics"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2018/comics"
+      ]
     },
     {
       "region": "日本",
@@ -238,11 +444,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2018第7名。",
-      "tags": ["魔法工艺", "学徒", "绘制法术", "知识垄断", "残障议题", "师徒", "工坊生活", "伦理规则", "女性群像", "设计感"],
+      "tags": [
+        "魔法工艺",
+        "学徒",
+        "绘制法术",
+        "知识垄断",
+        "残障议题",
+        "师徒",
+        "工坊生活",
+        "伦理规则",
+        "女性群像",
+        "设计感"
+      ],
       "protagonist_role": "没有血统特权的乡村女孩进入魔法工坊学习，老师与同学各有专业和伦理困境。",
       "narrative_features": "魔法被定义为可学习的绘图技术，规则细节同时产生创造解法和制度冲突。",
       "why_included": "提示能力系统应允许学习、工艺、禁令与社会准入，而非只给主角天赋等级。",
-      "sources": ["https://www.mangataisho.com/archives/2018.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2018.html"
+      ]
     },
     {
       "region": "日本",
@@ -253,11 +473,24 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2018第8名。",
-      "tags": ["垂直世界", "探窟家职业", "异界生态", "遗物经济", "身体代价", "儿童冒险", "不可逆旅行", "童话恐怖", "环境叙事"],
+      "tags": [
+        "垂直世界",
+        "探窟家职业",
+        "异界生态",
+        "遗物经济",
+        "身体代价",
+        "儿童冒险",
+        "不可逆旅行",
+        "童话恐怖",
+        "环境叙事"
+      ],
       "protagonist_role": "见习探窟家少女与机器人少年向下探索，地形和返程诅咒决定行动边界。",
       "narrative_features": "每一层都有独立生态、资源与身体风险；越深入越难回头，天然形成阶段结构。",
       "why_included": "是“地点规则比主角身份更重要”的世界设计范例，适合生成有明确生态与代价的区域。",
-      "sources": ["https://www.mangataisho.com/archives/2018.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2018.html"
+      ]
     },
     {
       "region": "日本",
@@ -268,11 +501,26 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "TO Books长期并行推出多个篇章漫画线；官方特设截至2026年称全系列累计突破1200万部。",
-      "tags": ["幼女转生", "身体虚弱", "造纸印刷", "产业链", "平民生活", "阶层跃迁", "商业经营", "宗教政治", "知识传播", "家庭"],
+      "tags": [
+        "幼女转生",
+        "身体虚弱",
+        "造纸印刷",
+        "产业链",
+        "平民生活",
+        "阶层跃迁",
+        "商业经营",
+        "宗教政治",
+        "知识传播",
+        "家庭"
+      ],
       "protagonist_role": "转生为贫民病弱幼女的图书馆员，以家人与小作坊为起点造书。",
       "narrative_features": "每次跃迁都建立在材料、手艺、人脉和制度许可上；家庭、商业、神殿与贵族篇逐层换尺度。",
       "why_included": "是前世知识不直接等于无敌、而需穿过身体与阶层限制的长篇经营范本。",
-      "sources": ["https://www.tobooks.jp/booklove/", "https://www.tobooks.jp/contents/16165"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.tobooks.jp/booklove/",
+        "https://www.tobooks.jp/contents/16165"
+      ]
     },
     {
       "region": "日本",
@@ -283,11 +531,25 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "原作Web小说自2015连载；官方动画与GC Novels页面明确其“知性武器”主角、漫画及衍生线，系列后来突破350万部。",
-      "tags": ["器物转生", "智能武器", "共生双主角", "猫族少女", "师徒亲子", "技能收集", "奴隶解放", "装备视角", "无法独立行动"],
+      "tags": [
+        "器物转生",
+        "智能武器",
+        "共生双主角",
+        "猫族少女",
+        "师徒亲子",
+        "技能收集",
+        "奴隶解放",
+        "装备视角",
+        "无法独立行动"
+      ],
       "protagonist_role": "主角是必须被使用的剑，与被压迫的黑猫族少女共同成长；行动权天然共享。",
       "narrative_features": "武器和持有者形成双主体，身体限制迫使叙事围绕信任、装备、教学与共同战斗。",
       "why_included": "是非生命体主角最清晰的可玩模型之一，说明器物角色需要操作者关系而非硬改成人形。",
-      "sources": ["https://tenken-anime.com/s1/", "https://gcnovels.jp/sword/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tenken-anime.com/s1/",
+        "https://gcnovels.jp/sword/"
+      ]
     },
     {
       "region": "日本",
@@ -298,11 +560,25 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "Overlap官方于2017年9月启动漫画连载，并称原Web小说迅速获得人气；漫画第1卷2018年出版。",
-      "tags": ["亡灵养育", "第二人生", "宗教信仰", "师徒家庭", "边境开拓", "圣骑士", "成人仪式", "王道高幻想", "责任伦理"],
+      "tags": [
+        "亡灵养育",
+        "第二人生",
+        "宗教信仰",
+        "师徒家庭",
+        "边境开拓",
+        "圣骑士",
+        "成人仪式",
+        "王道高幻想",
+        "责任伦理"
+      ],
       "protagonist_role": "由骷髅战士、木乃伊神官与幽灵魔法师共同养大的少年，成年后选择神职和边境责任。",
       "narrative_features": "把转生背景压低，重点转向养育、信仰选择、成年礼与公共责任。",
       "why_included": "显示转生故事可以不依赖系统外挂，而以养父母、宗教和社会职责构建身份。",
-      "sources": ["https://blog.over-lap.co.jp/%E3%80%90%E3%82%B3%E3%83%9F%E3%83%83%E3%82%AF%E3%82%AC%E3%83%AB%E3%83%89%E3%80%917%E4%BD%9C%E5%93%81%E3%81%AE%E6%9C%80%E6%96%B0%E8%A9%B1%E3%82%92%E5%85%AC%E9%96%8B%EF%BC%81/", "https://www.over-lap.co.jp/Form/Product/ProductDetail.aspx?cat=CGB&pid=9784865543346&shop=0&swrd=&vid="]
+      "evidence_strength": "A",
+      "sources": [
+        "https://blog.over-lap.co.jp/%E3%80%90%E3%82%B3%E3%83%9F%E3%83%83%E3%82%AF%E3%82%AC%E3%83%AB%E3%83%89%E3%80%917%E4%BD%9C%E5%93%81%E3%81%AE%E6%9C%80%E6%96%B0%E8%A9%B1%E3%82%92%E5%85%AC%E9%96%8B%EF%BC%81/",
+        "https://www.over-lap.co.jp/Form/Product/ProductDetail.aspx?cat=CGB&pid=9784865543346&shop=0&swrd=&vid="
+      ]
     },
     {
       "region": "日本",
@@ -313,11 +589,26 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "Overlap官方称原作Web累计5.8亿PV、系列累计120万部（当时数据），并将漫画称为异世界料理漫画代表。",
-      "tags": ["召唤卷入者", "非勇者位", "网络超市", "料理", "旅行", "使魔", "商贸", "低政治参与", "日常冒险", "现代商品"],
+      "tags": [
+        "召唤卷入者",
+        "非勇者位",
+        "网络超市",
+        "料理",
+        "旅行",
+        "使魔",
+        "商贸",
+        "低政治参与",
+        "日常冒险",
+        "现代商品"
+      ],
       "protagonist_role": "被勇者召唤顺带卷入的普通上班族，主动离开王国，以做饭和交易维持旅程。",
       "narrative_features": "食材采购、料理、魔物解体和商会往来构成循环；强大使魔保护主角但也制造喂养需求。",
       "why_included": "把“不是勇者”变成稳定叙事位置，适合旅行、后勤、料理与商贸型玩家。",
-      "sources": ["https://comic-gardo.com/episode/10834108156661710941", "https://over-lap.co.jp/cam/skill/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://comic-gardo.com/episode/10834108156661710941",
+        "https://over-lap.co.jp/cam/skill/"
+      ]
     },
     {
       "region": "日本",
@@ -328,11 +619,26 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "Square Enix官方漫画第1卷于2017年出版，并将其定义为现代食堂与异世界各族顾客相连的料理幻想。",
-      "tags": ["跨世界店铺", "料理", "异种顾客", "群像单元剧", "文化交流", "经营", "固定场所", "无战斗主线", "顾客视角", "温暖日常"],
+      "tags": [
+        "跨世界店铺",
+        "料理",
+        "异种顾客",
+        "群像单元剧",
+        "文化交流",
+        "经营",
+        "固定场所",
+        "无战斗主线",
+        "顾客视角",
+        "温暖日常"
+      ],
       "protagonist_role": "店主与每周来访的多种族顾客共同构成主角群，许多章节从顾客生活出发。",
       "narrative_features": "一扇门连接不同地区，固定店铺成为低成本世界接口；每道菜触发一段人物史。",
       "why_included": "适合作为酒馆、诊所、书店、澡堂等“固定据点接待全世界”的AI游戏结构。",
-      "sources": ["https://orig-magazine.jp.square-enix.com/top/comics/detail/9784757553910/", "https://orig-magazine.jp.square-enix.com/top/anime/detail/isekai-shokudo/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://orig-magazine.jp.square-enix.com/top/comics/detail/9784757553910/",
+        "https://orig-magazine.jp.square-enix.com/top/anime/detail/isekai-shokudo/"
+      ]
     },
     {
       "region": "日本",
@@ -343,11 +649,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "第21回文化厅媒体艺术祭漫画部门优秀赏；评审称其以短篇连续剧细密模拟近未来AI社会。",
-      "tags": ["近未来", "仿生人", "AI伦理", "医生职业", "医疗单元剧", "人格复制", "数字记忆", "社会制度", "人机共存", "案例叙事"],
+      "tags": [
+        "近未来",
+        "仿生人",
+        "AI伦理",
+        "医生职业",
+        "医疗单元剧",
+        "人格复制",
+        "数字记忆",
+        "社会制度",
+        "人机共存",
+        "案例叙事"
+      ],
       "protagonist_role": "治疗人类与仿生人的医生，通过患者案例观察技术如何改变家庭、身份和死亡。",
       "narrative_features": "每个短篇从具体生活难题切入，不把AI只写成叛乱阴谋，而作为已进入婚姻、教育、医疗的社会成员。",
       "why_included": "为赛博世界提供医院、社区和普通家庭视角，避免赛博题材被锁死为黑客、佣兵和巨企阴谋。",
-      "sources": ["https://www.j-mediaarts.jp/award/previous/21st/manga/index.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.j-mediaarts.jp/award/previous/21st/manga/index.html"
+      ]
     },
     {
       "region": "日本",
@@ -358,11 +678,26 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2018大赏，同时获第21回文化厅媒体艺术祭漫画部门新人赏。",
-      "tags": ["全动物社会", "肉食与草食", "校园群像", "身体欲望", "种族偏见", "社会生态", "戏剧社", "犯罪与日常", "身份认同", "成年成长"],
+      "tags": [
+        "全动物社会",
+        "肉食与草食",
+        "校园群像",
+        "身体欲望",
+        "种族偏见",
+        "社会生态",
+        "戏剧社",
+        "犯罪与日常",
+        "身份认同",
+        "成年成长"
+      ],
       "protagonist_role": "性格温和的灰狼学生在肉食身体、社会偏见与跨种族感情之间寻找位置。",
       "narrative_features": "动物物种不是装饰，而决定体格、食欲、职业预期与法律；学校只是观察整个社会的缩影。",
       "why_included": "为兽人世界提供系统性种族设定范本：身体、文化与制度必须共同影响剧情。",
-      "sources": ["https://www.mangataisho.com/archives/2018.html", "https://www.j-mediaarts.jp/award/previous/21st/manga/index.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2018.html",
+        "https://www.j-mediaarts.jp/award/previous/21st/manga/index.html"
+      ]
     },
     {
       "region": "日本",
@@ -373,11 +708,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2018第9名。",
-      "tags": ["动画制作", "女子社团", "创作职业", "想象可视化", "制片管理", "预算", "场景设计", "团队互补", "元创作", "校园"],
+      "tags": [
+        "动画制作",
+        "女子社团",
+        "创作职业",
+        "想象可视化",
+        "制片管理",
+        "预算",
+        "场景设计",
+        "团队互补",
+        "元创作",
+        "校园"
+      ],
       "protagonist_role": "设定迷、动画师型少女与擅长谈判的制片人组成创作团队。",
       "narrative_features": "现实场地会在画面中变成想象世界；创作欲望必须经过预算、工期、宣传和分工落地。",
       "why_included": "可直接转化为“创作项目模拟”玩法，也说明想象场景不等于现实事件，能减少无关奇观插入。",
-      "sources": ["https://www.mangataisho.com/archives/2018.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2018.html"
+      ]
     },
     {
       "region": "日本",
@@ -388,11 +737,24 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2018第10名。",
-      "tags": ["电影工业", "制片人", "新人导演", "剪辑", "选角", "好莱坞式片场", "元叙事", "短篇结构", "职业群像"],
+      "tags": [
+        "电影工业",
+        "制片人",
+        "新人导演",
+        "剪辑",
+        "选角",
+        "好莱坞式片场",
+        "元叙事",
+        "短篇结构",
+        "职业群像"
+      ],
       "protagonist_role": "幕后制片人与被提拔的新人导演，而不是银幕明星。",
       "narrative_features": "把剧本、拍摄、表演与剪辑分别变成冲突，尤其强调删减和选择如何创造作品。",
       "why_included": "补足幕后职业、项目管理和“创作一部作品”型主线。",
-      "sources": ["https://www.mangataisho.com/archives/2018.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2018.html"
+      ]
     },
     {
       "region": "日本",
@@ -403,11 +765,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "“下一部漫画大赏2018”Web部门第3名，官方简介为“原最凶黑道走主夫之道”。",
-      "tags": ["退役黑道", "主夫", "家务", "婚后日常", "反差喜剧", "社区生活", "料理", "购物", "身份余波", "短篇"],
+      "tags": [
+        "退役黑道",
+        "主夫",
+        "家务",
+        "婚后日常",
+        "反差喜剧",
+        "社区生活",
+        "料理",
+        "购物",
+        "身份余波",
+        "短篇"
+      ],
       "protagonist_role": "离开黑道、全职照料家庭的成年男性；能力用于清洁、采购和邻里活动。",
       "narrative_features": "用犯罪片镜头语言拍家务，把过去身份留下的误会转化为日常笑料而非强迫复出。",
       "why_included": "是“退队/退休后真的开始第二职业”的典型，旧身份可以保留风味而不吞噬新生活。",
-      "sources": ["https://tsugimanga.jp/winner/2018/web"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2018/web"
+      ]
     },
     {
       "region": "日本",
@@ -418,11 +794,24 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "“下一部漫画大赏2018”Web部门第2名；官方奖项页概括为想被爱之猫与大叔的温暖故事。",
-      "tags": ["弃猫视角", "中年鳏夫", "人宠双视角", "丧偶疗愈", "收养", "家庭重建", "低压力日常", "内心独白", "治愈"],
+      "tags": [
+        "弃猫视角",
+        "中年鳏夫",
+        "人宠双视角",
+        "丧偶疗愈",
+        "收养",
+        "家庭重建",
+        "低压力日常",
+        "内心独白",
+        "治愈"
+      ],
       "protagonist_role": "宠物店里无人选择的成年猫与失去妻子的中年音乐家组成双主角。",
       "narrative_features": "人和猫对同一动作有不同理解，依靠小事逐步建立安全感。",
       "why_included": "补充动物、宠物、照护者与中老年主角，证明低冲突关系成长也能长期连载。",
-      "sources": ["https://tsugimanga.jp/winner/2018/web"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2018/web"
+      ]
     },
     {
       "region": "日本",
@@ -433,11 +822,26 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "KADOKAWA官方漫画第1卷2018年11月出版；当时原Web累计约6000万PV、系列25万部。",
-      "tags": ["VRMMO", "女性玩家", "误打误撞配点", "极端build", "系统漏洞", "女性友情", "轻松探索", "无死亡代价", "公会", "游戏运营"],
+      "tags": [
+        "VRMMO",
+        "女性玩家",
+        "误打误撞配点",
+        "极端build",
+        "系统漏洞",
+        "女性友情",
+        "轻松探索",
+        "无死亡代价",
+        "公会",
+        "游戏运营"
+      ],
       "protagonist_role": "不懂攻略的新手女性玩家，因怕痛全点防御，意外创造非常规玩法。",
       "narrative_features": "乐趣来自玩家自由试验与运营方补丁，不要求现实穿越或承担救世使命。",
       "why_included": "提供真正“只是在玩游戏”的世界框架，支持非最优build、休闲玩家和系统涌现。",
-      "sources": ["https://www.kadokawa.co.jp/product/321808000524/", "https://www.kadokawa.co.jp/topics/2670/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.kadokawa.co.jp/product/321808000524/",
+        "https://www.kadokawa.co.jp/topics/2670/"
+      ]
     },
     {
       "region": "日本",
@@ -448,11 +852,24 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "KADOKAWA官方漫画第1卷于2018年3月出版，定位为Web发农业慢生活漫画化。",
-      "tags": ["异世界农业", "慢生活", "聚落建设", "万能农具", "多种族移民", "村长", "生产经营", "季节循环", "社区日常"],
+      "tags": [
+        "异世界农业",
+        "慢生活",
+        "聚落建设",
+        "万能农具",
+        "多种族移民",
+        "村长",
+        "生产经营",
+        "季节循环",
+        "社区日常"
+      ],
       "protagonist_role": "病死后获得健康身体的青年，从独居农夫逐步成为多种族村落管理者。",
       "narrative_features": "建屋、耕作、畜牧、迎接居民与村务形成节拍；规模扩张来自日常积累。",
       "why_included": "提供农耕、定居、社区治理而非冒险打怪的长线驱动。",
-      "sources": ["https://www.kadokawa.co.jp/product/321710000308/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.kadokawa.co.jp/product/321710000308/"
+      ]
     },
     {
       "region": "日本",
@@ -463,11 +880,25 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "一迅社官方将其称为热门文库作品的漫画化，并以恶役令嬢破灭回避为核心介绍。",
-      "tags": ["乙女游戏", "恶役令嬢", "破灭回避", "童年改写", "全员好感", "男女双向暧昧", "天然误解", "农业爱好", "原作知识", "友情重构"],
+      "tags": [
+        "乙女游戏",
+        "恶役令嬢",
+        "破灭回避",
+        "童年改写",
+        "全员好感",
+        "男女双向暧昧",
+        "天然误解",
+        "农业爱好",
+        "原作知识",
+        "友情重构"
+      ],
       "protagonist_role": "转生为游戏反派的少女，从幼年起改变关系，不必按游戏设定攻略男性。",
       "narrative_features": "原作坏结局提供风险，但日常善意不断使角色关系偏离剧本，形成无自觉万人迷喜剧。",
       "why_included": "是乙女游戏穿越从“攻略者”转向“反派位置改写”的代表，也天然支持百合、友情与无固定路线。",
-      "sources": ["https://www.ichijinsha.co.jp/stories/comic-zerosum/otomegame/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.ichijinsha.co.jp/stories/comic-zerosum/otomegame/"
+      ]
     },
     {
       "region": "日本",
@@ -478,11 +909,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "KADOKAWA官方列第1卷2018年11月出版；后续宣布动画化时累计突破150万部。",
-      "tags": ["异世界归来", "中年主角", "回忆套层", "不可靠叙述", "世嘉游戏文化", "直播观看", "错失恋爱信号", "现代同居", "反穿越后日谈"],
+      "tags": [
+        "异世界归来",
+        "中年主角",
+        "回忆套层",
+        "不可靠叙述",
+        "世嘉游戏文化",
+        "直播观看",
+        "错失恋爱信号",
+        "现代同居",
+        "反穿越后日谈"
+      ],
       "protagonist_role": "昏迷17年后归来的中年舅舅与观看其魔法回忆的外甥组成叙述搭档。",
       "narrative_features": "冒险已发生，现实观众不断质疑和重解过去；叙述者因外貌偏见和社交迟钝遗漏大量情感信息。",
       "why_included": "提供“穿越结束后”与旁观回放型结构，也允许玩家不是勇者而是讲述者、听众或家属。",
-      "sources": ["https://store.kadokawa.co.jp/shop/series/series00088403?sort=sp", "https://www.kadokawa.co.jp/topics/5939/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://store.kadokawa.co.jp/shop/series/series00088403?sort=sp",
+        "https://www.kadokawa.co.jp/topics/5939/"
+      ]
     },
     {
       "region": "日本",
@@ -493,11 +938,26 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "Square Enix官方漫画第1卷于2018年8月出版，定义为两名女性进入网络怪谈实体化里世界的探险生存。",
-      "tags": ["百合", "女性双主角", "都市传说", "网络怪谈", "异空间", "研究", "挣钱", "枪械", "失踪者寻找", "第一人称认知偏差"],
+      "tags": [
+        "百合",
+        "女性双主角",
+        "都市传说",
+        "网络怪谈",
+        "异空间",
+        "研究",
+        "挣钱",
+        "枪械",
+        "失踪者寻找",
+        "第一人称认知偏差"
+      ],
       "protagonist_role": "孤僻废墟爱好者与寻找失踪女性的行动派组成大学生探险搭档。",
       "narrative_features": "怪异来自真实网络民俗，观察方式会反过来改变怪物；关系线与探索线同步推进。",
       "why_included": "是百合关系不被限定为校园恋爱、而能成为成人怪异探险主轴的代表。",
-      "sources": ["https://magazine.jp.square-enix.com/top/comics/detail/9784757558052/", "https://magazine.jp.square-enix.com/gangan/introduction/otherside_picnic/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://magazine.jp.square-enix.com/top/comics/detail/9784757558052/",
+        "https://magazine.jp.square-enix.com/gangan/introduction/otherside_picnic/"
+      ]
     },
     {
       "region": "日本",
@@ -508,11 +968,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2019大赏；官方评语强调其5卷完结、长线伏笔集中回收。",
-      "tags": ["宇宙漂流", "学生群像", "行星生态", "归家旅程", "生存资源", "身份谜题", "团队轮值", "完结型伏笔", "科幻冒险", "轻喜剧"],
+      "tags": [
+        "宇宙漂流",
+        "学生群像",
+        "行星生态",
+        "归家旅程",
+        "生存资源",
+        "身份谜题",
+        "团队轮值",
+        "完结型伏笔",
+        "科幻冒险",
+        "轻喜剧"
+      ],
       "protagonist_role": "参加行星露营却被抛到太空的学生团队，每个人的技能和家庭背景都决定生存贡献。",
       "narrative_features": "一星一单元的生态挑战与全篇身份谜题并行；预先限定篇幅，伏笔密度高而非无限加阴谋。",
       "why_included": "可作为有明确终点、团队岗位和章节化地点的中篇游戏结构。",
-      "sources": ["https://www.mangataisho.com/archives/2019.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2019.html"
+      ]
     },
     {
       "region": "日本",
@@ -523,11 +997,26 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2019第8名，并获第22回文化厅媒体艺术祭漫画部门新人赏。",
-      "tags": ["老年主角", "跨代友情", "BL同好", "读者视角", "同人创作", "书店", "女性友谊", "低压力日常", "兴趣共同体", "晚年生活"],
+      "tags": [
+        "老年主角",
+        "跨代友情",
+        "BL同好",
+        "读者视角",
+        "同人创作",
+        "书店",
+        "女性友谊",
+        "低压力日常",
+        "兴趣共同体",
+        "晚年生活"
+      ],
       "protagonist_role": "偶然买到BL漫画的75岁寡妇与害羞的女高中店员成为朋友。",
       "narrative_features": "没有“拯救老人”或“教育少女”的单向关系，两人围绕阅读、活动和创作互相推动。",
       "why_included": "扩大年龄与关系轴，说明共同兴趣比血缘、恋爱和主线使命更能自然建立长期关系。",
-      "sources": ["https://www.mangataisho.com/archives/2019.html", "https://www.j-mediaarts.jp/award/previous/22nd/manga/index.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2019.html",
+        "https://www.j-mediaarts.jp/award/previous/22nd/manga/index.html"
+      ]
     },
     {
       "region": "日本",
@@ -538,11 +1027,25 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "“下一部漫画大赏2019”纸本部门第1名，官方简介以原药师少女猫猫用好奇心推动宫中事件为核心。",
-      "tags": ["后宫", "药师职业", "医学推理", "观察型女主", "宫廷制度", "毒物", "有限信息", "身份隐瞒", "女性劳动", "单元案件"],
+      "tags": [
+        "后宫",
+        "药师职业",
+        "医学推理",
+        "观察型女主",
+        "宫廷制度",
+        "毒物",
+        "有限信息",
+        "身份隐瞒",
+        "女性劳动",
+        "单元案件"
+      ],
       "protagonist_role": "被卖入后宫的药师女儿，以专业知识自保和查验异常，不追求成为妃嫔或权力中心。",
       "narrative_features": "谜题通常从症状、习俗与物质条件推断；主角只知道其社会位置能接触到的信息。",
       "why_included": "是宫廷题材的职业观察者路线，能避免人人都在讲巨大阴谋，更多事件源于卫生、礼制和利益。",
-      "sources": ["https://tsugimanga.jp/winner/2019/comics"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2019/comics"
+      ]
     },
     {
       "region": "日本",
@@ -553,11 +1056,26 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "“下一部漫画大赏2019”纸本部门第2名，官方概括为社会最底层的血腥电锯恶魔黑暗英雄。",
-      "tags": ["贫穷主角", "人体恶魔融合", "底层欲望", "公共机构", "恶魔猎人", "黑色荒诞", "电影感", "不稳定家庭", "身体改造", "反英雄"],
+      "tags": [
+        "贫穷主角",
+        "人体恶魔融合",
+        "底层欲望",
+        "公共机构",
+        "恶魔猎人",
+        "黑色荒诞",
+        "电影感",
+        "不稳定家庭",
+        "身体改造",
+        "反英雄"
+      ],
       "protagonist_role": "被债务剥夺正常生活的少年与恶魔宠物融合，进入政府猎魔机构。",
       "narrative_features": "主角愿望极其日常，宏大冲突不断撞上吃饭、住房、亲密需求；画面借鉴电影剪辑。",
       "why_included": "展示低层次欲望也能成为强主线，并提醒系统不要把所有主角自动提升为正义救世者。",
-      "sources": ["https://tsugimanga.jp/winner/2019/comics", "https://www.mangataisho.com/archives/2020.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2019/comics",
+        "https://www.mangataisho.com/archives/2020.html"
+      ]
     },
     {
       "region": "日本",
@@ -568,11 +1086,26 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "“下一部漫画大赏2019”Web部门第1名，漫画大赏2020第2名。",
-      "tags": ["伪装家庭", "间谍", "杀手", "读心儿童", "多视角秘密", "冷战架空", "家庭喜剧", "学校", "任务与日常", "选择家庭"],
+      "tags": [
+        "伪装家庭",
+        "间谍",
+        "杀手",
+        "读心儿童",
+        "多视角秘密",
+        "冷战架空",
+        "家庭喜剧",
+        "学校",
+        "任务与日常",
+        "选择家庭"
+      ],
       "protagonist_role": "为任务组成家庭的间谍父亲、杀手母亲和读心养女；彼此都误认其他人为普通人。",
       "narrative_features": "同一场景因三人所知不同产生多层喜剧；任务主线与真正形成家庭的日常线相互支撑。",
       "why_included": "是信息差可以轻松、温暖而非全员谜语人的最佳例子；秘密必须带来具体行动和误会。",
-      "sources": ["https://tsugimanga.jp/winner/2019/web", "https://www.mangataisho.com/archives/2020.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2019/web",
+        "https://www.mangataisho.com/archives/2020.html"
+      ]
     },
     {
       "region": "日本",
@@ -583,11 +1116,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "讲谈社官方持续刊载并动画化；作品以调查员的真实任务并非冒险、而是检查世界异常为核心反转。",
-      "tags": ["游戏测试员", "无法登出", "Bug世界", "元游戏", "职业伦理", "NPC关系", "规则漏洞", "调试", "玩家权力滥用", "世界真实性"],
+      "tags": [
+        "游戏测试员",
+        "无法登出",
+        "Bug世界",
+        "元游戏",
+        "职业伦理",
+        "NPC关系",
+        "规则漏洞",
+        "调试",
+        "玩家权力滥用",
+        "世界真实性"
+      ],
       "protagonist_role": "被困在VR游戏中的QA测试员，仍坚持记录错误和遵守测试职责。",
       "narrative_features": "奇观、怪物与物理异常都可被解释为Bug；其他测试员用调试权限作恶，形成职业伦理冲突。",
       "why_included": "非常适合AI游戏的“世界规则校验”层，也提供玩家、NPC、测试员三种不同叙事位置。",
-      "sources": ["https://www.kodansha.co.jp/titles/1000037486"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.kodansha.co.jp/titles/1000037486"
+      ]
     },
     {
       "region": "日本",
@@ -598,11 +1145,25 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "KADOKAWA官方漫画第1卷于2019年12月出版，并明确其“游戏実況成为神谕、连接现实与乙女游戏”的结构。",
-      "tags": ["乙女游戏", "恶役令嬢", "游戏実況", "神谕", "跨世界通信", "外部观察者", "多层叙事", "破灭回避", "双世界恋爱", "角色误读修正"],
+      "tags": [
+        "乙女游戏",
+        "恶役令嬢",
+        "游戏実況",
+        "神谕",
+        "跨世界通信",
+        "外部观察者",
+        "多层叙事",
+        "破灭回避",
+        "双世界恋爱",
+        "角色误读修正"
+      ],
       "protagonist_role": "现实高中生不是转生者，而以玩家/解说者身份被游戏王子听见；游戏角色仍有主体性。",
       "narrative_features": "外部解说把“恶毒台词”翻译成害羞本心，构成第三方叙事干预；现实线和游戏线互相影响。",
       "why_included": "拓宽“进入游戏世界”的方式：玩家可以是旁白、观众、神谕来源，不必占据原角色身体。",
-      "sources": ["https://www.kadokawa.co.jp/product/321909000329/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.kadokawa.co.jp/product/321909000329/"
+      ]
     },
     {
       "region": "日本",
@@ -613,11 +1174,25 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "Square Enix官方漫画第1卷2019年11月出版，并称其为Web小说改编的贵族群像、犯罪悬疑与女性搭档故事。",
-      "tags": ["被处刑恶女", "幽灵搭档", "胆小令嬢", "复仇", "贵族社会", "女性友谊", "身体借用", "群像", "犯罪悬疑", "过去案件"],
+      "tags": [
+        "被处刑恶女",
+        "幽灵搭档",
+        "胆小令嬢",
+        "复仇",
+        "贵族社会",
+        "女性友谊",
+        "身体借用",
+        "群像",
+        "犯罪悬疑",
+        "过去案件"
+      ],
       "protagonist_role": "诚实但软弱的普通子爵女与被处刑恶女幽灵形成共生搭档。",
       "narrative_features": "幽灵提供社交胆量与过去线索，活人提供身体和伦理约束；两种性格轮流主导场景。",
       "why_included": "提供“原反派幽灵×边缘令嬢”的双主角模型，反派不必被洗成同一种人格。",
-      "sources": ["https://magazine.jp.square-enix.com/top/comics/detail/9784757563704/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://magazine.jp.square-enix.com/top/comics/detail/9784757563704/"
+      ]
     },
     {
       "region": "日本",
@@ -628,11 +1203,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "集英社官方第1卷2019年出版；之后入围漫画大赏2021第9名。",
-      "tags": ["成年职场", "九龙城寨", "怀旧都市", "日常渗透SF", "身份复制", "记忆", "办公室恋爱", "城市作为角色", "慢谜题"],
+      "tags": [
+        "成年职场",
+        "九龙城寨",
+        "怀旧都市",
+        "日常渗透SF",
+        "身份复制",
+        "记忆",
+        "办公室恋爱",
+        "城市作为角色",
+        "慢谜题"
+      ],
       "protagonist_role": "在房产公司工作的成年女性，从日常工作与恋爱情绪中逐渐察觉自身身份异常。",
       "narrative_features": "SF真相长期埋在吃饭、带看房、同事交往和城市气味中，日常不是无关描写而是身份证据。",
       "why_included": "说明悬疑不必靠NPC故弄玄虚，可以由环境与日常细节逐步显影。",
-      "sources": ["https://www.shueisha.co.jp/books/items/contents.html?jdcn=08891488891488315501", "https://www.mangataisho.com/archives/2021.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.shueisha.co.jp/books/items/contents.html?jdcn=08891488891488315501",
+        "https://www.mangataisho.com/archives/2021.html"
+      ]
     },
     {
       "region": "日本",
@@ -643,11 +1232,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "KADOKAWA官方第1卷2019年7月出版，称其为在Twitter约20万关注基础上单行本化的话题作品。",
-      "tags": ["普通职业", "万事屋", "后勤支援", "开锁", "装备修理", "团队互补", "非最强", "短篇拼图", "异世界劳动", "被需要"],
+      "tags": [
+        "普通职业",
+        "万事屋",
+        "后勤支援",
+        "开锁",
+        "装备修理",
+        "团队互补",
+        "非最强",
+        "短篇拼图",
+        "异世界劳动",
+        "被需要"
+      ],
       "protagonist_role": "没有战斗外挂的维修万事屋，依靠现实工作经验补足冒险队缺口。",
       "narrative_features": "早期用多个短篇视角拼出队伍与世界，普通技能在正确情境中成为关键。",
       "why_included": "直接支持后勤、维修、锁匠等非战斗职业，也适合退队后重新找到团队位置的故事。",
-      "sources": ["https://www.kadokawa.co.jp/product/321902001483/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.kadokawa.co.jp/product/321902001483/"
+      ]
     },
     {
       "region": "日本",
@@ -658,11 +1261,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "第22回文化厅媒体艺术祭漫画部门大赏。",
-      "tags": ["机器人主角", "2048东京", "AI", "公司职员伪装", "自我升级", "机器人兄弟", "感情学习", "硬科幻", "赛博动作", "非人伦理"],
+      "tags": [
+        "机器人主角",
+        "2048东京",
+        "AI",
+        "公司职员伪装",
+        "自我升级",
+        "机器人兄弟",
+        "感情学习",
+        "硬科幻",
+        "赛博动作",
+        "非人伦理"
+      ],
       "protagonist_role": "在人类企业中伪装成田中仁的原型机器人，为遵守生存程序与兄弟机体战斗。",
       "narrative_features": "从机器人的计算和维护需求观察人类职场；情感不是初始属性，而是逐渐难以解释的变量。",
       "why_included": "为赛博世界补充机器人自身视角、设备维护和普通职场伪装，而非永远由人类黑客观察AI。",
-      "sources": ["https://www.j-mediaarts.jp/award/previous/22nd/manga/index.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.j-mediaarts.jp/award/previous/22nd/manga/index.html"
+      ]
     },
     {
       "region": "日本",
@@ -673,11 +1290,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2020大赏；官方评语强调将“热情”与“技术”放进美术大学考试。",
-      "tags": ["美术", "职业教育", "美大考试", "技能训练", "自我认同", "创作焦虑", "同学群像", "作品评价", "非战斗升级", "青春"],
+      "tags": [
+        "美术",
+        "职业教育",
+        "美大考试",
+        "技能训练",
+        "自我认同",
+        "创作焦虑",
+        "同学群像",
+        "作品评价",
+        "非战斗升级",
+        "青春"
+      ],
       "protagonist_role": "成绩和社交都不错却缺乏真实热情的高中生，从零开始备考美术大学。",
       "narrative_features": "把观察、构图、材料、讲评和考试拆为可训练技能；竞争者的生活条件和表达目的各不相同。",
       "why_included": "是知识/艺术型成长的高质量范本，适合替代简单经验值升级。",
-      "sources": ["https://www.mangataisho.com/archives/2020.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2020.html"
+      ]
     },
     {
       "region": "日本",
@@ -688,11 +1319,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "漫画大赏2020第3名。",
-      "tags": ["乡村转学生", "东京高中", "低戏剧日常", "同学群像", "关系修复", "女性友谊", "家庭背景", "成长", "无恶役", "温暖现实主义"],
+      "tags": [
+        "乡村转学生",
+        "东京高中",
+        "低戏剧日常",
+        "同学群像",
+        "关系修复",
+        "女性友谊",
+        "家庭背景",
+        "成长",
+        "无恶役",
+        "温暖现实主义"
+      ],
       "protagonist_role": "目标成为公务员的乡村优等生进入东京高中，与各类普通同学建立关系。",
       "narrative_features": "人物摩擦通常通过具体交流和反省解决；配角拥有独立生活，不围着主角秘密运转。",
       "why_included": "是反谜语人、反阴谋的校园群像样本，可用于生成自然社交而非连续戏剧危机。",
-      "sources": ["https://www.mangataisho.com/archives/2020.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.mangataisho.com/archives/2020.html"
+      ]
     },
     {
       "region": "日本",
@@ -703,11 +1348,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "“下一部漫画大赏2020”纸本部门第1名。",
-      "tags": ["规则异能", "否定能力", "不死", "不运", "条件智斗", "能力者组织", "世界循环", "双主角", "规则追加", "战斗喜剧"],
+      "tags": [
+        "规则异能",
+        "否定能力",
+        "不死",
+        "不运",
+        "条件智斗",
+        "能力者组织",
+        "世界循环",
+        "双主角",
+        "规则追加",
+        "战斗喜剧"
+      ],
       "protagonist_role": "接触他人会带来不幸的少女与渴望真正死亡的不死男子组成能力互补搭档。",
       "narrative_features": "能力由否定对象、触发条件和解释范围决定，战斗重点是发现规则而非比数值。",
       "why_included": "适合建立可验证、可钻研的异能规则系统，减少模型临场随意改判。",
-      "sources": ["https://tsugimanga.jp/winner/2020/comics"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2020/comics"
+      ]
     },
     {
       "region": "日本",
@@ -718,11 +1377,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "“下一部漫画大赏2020”纸本部门第2名，官方明确称其“败犬女主角为零”的多人数爱情喜剧。",
-      "tags": ["多伴侣恋爱", "命定系统", "全员平等", "自觉后宫", "元喜剧", "女友群像", "恋爱协商", "类型自嘲", "无败犬", "夸张日常"],
+      "tags": [
+        "多伴侣恋爱",
+        "命定系统",
+        "全员平等",
+        "自觉后宫",
+        "元喜剧",
+        "女友群像",
+        "恋爱协商",
+        "类型自嘲",
+        "无败犬",
+        "夸张日常"
+      ],
       "protagonist_role": "必须面对大量命定恋人的男主，但剧情把每位女友视为持续参与的主角而非一次性路线。",
       "narrative_features": "公开承认多角关系并反复处理成员加入、相处与群体活动，以元叙事挑战淘汰式后宫。",
       "why_included": "为多伴侣或群像恋爱提供“关系结构先声明、角色不被淘汰”的标签模型，而非默认争宠。",
-      "sources": ["https://tsugimanga.jp/winner/2020/comics"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2020/comics"
+      ]
     },
     {
       "region": "日本",
@@ -733,11 +1406,24 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "“下一部漫画大赏2020”Web部门第1名。",
-      "tags": ["中二视角", "慢热恋爱", "内心独白", "认知修正", "校园日常", "尴尬喜剧", "微小进展", "青春期", "非可靠自我形象"],
+      "tags": [
+        "中二视角",
+        "慢热恋爱",
+        "内心独白",
+        "认知修正",
+        "校园日常",
+        "尴尬喜剧",
+        "微小进展",
+        "青春期",
+        "非可靠自我形象"
+      ],
       "protagonist_role": "沉浸黑暗幻想的孤僻少年逐渐发现自己对开朗同学的判断和自我理解都不可靠。",
       "narrative_features": "戏剧来自观察细节和错误归因被纠正；亲密关系以很小但可累计的行动推进。",
       "why_included": "提供“不靠事件轰炸也能有进展”的恋爱节奏，适合AI游戏抑制无关大场面。",
-      "sources": ["https://tsugimanga.jp/winner/2020/web"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2020/web"
+      ]
     },
     {
       "region": "日本",
@@ -748,11 +1434,24 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "“下一部漫画大赏2020”Web部门第2名，官方称其为颠覆拷问概念的温馨拷问幻想。",
-      "tags": ["俘虏公主", "反转拷问", "食物诱惑", "敌我日常", "魔王城职场", "治愈", "单元喜剧", "无真实虐待", "关系软化"],
+      "tags": [
+        "俘虏公主",
+        "反转拷问",
+        "食物诱惑",
+        "敌我日常",
+        "魔王城职场",
+        "治愈",
+        "单元喜剧",
+        "无真实虐待",
+        "关系软化"
+      ],
       "protagonist_role": "被俘公主面对的不是酷刑，而是美食、游戏和休闲诱惑；魔族员工也有家庭与工作生活。",
       "narrative_features": "保留“审问”形式却持续置换内容，敌对阵营通过重复日常成为熟人共同体。",
       "why_included": "展示高危标签可以被完全改写成生活喜剧，世界观不应自动决定阴暗语气。",
-      "sources": ["https://tsugimanga.jp/winner/2020/web"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://tsugimanga.jp/winner/2020/web"
+      ]
     },
     {
       "region": "日本",
@@ -763,11 +1462,26 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "首卷2020年发行，翌年获漫画大赏2021大赏；官方将其定义为从魔王被打倒之后开始的后日谈。",
-      "tags": ["冒险后日谈", "长寿种", "时间尺度", "追忆", "第二次旅程", "师徒", "魔法收集", "勇者故友", "哀而不伤", "单元旅行"],
+      "tags": [
+        "冒险后日谈",
+        "长寿种",
+        "时间尺度",
+        "追忆",
+        "第二次旅程",
+        "师徒",
+        "魔法收集",
+        "勇者故友",
+        "哀而不伤",
+        "单元旅行"
+      ],
       "protagonist_role": "勇者队伍中的精灵法师而非勇者本人；旧友死后带着弟子重新理解当年旅程。",
       "narrative_features": "现在的小事件触发过去记忆，时间跳跃体现不同寿命；主线是理解人而非再打一次魔王。",
       "why_included": "正是“勇者朋友/队友而非勇者本人”和英雄时代结束后的长期生活范本。",
-      "sources": ["https://e-comi.shogakukan.co.jp/books/098501800000d0000000", "https://www.mangataisho.com/archives/2021.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://e-comi.shogakukan.co.jp/books/098501800000d0000000",
+        "https://www.mangataisho.com/archives/2021.html"
+      ]
     },
     {
       "region": "日本",
@@ -778,11 +1492,26 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "集英社官方第1卷2020年7月发行；“下一部漫画大赏2021”纸本部门第1名。",
-      "tags": ["双重转生", "偶像产业", "演员职业", "娱乐圈", "双胞胎", "粉丝身份", "亲子秘密", "复仇", "节目制作", "多职业群像"],
+      "tags": [
+        "双重转生",
+        "偶像产业",
+        "演员职业",
+        "娱乐圈",
+        "双胞胎",
+        "粉丝身份",
+        "亲子秘密",
+        "复仇",
+        "节目制作",
+        "多职业群像"
+      ],
       "protagonist_role": "偶像粉丝转生为偶像之子女，后来分别进入演员与偶像道路；身份同时是家属、粉丝和从业者。",
       "narrative_features": "以真人秀、舞台、漫画改编、偶像团体等项目切换职业场景，行业结构推动人物选择。",
       "why_included": "适合娱乐圈多职业、多项目游戏，也证明转生可发生在现代职业世界而非固定异世界。",
-      "sources": ["https://www.shueisha.co.jp/books/items/contents.html?isbn=978-4-08-891650-7&mobile-app=true&theme=wiki", "https://tsugimanga.jp/winner/2021/comics"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.shueisha.co.jp/books/items/contents.html?isbn=978-4-08-891650-7&mobile-app=true&theme=wiki",
+        "https://tsugimanga.jp/winner/2021/comics"
+      ]
     },
     {
       "region": "日本",
@@ -793,11 +1522,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "集英社官方第1卷2020年12月发行；“下一部漫画大赏2021”Web部门第1名。",
-      "tags": ["中年再挑战", "怪兽身体", "怪兽清扫工", "防卫队", "隐藏身份", "职业考试", "后勤视角", "旧友约定", "身体变异"],
+      "tags": [
+        "中年再挑战",
+        "怪兽身体",
+        "怪兽清扫工",
+        "防卫队",
+        "隐藏身份",
+        "职业考试",
+        "后勤视角",
+        "旧友约定",
+        "身体变异"
+      ],
       "protagonist_role": "放弃梦想、从事怪兽尸体清扫的32岁男性，在身体怪兽化后重新参加防卫队考试。",
       "narrative_features": "从战斗后的清理行业切入怪兽世界；中年经验、同事关系和失败履历都是行动资源。",
       "why_included": "提供中年、后勤、再就业与怪物身体结合的主角位，打破少年天才默认。",
-      "sources": ["https://www.shueisha.co.jp/books/items/contents_amp.html?isbn=978-4-08-882525-0", "https://tsugimanga.jp/winner/2021/web"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.shueisha.co.jp/books/items/contents_amp.html?isbn=978-4-08-882525-0",
+        "https://tsugimanga.jp/winner/2021/web"
+      ]
     },
     {
       "region": "日本",
@@ -808,11 +1551,26 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "2020年开始出版，漫画大赏2021第2名；小学馆官方称其为多人为证明真理赌上一切的历史叙事诗。",
-      "tags": ["接力主角", "知识传播", "15世纪欧洲", "科学史", "信念", "死亡更替", "异端", "文献传承", "群体叙事", "非单一英雄"],
+      "tags": [
+        "接力主角",
+        "知识传播",
+        "15世纪欧洲",
+        "科学史",
+        "信念",
+        "死亡更替",
+        "异端",
+        "文献传承",
+        "群体叙事",
+        "非单一英雄"
+      ],
       "protagonist_role": "主角位置由多名不同阶层人物接力，个人会死亡，但知识与问题继续流动。",
       "narrative_features": "叙事中心从人物转向命题；书稿、口述、观测和选择把彼此不相识者连接起来。",
       "why_included": "为玩家退场、时代推进、群像接班提供强模板，故事不必依赖一个永生主角。",
-      "sources": ["https://e-comi.shogakukan.co.jp/books/098607780000d0000000", "https://www.mangataisho.com/archives/2021.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://e-comi.shogakukan.co.jp/books/098607780000d0000000",
+        "https://www.mangataisho.com/archives/2021.html"
+      ]
     },
     {
       "region": "日本",
@@ -823,11 +1581,26 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "少年画报社2020年刊物页称其在SNS引发热议，第1卷于2020年12月出版。",
-      "tags": ["中年父亲", "恶役令嬢", "乙女游戏", "性别转换", "社会人技能", "家长视角", "优雅自动转换", "家庭旁观", "温和误解", "代际宅文化"],
+      "tags": [
+        "中年父亲",
+        "恶役令嬢",
+        "乙女游戏",
+        "性别转换",
+        "社会人技能",
+        "家长视角",
+        "优雅自动转换",
+        "家庭旁观",
+        "温和误解",
+        "代际宅文化"
+      ],
       "protagonist_role": "52岁公务员父亲进入女儿喜爱的乙女游戏，成为恶役令嬢后仍以家长和管理者思维待人。",
       "narrative_features": "中年口吻会被系统转换成贵族优雅表达；现实中的妻女也能观察并研究游戏世界。",
       "why_included": "把乙女游戏穿越、跨性别身体和父母世代结合，证明恶役令嬢位不属于单一年龄或性别。",
-      "sources": ["https://www.shonengahosha.co.jp/book_Info.php?id=8419", "https://www.shonengahosha.co.jp/book_Info.php?id=8614"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.shonengahosha.co.jp/book_Info.php?id=8419",
+        "https://www.shonengahosha.co.jp/book_Info.php?id=8614"
+      ]
     },
     {
       "region": "日本",
@@ -838,11 +1611,26 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "一迅社官方漫画第1卷于2020年12月出版，并明确其女主转生为乙女游戏主角却追求恶役令嬢。",
-      "tags": ["乙女游戏", "百合", "女主角转生", "追求恶役令嬢", "社畜前世", "阶级差", "政治改革", "主动恋爱", "攻略对象拒绝", "女性关系"],
+      "tags": [
+        "乙女游戏",
+        "百合",
+        "女主角转生",
+        "追求恶役令嬢",
+        "社畜前世",
+        "阶级差",
+        "政治改革",
+        "主动恋爱",
+        "攻略对象拒绝",
+        "女性关系"
+      ],
       "protagonist_role": "转生为游戏默认女主，却完全不攻略王子，公开追求被设定为反派的女性。",
       "narrative_features": "先以喜剧式倒追翻转游戏路线，随后把贵族和平民矛盾、同性关系压力纳入世界。",
       "why_included": "是乙女游戏×百合最重要的路线反转之一；标签系统必须允许玩家拒绝默认攻略对象。",
-      "sources": ["https://data.ichijinsha.co.jp/detail/75802193", "https://www.ichijinsha.co.jp/yurihime/title/%E6%BC%AB%E7%94%BB%EF%BC%9A%E9%9D%92%E4%B9%83%E4%B8%8B%E3%80%80%E5%8E%9F%E4%BD%9C%EF%BC%9A%E3%81%84%E3%81%AE%E3%82%8A%E3%80%82%E3%80%80%E3%82%AD%E3%83%A3%E3%83%A9%E3%82%AF%E3%82%BF%E3%83%BC%E3%83%87/%E7%A7%81%E3%81%AE%E6%8E%A8%E3%81%97%E3%81%AF%E6%82%AA%E5%BD%B9%E4%BB%A4%E5%AC%A2%E3%80%82/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://data.ichijinsha.co.jp/detail/75802193",
+        "https://www.ichijinsha.co.jp/yurihime/title/%E6%BC%AB%E7%94%BB%EF%BC%9A%E9%9D%92%E4%B9%83%E4%B8%8B%E3%80%80%E5%8E%9F%E4%BD%9C%EF%BC%9A%E3%81%84%E3%81%AE%E3%82%8A%E3%80%82%E3%80%80%E3%82%AD%E3%83%A3%E3%83%A9%E3%82%AF%E3%82%BF%E3%83%BC%E3%83%87/%E7%A7%81%E3%81%AE%E6%8E%A8%E3%81%97%E3%81%AF%E6%82%AA%E5%BD%B9%E4%BB%A4%E5%AC%A2%E3%80%82/"
+      ]
     },
     {
       "region": "日本",
@@ -853,11 +1641,26 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "KADOKAWA官方漫画第1卷于2020年出版；后续官方公布系列累计100万部。",
-      "tags": ["乙女游戏", "隐藏Boss", "恶役令嬢", "练级狂", "无自觉最强", "黑发偏见", "低表情喜剧", "避免主线", "数值系统", "边缘角色"],
+      "tags": [
+        "乙女游戏",
+        "隐藏Boss",
+        "恶役令嬢",
+        "练级狂",
+        "无自觉最强",
+        "黑发偏见",
+        "低表情喜剧",
+        "避免主线",
+        "数值系统",
+        "边缘角色"
+      ],
       "protagonist_role": "转生为游戏隐藏Boss的边缘令嬢，只想安静生活却因独自练到99级被误认为魔王。",
       "narrative_features": "主角知道原剧情却尽量不介入；喜剧来自玩家式效率思维与贵族社会常识不兼容。",
       "why_included": "提供“不是反派主线角色而是隐藏Boss”的位置，并允许玩家主动远离原作剧情。",
-      "sources": ["https://www.kadokawa.co.jp/product/322005000119/", "https://www.kadokawa.co.jp/topics/11428/"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.kadokawa.co.jp/product/322005000119/",
+        "https://www.kadokawa.co.jp/topics/11428/"
+      ]
     },
     {
       "region": "日本",
@@ -868,11 +1671,26 @@
       "source_type": "adaptation",
       "source_material": "网络小说／轻小说改编漫画",
       "popularity_basis": "TO Books官方列漫画第1卷于2020年1月出版，系列后来突破数百万部。",
-      "tags": ["时间回归", "断头台回避", "皇女", "帝国内政", "自保动机", "误解成圣人", "迪化", "蝴蝶效应", "饥荒预防", "第二人生"],
+      "tags": [
+        "时间回归",
+        "断头台回避",
+        "皇女",
+        "帝国内政",
+        "自保动机",
+        "误解成圣人",
+        "迪化",
+        "蝴蝶效应",
+        "饥荒预防",
+        "第二人生"
+      ],
       "protagonist_role": "被革命处刑的任性皇女回到12岁，主要为避免再次受苦而改善身边制度。",
       "narrative_features": "她的有限善举被周围人过度正面解读；自利动机、实际公共效果与传说形象三层分离。",
       "why_included": "是回归、内政与善意误解结合的代表，避免把改命故事写成单纯复仇“打脸”。",
-      "sources": ["https://www.tobooks.jp/contents/11322", "https://www.tobooks.jp/contents?keyword=%E3%83%86%E3%82%A3%E3%82%A2%E3%83%A0%E3%83%BC%E3%83%B3%E5%B8%9D%E5%9B%BD%E7%89%A9%E8%AA%9E%EF%BD%9E%E6%96%AD%E9%A0%AD%E5%8F%B0%E3%81%8B%E3%82%89%E5%A7%8B%E3%81%BE%E3%82%8B%E3%80%81%E5%A7%AB%E3%81%AE%E8%BB%A2%E7%94%9F%E9%80%86%E8%BB%A2%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AA%E3%83%BC%EF%BD%9E&page=2"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.tobooks.jp/contents/11322",
+        "https://www.tobooks.jp/contents?keyword=%E3%83%86%E3%82%A3%E3%82%A2%E3%83%A0%E3%83%BC%E3%83%B3%E5%B8%9D%E5%9B%BD%E7%89%A9%E8%AA%9E%EF%BD%9E%E6%96%AD%E9%A0%AD%E5%8F%B0%E3%81%8B%E3%82%89%E5%A7%8B%E3%81%BE%E3%82%8B%E3%80%81%E5%A7%AB%E3%81%AE%E8%BB%A2%E7%94%9F%E9%80%86%E8%BB%A2%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AA%E3%83%BC%EF%BD%9E&page=2"
+      ]
     },
     {
       "region": "日本",
@@ -883,11 +1701,25 @@
       "source_type": "original",
       "source_material": "漫画原创",
       "popularity_basis": "第23回文化厅媒体艺术祭漫画部门大赏。",
-      "tags": ["机器人群像", "超长时间尺度", "人机共存", "自由机器人", "太空探索", "核废料管理", "寓言", "所有权", "记忆与使命", "单元史诗"],
+      "tags": [
+        "机器人群像",
+        "超长时间尺度",
+        "人机共存",
+        "自由机器人",
+        "太空探索",
+        "核废料管理",
+        "寓言",
+        "所有权",
+        "记忆与使命",
+        "单元史诗"
+      ],
       "protagonist_role": "不是一个机器人英雄，而是跨时代承担寻人、维护设施、探索行星与回应人类请求的多名机器人。",
       "narrative_features": "人类寿命只是机器人任务中的短瞬间；不同短篇以任务和遗言跨越漫长历史相连。",
       "why_included": "为AI、机器人、城市意识等非人主角提供比“觉醒反叛”更广的使命、劳动、自由与时间叙事。",
-      "sources": ["https://www.j-mediaarts.jp/award/previous/23rd/manga/index.html"]
+      "evidence_strength": "A",
+      "sources": [
+        "https://www.j-mediaarts.jp/award/previous/23rd/manga/index.html"
+      ]
     }
   ]
 }

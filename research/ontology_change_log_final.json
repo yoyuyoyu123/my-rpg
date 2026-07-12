@@ -1,0 +1,26 @@
+[
+  {
+    "tag": "短篇结构",
+    "action": "added",
+    "category": "manga_form",
+    "source_review": "ontology_candidate_review_manga.json"
+  },
+  {
+    "tag": "短篇连作",
+    "action": "added",
+    "category": "manga_form",
+    "source_review": "ontology_candidate_review_manga.json"
+  },
+  {
+    "tag": "非虚构漫画",
+    "action": "added",
+    "category": "manga_form",
+    "source_review": "ontology_candidate_review_manga.json"
+  },
+  {
+    "tag": "内心独白",
+    "action": "added",
+    "category": "manga_form",
+    "source_review": "ontology_candidate_review_manga.json"
+  }
+]

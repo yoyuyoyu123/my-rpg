@@ -17,3 +17,14 @@ if(d.s2) localStorage.setItem('wuji_sv_2', d.s2);
 克苏鲁世界观的总流程比较短 但是至少没ooc
 
 zato世界观表现欠佳 待修复
+
+## 类型研究数据库
+
+`research/research_db.json` 是由中国网文、日本 Web/轻小说和漫画年度样本构建的主库。更新原始作品表、标签本体或交叉表后运行：
+
+```powershell
+node tools\validate_research_db.mjs
+node tools\build_research_db.mjs
+```
+
+研究口径、证据等级与字段说明见 `research/RESEARCH_REPORT.md` 和 `research/DATABASE_GUIDE.md`。

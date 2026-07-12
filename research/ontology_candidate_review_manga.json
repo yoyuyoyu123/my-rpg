@@ -1,0 +1,908 @@
+[
+  {
+    "canonical_tag": "漫画原创",
+    "proposed_category": "provenance",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "来源机制：漫画原创",
+        "frequency": 102,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 102,
+    "total_frequency": 102,
+    "regions": [
+      "日本"
+    ],
+    "decision": "defer",
+    "merge_into": [],
+    "rationale": "这是作品生产来源，不是角色在世界内的provenance；应保留在source_material元数据，避免污染故事本体。"
+  },
+  {
+    "canonical_tag": "小说改编漫画",
+    "proposed_category": "provenance",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "来源机制：网络小说／轻小说改编漫画",
+        "frequency": 23,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 23,
+    "total_frequency": 23,
+    "regions": [
+      "日本"
+    ],
+    "decision": "defer",
+    "merge_into": [],
+    "rationale": "这是作品生产来源，不是角色在世界内的provenance；应保留在source_material元数据，避免污染故事本体。"
+  },
+  {
+    "canonical_tag": "固定地点发动机",
+    "proposed_category": "story_engine",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "固定地点",
+        "frequency": 5,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "固定场所",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 6,
+    "total_frequency": 6,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "日常单元剧",
+      "地点作为主角"
+    ],
+    "rationale": "固定地点是篇章发动机与漫画空间形式的组合，无需新增平行标签。"
+  },
+  {
+    "canonical_tag": "女性关系中心",
+    "proposed_category": "relationship",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "女性关系",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "女性联盟",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "女性双主角",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 6,
+    "total_frequency": 6,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "女性关系中心"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "成年主角",
+    "proposed_category": "narrative_position",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "成年女性",
+        "frequency": 4,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "成年人",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 5,
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "decision": "defer",
+    "merge_into": [],
+    "rationale": "年龄与性别很有用，但现有17类缺少正交主角档案轴；放入叙事位置会与职业和角色功能冲突。"
+  },
+  {
+    "canonical_tag": "女性主角",
+    "proposed_category": "narrative_position",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "成年女性",
+        "frequency": 4,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "女性视角",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 5,
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "decision": "defer",
+    "merge_into": [],
+    "rationale": "年龄与性别很有用，但现有17类缺少正交主角档案轴；放入叙事位置会与职业和角色功能冲突。"
+  },
+  {
+    "canonical_tag": "中年主角",
+    "proposed_category": "narrative_position",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "中年主角",
+        "frequency": 3,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "中年上班族",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 5,
+    "total_frequency": 5,
+    "regions": [
+      "日本"
+    ],
+    "decision": "defer",
+    "merge_into": [],
+    "rationale": "年龄与性别很有用，但现有17类缺少正交主角档案轴；放入叙事位置会与职业和角色功能冲突。"
+  },
+  {
+    "canonical_tag": "搭档关系",
+    "proposed_category": "relationship",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "成年搭档",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "搭档",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "搭档关系"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "第二人生",
+    "proposed_category": "provenance",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "第二人生",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "完成冒险后的第二人生"
+    ],
+    "rationale": "现有来历标签已覆盖主线结束后的第二人生；具体丧偶、离职或退役保留原始标签。"
+  },
+  {
+    "canonical_tag": "短篇结构",
+    "proposed_category": "manga_form",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "短篇",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "短篇连载",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "add",
+    "merge_into": [],
+    "rationale": "表示有限篇幅的结构约束，不自动推断单元剧、闭环结局或连作关系。"
+  },
+  {
+    "canonical_tag": "短篇连作",
+    "proposed_category": "manga_form",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "短篇连作",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "短篇拼图",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "add",
+    "merge_into": [],
+    "rationale": "多个短篇由人物、地点、物品或母题拼成整体，与单篇闭环和普通章节单元剧不同。"
+  },
+  {
+    "canonical_tag": "非人主角",
+    "proposed_category": "embodiment",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "非人主角",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "reject",
+    "merge_into": [],
+    "rationale": "本体已有动物、魔物、器灵、AI等具体形态；上位总括词会抹平身体差异。"
+  },
+  {
+    "canonical_tag": "非虚构漫画",
+    "proposed_category": "manga_form",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "来源机制：实录／非虚构漫画",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "实录漫画",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "add",
+    "merge_into": [],
+    "rationale": "事实承诺、取材责任和叙述者立场会改变内容校验，不能用伪纪录片代替。"
+  },
+  {
+    "canonical_tag": "服务业职业",
+    "proposed_category": "profession",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "服务业",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "现实职业"
+    ],
+    "rationale": "服务业范围过宽，具体店员、餐饮、护理等职业继续保留原始标签。"
+  },
+  {
+    "canonical_tag": "漫画创作题材",
+    "proposed_category": "story_engine",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "漫画创作",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "创作活动"
+    ],
+    "rationale": "漫画制作是创作活动的具体媒介；投稿、分镜和编辑流程保留原始标签。"
+  },
+  {
+    "canonical_tag": "内心独白",
+    "proposed_category": "manga_form",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "内心独白",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "add",
+    "merge_into": [],
+    "rationale": "内在语言可与画面形成反差并承担主要信息，是漫画中可独立控制的叙述形式。"
+  },
+  {
+    "canonical_tag": "退役身份",
+    "proposed_category": "provenance",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "前战斗人员",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "退役杀手",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "defer",
+    "merge_into": [],
+    "rationale": "现有“退役后重新开始”“主动退休者”可覆盖多数样本；若未来需要区分自愿、强制与组织脱离再考虑新增。"
+  },
+  {
+    "canonical_tag": "现实职业",
+    "proposed_category": "world_frame",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "中年上班族",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "现实职业"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "心理创伤",
+    "proposed_category": "conflict_source",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "创伤",
+        "frequency": 2,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "心理创伤"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "佣兵军人",
+    "proposed_category": "profession",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "前战斗人员",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      },
+      {
+        "raw_tag": "退役杀手",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 2,
+    "total_frequency": 2,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "佣兵军人"
+    ],
+    "rationale": "混合候选中的旧职业部分已存在；退役状态另行审核。"
+  },
+  {
+    "canonical_tag": "成长叙事",
+    "proposed_category": "growth_mode",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "成长",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "reject",
+    "merge_into": [],
+    "rationale": "过于宽泛，无法判断人格、职业、团队或能力成长，加入本体不会产生可执行约束。"
+  },
+  {
+    "canonical_tag": "出版生产链",
+    "proposed_category": "story_engine",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "网络重制",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "defer",
+    "merge_into": [],
+    "rationale": "采访、排版、装订、发行具有玩法价值，但当前只有一条直接支持，先保留原始标签。"
+  },
+  {
+    "canonical_tag": "反英雄身份",
+    "proposed_category": "narrative_position",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "反英雄",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "反英雄身份"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "共同生活",
+    "proposed_category": "relationship",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "同居",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "共同生活"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "孤独处境",
+    "proposed_category": "conflict_source",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "孤独",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "孤独处境"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "关系边界协商",
+    "proposed_category": "relationship",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "边界感",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "关系边界协商"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "后日谈",
+    "proposed_category": "pacing",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "职业后日谈",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "后日谈"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "记忆主题",
+    "proposed_category": "information_structure",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "记忆",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "defer",
+    "merge_into": [],
+    "rationale": "记忆是主题而非必然的信息结构；需要未来theme轴，不能误并入失忆、倒叙或未来记忆。"
+  },
+  {
+    "canonical_tag": "轮换主角",
+    "proposed_category": "information_structure",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "接力主角",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "群像轮换视角"
+    ],
+    "rationale": "现有标签已经覆盖叙事中心在角色间轮换；接力式跨代差异保留原始标签。"
+  },
+  {
+    "canonical_tag": "器物主角",
+    "proposed_category": "manga_form",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "装备视角",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "物品作为主角"
+    ],
+    "rationale": "漫画形式标签已能表达器物承担叙事中心；具体器灵、武器或载具由embodiment补充。"
+  },
+  {
+    "canonical_tag": "潜伏谍报",
+    "proposed_category": "story_engine",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "间谍",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "潜伏谍报"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "青春成长",
+    "proposed_category": "growth_mode",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "青春",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "人格成长",
+      "青春酸甜"
+    ],
+    "rationale": "青春成长可由成长方向与青春基调两个正交标签表达。"
+  },
+  {
+    "canonical_tag": "人宠双视角",
+    "proposed_category": "information_structure",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "人宠双视角",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "多视角POV",
+      "动物视角"
+    ],
+    "rationale": "它是视角数量与漫画动物视角的组合，不需新增组合型标签。"
+  },
+  {
+    "canonical_tag": "微观生命主角",
+    "proposed_category": "embodiment",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "细胞视角",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "defer",
+    "merge_into": [],
+    "rationale": "细胞尺度有独立价值，但只有一条作品支持；需更多菌群、细胞或器官社会样本确认边界。"
+  },
+  {
+    "canonical_tag": "现代怪谈",
+    "proposed_category": "world_frame",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "都市传说",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "现代怪谈"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  },
+  {
+    "canonical_tag": "游戏／媒体企划改编漫画",
+    "proposed_category": "provenance",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "来源机制：游戏／媒体企划改编漫画",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "defer",
+    "merge_into": [],
+    "rationale": "这是作品生产来源，不是角色在世界内的provenance；应保留在source_material元数据，避免污染故事本体。"
+  },
+  {
+    "canonical_tag": "元叙事",
+    "proposed_category": "information_structure",
+    "supporting_raw_tags": [
+      {
+        "raw_tag": "类型自觉",
+        "frequency": 1,
+        "regions": [
+          "日本"
+        ]
+      }
+    ],
+    "frequency": 1,
+    "total_frequency": 1,
+    "regions": [
+      "日本"
+    ],
+    "decision": "merge",
+    "merge_into": [
+      "元叙事"
+    ],
+    "rationale": "正式本体已经存在完全相同标签。"
+  }
+]

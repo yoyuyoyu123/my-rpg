@@ -157,6 +157,7 @@ const output = [...aggregated.entries()].map(([canonicalTag, data]) => {
         regions: [...rawData.regions].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'))
       }))
       .sort((a, b) => b.frequency - a.frequency || a.raw_tag.localeCompare(b.raw_tag, 'zh-Hans-CN')),
+    frequency: data.totalFrequency,
     total_frequency: data.totalFrequency,
     regions: [...data.regions].sort((a, b) => a.localeCompare(b, 'zh-Hans-CN')),
     decision: review.decision,

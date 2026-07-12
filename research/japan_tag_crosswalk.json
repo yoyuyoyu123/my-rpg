@@ -23,16 +23,14 @@
     "canonical_tags": [
       "喜剧"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "现有基调只有若干喜剧子型，无法无损承接未指定子型的泛喜剧。"
   },
   {
     "raw_tag": "女性主角",
     "frequency": 6,
-    "canonical_tags": [
-      "女性主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体缺少独立的主角性别／性别呈现轴；不应靠关系类型反推。"
   },
   {
@@ -41,7 +39,7 @@
     "canonical_tags": [
       "创作活动"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "创作可能是音乐、绘画、写作或节目，现有作家职业过窄。"
   },
   {
@@ -79,7 +77,7 @@
     "canonical_tags": [
       "恋爱要素"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "泛恋爱不能安全归为单一恋爱、后宫或其他具体结构。"
   },
   {
@@ -116,16 +114,17 @@
     "canonical_tags": [
       "魔女"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "魔女不是必然等同魔族，且在日轻中是稳定身份母题。"
   },
   {
     "raw_tag": "青春",
     "frequency": 4,
     "canonical_tags": [
-      "青春成长"
+      "人格成长",
+      "青春酸甜"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "青春不必等于校园或固定酸甜基调，建议独立主题标签。"
   },
   {
@@ -134,7 +133,7 @@
     "canonical_tags": [
       "生活流"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "现有“群像生活流”过窄，单主角生活流需要上位标签。"
   },
   {
@@ -158,10 +157,8 @@
   {
     "raw_tag": "成长",
     "frequency": 3,
-    "canonical_tags": [
-      "成长叙事"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "原始标签未说明人格、能力或团队方向，需保留上位概念。"
   },
   {
@@ -226,7 +223,7 @@
     "canonical_tags": [
       "内政治理"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "领地建设与战争经营不能完整覆盖财政、官僚和公共治理。"
   },
   {
@@ -235,7 +232,7 @@
     "canonical_tags": [
       "女性关系中心"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "女性中心关系不一定是百合或女性群像，需保留开放性。"
   },
   {
@@ -280,7 +277,7 @@
     "canonical_tags": [
       "音乐题材"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "音乐兼具职业、关系和世界机制，现有本体没有通用音乐标签。"
   },
   {
@@ -289,7 +286,7 @@
     "canonical_tags": [
       "病态依恋"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "关系强度与控制欲是稳定母题，不能简化为普通多角关系。"
   },
   {
@@ -304,11 +301,8 @@
   {
     "raw_tag": "成年女性",
     "frequency": 2,
-    "canonical_tags": [
-      "成年主角",
-      "女性主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "年龄阶段和性别应成为独立、可组合的主角档案字段。"
   },
   {
@@ -317,7 +311,7 @@
     "canonical_tags": [
       "成人关系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "成年人的经济、工作和长期责任会改变恋爱结构。"
   },
   {
@@ -326,7 +320,7 @@
     "canonical_tags": [
       "心理创伤"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "心理创伤是持续冲突，不等同一般疾病伤痛或已经开始疗愈。"
   },
   {
@@ -363,7 +357,7 @@
     "canonical_tags": [
       "现代怪谈"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "都市奇幻过宽，地方性怪谈与传播链值得独立世界标签。"
   },
   {
@@ -381,7 +375,7 @@
     "canonical_tags": [
       "多种族社会"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有身体标签无法表达多族群制度与政治。"
   },
   {
@@ -417,7 +411,7 @@
     "canonical_tags": [
       "反英雄身份"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "反勇者可能是制度批判或身份反转，不等同勇者队非勇者。"
   },
   {
@@ -444,7 +438,7 @@
     "canonical_tags": [
       "孤独处境"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "孤独是持续人物处境，不等同失忆或社会退出。"
   },
   {
@@ -453,7 +447,7 @@
     "canonical_tags": [
       "广播叙事"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "广播及来信是稳定的信息结构，不能等同直播弹幕。"
   },
   {
@@ -462,7 +456,7 @@
     "canonical_tags": [
       "内政治理"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "领地建设与战争经营不能完整覆盖财政、官僚和公共治理。"
   },
   {
@@ -513,10 +507,8 @@
   {
     "raw_tag": "记忆",
     "frequency": 2,
-    "canonical_tags": [
-      "记忆主题"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "记忆作为主题不一定对应失忆、未来记忆或叙事倒序。"
   },
   {
@@ -558,19 +550,15 @@
   {
     "raw_tag": "女性向",
     "frequency": 2,
-    "canonical_tags": [
-      "女性向"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "这是市场／受众元数据，应新增独立 audience 轴而非混入世界框架。"
   },
   {
     "raw_tag": "女性向幻想",
     "frequency": 2,
-    "canonical_tags": [
-      "女性向"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "这是市场／受众元数据，应新增独立 audience 轴而非混入世界框架。"
   },
   {
@@ -598,7 +586,7 @@
     "canonical_tags": [
       "后日谈"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "原故事完成后的生活与调查不一定是第二人生或退休。"
   },
   {
@@ -607,7 +595,7 @@
     "canonical_tags": [
       "认知规范错位"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "社会常识或善恶评价错位是误解喜剧之外的制度机制。"
   },
   {
@@ -670,7 +658,7 @@
     "canonical_tags": [
       "共同生活"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "共同居住不必构成选择家庭，建议保留独立关系状态。"
   },
   {
@@ -735,7 +723,7 @@
     "canonical_tags": [
       "性别身份错位"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "身份呈现错位不一定发生身体性转。"
   },
   {
@@ -820,7 +808,7 @@
     "canonical_tags": [
       "元叙事"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "角色意识到类型规则或媒介结构，现有本体缺少对应信息标签。"
   },
   {
@@ -862,10 +850,8 @@
   {
     "raw_tag": "中年主角",
     "frequency": 2,
-    "canonical_tags": [
-      "中年主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "中年经验与身体年龄错位频繁出现，值得独立于成年统称。"
   },
   {
@@ -969,10 +955,8 @@
   {
     "raw_tag": "搬家职业",
     "frequency": 1,
-    "canonical_tags": [
-      "搬迁物流"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "搬家和空间整理不能无损归入快递信使。"
   },
   {
@@ -1034,7 +1018,7 @@
     "canonical_tags": [
       "离婚后生活"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "婚姻结束后的生活重建不同于婚约破弃或追妻。"
   },
   {
@@ -1068,7 +1052,7 @@
     "canonical_tags": [
       "关系边界协商"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "近年关系文大量依靠明确协商而非误会，需要独立机制。"
   },
   {
@@ -1077,7 +1061,7 @@
     "canonical_tags": [
       "关系边界协商"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "近年关系文大量依靠明确协商而非误会，需要独立机制。"
   },
   {
@@ -1086,7 +1070,7 @@
     "canonical_tags": [
       "关系边界协商"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "近年关系文大量依靠明确协商而非误会，需要独立机制。"
   },
   {
@@ -1271,43 +1255,35 @@
     "canonical_tags": [
       "搭档关系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
   },
   {
     "raw_tag": "成年男性视角",
     "frequency": 1,
-    "canonical_tags": [
-      "男性主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体缺少主角性别轴；职业或文风不能替代性别记录。"
   },
   {
     "raw_tag": "成年人",
     "frequency": 1,
-    "canonical_tags": [
-      "成年主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "成年阶段是近年轻小说区别少年模板的重要维度。"
   },
   {
     "raw_tag": "成年新人",
     "frequency": 1,
-    "canonical_tags": [
-      "成年主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "成年阶段是近年轻小说区别少年模板的重要维度。"
   },
   {
     "raw_tag": "成年主角",
     "frequency": 1,
-    "canonical_tags": [
-      "成年主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "成年阶段是近年轻小说区别少年模板的重要维度。"
   },
   {
@@ -1316,7 +1292,7 @@
     "canonical_tags": [
       "成人关系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "成年人的经济、工作和长期责任会改变恋爱结构。"
   },
   {
@@ -1377,7 +1353,7 @@
     "canonical_tags": [
       "心理创伤"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "心理创伤是持续冲突，不等同一般疾病伤痛或已经开始疗愈。"
   },
   {
@@ -1431,7 +1407,7 @@
     "canonical_tags": [
       "搭档关系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
   },
   {
@@ -1536,7 +1512,7 @@
     "canonical_tags": [
       "心理创伤"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "心理创伤是持续冲突，不等同一般疾病伤痛或已经开始疗愈。"
   },
   {
@@ -1545,7 +1521,7 @@
     "canonical_tags": [
       "关系伦理灰度"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "需要记录非理想化、非犯罪化的关系伦理灰区。"
   },
   {
@@ -1655,7 +1631,7 @@
     "canonical_tags": [
       "低压力叙事"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有悠闲慢生活仍可能有目标压力，建议独立压力等级。"
   },
   {
@@ -1682,7 +1658,7 @@
     "canonical_tags": [
       "低压力叙事"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有悠闲慢生活仍可能有目标压力，建议独立压力等级。"
   },
   {
@@ -1691,7 +1667,7 @@
     "canonical_tags": [
       "敌对关系"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "敌对并不必然发展成恋爱或宿敌，现有关系轴缺少中性上位项。"
   },
   {
@@ -1714,7 +1690,7 @@
     "canonical_tags": [
       "潜伏谍报"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "谍报潜伏是独立职业／发动机。"
   },
   {
@@ -1840,7 +1816,7 @@
     "canonical_tags": [
       "心理创伤"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "心理创伤是持续冲突，不等同一般疾病伤痛或已经开始疗愈。"
   },
   {
@@ -1913,7 +1889,7 @@
     "canonical_tags": [
       "多种族社会"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有身体标签无法表达多族群制度与政治。"
   },
   {
@@ -1946,10 +1922,8 @@
   {
     "raw_tag": "儿童领主",
     "frequency": 1,
-    "canonical_tags": [
-      "儿童主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "儿童身体和社会能力限制会显著改变玩法。"
   },
   {
@@ -2029,7 +2003,7 @@
     "canonical_tags": [
       "反乌托邦"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "近现代制度性压迫需要独立世界框架。"
   },
   {
@@ -2048,7 +2022,7 @@
     "canonical_tags": [
       "反英雄身份"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "反勇者可能是制度批判或身份反转，不等同勇者队非勇者。"
   },
   {
@@ -2129,7 +2103,7 @@
     "canonical_tags": [
       "关系伦理灰度"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "需要记录非理想化、非犯罪化的关系伦理灰区。"
   },
   {
@@ -2160,10 +2134,8 @@
   {
     "raw_tag": "非人女主",
     "frequency": 1,
-    "canonical_tags": [
-      "非人主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体有非人形态，却缺少明确的主角位置标签。"
   },
   {
@@ -2178,10 +2150,8 @@
   {
     "raw_tag": "非人主角",
     "frequency": 1,
-    "canonical_tags": [
-      "非人主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体有非人形态，却缺少明确的主角位置标签。"
   },
   {
@@ -2283,9 +2253,9 @@
     "raw_tag": "服务业",
     "frequency": 1,
     "canonical_tags": [
-      "服务业职业"
+      "现实职业"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现实职业过宽，服务业的客户与情绪劳动值得独立职业类。"
   },
   {
@@ -2350,7 +2320,7 @@
     "canonical_tags": [
       "病态依恋"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "关系强度与控制欲是稳定母题，不能简化为普通多角关系。"
   },
   {
@@ -2558,7 +2528,7 @@
     "canonical_tags": [
       "关系边界协商"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "近年关系文大量依靠明确协商而非误会，需要独立机制。"
   },
   {
@@ -2693,7 +2663,7 @@
     "canonical_tags": [
       "共同生活"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "共同居住不必构成选择家庭，建议保留独立关系状态。"
   },
   {
@@ -2702,7 +2672,7 @@
     "canonical_tags": [
       "和风幻想"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "和风幻想不总是民俗志怪，建议保留独立美学框架。"
   },
   {
@@ -2756,7 +2726,7 @@
     "canonical_tags": [
       "后日谈"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "原故事完成后的生活与调查不一定是第二人生或退休。"
   },
   {
@@ -2786,7 +2756,7 @@
     "canonical_tags": [
       "护卫安保"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "护卫、警戒和路线规划需要独立职业循环。"
   },
   {
@@ -3020,7 +2990,7 @@
     "canonical_tags": [
       "潜伏谍报"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "谍报潜伏是独立职业／发动机。"
   },
   {
@@ -3029,7 +2999,7 @@
     "canonical_tags": [
       "反乌托邦"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "近现代制度性压迫需要独立世界框架。"
   },
   {
@@ -3070,7 +3040,7 @@
     "canonical_tags": [
       "原作开局前"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "在原作开始前行动已成为独立的时间位置母题。"
   },
   {
@@ -3147,7 +3117,7 @@
     "canonical_tags": [
       "非婚关系契约"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有婚姻契约无法覆盖友情、雇佣和试用恋人。"
   },
   {
@@ -3176,7 +3146,7 @@
     "canonical_tags": [
       "心理关系剧"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "以内在与关系变化为核心，不等同悬疑或哲学思辨。"
   },
   {
@@ -3257,7 +3227,7 @@
     "canonical_tags": [
       "原作开局前"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "在原作开始前行动已成为独立的时间位置母题。"
   },
   {
@@ -3356,10 +3326,8 @@
   {
     "raw_tag": "科幻",
     "frequency": 1,
-    "canonical_tags": [
-      "科幻（未指定子类）"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "信息不足时不应强行归入硬科幻或近未来科幻。"
   },
   {
@@ -3404,10 +3372,8 @@
   {
     "raw_tag": "克制男主",
     "frequency": 1,
-    "canonical_tags": [
-      "男性主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体缺少主角性别轴；职业或文风不能替代性别记录。"
   },
   {
@@ -3525,7 +3491,7 @@
     "canonical_tags": [
       "元叙事"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "角色意识到类型规则或媒介结构，现有本体缺少对应信息标签。"
   },
   {
@@ -3543,7 +3509,7 @@
     "canonical_tags": [
       "离婚后生活"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "婚姻结束后的生活重建不同于婚约破弃或追妻。"
   },
   {
@@ -3638,7 +3604,7 @@
     "canonical_tags": [
       "非婚关系契约"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有婚姻契约无法覆盖友情、雇佣和试用恋人。"
   },
   {
@@ -3741,7 +3707,7 @@
     "canonical_tags": [
       "拒绝原作路线"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "关键角色主动退出路线不同于主角单纯改写结局。"
   },
   {
@@ -3779,7 +3745,7 @@
     "canonical_tags": [
       "故障文本"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "界面损坏、乱码和污染是数字原生叙事形式。"
   },
   {
@@ -3994,10 +3960,8 @@
   {
     "raw_tag": "魔法物流",
     "frequency": 1,
-    "canonical_tags": [
-      "搬迁物流"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "搬家和空间整理不能无损归入快递信使。"
   },
   {
@@ -4218,7 +4182,7 @@
     "canonical_tags": [
       "搭档关系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
   },
   {
@@ -4259,10 +4223,8 @@
   {
     "raw_tag": "男性主播",
     "frequency": 1,
-    "canonical_tags": [
-      "男性主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体缺少主角性别轴；职业或文风不能替代性别记录。"
   },
   {
@@ -4368,7 +4330,7 @@
     "canonical_tags": [
       "关系伦理灰度"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "需要记录非理想化、非犯罪化的关系伦理灰区。"
   },
   {
@@ -4384,16 +4346,14 @@
     "canonical_tags": [
       "搭档关系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
   },
   {
     "raw_tag": "女性第一人称",
     "frequency": 1,
-    "canonical_tags": [
-      "女性主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体缺少独立的主角性别／性别呈现轴；不应靠关系类型反推。"
   },
   {
@@ -4434,10 +4394,8 @@
   {
     "raw_tag": "女性视角",
     "frequency": 1,
-    "canonical_tags": [
-      "女性主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体缺少独立的主角性别／性别呈现轴；不应靠关系类型反推。"
   },
   {
@@ -4446,16 +4404,14 @@
     "canonical_tags": [
       "女性关系中心"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "女性中心关系不一定是百合或女性群像，需保留开放性。"
   },
   {
     "raw_tag": "女性向奇幻",
     "frequency": 1,
-    "canonical_tags": [
-      "女性向"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "这是市场／受众元数据，应新增独立 audience 轴而非混入世界框架。"
   },
   {
@@ -4464,7 +4420,7 @@
     "canonical_tags": [
       "性别秩序反转"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "这是完整社会制度变量，不只是主角性转。"
   },
   {
@@ -4480,7 +4436,7 @@
     "canonical_tags": [
       "护卫安保"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "护卫、警戒和路线规划需要独立职业循环。"
   },
   {
@@ -4506,7 +4462,7 @@
     "canonical_tags": [
       "性别身份错位"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "身份呈现错位不一定发生身体性转。"
   },
   {
@@ -4578,7 +4534,7 @@
     "canonical_tags": [
       "非婚关系契约"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有婚姻契约无法覆盖友情、雇佣和试用恋人。"
   },
   {
@@ -4624,7 +4580,7 @@
     "canonical_tags": [
       "低压力叙事"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有悠闲慢生活仍可能有目标压力，建议独立压力等级。"
   },
   {
@@ -4681,7 +4637,7 @@
     "canonical_tags": [
       "非婚关系契约"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有婚姻契约无法覆盖友情、雇佣和试用恋人。"
   },
   {
@@ -4756,10 +4712,8 @@
   {
     "raw_tag": "强女主",
     "frequency": 1,
-    "canonical_tags": [
-      "女性主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体缺少独立的主角性别／性别呈现轴；不应靠关系类型反推。"
   },
   {
@@ -4819,10 +4773,8 @@
   {
     "raw_tag": "清扫工",
     "frequency": 1,
-    "canonical_tags": [
-      "清洁维护"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "清扫与维护是近年边缘职业主角的重要循环。"
   },
   {
@@ -4944,10 +4896,8 @@
   {
     "raw_tag": "人外",
     "frequency": 1,
-    "canonical_tags": [
-      "非人主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体有非人形态，却缺少明确的主角位置标签。"
   },
   {
@@ -5030,7 +4980,7 @@
     "canonical_tags": [
       "心理关系剧"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "以内在与关系变化为核心，不等同悬疑或哲学思辨。"
   },
   {
@@ -5123,7 +5073,7 @@
     "canonical_tags": [
       "搭档关系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
   },
   {
@@ -5157,7 +5107,7 @@
     "canonical_tags": [
       "认知规范错位"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "社会常识或善恶评价错位是误解喜剧之外的制度机制。"
   },
   {
@@ -5246,7 +5196,7 @@
     "canonical_tags": [
       "敌对关系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "敌对并不必然发展成恋爱或宿敌，现有关系轴缺少中性上位项。"
   },
   {
@@ -5373,7 +5323,7 @@
     "canonical_tags": [
       "死亡游戏"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "死亡游戏是稳定故事发动机，不能完全等同无限流或副本循环。"
   },
   {
@@ -5409,7 +5359,7 @@
     "canonical_tags": [
       "生活流"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有“群像生活流”过窄，单主角生活流需要上位标签。"
   },
   {
@@ -5425,7 +5375,7 @@
     "canonical_tags": [
       "生活流"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有“群像生活流”过窄，单主角生活流需要上位标签。"
   },
   {
@@ -5455,10 +5405,8 @@
   {
     "raw_tag": "声音记忆",
     "frequency": 1,
-    "canonical_tags": [
-      "记忆主题"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "记忆作为主题不一定对应失忆、未来记忆或叙事倒序。"
   },
   {
@@ -5679,7 +5627,7 @@
     "canonical_tags": [
       "多种族社会"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有身体标签无法表达多族群制度与政治。"
   },
   {
@@ -5713,7 +5661,7 @@
     "canonical_tags": [
       "女性关系中心"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "女性中心关系不一定是百合或女性群像，需保留开放性。"
   },
   {
@@ -5729,7 +5677,7 @@
     "canonical_tags": [
       "搭档关系"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "并非所有搭档都是职业同事，需中性关系上位项。"
   },
   {
@@ -5798,7 +5746,7 @@
     "canonical_tags": [
       "死亡游戏"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "死亡游戏是稳定故事发动机，不能完全等同无限流或副本循环。"
   },
   {
@@ -5807,7 +5755,7 @@
     "canonical_tags": [
       "死亡游戏"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "死亡游戏是稳定故事发动机，不能完全等同无限流或副本循环。"
   },
   {
@@ -5867,7 +5815,7 @@
     "canonical_tags": [
       "广播叙事"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "广播及来信是稳定的信息结构，不能等同直播弹幕。"
   },
   {
@@ -5954,10 +5902,8 @@
   {
     "raw_tag": "吐槽系男主",
     "frequency": 1,
-    "canonical_tags": [
-      "男性主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "现有本体缺少主角性别轴；职业或文风不能替代性别记录。"
   },
   {
@@ -6053,7 +5999,7 @@
     "canonical_tags": [
       "拒绝原作路线"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "关键角色主动退出路线不同于主角单纯改写结局。"
   },
   {
@@ -6434,7 +6380,7 @@
     "canonical_tags": [
       "现代怪谈"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "都市奇幻过宽，地方性怪谈与传播链值得独立世界标签。"
   },
   {
@@ -6443,7 +6389,7 @@
     "canonical_tags": [
       "现代怪谈"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "都市奇幻过宽，地方性怪谈与传播链值得独立世界标签。"
   },
   {
@@ -6452,7 +6398,7 @@
     "canonical_tags": [
       "恋爱要素"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "泛恋爱不能安全归为单一恋爱、后宫或其他具体结构。"
   },
   {
@@ -6587,7 +6533,7 @@
     "canonical_tags": [
       "护卫安保"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "护卫、警戒和路线规划需要独立职业循环。"
   },
   {
@@ -6644,7 +6590,7 @@
     "canonical_tags": [
       "音乐题材"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "音乐兼具职业、关系和世界机制，现有本体没有通用音乐标签。"
   },
   {
@@ -6662,7 +6608,7 @@
     "canonical_tags": [
       "心理关系剧"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "以内在与关系变化为核心，不等同悬疑或哲学思辨。"
   },
   {
@@ -6678,7 +6624,7 @@
     "canonical_tags": [
       "故障文本"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "界面损坏、乱码和污染是数字原生叙事形式。"
   },
   {
@@ -6724,7 +6670,7 @@
     "canonical_tags": [
       "性别秩序反转"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "这是完整社会制度变量，不只是主角性转。"
   },
   {
@@ -6919,7 +6865,7 @@
     "canonical_tags": [
       "妖精族"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "妖精不宜无条件并入元素生命或亚人。"
   },
   {
@@ -6953,7 +6899,7 @@
     "canonical_tags": [
       "传记体"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "传记跨越一生，与一般长时间跳跃不同。"
   },
   {
@@ -7044,9 +6990,10 @@
     "raw_tag": "异世界生活",
     "frequency": 1,
     "canonical_tags": [
-      "异世界生活"
+      "异世界幻想",
+      "日常占主导"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "原始标签没有说明转生、转移或世界魔法强度，需上位生活标签。"
   },
   {
@@ -7078,7 +7025,7 @@
     "canonical_tags": [
       "音乐题材"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "音乐兼具职业、关系和世界机制，现有本体没有通用音乐标签。"
   },
   {
@@ -7087,7 +7034,7 @@
     "canonical_tags": [
       "音乐题材"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "音乐兼具职业、关系和世界机制，现有本体没有通用音乐标签。"
   },
   {
@@ -7114,16 +7061,14 @@
     "canonical_tags": [
       "传记体"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "传记跨越一生，与一般长时间跳跃不同。"
   },
   {
     "raw_tag": "婴儿开局",
     "frequency": 1,
-    "canonical_tags": [
-      "儿童主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "儿童身体和社会能力限制会显著改变玩法。"
   },
   {
@@ -7160,7 +7105,7 @@
     "canonical_tags": [
       "后日谈"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "原故事完成后的生活与调查不一定是第二人生或退休。"
   },
   {
@@ -7178,7 +7123,7 @@
     "canonical_tags": [
       "桌游社交"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "桌游规则和线下社交不同于电子游戏世界。"
   },
   {
@@ -7271,10 +7216,8 @@
   {
     "raw_tag": "幼女主角",
     "frequency": 1,
-    "canonical_tags": [
-      "儿童主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "儿童身体和社会能力限制会显著改变玩法。"
   },
   {
@@ -7341,7 +7284,7 @@
     "canonical_tags": [
       "拒绝原作路线"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "关键角色主动退出路线不同于主角单纯改写结局。"
   },
   {
@@ -7406,10 +7349,8 @@
   {
     "raw_tag": "杂务",
     "frequency": 1,
-    "canonical_tags": [
-      "清洁维护"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "清扫与维护是近年边缘职业主角的重要循环。"
   },
   {
@@ -7462,7 +7403,7 @@
     "canonical_tags": [
       "增强现实"
     ],
-    "action": "new_candidate",
+    "action": "existing",
     "rationale": "增强现实与完全沉浸虚拟现实的空间逻辑不同。"
   },
   {
@@ -7535,7 +7476,7 @@
     "canonical_tags": [
       "孤独处境"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "孤独是持续人物处境，不等同失忆或社会退出。"
   },
   {
@@ -7586,7 +7527,7 @@
     "canonical_tags": [
       "性别秩序反转"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "这是完整社会制度变量，不只是主角性转。"
   },
   {
@@ -7665,7 +7606,7 @@
     "canonical_tags": [
       "病态依恋"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "关系强度与控制欲是稳定母题，不能简化为普通多角关系。"
   },
   {
@@ -7690,7 +7631,7 @@
     "canonical_tags": [
       "病态依恋"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "关系强度与控制欲是稳定母题，不能简化为普通多角关系。"
   },
   {
@@ -7862,7 +7803,7 @@
     "canonical_tags": [
       "音乐题材"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "音乐兼具职业、关系和世界机制，现有本体没有通用音乐标签。"
   },
   {
@@ -7973,10 +7914,8 @@
   {
     "raw_tag": "中年内心",
     "frequency": 1,
-    "canonical_tags": [
-      "中年主角"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "中年经验与身体年龄错位频繁出现，值得独立于成年统称。"
   },
   {
@@ -7992,7 +7931,7 @@
     "canonical_tags": [
       "多种族社会"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "现有身体标签无法表达多族群制度与政治。"
   },
   {
@@ -8077,7 +8016,7 @@
     "canonical_tags": [
       "桌游社交"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "桌游规则和线下社交不同于电子游戏世界。"
   },
   {
@@ -8165,7 +8104,7 @@
     "canonical_tags": [
       "魔女"
     ],
-    "action": "new_candidate",
+    "action": "alias",
     "rationale": "魔女不是必然等同魔族，且在日轻中是稳定身份母题。"
   },
   {
@@ -8223,10 +8162,8 @@
   {
     "raw_tag": "SF",
     "frequency": 1,
-    "canonical_tags": [
-      "科幻（未指定子类）"
-    ],
-    "action": "new_candidate",
+    "canonical_tags": [],
+    "action": "keep_raw",
     "rationale": "信息不足时不应强行归入硬科幻或近未来科幻。"
   },
   {

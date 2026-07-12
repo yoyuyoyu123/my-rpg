@@ -10,6 +10,19 @@ const crosswalkFiles = fs.readdirSync(dir).filter((name) => /_tag_crosswalk\.jso
 const ontology = readJson(path.join(dir, 'tag_ontology.json'));
 
 const canonicalTags = new Set(ontology.categories.flatMap((category) => category.tags));
+const tagCategories = new Map();
+for (const category of ontology.categories) for (const tag of category.tags) {
+  if (!tagCategories.has(tag)) tagCategories.set(tag, []);
+  tagCategories.get(tag).push(category.id);
+}
+const facetTags = (tags) => {
+  const facets = {};
+  for (const tag of tags) for (const category of tagCategories.get(tag) || []) {
+    facets[category] ||= [];
+    if (!facets[category].includes(tag)) facets[category].push(tag);
+  }
+  return facets;
+};
 const crosswalk = new Map();
 const crosswalkEntries = [];
 for (const name of crosswalkFiles) {
@@ -62,6 +75,7 @@ for (const name of workFiles) {
         recognition_years: [row.year],
         raw_tags: rawTags,
         canonical_tags: normalized,
+        canonical_tags_by_category: facetTags(normalized),
         protagonist_role: row.protagonist_role,
         narrative_features: row.narrative_features,
         why_included: row.why_included,
@@ -72,12 +86,16 @@ for (const name of workFiles) {
       item.recognition_years = [...new Set([...item.recognition_years, row.year])].sort();
       item.raw_tags = [...new Set([...item.raw_tags, ...rawTags])];
       item.canonical_tags = [...new Set([...item.canonical_tags, ...normalized])];
+      item.canonical_tags_by_category = facetTags(item.canonical_tags);
       item.evidence.push(sourceRecord);
     }
   }
 }
 
 const works = [...byKey.values()].sort((a, b) => Math.min(...a.recognition_years) - Math.min(...b.recognition_years) || a.title.localeCompare(b.title, 'zh-CN'));
+const observedYears = works.flatMap((work) => work.recognition_years).filter(Number.isFinite);
+const minYear = Math.min(...observedYears);
+const maxYear = Math.max(...observedYears);
 const rawTagFrequency = {};
 for (const work of works) for (const tag of work.raw_tags) rawTagFrequency[tag] = (rawTagFrequency[tag] || 0) + 1;
 const yearlyTagFrequency = {};
@@ -109,7 +127,7 @@ const database = {
   schema_version: '2.0.0',
   built_at: new Date().toISOString(),
   coverage: {
-    period: '2016-2026YTD',
+    period: `${minYear}-${maxYear}${maxYear === new Date().getUTCFullYear() ? 'YTD' : ''}`,
     raw_records: workFiles.reduce((count, name) => {
       const parsed = readJson(path.join(dir, name));
       return count + (Array.isArray(parsed) ? parsed.length : (parsed.works || []).length);
