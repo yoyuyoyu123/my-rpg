@@ -882,7 +882,7 @@ var STATE_ACTIVE=false; // true once the model starts reporting via STATE patche
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
 var PREFS={tone:'',skeleton:'',opening:''}; // player taste constraints from the pace screen
 var PREF_MAPS={
-  tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'严肃正剧':['严肃正剧'],'黑色悬疑':['黑色悬疑']},
+  tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'严肃正剧':['严肃正剧'],'黑色悬疑':['冷峻现实']},
   skeleton:{'冒险探索':['旅行见闻线','探索发现线','公开委托线'],'经营生活':['安身立业线','建设经营线','社区生活线','职业成长线'],'争锋上位':['竞技争锋线','权谋上位线','学习修炼线'],'恩怨情仇':['复仇线','救赎线','守护责任线','归乡重建线'],'悬疑真相':['悬疑真相线','身份秘密线','卧底潜伏线']},
   opening:{'经典问答':['经典问答'],'平静日常切入':['普通一天','工作现场','抵达新地','熟人见面','小麻烦','公开委托','自由闲暇'],'戏剧性切入':['错位苏醒','危机切入','事件余波','他人视角']}
 };
@@ -900,6 +900,42 @@ var DNA_SKELETONS_X=[
   ['身份秘密线','主角藏着一个暴露即毁灭的秘密，瞒的成本越来越高'],
   ['卧底潜伏线','身在对方阵营，每天都在暴露边缘，立场逐渐动摇']
 ];
+var TAG_FREQ=null, CAT_TAGS=null, DNA_PICKS=null;
+var TONE_TAG_MAP={
+  '欢乐废萌':['轻松吐槽','喜剧','误解喜剧','荒诞喜剧','日轻会话感','黑色幽默'],
+  '轻松爽快':['轻松吐槽','热血王道','低压力叙事','喜剧'],
+  '温馨治愈':['温馨治愈','悠闲慢生活','青春酸甜','群像生活流','低压力叙事'],
+  '市井烟火':['市井烟火','地域生活书写','群像生活流','职业写实'],
+  '热血王道':['热血王道','青春酸甜'],
+  '严肃正剧':['成熟正剧','冷峻现实','哲学思辨','职业写实','极简克制','心理关系剧'],
+  '黑色悬疑':['悬疑紧张','心理恐怖','压抑黑暗','黑色幽默','冷峻现实'],
+  '冷峻现实':['冷峻现实','压抑黑暗','悬疑紧张','心理恐怖','成熟正剧','哲学思辨'],
+  '荒诞喜剧':['荒诞喜剧','讽刺寓言','误解喜剧','黑色幽默']
+};
+var ENGINE_BUCKETS={
+  '冒险探索':['谜题调查','旅行见闻','迷宫攻略','副本循环','无限流','任务系统'],
+  '经营生活':['店铺经营','美食制作','日常单元剧','公司经营','领地建设','内政治理','创作活动','直播弹幕'],
+  '争锋上位':['竞技联赛','科研研发','工业科技树','战争经营','职业技能树','职业案件单元剧'],
+  '恩怨情仇':['马甲身份','婚姻契约','潜伏谍报','幕后组织经营'],
+  '悬疑真相':['谜题调查','马甲身份','潜伏谍报','职业案件单元剧','幕后组织经营']
+};
+var LIGHT_CONFLICTS=['资源不足','规则公开限制','利益不同','市场竞争','职业难题','舆论压力','代际差异','认知规范错位','孤独处境','阶层差异','疾病伤痛','价值观冲突','性别身份错位','流程官僚'];
+var VENDETTA_CONFLICTS=['复仇血债','阶层差异','价值观冲突','心理创伤','政治权力'];
+function buildTagStats(){
+  if(!TAG_ONTO)return;
+  TAG_FREQ={}; CAT_TAGS={};
+  TAG_ONTO.categories.forEach(function(c){CAT_TAGS[c.id]=(c.tags||[]).slice();});
+  TAG_WORKS.forEach(function(w){(w.tags||[]).forEach(function(t){TAG_FREQ[t]=(TAG_FREQ[t]||0)+1;});});
+}
+function weightedDraw(catId,allowed){
+  var tags=(CAT_TAGS&&CAT_TAGS[catId])||[];
+  if(allowed&&allowed.length){var f=tags.filter(function(t){return allowed.indexOf(t)>=0;});if(f.length)tags=f;}
+  if(!tags.length)return '';
+  var total=0,ws=tags.map(function(t){var wv=(TAG_FREQ[t]||0)+1;total+=wv;return wv;});
+  var r=Math.random()*total;
+  for(var i=0;i<tags.length;i++){ r-=ws[i]; if(r<0)return tags[i]; }
+  return tags[tags.length-1];
+}
 function readPrefChips(){
   var get=function(g){var el=document.querySelector('.chip[data-group="'+g+'"].on');return el?el.dataset.val:'';};
   PREFS={tone:get('pref-tone'),skeleton:get('pref-skeleton'),opening:get('pref-opening')};
@@ -958,6 +994,9 @@ function rollOpening(){
     OPENING_PICK+=' · '+mech.split('——')[0];
   }
   t+='切入即体验：抽到的切入方式必须作为开场第一幕完整演出来，玩家身处其中、亲手参与，而不是听别人提起它。\n';
+  if(DNA_PICKS&&DNA_PICKS.prof){
+    t+='主角身份参考：'+DNA_PICKS.prof+(DNA_PICKS.pos?('·'+DNA_PICKS.pos):'')+'（若与世界观时代不符，转译为等价身份）。开场必须生长在这个身份的具体日常里——他的工具、他的顾客或同事、他今天要干的活，而不是通用的旅人开场。\n';
+  }
   t+='建角规则：禁止分步问答建角。最多向玩家问一个开放式问题（也可以一个都不问、直接开演），主角其余设定由你按切入方式自动生成并在叙事中自然呈现，玩家之后随时可用输入修正。\n';
   t+='开场必须严格符合上述切入方式，严禁滑回模板化开场（穿越必见神明、旅店醒来听传闻、神秘老人赠功法等）。只写帮助玩家理解处境和作决定的具体细节；无关的气味、路人动作、天气和远景最多一句。\n开场第一回合必须给玩家落脚感：我是谁、身在何处、手头正在做什么、今天原本打算干什么——通过具体场景自然带出，禁止设定罗列，禁止额外塞入谜团或主线钩子。';
   OPENING_TEXT=t;
@@ -1018,14 +1057,14 @@ function rollTone(){
   else{ trans='半明牌——主角清楚自己的目标，背景随正常经历自然了解；未知只表示尚未接触，不表示有人故意隐瞒'; }
   TONE_LINE='【本局基调：'+t[0]+'】'+t[1]+'。信息牌面：'+trans+'。基调优先级高于世界观的默认文风倾向：句式、对话密度、心理描写的多少、悬念的浓度都必须服从基调。';
 }
-function rollStoryDNA(){
+function rollStoryDNALegacy(){
   var hist=[];
   try{hist=JSON.parse(localStorage.getItem('wuji_dna_hist')||'[]');}catch(e){}
   var skmerged=DNA_SKELETONS.concat(DNA_SKELETONS_X);
   var skpool=DNA_SKELETONS;
   var skpref=PREFS.skeleton&&PREF_MAPS.skeleton[PREFS.skeleton];
   if(skpref){ skpool=skmerged.filter(function(x){return skpref.indexOf(x[0])>=0;}); if(!skpool.length)skpool=DNA_SKELETONS; }
-  else if(STORY_TONE==='黑色悬疑'||STORY_TONE==='严肃正剧'){ skpool=skmerged; }
+  else if(STORY_TONE==='黑色悬疑'||STORY_TONE==='冷峻现实'||STORY_TONE==='严肃正剧'){ skpool=skmerged; }
   var sk,cf,ag,key,tries=0;
   do{
     sk=skpool[Math.floor(Math.random()*skpool.length)];
@@ -1043,6 +1082,53 @@ function rollStoryDNA(){
     +'核心困难：'+cf+'\n'
     +'阻力性质：'+ag[0]+'——'+ag[1]+'\n'
     +'可选的长期发展（只有在玩家行动自然促成时才采用，禁止提前暗示）：'+dev+'。\n'
+    +'规模约束：默认把故事留在当前生活圈和当前目标内纵深发展。只有玩家主动远行、晋升、接触更大事务或完成现阶段目标时，才扩大舞台；不得为了升级剧情凭空引入更高势力、世界危机或幕后组织。\n'
+    +'以上只是方向参考。每回合首先完整回应玩家眼前的行动；若骨架与玩家当前兴趣无关，就让骨架安静待在后台，不得硬塞。';
+}
+
+function rollStoryDNA(){
+  if(TAG_ONTO&&TAG_WORKS.length&&TAG_FREQ&&CAT_TAGS){ try{ rollStoryDNADB(); return; }catch(e){} }
+  rollStoryDNALegacy();
+}
+
+function rollStoryDNADB(){
+  rollTone();
+  var toneTag=weightedDraw('tone',TONE_TAG_MAP[STORY_TONE]||null);
+  var engineAllowed=(PREFS.skeleton&&ENGINE_BUCKETS[PREFS.skeleton])||null;
+  var lightTone=['欢乐废萌','轻松爽快','温馨治愈','市井烟火','荒诞喜剧'].indexOf(STORY_TONE)>=0;
+  var confAllowed=PREFS.skeleton==='恩怨情仇'?VENDETTA_CONFLICTS:(lightTone?LIGHT_CONFLICTS:null);
+  var hist=[]; try{hist=JSON.parse(localStorage.getItem('wuji_dna_hist')||'[]');}catch(e){}
+  var engine,conflict,prof,key,tries=0;
+  do{
+    engine=weightedDraw('story_engine',engineAllowed);
+    conflict=weightedDraw('conflict_source',confAllowed);
+    prof=weightedDraw('profession',null);
+    key=engine+'|'+conflict+'|'+prof; tries++;
+  }while(hist.indexOf(key)>=0&&tries<8);
+  hist.push(key); if(hist.length>12)hist=hist.slice(-12);
+  try{localStorage.setItem('wuji_dna_hist',JSON.stringify(hist));}catch(e){}
+  var pos=Math.random()<0.6?weightedDraw('narrative_position',null):'';
+  var rel=weightedDraw('relationship',null);
+  var growth=weightedDraw('growth_mode',null);
+  DNA_PICKS={engine:engine,conflict:conflict,prof:prof,pos:pos,rel:rel,growth:growth,toneTag:toneTag};
+  var drawn=[engine,conflict,rel,prof,growth,toneTag].filter(Boolean);
+  function scoreWorks(minScore){
+    return TAG_WORKS.map(function(w){
+      var sc=(w.tags||[]).filter(function(t){return drawn.indexOf(t)>=0;}).length;
+      return {w:w,sc:sc};
+    }).filter(function(x){return x.sc>=minScore;}).sort(function(a,b){return b.sc-a.sc;}).slice(0,8);
+  }
+  var pool=scoreWorks(2); if(pool.length<2)pool=scoreWorks(1);
+  var picks=[];
+  while(picks.length<2&&pool.length){ picks.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0].w.title); }
+  STORY_DNA='【本局故事骨架——由2016-2026中日热门作品库按真实热度加权抽取。编剧内部备忘，不是必须制造大事件的剧本，更不是秘密清单】\n'
+    +'细分风味：'+toneTag+'（服从本局基调）\n'
+    +'故事引擎：'+engine+'——主线与日常都从这一引擎里长出来\n'
+    +'核心困难：'+conflict+'（呈现强度必须服从基调，轻快基调下写成生活尺度的难处）\n'
+    +'主角职业/位置：'+prof+(pos?(' · '+pos):'')+'——若与世界观时代不符，转译为世界观内的等价身份\n'
+    +'关系底色：'+rel+'\n'
+    +'成长模式：'+growth+'\n'
+    +(picks.length?('风味锚点：《'+picks.join('》《')+'》——借鉴其质感、节奏与题材组合，严禁复刻情节、人物名与专有设定\n'):'')
     +'规模约束：默认把故事留在当前生活圈和当前目标内纵深发展。只有玩家主动远行、晋升、接触更大事务或完成现阶段目标时，才扩大舞台；不得为了升级剧情凭空引入更高势力、世界危机或幕后组织。\n'
     +'以上只是方向参考。每回合首先完整回应玩家眼前的行动；若骨架与玩家当前兴趣无关，就让骨架安静待在后台，不得硬塞。';
 }
@@ -1738,8 +1824,8 @@ function startGame(){
   var d=document.getElementById('sdsp'); d.textContent='— 游戏开始后显示 —'; d.style.color='var(--dm)';
   var ig=document.getElementById('inv-grid'); if(ig) ig.innerHTML='<span class="inv-empty">— 空 —</span>';
   renderSlots(); renderQuests(); renderPins(); renderLore(); renderNpcs();
-  rollOpening();
   rollStoryDNA();
+  rollOpening();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
   addBlk('sys','▸ 本局开局变体：'+OPENING_PICK+'（不满意可点「完全重置」重抽）');
   var prefNote=[PREFS.tone,PREFS.skeleton,PREFS.opening].filter(Boolean).join('/');
@@ -2162,6 +2248,7 @@ async function loadResearchDB(){
       var seen={};
       TAG_WORKS=TAG_WORKS.filter(function(x){ if(seen[x.title])return false; seen[x.title]=1; return true; });
     }
+    buildTagStats();
     var tagCount=TAG_ONTO.categories.reduce(function(a,c){return a+(c.tags||[]).length;},0);
     if(stats)stats.textContent=TAG_ONTO.categories.length+'类 · '+tagCount+'标签 · '+TAG_WORKS.length+'部作品样本';
     var sel=document.getElementById('tag-db-category');
@@ -2407,6 +2494,7 @@ document.getElementById('pinp').addEventListener('input',function(){
   this.style.height='44px';this.style.height=Math.min(this.scrollHeight,110)+'px';
 });
 document.getElementById('imodal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+setTimeout(function(){ try{loadResearchDB();}catch(e){} },600);
 
 // soft keyboard: re-pin the log to the bottom when the visual viewport shrinks
 if(window.visualViewport){
