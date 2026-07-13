@@ -1008,7 +1008,9 @@ function rollOpening(){ /* merged into rollBlueprint */ }
 
 function rollBlueprint(){
   rollTone();
-  var dbOK=!!(TAG_ONTO&&TAG_WORKS.length&&TAG_FREQ&&CAT_TAGS);
+  // A compact built-in ontology has no work samples, but is still useful for
+  // uniform tag draws. TAG_FREQ simply becomes an optional weighting source.
+  var dbOK=!!(TAG_ONTO&&CAT_TAGS);
   var engine='',conflict='',prof='',pos='',rel='',growth='',toneTag='',anchors=[];
   if(dbOK){
     toneTag=weightedDraw('tone',TONE_TAG_MAP[STORY_TONE]||null);
@@ -1152,15 +1154,15 @@ function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(
 var PACE_CONFIG = {
   short: {
     label:'短篇', icon:'📖',
-    instruction:'短篇：20-40回合的完整闭合故事，开场-发展-高潮-结局，每回合都向结局积累，不拖延；结局要有叙事闭合。'
+    instruction:'短篇：约30-60回合的聚焦故事，舞台和目标较集中，但推进仍由玩家行动触发。不得因为是短篇就替玩家跳过过程或强推高潮；玩家主动追求结局时再逐步收束。'
   },
   medium: {
     label:'中篇', icon:'📚',
-    instruction:'中篇：50-100回合到达终点。主线骨架稳定，支线与日常自由展开，节拍由GM裁判调度；始终能隐约感到主线在缓缓推进。'
+    instruction:'中篇：约80-160回合。主线只作为可选择的方向存在，实质推进主要来自玩家主动调查、承诺和行动；日常、关系、职业与探索可以长期展开，不要求每回合积累主线。'
   },
   long: {
     label:'长篇', icon:'🌍',
-    instruction:'长篇：开放沙盒，没有固定终点。日常与经营是重心，大事件由玩家行为和阶段推进自然引发，绝不凭空降临。'
+    instruction:'长篇：开放沙盒，没有固定终点。日常、经营、关系和细致过程是重心；世界会在后台正常运转，但大事件与舞台扩大主要由玩家行为引发，绝不替玩家决定方向。'
   }
 };
 
@@ -1389,14 +1391,17 @@ async function qMod(t) {
     else if(t==='or'){url='https://openrouter.ai/api/v1/models';hdrs={'Authorization':'Bearer '+document.getElementById('orkey').value.trim()};}
     else if(t==='sf'){url='https://api.siliconflow.cn/v1/models';hdrs={'Authorization':'Bearer '+document.getElementById('sfkey').value.trim()};}
     else{url=document.getElementById('olhost').value.trim()+'/api/tags';hdrs={};}
-    var res=await fetch(url,{headers:hdrs}), data=await res.json();
+    var qc=new AbortController(),qt=setTimeout(function(){qc.abort();},30000),res;
+    try{res=await fetch(url,{headers:hdrs,signal:qc.signal});}finally{clearTimeout(qt);}
+    if(!res.ok){var qet='';try{qet=await res.text();}catch(_e){}throw new Error('HTTP '+res.status+(qet?('：'+qet.substring(0,120)):''));}
+    var data=await res.json();
     var items=t==='ol'?(data.models||[]).map(function(m){return{id:m.name};}):(data.data||[]);
     if(items.length){
       var sid=t==='ol'?'olmod':(t==='ds'?'dsmod':(t==='or'?'ormod':'sfmod'));
       document.getElementById(sid).innerHTML=items.map(function(m){return'<option value="'+m.id+'">'+m.id+'</option>';}).join('');
       st.textContent='▸ 发现 '+items.length+' 个模型'; st.style.color='var(--g)';
     } else { st.textContent='▸ 未找到'; st.style.color='var(--r)'; }
-  } catch(e){ st.textContent='▸ 失败：'+e.message; st.style.color='var(--r)'; }
+  } catch(e){ st.textContent='▸ 失败：'+(e&&e.name==='AbortError'?'查询超时':e.message); st.style.color='var(--r)'; }
 }
 
 function doConnect(t) {
@@ -1468,9 +1473,9 @@ async function openItemModal(item) {
   try {
     var res=await doFetch([{role:'user',content:prompt}],200);
     var data=await res.json();
-    if(!data.error) document.getElementById('imod-desc').textContent=data.choices[0].message.content;
+    if(!data.error) document.getElementById('imod-desc').textContent=chatContent(data);
     else document.getElementById('imod-desc').textContent='无法获取描述。';
-  } catch(e){document.getElementById('imod-desc').textContent='查询失败。';}
+  } catch(e){document.getElementById('imod-desc').textContent='查询失败：'+String(e&&e.message||e).substring(0,120);}
 }
 
 async function openSkillModal(skill) {
@@ -1482,9 +1487,9 @@ async function openSkillModal(skill) {
   try {
     var res=await doFetch([{role:'user',content:prompt}],200);
     var data=await res.json();
-    if(!data.error) document.getElementById('imod-desc').textContent=data.choices[0].message.content;
+    if(!data.error) document.getElementById('imod-desc').textContent=chatContent(data);
     else document.getElementById('imod-desc').textContent='无法获取描述。';
-  } catch(e){document.getElementById('imod-desc').textContent='查询失败。';}
+  } catch(e){document.getElementById('imod-desc').textContent='查询失败：'+String(e&&e.message||e).substring(0,120);}
 }
 
 function closeModal(){document.getElementById('imodal').classList.remove('on');}
@@ -1615,13 +1620,13 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; TONE_LINE=sv.toneline||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; TONE_LINE=sv.toneline||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
@@ -1668,7 +1673,15 @@ function loadSvAuto(){loadSv('auto');}
 
 function delSv(i){idbDel('sv_'+i).then(function(){renderSlots();});}
 
-function doFetch(messages,maxTok){
+function apiTimeoutMs(maxTok){
+  // Short utility calls should fail reasonably quickly; long generations and
+  // cold local models need substantially more room.
+  if(maxTok&&maxTok<=400)return 60000;
+  if(maxTok&&maxTok<=1200)return 120000;
+  return 180000;
+}
+
+async function doFetch(messages,maxTok){
   var url,hdrs,body;
   if(BK==='ol'){
     url=BASEURL+'/v1/chat/completions'; hdrs={'Content-Type':'application/json'};
@@ -1678,7 +1691,25 @@ function doFetch(messages,maxTok){
     if(BK==='or'){hdrs['HTTP-Referer']='https://localhost';hdrs['X-Title']='WuxiaRPG';}
     body=JSON.stringify({model:MODEL,messages:messages,stream:false,temperature:Number(SETTINGS.temp),max_tokens:maxTok||4096});
   }
-  return fetch(url,{method:'POST',headers:hdrs,body:body});
+  var ctrl=new AbortController(), timer=setTimeout(function(){ctrl.abort();},apiTimeoutMs(maxTok));
+  try{
+    var res=await fetch(url,{method:'POST',headers:hdrs,body:body,signal:ctrl.signal});
+    if(!res.ok){
+      var et=''; try{et=await res.text();}catch(_e){}
+      throw new Error('HTTP '+res.status+(et?('：'+et.substring(0,200)):''));
+    }
+    return res;
+  }catch(e){
+    if(e&&e.name==='AbortError')throw new Error('请求超时，请检查后端或稍后重试');
+    throw e;
+  }finally{clearTimeout(timer);}
+}
+
+function chatContent(data){
+  if(data&&data.error)throw new Error(typeof data.error==='string'?data.error:JSON.stringify(data.error));
+  var c=data&&data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content;
+  if(typeof c!=='string'||!c.trim())throw new Error('后端返回格式异常或内容为空');
+  return c;
 }
 
 async function doFetchStream(messages,maxTok,onDelta){
@@ -1691,11 +1722,19 @@ async function doFetchStream(messages,maxTok,onDelta){
     if(BK==='or'){hdrs['HTTP-Referer']='https://localhost';hdrs['X-Title']='WuxiaRPG';}
     body={model:MODEL,messages:messages,stream:true,temperature:Number(SETTINGS.temp),max_tokens:maxTok||4096};
   }
-  var res=await fetch(url,{method:'POST',headers:hdrs,body:JSON.stringify(body)});
+  var ctrl=new AbortController();
+  var connectTimer=setTimeout(function(){ctrl.abort();},60000);
+  var res;
+  try{res=await fetch(url,{method:'POST',headers:hdrs,body:JSON.stringify(body),signal:ctrl.signal});}
+  catch(e){clearTimeout(connectTimer);if(e&&e.name==='AbortError')throw new Error('连接后端超时');throw e;}
+  clearTimeout(connectTimer);
   if(!res.ok||!res.body){var et='';try{et=await res.text();}catch(e){}throw new Error('HTTP '+res.status+' '+et.substring(0,200));}
   var reader=res.body.getReader(),dec=new TextDecoder(),buf='',full='',usage=null;
-  while(true){
-    var r=await reader.read(); if(r.done)break;
+  var idleTimer=null;
+  function armIdle(){clearTimeout(idleTimer);idleTimer=setTimeout(function(){ctrl.abort();},90000);}
+  armIdle();
+  try{while(true){
+    var r=await reader.read(); if(r.done)break; armIdle();
     buf+=dec.decode(r.value,{stream:true});
     var lines=buf.split('\n'); buf=lines.pop();
     for(var i=0;i<lines.length;i++){
@@ -1711,6 +1750,12 @@ async function doFetchStream(messages,maxTok,onDelta){
       }catch(e){}
     }
   }
+  // Some compatible backends omit the final newline. Process that last SSE frame.
+  var tail=buf.trim();
+  if(tail.indexOf('data:')===0){
+    var tp=tail.slice(5).trim();
+    if(tp&&tp!=='[DONE]'){try{var tj=JSON.parse(tp),td=tj.choices&&tj.choices[0]&&tj.choices[0].delta&&tj.choices[0].delta.content;if(td){full+=td;if(onDelta)onDelta(full);}if(tj.usage)usage=tj.usage;}catch(_e){}}
+  }}catch(e){if(e&&e.name==='AbortError')throw new Error('流式输出长时间没有返回内容');throw e;}finally{clearTimeout(idleTimer);}
   return {text:full,usage:usage};
 }
 
@@ -1725,7 +1770,7 @@ async function maybeCompress(){
     var res=await doFetch([{role:'user',content:prompt}],900);
     var data=await res.json();
     if(HIST.length!==version){ return; } // history moved on during the request — never clobber it
-    if(!data.error){HIST=[{role:'system',content:'【历史摘要】\n'+data.choices[0].message.content}].concat(toK);addBlk('sys','▸ 记忆压缩完成');}
+    if(!data.error){HIST=[{role:'system',content:'【历史摘要】\n'+chatContent(data)}].concat(toK);addBlk('sys','▸ 记忆压缩完成');}
   }catch(e){}
   finally{ SUMMING=false; }
 }
@@ -1743,6 +1788,12 @@ function launchGame() {
 }
 
 var CORE_RULES='【叙事引擎核心规范】\n职责：你负责叙事与NPC；程序负责裁定、数值与记忆。GM裁定与系统状态是不可改判的事实。严禁输出任何元注释，提问必须戏中化（NPC搭话、文书、系统弹窗）。\n一、输入与裁定\n1. 玩家输入是意图不是结果，成败由裁定与情境决定；失败、拒绝、平淡都是合法结果，但要有可理解的原因。\n2. 心理活动NPC永远听不见；没说出口的话就是没说，拿不准时默认没说。\n二、世界与NPC\n3. NPC是活人：有限视角、立场惯性（态度数值由系统钳制）、观察力不超过其身份；绝大多数人没有秘密，说话直接像真人——问路给方向、买卖报价、闲聊就聊生活。\n4. 世界大多数事与主角无关，NPC能自己处理的事不必汇报；信息不完整只能来自不知道/记错/只听说过，禁用你不该知道、现在还不是时候、别问这类句式。\n5. 悬念浓度服从蓝图的信息牌面：非暗牌局禁止可疑细节、欲言又止、意味深长、幕后观察者与神秘组织。\n三、笔法\n6. 一回合一重点，所有笔墨为它服务；过场与日常3-6句收束，只有关键场景铺开；特写即承诺——花了半句以上笔墨的细节必须在不远的将来兑现，否则不写。\n7. 对话像真人：一场对话一个重点，寒暄就是寒暄，没有信息就短。\n8. 失败与代价真实：强敌就是打不过，重伤要养数天到数周且带减益，钱不够是常态；禁止刚好赶到、侥幸逃脱、突然手下留情式的廉价解围；物价开局定下后全程一致。\n9. 时间像小说一样伸缩：发育、赶路、等待用蒙太奇跳过并用STATE结算收获，跳跃后标注经过的时间；玩家请求跳过必须照做。\n10. 章节感：进入新阶段或大时间跳跃时，正文第一行输出【章：四到十字标题】，其余回合不输出。\n11. 命名规范：地名、势力、人名要平实、有来历，用真实世界的构词法——地理特征、姓氏、行业、方言（如陈家渡、三里坡、广盛号、下瓦窑、槐树巷）；禁止模板名（青石镇、黑风寨、悦来客栈之类）与中二直译名（暗影兄弟会、血色黎明之类）。名字越平淡越好，气氛靠事件不靠名字。\n四、格式协议（每回合）\n12. 回复末尾必须有选项块，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n（数字+空格+内容，无句号无加粗；四个选项覆盖不同玩法，不暗示最优解，日常不设陷阱选项。）\n13. 状态栏按世界包定义的格式附于选项之后。\n14. 剧情实质推进时更新隐藏大纲块（前端隐藏）：【大纲】阶段:xx｜当前目标:xx｜活跃支线:xx｜关键NPC:名(目的)｜当前舞台:xx【/大纲】\n15. 状态申报：当主角的属性、技能、持有物、资源或位置发生变化时，必须在回复最末尾（大纲块之后）输出【STATE】{"attr_set":{"属性名":变化后的新值},"res_set":{"资源名":变化后的新数值},"inv_add":["获得的物品"],"inv_rm":["失去的物品"],"skill_add":["新学会的技能"],"skill_rm":[],"loc":"新位置","npc_set":{"NPC名":{"rel":"与主角的关系","att":-5到5的态度整数,"note":"一句话现状"}},"npc_rm":["永久离场或死亡的NPC名"]}【/STATE】，未变化的字段省略，无变化则不输出此块。技能与物品的增减只有通过此块申报才算数。有名有姓的NPC首次登场、关系变化、态度变化或有新动向时都必须用npc_set申报；态度值-5敌对~0中立~5生死之交，单回合变化不得超过1（系统会强制截断）。';
+
+// The original rule set grew through several iterations and contained
+// conflicting pacing directives. Keep one compact contract as the sole core
+// prompt; the older declaration above remains only for save compatibility.
+CORE_RULES='【文字RPG叙事契约】\n玩家决定主角，AI负责世界与NPC。玩家输入通常只授权其中明确表达的动作；写完该动作及连续、直接的反馈后，在出现新选择、未知风险、承诺、转场或需要玩家表态的地方停下。不得替玩家点击、答应、拒绝、说话、接受任务、决定去向、使用物品、跨越时间或总结其心理结论。\n时间默认连续。职业、生活、观察、对话、赶路和适应都可正常展开；仅当玩家明确要求快进时使用蒙太奇。穿越、召唤、觉醒、入职和加入组织等转折应分阶段游玩，每个决定点都交还玩家。\nNPC有自己的立场、生活与有限视角，说话自然直接；不知道就说不知道。不要用神秘停顿、含糊警告、幕后观察者或凭空阴谋制造戏剧，也不要让所有人围着主角运转。\n叙事以当前行动为中心，但允许少量职业、环境和人物细节建立生活质感；细节不必都是伏笔。篇幅服从内容，不设最低字数，不重复玩家刚说过的话，不为了写长而新增事件。失败应有情境依据，普通无风险行动不检定。\n每回合末尾提供2-4个眼前可做的行动参考，数量服从场景，并保留“或输入任何你想做的事”。选项不得替玩家规划人生或预告剧情。任务只有在玩家明确接受、承诺或主动设定目标后才登记。数值、物品、技能、位置和重要关系确有变化时才输出【STATE】；普通路人无需进入长期关系记录。世界包要求的状态栏保持简洁，不得为了填栏擅自改变数值。';
+var INTERACTION_RULES='';
 
 var ANTI_MYSTERY='【生活感与相关性】普通NPC说人话：问路给方向、买卖报价、闲聊就聊眼前话题。信息不完整只能来自不知道/记错/只听说过。禁用：你不该知道、现在还不是时候、别问、我只能告诉你这么多、这座城市不简单，以及无缘无故的停顿、眼神闪烁、神秘微笑。玩家没有询问的背景故事不要主动倾倒；与当前行动无关的世界变化不进入正文。';
 
@@ -1779,16 +1830,27 @@ function buildSystemPrompt(recentText){
   if(!w||!p) return '';
   var sp=CORE_RULES;
   sp+='\n\n【世界包】\n'+w.prompt;
+  sp+='\n【输出覆盖】世界包中的状态栏示例只定义字段，不代表每回合必须重写全部字段；无变化时可省略或只保留最简当前状态。任务仅在玩家明确接受、承诺或主动设定目标后登记。';
   if(WORLD_PRESET&&w.presets){ var pp=w.presets.filter(function(x){return x.id===WORLD_PRESET;})[0]; if(pp&&pp.note){ sp+='\n【本局特色侧重】'+pp.note; } }
   sp+='\n\n【篇幅】'+p.instruction;
   if(STORY_DNA){ sp+='\n\n'+STORY_DNA; }
   if(w.lockedTags&&w.lockedTags.length){ sp+='\n\n【定制锁定标签——最高优先级，蓝图任何随机元素与之冲突时一律以此为准】'+w.lockedTags.join('、'); }
-  if(TURNS<4){ sp+='\n\n'+FIRST_CHAPTER; }
+  if(TURNS<8){ sp+='\n\n'+FIRST_CHAPTER; }
   if(NAMES){ sp+='\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n'+NAMES; }
   if(OUTLINE){ sp+='\n\n【剧情备忘——保持目标与因果连续的编剧笔记，不是悬念清单】\n'+OUTLINE+'\n（剧情实质推进时才输出更新版【大纲】块）'; }
   var ss=stateSummary();
   if(ss){ sp+='\n\n【权威角色状态——系统维护的唯一事实，叙事与状态栏不得与此矛盾；技能列表是全集】\n'+ss; }
-  if(PINS.length){ sp+='\n\n【不可更改的锁定设定——最高优先级，永远遵守】\n'+PINS.map(function(pn){return '- '+pn.text;}).join('\n'); }
+  if(PINS.length){
+    var pinLines=[],pinChars=0;
+    // Preserve the newest facts first and enforce a character budget instead
+    // of an arbitrary item-count limit.
+    for(var pi=PINS.length-1;pi>=0;pi--){
+      var pl='- '+String(PINS[pi].text||'').trim();
+      if(!pl||pinChars+pl.length>6000)continue;
+      pinLines.unshift(pl); pinChars+=pl.length;
+    }
+    sp+='\n\n【不可更改的锁定设定——最高优先级，永远遵守】\n'+pinLines.join('\n');
+  }
   var loreBlocks=getRelevantLore(recentText||'');
   if(loreBlocks){ sp+='\n\n【相关背景资料——本回合参考】\n'+loreBlocks; }
   return sp;
@@ -1943,31 +2005,21 @@ async function directorPass(playerInput){
     +'人物关系:'+(Object.keys(GAME_STATE.npcs||{}).slice(-10).map(function(n){var v=GAME_STATE.npcs[n];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+')';}).join('；')||'无')+'\n'
     +'最近剧情:\n'+recent+'\n\n'
     +'玩家本回合输入:'+playerInput+'\n\n'
-    +'节拍参考：发育（纯日常，让玩家安心积累）/互动（完整回应对话或当前事务）/推进（只推进玩家主动追求的现有目标）/收获（结算实打实的结果）。不要自动循环，不要为了节奏强行制造冲突或钩子；连续日常完全正常。\n'
+    +'节拍参考：发育（纯日常，让玩家安心积累）/互动（完整回应对话或当前事务）/推进（只推进玩家主动追求的现有目标）/收获（结算实打实的结果）。不要自动循环，不要为了节奏强行制造冲突或钩子；连续日常完全正常。裁定只授权回应玩家明确做出的这一步，不授权叙事者代替玩家继续下一步；若即将出现选择、转场、承诺、点击、接受或拒绝，scene_note必须要求在该节点前停下。\n'
     +'若玩家输入是【时间跳跃】请求：risky填false，beat填发育，scene_note写"用蒙太奇概括跳过的时间并结算收获"。\n'
     +'只输出一个JSON对象，不要任何其他文字:{"spoken":布尔值(这句输入是否说出口了,心理活动或内心想法为false),"risky":布尔值(此行动是否需要成败检定),"attr":"若risky为true,从角色属性中选出最相关的一个属性名","dc":若risky为true给难度数字(简单40,普通55,困难70,极难85,远超实力可更高),"npc":"仅填写本回合正在直接互动的NPC的态度,没有则空字符串","focus":"玩家输入要求得到的直接回应或结果,一句话","beat":"发育|互动|推进|收获,四选一","scene_note":"一句话说明本回合应该回答什么；同时明确哪些旁枝不要写","mainline":"只有玩家主动处理现有任务/目标时填写，否则必须是空字符串","fail_cost":"若检定失败应落实的直接代价,一句话"}';
   var res=await doFetch([{role:'user',content:p}],350);
   var data=await res.json();
   if(data.error||!data.choices)return null;
   if(data.usage&&data.usage.total_tokens)TOKENS+=data.usage.total_tokens;
-  var m=String(data.choices[0].message.content).match(/\{[\s\S]*\}/);
+  var m=chatContent(data).match(/\{[\s\S]*\}/);
   if(!m)return null;
   return JSON.parse(m[0]);
 }
 
 function authorNote(dice){
-  var an='【本回合裁定提示——内部指令，不得向玩家提及】';
-  if(dice!==null){
-    an+='裁定骰:'+dice+'/100。若玩家本回合行动存在失败可能（战斗/说服/潜行/偷窃/交涉/追逐/冒险尝试），必须按CRPG规则检定：';
-    an+='1)从状态栏选取与该行动最相关的一项属性（膂力/悟性/魅力/敏捷等，按世界观），加成=属性值×5；';
-    an+='2)按情境和对手实力定难度：简单40/普通55/困难70/极难85（挑战远超当前实力可更高）；';
-    an+='3)总值=骰值+属性加成，总值≥难度即成功；总值低于难度30以上为大失败，超出难度30以上为大成功；';
-    an+='4)必须在叙事正文最开头输出检定行，格式严格为：【检定】行为·属性｜骰'+dice+'+属性名N×5=总值｜难度D｜结果【/检定】（结果只能是：大失败/失败/成功/大成功）；';
-    an+='5)之后的叙事必须严格符合检定结果，禁止无视失败让玩家如愿。纯日常无风险行为不检定、不输出检定行。';
-  }
-  an+='若本回合有成败判定，可先输出【裁定】…【/裁定】小块简短推演（玩家不可见），再写正文。';
-  an+='严守：玩家输入是意图不是结果；心理活动NPC永远听不见；NPC有立场惯性且只有有限视角；先完整回答玩家本回合具体做的事，再写直接后果。四个选项必须从当前场景已经存在的人、物、地点和目标中产生，不得凭空开新线。回复末尾必须有"选项："格式块。';
-  an+='篇幅按内容分配：普通问话/买卖/查看/赶路写250-450字；确有冲突、重要会面或玩家主动调查时写450-800字。环境最多1-2句，除非玩家正在观察环境；不新增无关路人动作、天气特写、远处动静、陌生人插话或主线暗示。';
+  var an='【本回合】只完成玩家明确行动及其直接反馈，在下一个决策边界前停下。心理活动未说出口；NPC只有有限视角。篇幅服从内容，允许自然细节，不新增无关事件。末尾给2-4个眼前行动参考并允许自由输入。';
+  if(dice!==null)an+='仅当行动存在明确风险且失败会产生实质不同后果时才检定。需要检定则选择最相关属性，按骰'+dice+'+属性×5对抗难度40/55/70/85，并输出【检定】行为·属性｜骰'+dice+'+属性名N×5=总值｜难度D｜结果【/检定】；普通观察、交谈和日常动作不检定。';
   return an;
 }
 
@@ -2008,12 +2060,12 @@ async function _runTurn(){
         rt+='本回合检定已由系统算出，结果：'+outc+'。必须严格按此结果叙事。';
         if(outc.indexOf('失败')>=0 && ruling.fail_cost) rt+='失败的代价必须落实：'+ruling.fail_cost;
       }
-      if(ruling.focus) rt+='本回合唯一重点：'+ruling.focus+'。正文第一段就回应它；所有笔墨只为这个重点服务，与它无关的描写和细节一律删去。';
+      if(ruling.focus) rt+='本回合中心：'+ruling.focus+'。优先回应它，同时允许少量建立空间、人物状态和生活质感的自然细节。';
       if(ruling.beat) rt+='本回合节拍：'+ruling.beat+'。';
       if(ruling.scene_note) rt+=String(ruling.scene_note)+' ';
       if(ruling.npc) rt+='在场NPC的真实态度：'+ruling.npc;
       if(ruling.mainline) rt+='本回合与主线的联系：'+ruling.mainline;
-      rt+='篇幅纪律：普通问话/买卖/查看/赶路250-450字，重要冲突或玩家主动调查450-800字。环境最多1-2句，除非玩家正在观察环境；禁止无关路人动作、天气特写、远处动静、陌生人插话。四个选项只能来自当前已经存在的情境，不得凭空开启新线；回复末尾必须有"选项："格式块；状态有变化时输出【STATE】块。';
+      rt+='只完成玩家这一步及直接反馈，在新的选择或表态前停下。篇幅服从内容，可保留自然的生活与人物细节，不新增无关事件。末尾给2-4个眼前行动参考并允许自由输入；状态确有变化时才输出【STATE】。';
       noteContent=rt;
     } else {
       noteContent=authorNote(dice);
@@ -2038,7 +2090,7 @@ async function _runTurn(){
       var res=await doFetch(msgs,4096);
       var data=await res.json();
       if(data.error){typ.remove();addBlk('err','错误：'+JSON.stringify(data.error));LOADING=false;return;}
-      reply=data.choices[0].message.content; usage=data.usage;
+      reply=chatContent(data); usage=data.usage;
       typ.remove(); typ=null;
     }
     if(checkLine && reply.indexOf('【检定】')<0){ reply=checkLine+'\n'+reply; }
@@ -2050,7 +2102,7 @@ async function _runTurn(){
     extractOutline(reply);
     extractState(reply);
     extractNames(reply);
-    await maybeCompress(); renderSlots(); autoSave(); maybeAutoMemory();
+    await maybeCompress(); autoSave(); maybeAutoMemory();
   }catch(e){ if(typ)typ.remove(); addBlk('err','连接失败：'+String(e&&e.message||e).substring(0,250)); }
   LOADING=false; document.getElementById('pinp').focus();
 }
@@ -2075,7 +2127,7 @@ function regenTurn(){
 
 
 var NAMES='';
-var FIRST_CHAPTER='【第一章规范——仅开场适用，此回合不受过场3-6句限制】\n开场是全书第一章，600-1000字，用边做事边带出的方式完成五件事，禁止设定罗列：\n1 主角是谁：称呼（守命名规范）、身份、此刻的处境，第一段就让读者站到他身后；\n2 他的小世界：所在地、营生、身边最重要的一两个人；\n3 世界底色：与主角直接相关的一两条世界规则或近况，大环境一笔带过；\n4 来历入戏：穿越者必须完整走完穿越链条——先用至少一整段写穿越前的现实生活，再亲历触发一幕，再落地新世界，现实到剧情的过程绝不可跳过；土著则从今天的日常自然写进去；\n5 收尾：主角手头有一件具体的今日目标，然后按格式给出选项。\n另外，本回合最末尾输出【命名表】地名:甲,乙,丙｜势力:甲,乙｜人物:甲,乙,丙,丁【/命名表】（前端隐藏；按命名规范为本局预铺8-12个名字，之后优先取用）。\n若蓝图的开局切入是经典问答：先用两三个戏中化的问题建角（一步一问等回答），问答完成后的第一段正式叙事再执行本规范。';
+var FIRST_CHAPTER='【互动式序章】\n开局用一个具体的当下场景自然呈现主角的生活、身份与可互动细节，不要罗列设定，也不要急着抵达事件中心。首回合停在第一个真正需要玩家反应的位置。若有穿越或其他重大转折，按“原本生活—触发—转移—落地—探索适应”分阶段游玩，未经玩家行动不得跨段。经典问答每回合最多问一个必要问题。第一次正式叙事末尾输出一次隐藏【命名表】地名:甲,乙,丙｜势力:甲,乙｜人物:甲,乙,丙,丁【/命名表】，预铺名字不代表必须登场。';
 function extractNames(text){
   var m=String(text).match(/【命名表】([\s\S]*?)【\/命名表】/);
   if(m&&m[1].trim()) NAMES=m[1].trim();
@@ -2140,19 +2192,24 @@ function promptAddLore(){
   renderLore();
 }
 
-// ── AUTO MEMORY: every 12 player turns, extract established facts into lorebook ──
-var _memBusy=false;
+// ── AUTO MEMORY: trigger only after enough new, substantial story text ──
+var _memBusy=false, _lastMemTurn=0;
 async function maybeAutoMemory(){
   if(!SETTINGS.autoMem||_memBusy)return;
-  if(TURNS===0||TURNS%12!==0)return;
+  if(TURNS===0||TURNS-_lastMemTurn<10)return;
+  var recentSlice=HIST.slice(-24);
+  var meaningfulChars=recentSlice.reduce(function(n,m){
+    return n+(m.role==='assistant'?String(m.content||'').replace(/【(?:STATE|大纲|命名表|裁定)】[\s\S]*?(?:【\/(?:STATE|大纲|命名表|裁定)】|$)/g,'').length:0);
+  },0);
+  if(meaningfulChars<3000)return;
   _memBusy=true;
   try{
-    var recent=HIST.slice(-24).map(function(m){return m.role+': '+m.content;}).join('\n').substring(0,9000);
+    var recent=recentSlice.map(function(m){return m.role+': '+m.content;}).join('\n').substring(0,9000);
     var p='从以下文字游戏最近的剧情中，提取1-3条今后必须记住的既成事实（NPC关系变化、许下的承诺、结下的恩怨、重要物品去向、地点变化）。每行一条，格式严格为：名称|逗号分隔的触发关键词|一句话事实。只输出这些行，没有值得记的就输出：无\n\n'+recent;
     var res=await doFetch([{role:'user',content:p}],300);
     var data=await res.json();
     if(!data.error&&data.choices){
-      data.choices[0].message.content.split('\n').forEach(function(ln){
+      chatContent(data).split('\n').forEach(function(ln){
         var parts=ln.split('|'); if(parts.length<3)return;
         var name=parts[0].trim().replace(/^[-\d.、\s]+/,''), kws=parts[1].split(/[,，]/).map(function(x){return x.trim();}).filter(Boolean), txt=parts.slice(2).join('|').trim();
         if(!name||name==='无'||!txt)return;
@@ -2166,6 +2223,7 @@ async function maybeAutoMemory(){
       }
       renderLore();
     }
+    _lastMemTurn=TURNS;
   }catch(e){}
   _memBusy=false;
 }
@@ -2234,7 +2292,7 @@ function cardToWorld(card){
   if(d.scenario)pieces.push('【场景】\n'+d.scenario);
   if(d.mes_example)pieces.push('【对话风格示例】\n'+String(d.mes_example).substring(0,1500));
   pieces.push('【开局】用第二人称把玩家带入场景，然后以下面的开场白开始（可自然润色）：\n'+(d.first_mes||'自由发挥一个符合人设的开场'));
-  pieces.push('【强制格式】每次回复末尾必须有：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事');
+  pieces.push('【行动参考】每次回复末尾按场景提供2-4个眼前可做的行动，并保留“或输入任何你想做的事”；不必为了凑数强行写满四项');
   var book=[];
   try{
     var entries=(d.character_book&&d.character_book.entries)||[];
@@ -2291,7 +2349,9 @@ function buildQuickWorld(){
   };
 }
 async function quickStart(){ var pb=document.getElementById('preset-box'); if(pb)pb.style.display='none'; WORLD_PRESET='';
-  try{ await Promise.race([loadResearchDB(),new Promise(function(r){setTimeout(r,2500);})]); }catch(e){}
+  // Reuse an in-flight DB request. Quick start remains quick, but no longer
+  // mistakes “already loading” for “finished loading”.
+  try{ await Promise.race([loadResearchDB(),new Promise(function(r){setTimeout(function(){r(false);},3500);})]); }catch(e){}
   buildQuickWorld();
   WORLD='__custom__';
   document.querySelectorAll('.wcard').forEach(function(c){c.classList.remove('sel');});
@@ -2300,15 +2360,32 @@ async function quickStart(){ var pb=document.getElementById('preset-box'); if(pb
 }
 
 // ── RESEARCH TAG DB ──
-var TAG_ONTO=null, TAG_WORKS=[], SELECTED_TAGS=[], TAG_DB_LOADING=false;
-async function loadResearchDB(){
-  if(TAG_ONTO||TAG_DB_LOADING) return;
+var TAG_ONTO=null, TAG_WORKS=[], SELECTED_TAGS=[], TAG_DB_LOADING=false, TAG_DB_PROMISE=null;
+function fallbackResearchDB(){
+  if(TAG_ONTO)return;
+  TAG_ONTO={categories:[
+    {id:'world_frame',label:'世界框架',tags:['武侠江湖','现代都市','低魔奇幻','末日废土','市井年代','星际殖民地','校园生活','蒸汽工业']},
+    {id:'story_engine',label:'叙事机制',tags:['冒险探索','店铺经营','日常单元剧','职业成长','谜题调查','旅行见闻','领地建设','群像生活流']},
+    {id:'tone',label:'基调',tags:['轻松吐槽','热血王道','温馨治愈','市井烟火','成熟正剧','冷峻现实','荒诞喜剧','悬疑紧张']},
+    {id:'conflict_source',label:'冲突来源',tags:['资源不足','利益不同','职业难题','市场竞争','价值观冲突','阶层差异','自然环境','政治权力']},
+    {id:'profession',label:'职业',tags:['商人','工匠','调查员','医生','教师','冒险者','研究者','普通职员']},
+    {id:'narrative_position',label:'叙事位置',tags:['本地普通人','外来者','职业人','边缘角色','经营者','前辈导师']},
+    {id:'relationship',label:'关系',tags:['挚友伙伴','选择家庭','职业搭档','师徒前后辈','复杂关系网','独自生活']},
+    {id:'growth_mode',label:'成长',tags:['职业专精','缓慢积累','热血成长','平凡日常','经营建设','成长有代价']}
+  ]};
+  TAG_WORKS=[];
+}
+function loadResearchDB(){
+  if(TAG_ONTO) return Promise.resolve(true);
+  if(TAG_DB_PROMISE) return TAG_DB_PROMISE;
+  TAG_DB_PROMISE=(async function(){
   TAG_DB_LOADING=true;
   var stats=document.getElementById('tag-db-stats');
   try{
     // 优先读聚合库（含归一化标签与内嵌ontology），失败再退回7个原始文件
     try{
-      var master=await (await fetch('research/research_db.json')).json();
+      var mr=await fetch('research/research_db.json'); if(!mr.ok)throw new Error('HTTP '+mr.status);
+      var master=await mr.json();
       if(master&&master.ontology&&Array.isArray(master.works)&&master.works.length){
         TAG_ONTO=master.ontology;
         TAG_WORKS=master.works.map(function(w){
@@ -2317,11 +2394,13 @@ async function loadResearchDB(){
       }
     }catch(e){}
     if(!TAG_ONTO){
-      TAG_ONTO=await (await fetch('research/tag_ontology.json')).json();
+      var or=await fetch('research/tag_ontology.json'); if(!or.ok)throw new Error('HTTP '+or.status);
+      TAG_ONTO=await or.json();
       var files=['research/china_works_2016_2020.json','research/china_works_2021_2024.json','research/china_works_2025_2026.json','research/japan_works_2016_2020.json','research/japan_works_2021_2026.json','research/manga_works_2016_2020.json','research/manga_works_2021_2026.json'];
       for(var i=0;i<files.length;i++){
         try{
-          var w=await (await fetch(files[i])).json();
+          var wr=await fetch(files[i]); if(!wr.ok)throw new Error('HTTP '+wr.status);
+          var w=await wr.json();
           var arr=Array.isArray(w)?w:(Array.isArray(w.works)?w.works:Object.keys(w).map(function(k){return w[k];}));
           TAG_WORKS=TAG_WORKS.concat(arr.filter(function(x){return x&&x.title;}));
         }catch(e){}
@@ -2339,10 +2418,20 @@ async function loadResearchDB(){
       });
     }
     renderTagResults();
+    return true;
   }catch(e){
-    if(stats)stats.textContent='研究数据加载失败：需通过网页地址访问（GitHub Pages或本地服务），不能双击文件直接打开';
+    fallbackResearchDB(); buildTagStats();
+    if(stats)stats.textContent='已启用内置精简标签库（完整研究数据需通过网页地址访问）';
+    var sel=document.getElementById('tag-db-category');
+    if(sel&&sel.options.length<=1)TAG_ONTO.categories.forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.label||c.id;sel.appendChild(o);});
+    renderTagResults();
+    return false;
+  }finally{
+    TAG_DB_LOADING=false;
+    TAG_DB_PROMISE=null;
   }
-  TAG_DB_LOADING=false;
+  })();
+  return TAG_DB_PROMISE;
 }
 function renderTagResults(){
   var box=document.getElementById('tag-db-results');
@@ -2417,7 +2506,7 @@ function clearResearchTags(){ SELECTED_TAGS=[]; renderSelectedTags(); renderTagR
 })();
 
 function resetGen() {
-  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+  document.querySelectorAll('#genscreen .chip').forEach(function(c){ c.classList.remove('on'); });
   ['custom-genre','custom-origin','custom-form','custom-rolepos','custom-sourceframe','custom-ability','custom-style','custom-extra'].forEach(function(id){
     var el = document.getElementById(id);
     if(el) el.value = '';
@@ -2448,7 +2537,13 @@ document.addEventListener('click', function(e) {
 
 function getGenSelections() {
   var result = {};
-  var groups = ['genre','magic','era','scale','power','econ','ability','rating','mechanic'];
+  // Derive the list from the generator UI so future option groups cannot be
+  // silently forgotten. Preference chips belong to quick-start, not this form.
+  var groups = [];
+  document.querySelectorAll('#genscreen .chip[data-group]').forEach(function(c){
+    var g=c.dataset.group;
+    if(g&&g.indexOf('pref-')!==0&&groups.indexOf(g)<0)groups.push(g);
+  });
   groups.forEach(function(g) {
     var selected = [];
     document.querySelectorAll('.chip[data-group="'+g+'"].on').forEach(function(c){
@@ -2498,10 +2593,11 @@ function buildMetaPrompt(sel) {
   parts.push('1. 【世界观】- 详细描述世界背景、历史、势力');
   parts.push('2. 【开局流程】- 最多询问3项真正必要的信息；所有身份列表都只是示例，必须允许自由输入。若玩家已经明确给出身份、形态或目标，不得重复询问');
   parts.push('3. 【叙事规则】- 节奏、文风、禁止事项');
-  parts.push('4. 【强制格式】- 选项格式（必须是"选项：\n1 xxx\n2 xxx"格式，无加粗无句号）');
+  parts.push('4. 【行动参考】- 每回合末尾按场景提供2-4个眼前行动，格式为“选项：\n1 xxx\n2 xxx”，不必凑满四项，并保留自由输入');
   parts.push('5. 【状态栏】- 末尾附带的状态格式（包含HP、资源、属性、位置等）');
   parts.push('6. 如有特殊机制（理智值/道德系统等），详细说明其规则');
   parts.push('7. 【身份开放】- 职业、种族、身体形态、阵营与故事位置不得被预设列表锁死；严格落实所选“存在形态”和“叙事位置”，主角不默认是人类、勇者或世界中心');
+  parts.push('8. 【玩家主导】- 世界提示词不得规定叙事者替玩家完成选择。开局和重大转折必须拆成多个可交互阶段；每回合只回应玩家一个明确动作及直接结果，出现选择、请求、点击、转场或时间跨越前必须停下等待玩家');
   parts.push('\n只输出提示词本身，不要任何解释或前言。用中文生成。');
 
   return parts.join('\n');
@@ -2535,7 +2631,7 @@ async function generateWorld() {
     var res = await doFetch([{role:'user', content: metaPrompt}], 3000);
     var data = await res.json();
     if (data.error) throw new Error(JSON.stringify(data.error));
-    var generated = data.choices[0].message.content;
+    var generated = chatContent(data);
     GEN_WORLD = generated;
 
     var preview = document.getElementById('gen-preview');
