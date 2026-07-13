@@ -979,60 +979,78 @@ var REVEAL_TIMING=[
   '保留前世常识与少量生活记忆，具体细节在相关场景自然想起，不作为悬疑线',
   '来历并不重要——主角接受当前人生，故事重心是现在的身份、关系与生活'
 ];
-function rollOpening(){
+function rollOpening(){ /* merged into rollBlueprint */ }
+
+function rollBlueprint(){
+  rollTone();
+  var dbOK=!!(TAG_ONTO&&TAG_WORKS.length&&TAG_FREQ&&CAT_TAGS);
+  var engine='',conflict='',prof='',pos='',rel='',growth='',toneTag='',anchors=[];
+  if(dbOK){
+    toneTag=weightedDraw('tone',TONE_TAG_MAP[STORY_TONE]||null);
+    var engineAllowed=(PREFS.skeleton&&ENGINE_BUCKETS[PREFS.skeleton])||null;
+    var lightTone=['欢乐废萌','轻松爽快','温馨治愈','市井烟火','荒诞喜剧'].indexOf(STORY_TONE)>=0;
+    var confAllowed=PREFS.skeleton==='恩怨情仇'?VENDETTA_CONFLICTS:(lightTone?LIGHT_CONFLICTS:null);
+    var hist=[]; try{hist=JSON.parse(localStorage.getItem('wuji_dna_hist')||'[]');}catch(e){}
+    var key,tries=0;
+    do{
+      engine=weightedDraw('story_engine',engineAllowed);
+      conflict=weightedDraw('conflict_source',confAllowed);
+      prof=weightedDraw('profession',null);
+      key=engine+'|'+conflict+'|'+prof; tries++;
+    }while(hist.indexOf(key)>=0&&tries<8);
+    hist.push(key); if(hist.length>12)hist=hist.slice(-12);
+    try{localStorage.setItem('wuji_dna_hist',JSON.stringify(hist));}catch(e){}
+    pos=Math.random()<0.6?weightedDraw('narrative_position',null):'';
+    rel=weightedDraw('relationship',null);
+    growth=weightedDraw('growth_mode',null);
+    DNA_PICKS={engine:engine,conflict:conflict,prof:prof,pos:pos,rel:rel,growth:growth,toneTag:toneTag};
+    var drawn=[engine,conflict,rel,prof,growth,toneTag].filter(Boolean);
+    function scoreW(min){return TAG_WORKS.map(function(w){var sc=(w.tags||[]).filter(function(t){return drawn.indexOf(t)>=0;}).length;return{w:w,sc:sc};}).filter(function(x){return x.sc>=min;}).sort(function(a,b){return b.sc-a.sc;}).slice(0,8);}
+    var pool=scoreW(2); if(pool.length<2)pool=scoreW(1);
+    while(anchors.length<2&&pool.length){ anchors.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0].w.title); }
+  } else {
+    var sk=DNA_SKELETONS[Math.floor(Math.random()*DNA_SKELETONS.length)];
+    var ag=DNA_ANTAGONISTS[Math.floor(Math.random()*DNA_ANTAGONISTS.length)];
+    engine=sk[0]+'——'+sk[1];
+    conflict=DNA_CONFLICTS[Math.floor(Math.random()*DNA_CONFLICTS.length)]+'（阻力性质：'+ag[0]+'）';
+    DNA_PICKS=null;
+  }
   var opool=OPENING_STYLES;
   var opref=PREFS.opening&&PREF_MAPS.opening[PREFS.opening];
-  if(opref){
-    var omerged=OPENING_STYLES.concat(OPENING_STYLES_X);
-    opool=omerged.filter(function(x){return opref.indexOf(x.n)>=0;});
-    if(!opool.length)opool=OPENING_STYLES;
-  }
+  if(opref){ var om=OPENING_STYLES.concat(OPENING_STYLES_X); opool=om.filter(function(x){return opref.indexOf(x.n)>=0;}); if(!opool.length)opool=OPENING_STYLES; }
   var st=opool[Math.floor(Math.random()*opool.length)];
   OPENING_PICK=st.n;
-  if(st.n==='经典问答'){
-    OPENING_TEXT='【本局开局变体：经典问答】用两到三个世界观内的问题快速建角（如称呼、出身、此刻的追求），一步一问、每步等待玩家回答，问完直接开场。提问必须以世界观内的方式呈现（NPC搭话、文书登记、系统询问等），禁止引擎旁白口吻。';
-    return;
-  }
-  var t='【本局开局变体——系统随机抽取，最高优先级，覆盖世界观提示词中一切分步问答式的开局流程】\n';
-  t+='叙事切入：'+st.n+'——'+st.d+'\n';
+  var transLine='';
   var isTrans=(WORLD==='isekai'||WORLD==='gamerpunk')?true:(WORLD==='xianxia'?Math.random()<0.5:Math.random()<0.25);
   if(isTrans){
     var mech=TRANSMIGRATE_MECH[Math.floor(Math.random()*TRANSMIGRATE_MECH.length)];
     var tim=REVEAL_TIMING[Math.floor(Math.random()*REVEAL_TIMING.length)];
     var trig=TRANS_TRIGGERS[Math.floor(Math.random()*TRANS_TRIGGERS.length)];
-    t+='本局主角是穿越者。身份起点：'+mech+'\n';
-    t+='来历揭示节奏：'+tim+'——重要：无论哪一档，"后期揭示"指的只是穿越的原因与背后机制；主角始终清楚记得自己的前世身份和穿越前正在做的事。禁止无缘由的完全失忆（除非身份起点本身是继承原主记忆或从出生开始——那也要让前世记忆保持存在感）。\n';
-    t+='穿越链条必须交代齐全：前世身份（普通人优先，具体由你按基调定）→穿越前正在做的事→触发穿越的那一幕。触发场景参考：'+trig+'（可按世界观改编）。\n';
-    if(tim===REVEAL_TIMING[0]){
-      t+='呈现方式：开场直接从前世的最后一幕演起，让玩家完整经历触发瞬间，再落地新世界——这段桥是代入感的根，不许跳过、不许转述。\n';
-    } else {
-      t+='呈现方式：开场已在新世界，但要用主角的简短回忆自然带出前世与触发一幕（一两段即可，不必详写）；"为什么会发生"保持未知即可，不要做成悬疑主线。\n';
-    }
-    t+='形态与处境始终可见：揭示节奏隐藏的只是主角如何、为何来到这里；主角当前的存在形态、身份和处境对玩家从第一句起就完全可见——若起点是器物或非人生命，玩家开局就以该形态去感知和行动，绝不能写成普通人类的日常。\n';
     var frame;
     if(WORLD==='gamerpunk'){ frame='游戏化世界'; }
     else if(mech.indexOf('原作')>=0){ frame='穿书原作'; }
     else { var fr=Math.random(); frame=fr<0.55?'真实异界':(fr<0.8?'游戏化世界':'穿书原作'); }
-    if(frame==='游戏化世界'){
-      t+='进入框架：游戏化世界——本世界观以游戏的规则运行：主角拥有只有自己看得见的界面（状态、等级、任务提示），甚至认出这就是前世玩过的那款游戏——武侠世界就是武侠网游，修真界就是修仙手游，末日就是生存游戏，以此类推。游戏元素的浓度要贴合世界观质感；NPC是有血有肉的真人，死亡是真实的。\n';
-    } else if(frame==='穿书原作'){
-      t+='进入框架：原作世界——主角前世读过或看过这个世界的故事，大致记得剧情走向与关键人物的命运，但自己身处的往往是个边缘位置（路人、配角、反派手下）。随着主角的行动，剧情会逐渐偏离原作记忆，记忆的可靠性随之下降。\n';
-    } else {
-      t+='进入框架：真实异界——这个世界完全真实，没有任何游戏机制；穿越者没有系统面板，前世记忆带来的是知识、视角与心态的差异，不是外挂。\n';
-    }
-    t+='玩家一旦声明不同的身份、形态或来历，立刻以玩家版本为准，放弃随机起点。\n';
+    var fd=frame==='游戏化世界'?'本世界以游戏规则运行：主角有仅自己可见的界面与等级，或认出这就是前世玩过的那款游戏；NPC是活人，死亡真实'
+      :(frame==='穿书原作'?'主角前世读过这个世界的故事，记得大致剧情与关键人物走向，但身处边缘位置；主角的行动会使剧情逐渐偏离原作'
+      :'世界完全真实，没有任何游戏机制；前世记忆带来的是知识、视角与心态差，不是外挂');
+    transLine='主角来历：穿越者｜起点：'+mech+'\n进入框架：'+frame+'——'+fd+'\n'
+      +'穿越链条：前世（普通人优先，细节由你按基调定）→触发一幕（参考：'+trig+'，可按世界观改编）→落地新世界。揭示节奏：'+tim.split('——')[0]+'——只藏为什么会穿越；前世记忆与当前形态对玩家始终可见，禁止无缘由失忆。\n';
     OPENING_PICK+=' · 穿越者·'+mech.split('——')[0]+(frame!=='真实异界'?('·'+frame):'');
   } else {
-    t+='本局主角是本世界土著，以世界观内的常规身份开场，没有前世记忆。\n';
+    transLine='主角来历：本世界土著，无前世记忆。\n';
   }
-  t+='切入即体验：抽到的切入方式必须作为开场第一幕完整演出来，玩家身处其中、亲手参与，而不是听别人提起它。\n';
-  t+='世界观锚定：开局变体只改变叙事的切入方式，绝不改变世界观本身。开场第一幕必须发生在所选世界观内，并至少自然露出一处该世界观的标志性元素（游戏世界的系统界面与等级、赛博都市的义体霓虹、修真界的灵气法器、末日的废墟物资……按所选世界观取材）；开场的能量与情绪也要符合本局基调。\n';
-  if(DNA_PICKS&&DNA_PICKS.prof){
-    t+='主角身份参考：'+DNA_PICKS.prof+(DNA_PICKS.pos?('·'+DNA_PICKS.pos):'')+'（若与世界观时代不符，转译为等价身份）。开场必须生长在这个身份的具体日常里——他的工具、他的顾客或同事、他今天要干的活，而不是通用的旅人开场。\n';
-  }
-  t+='建角规则：禁止分步问答建角。最多向玩家问一个开放式问题（也可以一个都不问、直接开演），主角其余设定由你按切入方式自动生成并在叙事中自然呈现，玩家之后随时可用输入修正。若确要提问，必须以世界观内的方式呈现——角色的自问、系统的弹窗、神明的发问、NPC的搭话，禁止跳出叙事用引擎旁白的口吻直接问玩家。\n';
-  t+='开场必须严格符合上述切入方式，严禁滑回模板化开场（穿越必见神明、旅店醒来听传闻、神秘老人赠功法等）。只写帮助玩家理解处境和作决定的具体细节；无关的气味、路人动作、天气和远景最多一句。\n开场第一回合必须给玩家落脚感：我是谁、身在何处、手头正在做什么、今天原本打算干什么——通过具体场景自然带出，禁止设定罗列，禁止额外塞入谜团或主线钩子。';
-  OPENING_TEXT=t;
+  var b='【本局蓝图——编剧备忘：方向参考而非剧本，更不是秘密清单】\n';
+  b+='基调：'+STORY_TONE+(toneTag?('（细分风味：'+toneTag+'）'):'')+'——'+(TONE_DESC||'')+'\n';
+  b+='信息牌面：'+(TONE_TRANS||'明牌')+'\n';
+  b+=transLine;
+  if(prof)b+='身份参考：'+prof+(pos?(' · '+pos):'')+'（与世界观时代不符时转译为等价身份；开场必须生长在这个身份的具体日常里）\n';
+  if(rel)b+='关系底色：'+rel+'｜成长模式：'+growth+'\n';
+  b+='故事引擎：'+engine+'\n核心困难：'+conflict+'（呈现强度必须服从基调）\n';
+  if(anchors.length)b+='风味锚点：《'+anchors.join('》《')+'》——只借质感、节奏与题材组合，严禁复刻情节、人名与专有设定\n';
+  b+='开局切入：'+st.n+'——'+st.d+'\n';
+  b+='规模约束：故事默认留在当前生活圈与当前目标内纵深发展，只有玩家主动远行、晋升或完成阶段目标才扩大舞台；蓝图与玩家当前兴趣无关时就安静待在后台，不得硬塞。';
+  STORY_DNA=b;
+  OPENING_TEXT='';
 }
 
 // ── STORY DNA: distilled narratology decks (Polti/Plotto/webnovel skeletons) ──
@@ -1063,7 +1081,7 @@ var DNA_ANTAGONISTS=[
   ['普通误会','信息传递或表达造成的小误会，沟通后可以逐步澄清']
 ];
 var DNA_DEVELOPMENTS=['一次认真完成的工作带来新机会','普通熟人因长期相处成为可靠伙伴','学会的新技能改变解决问题的方式','先前兑现的承诺换来现实帮助','经营或建设开始形成稳定收益','一次失败暴露准备不足并促成调整','旅行中了解到一种不同的生活方式','竞争者在关键时刻选择公平合作','不起眼的日常积累终于产生明确成果'];
-var STORY_TONE='', TONE_LINE='';
+var STORY_TONE='', TONE_LINE='', TONE_DESC='', TONE_TRANS='';
 var DNA_TONES=(function(){
   var defs=[
     ['欢乐废萌','没有人苦大仇深，问题经常以滑稽的方式解决甚至自行消失，吐槽和笑点是日常的主要养分',2],
@@ -1084,87 +1102,17 @@ function rollTone(){
   var tpref=PREFS.tone&&PREF_MAPS.tone[PREFS.tone];
   if(tpref){ tpool=DNA_TONES.filter(function(x){return tpref.indexOf(x[0])>=0;}); if(!tpool.length)tpool=DNA_TONES; }
   var t=tpool[Math.floor(Math.random()*tpool.length)];
-  STORY_TONE=t[0];
-  var trans;
-  if(Math.random()<0.8){ trans='明牌——主角与玩家都清楚自己的处境和目标，看点是怎么做成，而不是猜真相；不存在藏在幕后的阴谋网，NPC没有集体瞒着主角的事'; }
-  else{ trans='半明牌——主角清楚自己的目标，背景随正常经历自然了解；未知只表示尚未接触，不表示有人故意隐瞒'; }
-  TONE_LINE='【本局基调：'+t[0]+'】'+t[1]+'。信息牌面：'+trans+'。基调优先级高于世界观的默认文风倾向：句式、对话密度、心理描写的多少、悬念的浓度都必须服从基调。';
+  STORY_TONE=t[0]; TONE_DESC=t[1];
+  if(t[0]==='冷峻现实'||t[0]==='黑色悬疑'){ TONE_TRANS='暗牌——存在待揭开的真相，允许铺设悬念与暗流'; }
+  else if(Math.random()<0.6){ TONE_TRANS='明牌——主角与玩家都清楚处境和目标，看点是怎么做成而不是猜真相；不存在幕后阴谋网'; }
+  else{ TONE_TRANS='半明牌——目标清楚，部分背景随剧情自然了解即可，不存在处处针对主角的暗流'; }
+  TONE_LINE='【本局基调：'+t[0]+'】'+t[1]+'。信息牌面：'+TONE_TRANS;
 }
-function rollStoryDNALegacy(){
-  var hist=[];
-  try{hist=JSON.parse(localStorage.getItem('wuji_dna_hist')||'[]');}catch(e){}
-  var skmerged=DNA_SKELETONS.concat(DNA_SKELETONS_X);
-  var skpool=DNA_SKELETONS;
-  var skpref=PREFS.skeleton&&PREF_MAPS.skeleton[PREFS.skeleton];
-  if(skpref){ skpool=skmerged.filter(function(x){return skpref.indexOf(x[0])>=0;}); if(!skpool.length)skpool=DNA_SKELETONS; }
-  else if(STORY_TONE==='黑色悬疑'||STORY_TONE==='冷峻现实'||STORY_TONE==='严肃正剧'){ skpool=skmerged; }
-  var sk,cf,ag,key,tries=0;
-  do{
-    sk=skpool[Math.floor(Math.random()*skpool.length)];
-    cf=DNA_CONFLICTS[Math.floor(Math.random()*DNA_CONFLICTS.length)];
-    ag=DNA_ANTAGONISTS[Math.floor(Math.random()*DNA_ANTAGONISTS.length)];
-    key=sk[0]+'|'+cf+'|'+ag[0];
-    tries++;
-  }while(hist.indexOf(key)>=0 && tries<8);
-  hist.push(key); if(hist.length>12)hist=hist.slice(-12);
-  try{localStorage.setItem('wuji_dna_hist',JSON.stringify(hist));}catch(e){}
-  var dev=DNA_DEVELOPMENTS[Math.floor(Math.random()*DNA_DEVELOPMENTS.length)];
-  rollTone();
-  STORY_DNA='【本局故事骨架——编剧内部备忘。初始【大纲】的当前目标可参考它；它不是必须制造大事件的剧本，更不是秘密清单】\n'
-    +'主线骨架：'+sk[0]+'——'+sk[1]+'\n'
-    +'核心困难：'+cf+'\n'
-    +'阻力性质：'+ag[0]+'——'+ag[1]+'\n'
-    +'可选的长期发展（只有在玩家行动自然促成时才采用，禁止提前暗示）：'+dev+'。\n'
-    +'规模约束：默认把故事留在当前生活圈和当前目标内纵深发展。只有玩家主动远行、晋升、接触更大事务或完成现阶段目标时，才扩大舞台；不得为了升级剧情凭空引入更高势力、世界危机或幕后组织。\n'
-    +'以上只是方向参考。每回合首先完整回应玩家眼前的行动；若骨架与玩家当前兴趣无关，就让骨架安静待在后台，不得硬塞。';
-}
+// (merged into rollBlueprint)
 
-function rollStoryDNA(){
-  if(TAG_ONTO&&TAG_WORKS.length&&TAG_FREQ&&CAT_TAGS){ try{ rollStoryDNADB(); return; }catch(e){} }
-  rollStoryDNALegacy();
-}
+function rollStoryDNA(){ rollBlueprint(); }
 
-function rollStoryDNADB(){
-  rollTone();
-  var toneTag=weightedDraw('tone',TONE_TAG_MAP[STORY_TONE]||null);
-  var engineAllowed=(PREFS.skeleton&&ENGINE_BUCKETS[PREFS.skeleton])||null;
-  var lightTone=['欢乐废萌','轻松爽快','温馨治愈','市井烟火','荒诞喜剧'].indexOf(STORY_TONE)>=0;
-  var confAllowed=PREFS.skeleton==='恩怨情仇'?VENDETTA_CONFLICTS:(lightTone?LIGHT_CONFLICTS:null);
-  var hist=[]; try{hist=JSON.parse(localStorage.getItem('wuji_dna_hist')||'[]');}catch(e){}
-  var engine,conflict,prof,key,tries=0;
-  do{
-    engine=weightedDraw('story_engine',engineAllowed);
-    conflict=weightedDraw('conflict_source',confAllowed);
-    prof=weightedDraw('profession',null);
-    key=engine+'|'+conflict+'|'+prof; tries++;
-  }while(hist.indexOf(key)>=0&&tries<8);
-  hist.push(key); if(hist.length>12)hist=hist.slice(-12);
-  try{localStorage.setItem('wuji_dna_hist',JSON.stringify(hist));}catch(e){}
-  var pos=Math.random()<0.6?weightedDraw('narrative_position',null):'';
-  var rel=weightedDraw('relationship',null);
-  var growth=weightedDraw('growth_mode',null);
-  DNA_PICKS={engine:engine,conflict:conflict,prof:prof,pos:pos,rel:rel,growth:growth,toneTag:toneTag};
-  var drawn=[engine,conflict,rel,prof,growth,toneTag].filter(Boolean);
-  function scoreWorks(minScore){
-    return TAG_WORKS.map(function(w){
-      var sc=(w.tags||[]).filter(function(t){return drawn.indexOf(t)>=0;}).length;
-      return {w:w,sc:sc};
-    }).filter(function(x){return x.sc>=minScore;}).sort(function(a,b){return b.sc-a.sc;}).slice(0,8);
-  }
-  var pool=scoreWorks(2); if(pool.length<2)pool=scoreWorks(1);
-  var picks=[];
-  while(picks.length<2&&pool.length){ picks.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0].w.title); }
-  STORY_DNA='【本局故事骨架——由2016-2026中日热门作品库按真实热度加权抽取。编剧内部备忘，不是必须制造大事件的剧本，更不是秘密清单】\n'
-    +'细分风味：'+toneTag+'（服从本局基调）\n'
-    +'故事引擎：'+engine+'——主线与日常都从这一引擎里长出来\n'
-    +'核心困难：'+conflict+'（呈现强度必须服从基调，轻快基调下写成生活尺度的难处）\n'
-    +'主角职业/位置：'+prof+(pos?(' · '+pos):'')+'——若与世界观时代不符，转译为世界观内的等价身份\n'
-    +'关系底色：'+rel+'\n'
-    +'成长模式：'+growth+'\n'
-    +(picks.length?('风味锚点：《'+picks.join('》《')+'》——借鉴其质感、节奏与题材组合，严禁复刻情节、人物名与专有设定\n'):'')
-    +'规模约束：默认把故事留在当前生活圈和当前目标内纵深发展。只有玩家主动远行、晋升、接触更大事务或完成现阶段目标时，才扩大舞台；不得为了升级剧情凭空引入更高势力、世界危机或幕后组织。\n'
-    +'以上只是方向参考。每回合首先完整回应玩家眼前的行动；若骨架与玩家当前兴趣无关，就让骨架安静待在后台，不得硬塞。';
-}
+// (merged into rollBlueprint)
 var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,director:true};
 try{var _st=localStorage.getItem('wuji_settings'); if(_st) SETTINGS=Object.assign(SETTINGS,JSON.parse(_st));}catch(e){}
 function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(SETTINGS));}catch(e){}}
@@ -1172,15 +1120,15 @@ function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(
 var PACE_CONFIG = {
   short: {
     label:'短篇', icon:'📖',
-    instruction:'【短篇模式——叙事铁律】这是一个有固定叙事结构的短篇故事。必须有明确的开场、发展、高潮、结局四个阶段。游戏目标在开场就隐约确立，故事在20-40回合内自然收束。每个选择都推动故事向结局前进。节奏紧凑，每回合都有意义，不要拖延。结局可以多样，但必须有一个完整的叙事闭合。\n\n【剧情起伏铁律——必须严格遵守】\n1. 战斗胜负：主角不能总是赢。根据实力差距判断：遇到明显强于自己的对手必须失败或狼狈逃跑。即使实力相当也要有50%失败概率。失败有后果：受伤、丢失物品、被捕、声誉受损等。\n2. 危机节奏：危机必须由玩家的行为自然引发，不要无中生有强行插入。主角在安全场所歇息就让他安静歇息（场所按世界观而定）；但如果他去刺探情报、招惹强敌、深入险地，就必须承担真实后果，不能每次都侥幸脱身。\n3. 濒死救援：主角濒死时不要让他奇迹般自救，而是被路人、NPC、甚至敌人救下，在陌生地方养伤，由此产生新的人物关系和剧情线。\n4. 伤势恢复：无论什么世界观的科技或功法，重伤（骨折、内伤、失血过多）至少需要数天到数周恢复，带伤有减益，不能无视。\n5. 资源紧张：钱不够用是常态。物资消耗要真实，不要凭空出现资源。\n6. NPC不配合：并非所有NPC都愿意帮助主角。有的冷漠，有的敌视，有的趁火打劫。\n7. 禁止廉价解围：禁止"刚好赶到""侥幸逃脱""对方突然手下留情"等廉价解围。\n\n【物价统一铁律】\n开局在脑海中确定并记住物价体系，全程保持一致。一旦定下某物的价格，后续必须保持一致，不能随意浮动。\n\n【叙事禁忌】\n严禁在叙事中输出任何"根据铁律""根据物价""此处设定"等自我注释。所有规则内化执行，不对玩家解释。\n\n【隐藏进度表规则——目标线而非阴谋线】\n开场剧情生成时（玩家完成建角后的第一段正式叙事），你必须在回复最末尾输出隐藏进度表（前端会隐藏，但保留在历史中供你参考），格式：\n【大纲】阶段:第一阶段·xxx｜玩家当前目标:xxx｜已公开信息:xxx｜重要人物关系:A(公开身份/当前态度/已知需求),B(公开身份/当前态度/已知需求)｜潜在长期线索:xxx｜下一步日常事件:xxx【/大纲】\n运行规则：\n1. 主线是目标线，不等于阴谋线。阶段目标可以是赚钱、找住处、学技能、修装备、认识某人、解决小麻烦、完成委托，也可以是冒险或调查。\n2. 主线永远存在，但不需要每回合制造神秘压力。玩家做支线或日常时，主线可以通过公开消息、明确委托、NPC的实际需求、价格变化、天气与生活事件轻微存在。\n3. 每次回复前先核对大纲，保持因果连贯；玩家提出的新元素只能编织进现有框架，不能无故替换主线。\n4. 阶段推进、公开信息变化、NPC态度变化、任务完成或生活目标变化时，输出更新后的【大纲】块。没有实质变化时无需重复输出。\n5. 之前出现过的NPC、恩怨、承诺、价格、地点与小目标必须在合适时机回归。\n\n【铺垫与展开规则——信息透明优先】\n重要人物和关键事件不要无预兆地突然出现，但铺垫应主要依靠可观察事实：公告、价格、天气、传闻来源、路人闲聊、环境痕迹、NPC的明确行动。\n大事件之前可以有征兆，但征兆必须具体，能被玩家理解和利用。禁止把铺垫写成NPC欲言又止、神秘微笑、只说半句话。\n节奏呼吸感：紧张事件之后要有缓和段落让玩家消化；缓和段落可以推进生活、人际、金钱、训练、旅行等普通目标，不必每次都埋黑幕。\n\n【详略与对话铁律】\n详略有度：过场、日常、赶路用3-6句收束即可；只有关键场景（冲突、高潮、重要会面、重大发现）才铺开细写。禁止把每个回合都写成重头戏，禁止无差别的氛围渲染和心理描写。\n对话像真人说话：一场对话最多承载一个重点；没有信息可给的对话就短，寒暄就是寒暄；NPC说话不带机锋、不话里有话（除非该NPC确有具体动机）。\n世界上大多数事与主角无关：NPC自己能处理的事就让他们自己处理掉，不必汇报给主角；玩家不需要知道每一件发生的事。\n\n【选项格式铁律】\n每次回复末尾必须有选项，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n注意：选项后面只有冒号，没有星号或加粗。每个选项只有数字+空格+内容，没有句号没有加粗没有1.格式。'
+    instruction:'短篇：20-40回合的完整闭合故事，开场-发展-高潮-结局，每回合都向结局积累，不拖延；结局要有叙事闭合。'
   },
   medium: {
     label:'中篇', icon:'📚',
-    instruction:'【中篇模式——叙事铁律】这是一个有主线骨架的中篇故事。主线目标明确，但支线和日常自由探索。故事在50-100回合内到达高潮和结局。主线会自然推进，支线可以丰富世界观。节奏适中，日常和冒险各占一半，但始终感觉到主线在缓缓推进。\n\n【剧情起伏铁律——必须严格遵守】\n1. 战斗胜负：主角不能总是赢。根据实力差距判断：遇到明显强于自己的对手必须失败或狼狈逃跑。即使实力相当也要有50%失败概率。失败有后果：受伤、丢失物品、被捕、声誉受损等。\n2. 危机节奏：危机必须由玩家的行为自然引发，不要无中生有强行插入。主角在安全场所歇息就让他安静歇息（场所按世界观而定）；但如果他去刺探情报、招惹强敌、深入险地，就必须承担真实后果，不能每次都侥幸脱身。\n3. 濒死救援：主角濒死时不要让他奇迹般自救，而是被路人、NPC、甚至敌人救下，在陌生地方养伤，由此产生新的人物关系和剧情线。\n4. 伤势恢复：无论什么世界观的科技或功法，重伤（骨折、内伤、失血过多）至少需要数天到数周恢复，带伤有减益，不能无视。\n5. 资源紧张：钱不够用是常态。物资消耗要真实，不要凭空出现资源。\n6. NPC不配合：并非所有NPC都愿意帮助主角。有的冷漠，有的敌视，有的趁火打劫。\n7. 禁止廉价解围：禁止"刚好赶到""侥幸逃脱""对方突然手下留情"等廉价解围。\n\n【物价统一铁律】\n开局在脑海中确定并记住物价体系，全程保持一致。一旦定下某物的价格，后续必须保持一致，不能随意浮动。\n\n【叙事禁忌】\n严禁在叙事中输出任何"根据铁律""根据物价""此处设定"等自我注释。所有规则内化执行，不对玩家解释。\n\n【隐藏进度表规则——目标线而非阴谋线】\n开场剧情生成时（玩家完成建角后的第一段正式叙事），你必须在回复最末尾输出隐藏进度表（前端会隐藏，但保留在历史中供你参考），格式：\n【大纲】阶段:第一阶段·xxx｜玩家当前目标:xxx｜已公开信息:xxx｜重要人物关系:A(公开身份/当前态度/已知需求),B(公开身份/当前态度/已知需求)｜潜在长期线索:xxx｜下一步日常事件:xxx【/大纲】\n运行规则：\n1. 主线是目标线，不等于阴谋线。阶段目标可以是赚钱、找住处、学技能、修装备、认识某人、解决小麻烦、完成委托，也可以是冒险或调查。\n2. 主线永远存在，但不需要每回合制造神秘压力。玩家做支线或日常时，主线可以通过公开消息、明确委托、NPC的实际需求、价格变化、天气与生活事件轻微存在。\n3. 每次回复前先核对大纲，保持因果连贯；玩家提出的新元素只能编织进现有框架，不能无故替换主线。\n4. 阶段推进、公开信息变化、NPC态度变化、任务完成或生活目标变化时，输出更新后的【大纲】块。没有实质变化时无需重复输出。\n5. 之前出现过的NPC、恩怨、承诺、价格、地点与小目标必须在合适时机回归。\n\n【铺垫与展开规则——信息透明优先】\n重要人物和关键事件不要无预兆地突然出现，但铺垫应主要依靠可观察事实：公告、价格、天气、传闻来源、路人闲聊、环境痕迹、NPC的明确行动。\n大事件之前可以有征兆，但征兆必须具体，能被玩家理解和利用。禁止把铺垫写成NPC欲言又止、神秘微笑、只说半句话。\n节奏呼吸感：紧张事件之后要有缓和段落让玩家消化；缓和段落可以推进生活、人际、金钱、训练、旅行等普通目标，不必每次都埋黑幕。\n\n【详略与对话铁律】\n详略有度：过场、日常、赶路用3-6句收束即可；只有关键场景（冲突、高潮、重要会面、重大发现）才铺开细写。禁止把每个回合都写成重头戏，禁止无差别的氛围渲染和心理描写。\n对话像真人说话：一场对话最多承载一个重点；没有信息可给的对话就短，寒暄就是寒暄；NPC说话不带机锋、不话里有话（除非该NPC确有具体动机）。\n世界上大多数事与主角无关：NPC自己能处理的事就让他们自己处理掉，不必汇报给主角；玩家不需要知道每一件发生的事。\n\n【选项格式铁律】\n每次回复末尾必须有选项，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n注意：选项后面只有冒号，没有星号或加粗。每个选项只有数字+空格+内容，没有句号没有加粗没有1.格式。'
+    instruction:'中篇：50-100回合到达终点。主线骨架稳定，支线与日常自由展开，节拍由GM裁判调度；始终能隐约感到主线在缓缓推进。'
   },
   long: {
     label:'长篇', icon:'🌍',
-    instruction:'【长篇模式——叙事铁律】这是一个开放沙盒世界。没有固定终点，世界是活的。日常生活占主导，大事件由玩家的行为自然引发。多写日常细节：吃什么、和谁聊天、天气如何。让玩家感受到角色真实地活在这个世界里。主线以慢节奏存在，不急于推进，但永不消失。\n\n【剧情起伏铁律——必须严格遵守】\n1. 战斗胜负：主角不能总是赢。根据实力差距判断：遇到明显强于自己的对手必须失败或狼狈逃跑。即使实力相当也要有50%失败概率。失败有后果：受伤、丢失物品、被捕、声誉受损等。\n2. 危机节奏：危机必须由玩家的行为自然引发，不要无中生有强行插入。主角在安全场所歇息就让他安静歇息（场所按世界观而定）；但如果他去刺探情报、招惹强敌、深入险地，就必须承担真实后果，不能每次都侥幸脱身。\n3. 濒死救援：主角濒死时不要让他奇迹般自救，而是被路人、NPC、甚至敌人救下，在陌生地方养伤，由此产生新的人物关系和剧情线。\n4. 伤势恢复：无论什么世界观的科技或功法，重伤（骨折、内伤、失血过多）至少需要数天到数周恢复，带伤有减益，不能无视。\n5. 资源紧张：钱不够用是常态。物资消耗要真实，不要凭空出现资源。\n6. NPC不配合：并非所有NPC都愿意帮助主角。有的冷漠，有的敌视，有的趁火打劫。\n7. 禁止廉价解围：禁止"刚好赶到""侥幸逃脱""对方突然手下留情"等廉价解围。\n\n【物价统一铁律】\n开局在脑海中确定并记住物价体系，全程保持一致。一旦定下某物的价格，后续必须保持一致，不能随意浮动。\n\n【叙事禁忌】\n严禁在叙事中输出任何"根据铁律""根据物价""此处设定"等自我注释。所有规则内化执行，不对玩家解释。\n\n【隐藏进度表规则——目标线而非阴谋线】\n开场剧情生成时（玩家完成建角后的第一段正式叙事），你必须在回复最末尾输出隐藏进度表（前端会隐藏，但保留在历史中供你参考），格式：\n【大纲】阶段:第一阶段·xxx｜玩家当前目标:xxx｜已公开信息:xxx｜重要人物关系:A(公开身份/当前态度/已知需求),B(公开身份/当前态度/已知需求)｜潜在长期线索:xxx｜下一步日常事件:xxx【/大纲】\n运行规则：\n1. 主线是目标线，不等于阴谋线。阶段目标可以是赚钱、找住处、学技能、修装备、认识某人、解决小麻烦、完成委托，也可以是冒险或调查。\n2. 主线永远存在，但不需要每回合制造神秘压力。玩家做支线或日常时，主线可以通过公开消息、明确委托、NPC的实际需求、价格变化、天气与生活事件轻微存在。\n3. 每次回复前先核对大纲，保持因果连贯；玩家提出的新元素只能编织进现有框架，不能无故替换主线。\n4. 阶段推进、公开信息变化、NPC态度变化、任务完成或生活目标变化时，输出更新后的【大纲】块。没有实质变化时无需重复输出。\n5. 之前出现过的NPC、恩怨、承诺、价格、地点与小目标必须在合适时机回归。\n\n【铺垫与展开规则——信息透明优先】\n重要人物和关键事件不要无预兆地突然出现，但铺垫应主要依靠可观察事实：公告、价格、天气、传闻来源、路人闲聊、环境痕迹、NPC的明确行动。\n大事件之前可以有征兆，但征兆必须具体，能被玩家理解和利用。禁止把铺垫写成NPC欲言又止、神秘微笑、只说半句话。\n节奏呼吸感：紧张事件之后要有缓和段落让玩家消化；缓和段落可以推进生活、人际、金钱、训练、旅行等普通目标，不必每次都埋黑幕。\n\n【详略与对话铁律】\n详略有度：过场、日常、赶路用3-6句收束即可；只有关键场景（冲突、高潮、重要会面、重大发现）才铺开细写。禁止把每个回合都写成重头戏，禁止无差别的氛围渲染和心理描写。\n对话像真人说话：一场对话最多承载一个重点；没有信息可给的对话就短，寒暄就是寒暄；NPC说话不带机锋、不话里有话（除非该NPC确有具体动机）。\n世界上大多数事与主角无关：NPC自己能处理的事就让他们自己处理掉，不必汇报给主角；玩家不需要知道每一件发生的事。\n\n【选项格式铁律】\n每次回复末尾必须有选项，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n注意：选项后面只有冒号，没有星号或加粗。每个选项只有数字+空格+内容，没有句号没有加粗没有1.格式。'
+    instruction:'长篇：开放沙盒，没有固定终点。日常与经营是重心，大事件由玩家行为和阶段推进自然引发，绝不凭空降临。'
   }
 };
 
@@ -1560,7 +1508,7 @@ function addTyp(){var el=document.createElement('div');el.className='sb nar';el.
 function qcmd(c){if(!LOADING)send(c,false);}
 
 function renderNar(text,hidx) {
-  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【裁定】[\s\S]*?【\/裁定】/g,'').replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*$/,'').trim();
+  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【命名表】[\s\S]*?【\/命名表】/g,'').replace(/【裁定】[\s\S]*?【\/裁定】/g,'').replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*$/,'').replace(/【命名表】[\s\S]*$/,'').trim();
   var wrapper=document.createElement('div'); wrapper.className='sb nar';
   if(typeof hidx==='number') wrapper.dataset.hidx=hidx;
   var optIdx=text.search(/选项[：:]\s*\n/);
@@ -1604,13 +1552,13 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,names:NAMES,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; TONE_LINE=sv.toneline||'';
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; TONE_LINE=sv.toneline||''; NAMES=sv.names||'';
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
@@ -1731,7 +1679,7 @@ function launchGame() {
   startGame();
 }
 
-var IRON_AGENCY='【叙事核心铁律】\n1. 玩家输入是意图不是结果：成败由情境、能力与裁定决定；失败、拒绝、平淡都是正常结果，但须有可理解的原因。\n2. 心理活动NPC永远听不见；没说出口的话就是没说。\n3. NPC是活人不是道具：有自己的生活、有限的见识和立场惯性，观察力不超过其身份；态度变化要渐进。绝大多数NPC没有秘密，说话直接具体。\n4. 直接回应优先：正文第一段必须回应玩家刚才做的事或说的话。每回合只保留三类内容：玩家行动本身、在场对象的直接反应、立刻发生的直接结果。删掉无关环境、路人小动作、天气闲笔、远景、幕后镜头、NPC与本次互动无关的个人故事。\n5. 信息与悬念：除非玩家明确选择悬疑题材或主动调查已经存在的疑点，否则禁止新增可疑细节、隐藏身份、幕后观察者、匿名纸条、神秘组织、欲言又止、意味深长和说一半的话。未知信息先保持普通未知，不自动升级为秘密。\n6. 状态申报：当主角的属性、技能、持有物、资源或位置发生变化时，必须在回复最末尾（大纲块之后）输出【STATE】{"attr_set":{"属性名":变化后的新值},"res_set":{"资源名":变化后的新数值},"inv_add":["获得的物品"],"inv_rm":["失去的物品"],"skill_add":["新学会的技能"],"skill_rm":[],"loc":"新位置","npc_set":{"NPC名":{"rel":"与主角的关系","att":-5到5的态度整数,"note":"一句话现状"}},"npc_rm":["永久离场或死亡的NPC名"]}【/STATE】，未变化的字段省略，无变化则不输出此块。技能与物品的增减只有通过此块申报才算数。有名有姓的NPC首次登场、关系变化、态度变化或有新动向时都必须用npc_set申报；态度值-5敌对~0中立~5生死之交，单回合变化不得超过1（系统会强制截断）。\n7. 时间可伸缩：只有玩家请求、等待确有必要或当前事务已告一段落时才时间跳跃；不要擅自跳过玩家可能想亲自处理的互动。跳跃后用【STATE】块结算变化。\n8. 章节感：进入新阶段或发生时间大跳跃时，在正文第一行输出【章：一个四到十字的标题】，其余回合不输出。';
+var CORE_RULES='【叙事引擎核心规范】\n职责：你负责叙事与NPC；程序负责裁定、数值与记忆。GM裁定与系统状态是不可改判的事实。严禁输出任何元注释，提问必须戏中化（NPC搭话、文书、系统弹窗）。\n一、输入与裁定\n1. 玩家输入是意图不是结果，成败由裁定与情境决定；失败、拒绝、平淡都是合法结果，但要有可理解的原因。\n2. 心理活动NPC永远听不见；没说出口的话就是没说，拿不准时默认没说。\n二、世界与NPC\n3. NPC是活人：有限视角、立场惯性（态度数值由系统钳制）、观察力不超过其身份；绝大多数人没有秘密，说话直接像真人——问路给方向、买卖报价、闲聊就聊生活。\n4. 世界大多数事与主角无关，NPC能自己处理的事不必汇报；信息不完整只能来自不知道/记错/只听说过，禁用你不该知道、现在还不是时候、别问这类句式。\n5. 悬念浓度服从蓝图的信息牌面：非暗牌局禁止可疑细节、欲言又止、意味深长、幕后观察者与神秘组织。\n三、笔法\n6. 一回合一重点，所有笔墨为它服务；过场与日常3-6句收束，只有关键场景铺开；特写即承诺——花了半句以上笔墨的细节必须在不远的将来兑现，否则不写。\n7. 对话像真人：一场对话一个重点，寒暄就是寒暄，没有信息就短。\n8. 失败与代价真实：强敌就是打不过，重伤要养数天到数周且带减益，钱不够是常态；禁止刚好赶到、侥幸逃脱、突然手下留情式的廉价解围；物价开局定下后全程一致。\n9. 时间像小说一样伸缩：发育、赶路、等待用蒙太奇跳过并用STATE结算收获，跳跃后标注经过的时间；玩家请求跳过必须照做。\n10. 章节感：进入新阶段或大时间跳跃时，正文第一行输出【章：四到十字标题】，其余回合不输出。\n11. 命名规范：地名、势力、人名要平实、有来历，用真实世界的构词法——地理特征、姓氏、行业、方言（如陈家渡、三里坡、广盛号、下瓦窑、槐树巷）；禁止模板名（青石镇、黑风寨、悦来客栈之类）与中二直译名（暗影兄弟会、血色黎明之类）。名字越平淡越好，气氛靠事件不靠名字。\n四、格式协议（每回合）\n12. 回复末尾必须有选项块，格式严格为：\n选项：\n1 xxx\n2 xxx\n3 xxx\n4 xxx\n或输入任何你想做的事\n（数字+空格+内容，无句号无加粗；四个选项覆盖不同玩法，不暗示最优解，日常不设陷阱选项。）\n13. 状态栏按世界包定义的格式附于选项之后。\n14. 剧情实质推进时更新隐藏大纲块（前端隐藏）：【大纲】阶段:xx｜当前目标:xx｜活跃支线:xx｜关键NPC:名(目的)｜当前舞台:xx【/大纲】\n15. 状态申报：当主角的属性、技能、持有物、资源或位置发生变化时，必须在回复最末尾（大纲块之后）输出【STATE】{"attr_set":{"属性名":变化后的新值},"res_set":{"资源名":变化后的新数值},"inv_add":["获得的物品"],"inv_rm":["失去的物品"],"skill_add":["新学会的技能"],"skill_rm":[],"loc":"新位置","npc_set":{"NPC名":{"rel":"与主角的关系","att":-5到5的态度整数,"note":"一句话现状"}},"npc_rm":["永久离场或死亡的NPC名"]}【/STATE】，未变化的字段省略，无变化则不输出此块。技能与物品的增减只有通过此块申报才算数。有名有姓的NPC首次登场、关系变化、态度变化或有新动向时都必须用npc_set申报；态度值-5敌对~0中立~5生死之交，单回合变化不得超过1（系统会强制截断）。';
 
 var ANTI_MYSTERY='【生活感与相关性】普通NPC说人话：问路给方向、买卖报价、闲聊就聊眼前话题。信息不完整只能来自不知道/记错/只听说过。禁用：你不该知道、现在还不是时候、别问、我只能告诉你这么多、这座城市不简单，以及无缘无故的停顿、眼神闪烁、神秘微笑。玩家没有询问的背景故事不要主动倾倒；与当前行动无关的世界变化不进入正文。';
 
@@ -1766,35 +1714,19 @@ function buildSystemPrompt(recentText){
   var w=WORLDS[WORLD];
   var p=PACE_CONFIG[PACE];
   if(!w||!p) return '';
-  var sp = w.prompt + '\n\n' + p.instruction + '\n\n' + IRON_AGENCY + '\n\n' + ANTI_MYSTERY;
-  sp += '\n\n' + IDENTITY_FREEDOM;
-  if(WORLD_EXPANSIONS[WORLD]) sp += '\n\n' + WORLD_EXPANSIONS[WORLD];
-  if(WORLD==='isekai' || WORLD==='gamerpunk') sp += '\n\n' + ISEKAI_MODERN + '\n\n' + GAMEWORLD_VARIANTS;
-  if(TONE_LINE){ sp += '\n\n' + TONE_LINE; }
-  if(OUTLINE){
-    sp += '\n\n【剧情备忘——用于保持目标与因果的连续，这是编剧笔记，不是需要营造悬念的秘密清单】\n' + OUTLINE + '\n（剧情有实质推进时才输出更新版【大纲】块，否则无需重复输出）';
-  }
+  var sp=CORE_RULES;
+  sp+='\n\n【世界包】\n'+w.prompt;
+  sp+='\n\n【篇幅】'+p.instruction;
+  if(STORY_DNA){ sp+='\n\n'+STORY_DNA; }
+  if(w.lockedTags&&w.lockedTags.length){ sp+='\n\n【定制锁定标签——最高优先级，蓝图任何随机元素与之冲突时一律以此为准】'+w.lockedTags.join('、'); }
+  if(TURNS<4){ sp+='\n\n'+FIRST_CHAPTER; }
+  if(NAMES){ sp+='\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n'+NAMES; }
+  if(OUTLINE){ sp+='\n\n【剧情备忘——保持目标与因果连续的编剧笔记，不是悬念清单】\n'+OUTLINE+'\n（剧情实质推进时才输出更新版【大纲】块）'; }
   var ss=stateSummary();
-  if(ss){
-    sp += '\n\n【权威角色状态——系统维护的唯一事实，叙事与状态栏均不得与此矛盾；技能列表是全集，禁止让主角使用列表之外的技能】\n' + ss;
-  }
-  if(OPENING_TEXT && TURNS<20){
-    sp += '\n\n' + OPENING_TEXT;
-  }
-  if(STORY_DNA && TURNS<10){
-    sp += '\n\n' + STORY_DNA;
-  }
-  var lkw=WORLDS[WORLD];
-  if(lkw&&lkw.lockedTags&&lkw.lockedTags.length){
-    sp += '\n\n【世界定制时锁定的标签——最高优先级。开局变体、故事骨架等任何随机抽取与这些标签冲突时，一律以锁定标签为准】' + lkw.lockedTags.join('、');
-  }
-  if(PINS.length){
-    sp += '\n\n【不可更改的锁定设定——最高优先级，永远遵守，禁止篡改或遗忘】\n' + PINS.map(function(pn){ return '- '+pn.text; }).join('\n');
-  }
-  var loreBlocks = getRelevantLore(recentText||'');
-  if(loreBlocks){
-    sp += '\n\n【相关背景资料——本回合参考】\n' + loreBlocks;
-  }
+  if(ss){ sp+='\n\n【权威角色状态——系统维护的唯一事实，叙事与状态栏不得与此矛盾；技能列表是全集】\n'+ss; }
+  if(PINS.length){ sp+='\n\n【不可更改的锁定设定——最高优先级，永远遵守】\n'+PINS.map(function(pn){return '- '+pn.text;}).join('\n'); }
+  var loreBlocks=getRelevantLore(recentText||'');
+  if(loreBlocks){ sp+='\n\n【相关背景资料——本回合参考】\n'+loreBlocks; }
   return sp;
 }
 
@@ -1861,14 +1793,14 @@ function undoTurn(){
 }
 
 function startGame(){
-  HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0; OUTLINE='';
+  HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0; OUTLINE=''; NAMES='';
+  GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=false; DNA_PICKS=null;
   LOREBOOK=((WORLDS[WORLD]&&WORLDS[WORLD].lorebook)||[]).slice();
   document.getElementById('slog').innerHTML='';
   var d=document.getElementById('sdsp'); d.textContent='— 游戏开始后显示 —'; d.style.color='var(--dm)';
   var ig=document.getElementById('inv-grid'); if(ig) ig.innerHTML='<span class="inv-empty">— 空 —</span>';
   renderSlots(); renderQuests(); renderPins(); renderLore(); renderNpcs();
-  rollStoryDNA();
-  rollOpening();
+  rollBlueprint();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
   addBlk('sys','▸ 本局开局变体：'+OPENING_PICK+'（不满意可点「完全重置」重抽）');
   var prefNote=[PREFS.tone,PREFS.skeleton,PREFS.opening].filter(Boolean).join('/');
@@ -2031,7 +1963,7 @@ async function _runTurn(){
       document.getElementById('slog').appendChild(live);
       try{
         var r=await doFetchStream(msgs,4096,function(full){
-          var vis=full.replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*?(【\/STATE】|$)/g,'').replace(/【裁定】[\s\S]*?(【\/裁定】|$)/g,'');
+          var vis=full.replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*?(【\/STATE】|$)/g,'').replace(/【命名表】[\s\S]*?(【\/命名表】|$)/g,'').replace(/【裁定】[\s\S]*?(【\/裁定】|$)/g,'');
           live.innerHTML=vis.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');
           scrollB();
         });
@@ -2053,6 +1985,7 @@ async function _runTurn(){
     renderNar(reply,HIST.length-1);
     extractOutline(reply);
     extractState(reply);
+    extractNames(reply);
     await maybeCompress(); renderSlots(); autoSave(); maybeAutoMemory();
   }catch(e){ if(typ)typ.remove(); addBlk('err','连接失败：'+String(e&&e.message||e).substring(0,250)); }
   LOADING=false; document.getElementById('pinp').focus();
@@ -2076,6 +2009,13 @@ function regenTurn(){
   _runTurn();
 }
 
+
+var NAMES='';
+var FIRST_CHAPTER='【第一章规范——仅开场适用，此回合不受过场3-6句限制】\n开场是全书第一章，600-1000字，用边做事边带出的方式完成五件事，禁止设定罗列：\n1 主角是谁：称呼（守命名规范）、身份、此刻的处境，第一段就让读者站到他身后；\n2 他的小世界：所在地、营生、身边最重要的一两个人；\n3 世界底色：与主角直接相关的一两条世界规则或近况，大环境一笔带过；\n4 来历入戏：穿越者必须完整走完穿越链条——先用至少一整段写穿越前的现实生活，再亲历触发一幕，再落地新世界，现实到剧情的过程绝不可跳过；土著则从今天的日常自然写进去；\n5 收尾：主角手头有一件具体的今日目标，然后按格式给出选项。\n另外，本回合最末尾输出【命名表】地名:甲,乙,丙｜势力:甲,乙｜人物:甲,乙,丙,丁【/命名表】（前端隐藏；按命名规范为本局预铺8-12个名字，之后优先取用）。\n若蓝图的开局切入是经典问答：先用两三个戏中化的问题建角（一步一问等回答），问答完成后的第一段正式叙事再执行本规范。';
+function extractNames(text){
+  var m=String(text).match(/【命名表】([\s\S]*?)【\/命名表】/);
+  if(m&&m[1].trim()) NAMES=m[1].trim();
+}
 
 // ── OUTLINE: capture latest hidden outline into JS state ──
 function extractOutline(text){
