@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>无界·叙事引擎</title>
+<title>无界·叙事引擎 v5</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -314,7 +314,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 <body>
 <div class="gbg"></div>
 <div class="hdr">
-  <div class="logo">无界<span>·</span>叙事引擎</div>
+  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v5</small></div>
   <div class="sbar">
     <div class="sdot" id="sdot"></div>
     <span id="stxt">选择世界</span>
@@ -687,15 +687,15 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <div class="pcard" id="pc-short" onclick="selPace('short')">
         <div class="pcard-icon">📖</div>
         <div class="pcard-name">短篇</div>
-        <div class="pcard-desc">固定大纲，奔着结局走。故事有开场、发展、高潮、结局，每个选择都在推动叙事向终点前进。</div>
-        <div class="pcard-rounds">约 20-40 回合 · 一局完结</div>
+        <div class="pcard-desc">舞台和目标较集中，但推进仍由玩家行动触发，不会为了赶结局跳过可互动过程。</div>
+        <div class="pcard-rounds">约 30-60 回合 · 聚焦故事</div>
         <div class="pcard-examples">适合：克苏鲁 · 恐怖故事 · 推理悬疑</div>
       </div>
       <div class="pcard" id="pc-medium" onclick="selPace('medium')">
         <div class="pcard-icon">📚</div>
         <div class="pcard-name">中篇</div>
-        <div class="pcard-desc">主线骨架固定，支线自由探索。有明确的终点，但通往终点的路径多样，日常与冒险各占一半。</div>
-        <div class="pcard-rounds">约 50-100 回合 · 有终点的冒险</div>
+        <div class="pcard-desc">主线是可选择的方向，实质推进来自玩家主动行动；日常、关系和探索都可充分展开。</div>
+        <div class="pcard-rounds">约 80-160 回合 · 玩家主导</div>
         <div class="pcard-examples">适合：博德之门 · 武侠复仇 · 特工任务</div>
       </div>
       <div class="pcard" id="pc-long" onclick="selPace('long')">
@@ -738,6 +738,87 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         <div class="chip" data-group="pref-opening" data-val="经典问答">📝 经典问答建角</div>
         <div class="chip" data-group="pref-opening" data-val="平静日常切入">🌤 平静日常切入</div>
         <div class="chip" data-group="pref-opening" data-val="戏剧性切入">⚡ 戏剧性切入</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">具体开场</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-scene" data-val="">🎲 桶内随机</div>
+        <div class="chip" data-group="pref-scene" data-val="普通一天">🌅 普通一天</div>
+        <div class="chip" data-group="pref-scene" data-val="工作现场">🧰 工作现场</div>
+        <div class="chip" data-group="pref-scene" data-val="熟人见面">🤝 熟人见面</div>
+        <div class="chip" data-group="pref-scene" data-val="自由闲暇">🍵 自由闲暇</div>
+        <div class="chip" data-group="pref-scene" data-val="公开委托">📜 公开委托</div>
+        <div class="chip" data-group="pref-scene" data-val="小麻烦">🪛 小麻烦</div>
+        <div class="chip" data-group="pref-scene" data-val="抵达新地">🧳 抵达新地</div>
+        <div class="chip" data-group="pref-scene" data-val="危机切入">⚠️ 小型危机</div>
+        <div class="chip" data-group="pref-scene" data-val="事件余波">🌧 事件余波</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">社会位置</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-role" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-role" data-val="本地普通人">🏠 本地普通人</div>
+        <div class="chip" data-group="pref-role" data-val="外来者">🧳 外来者</div>
+        <div class="chip" data-group="pref-role" data-val="职业人">🪪 职业人</div>
+        <div class="chip" data-group="pref-role" data-val="边缘角色">👤 边缘角色</div>
+        <div class="chip" data-group="pref-role" data-val="经营者">🏪 经营者</div>
+        <div class="chip" data-group="pref-role" data-val="前辈导师">🎓 前辈导师</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">职业方向</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-prof" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-prof" data-val="医护人员">🩺 医护</div>
+        <div class="chip" data-group="pref-prof" data-val="研究者或技术人员">🔬 研究技术</div>
+        <div class="chip" data-group="pref-prof" data-val="商人或店主">🛒 商业经营</div>
+        <div class="chip" data-group="pref-prof" data-val="工匠或创作者">🛠 工匠创作</div>
+        <div class="chip" data-group="pref-prof" data-val="教师或学生">📚 教育学习</div>
+        <div class="chip" data-group="pref-prof" data-val="服务业普通职员">☕ 服务职员</div>
+        <div class="chip" data-group="pref-prof" data-val="冒险、战斗或调查职业">🗡 冒险调查</div>
+        <div class="chip" data-group="pref-prof" data-val="无固定职业，由玩家在剧情中决定">🧭 暂无职业</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">关系底色</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-relation" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-relation" data-val="独自生活，关系从零建立">🚶 独自生活</div>
+        <div class="chip" data-group="pref-relation" data-val="有稳定家人和日常家庭关系">🏡 有家人</div>
+        <div class="chip" data-group="pref-relation" data-val="已有挚友或可靠伙伴">🫂 挚友伙伴</div>
+        <div class="chip" data-group="pref-relation" data-val="有工作搭档或共同经营者">🤝 职业搭档</div>
+        <div class="chip" data-group="pref-relation" data-val="有师徒或前后辈关系">🎓 师徒前后辈</div>
+        <div class="chip" data-group="pref-relation" data-val="有明确恋爱对象或伴侣">💞 恋爱伴侣</div>
+        <div class="chip" data-group="pref-relation" data-val="无预设恋爱线，以生活、友情和职业为主">🌿 无恋爱线</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">成长方式</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-growth" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-growth" data-val="平凡日常，不以变强为目标">☕ 平凡日常</div>
+        <div class="chip" data-group="pref-growth" data-val="职业专精，靠专业能力建立位置">🧰 职业专精</div>
+        <div class="chip" data-group="pref-growth" data-val="缓慢积累，长期准备和成长">🌱 缓慢积累</div>
+        <div class="chip" data-group="pref-growth" data-val="热血成长，阶段挑战与突破明确">🔥 热血成长</div>
+        <div class="chip" data-group="pref-growth" data-val="经营建设，通过事业或社区成长">🏗 经营建设</div>
+        <div class="chip" data-group="pref-growth" data-val="开局强大，重点是如何生活和选择">✨ 开局强大</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">核心阻力</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-conflict" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-conflict" data-val="钱、时间和资源不足">💰 资源不足</div>
+        <div class="chip" data-group="pref-conflict" data-val="能力或经验暂时达不到目标">📈 能力门槛</div>
+        <div class="chip" data-group="pref-conflict" data-val="职业中的具体难题">🧾 职业难题</div>
+        <div class="chip" data-group="pref-conflict" data-val="公开公平的竞争">🏁 公平竞争</div>
+        <div class="chip" data-group="pref-conflict" data-val="关系、承诺与个人安排冲突">🫱 关系取舍</div>
+        <div class="chip" data-group="pref-conflict" data-val="环境、旅途或生存条件">🌧 环境阻碍</div>
+        <div class="chip" data-group="pref-conflict" data-val="低压力，没有预设核心困难">🍃 低压自由</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">穿越触发</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-trigger" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-trigger" data-val="游戏弹窗">🖥 游戏弹窗</div>
+        <div class="chip" data-group="pref-trigger" data-val="游戏停服">⌛ 停服时刻</div>
+        <div class="chip" data-group="pref-trigger" data-val="VR设备">🥽 VR设备</div>
+        <div class="chip" data-group="pref-trigger" data-val="书或旧物">📖 书与旧物</div>
+        <div class="chip" data-group="pref-trigger" data-val="睡眠或昏迷">💤 睡眠昏迷</div>
+        <div class="chip" data-group="pref-trigger" data-val="意外事故">⚡ 意外事故</div>
+        <div class="chip" data-group="pref-trigger" data-val="主动移居，不发生意外">🚪 主动转移</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">穿越形式</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-transmode" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-transmode" data-val="普通转移">🚪 普通转移</div>
+        <div class="chip" data-group="pref-transmode" data-val="从出生重生">🍼 从出生重生</div>
+        <div class="chip" data-group="pref-transmode" data-val="群体召唤非勇者">👥 群体召唤</div>
+        <div class="chip" data-group="pref-transmode" data-val="原作边缘角色">📖 原作边缘</div>
+        <div class="chip" data-group="pref-transmode" data-val="非人或器物生命">🗿 非人/器物</div>
+        <div class="chip" data-group="pref-transmode" data-val="写实无金手指">🧍 无金手指</div>
+        <div class="chip" data-group="pref-transmode" data-val="经典神明面谈">✨ 神明面谈</div>
       </div></div>
       <div class="pref-row"><span class="pref-lbl">时代</span><div class="gen-chips">
         <div class="chip on" data-group="pref-era" data-val="">🎲 随本世界观</div>
@@ -906,7 +987,7 @@ var OUTLINE=''; // JS-owned latest hidden outline (survives even if model forget
 var GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; // authoritative state, owned by JS
 var STATE_ACTIVE=false; // true once the model starts reporting via STATE patches
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
-var PREFS={tone:'',skeleton:'',opening:'',entry:'',era:''};
+var PREFS={tone:'',skeleton:'',opening:'',scene:'',entry:'',era:'',role:'',prof:'',relation:'',growth:'',conflict:'',trigger:'',transmode:''};
 var WORLD_PRESET=''; // second-level flavor preset id chosen for the selected world // player taste constraints from the pace screen
 var PREF_MAPS={
   tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'市井烟火':['市井烟火','群像生活流'],'荒诞喜剧':['荒诞喜剧','讽刺寓言'],'严肃正剧':['严肃正剧','冷峻现实'],'黑色悬疑':['冷峻现实']},
@@ -965,7 +1046,7 @@ function weightedDraw(catId,allowed){
 }
 function readPrefChips(){
   var get=function(g){var el=document.querySelector('.chip[data-group="'+g+'"].on');return el?el.dataset.val:'';};
-  PREFS={tone:get('pref-tone'),skeleton:get('pref-skeleton'),opening:get('pref-opening'),entry:get('pref-entry'),era:get('pref-era')};
+  PREFS={tone:get('pref-tone'),skeleton:get('pref-skeleton'),opening:get('pref-opening'),scene:get('pref-scene'),entry:get('pref-entry'),era:get('pref-era'),role:get('pref-role'),prof:get('pref-prof'),relation:get('pref-relation'),growth:get('pref-growth'),conflict:get('pref-conflict'),trigger:get('pref-trigger'),transmode:get('pref-transmode')};
 }
 var OPENING_STYLES=[
   {n:'普通一天',d:'主角以本地人的身份开始普通的一天。交代眼前要做的事、生活条件和一个明确的小目标；没有异象、暗示或隐藏危机。'},
@@ -1043,10 +1124,18 @@ function rollBlueprint(){
     conflict=DNA_CONFLICTS[Math.floor(Math.random()*DNA_CONFLICTS.length)]+'（阻力性质：'+ag[0]+'）';
     DNA_PICKS=null;
   }
+  // Player-selected setup options override the hidden blueprint draw.
+  if(PREFS.prof)prof=PREFS.prof;
+  if(PREFS.role)pos=PREFS.role;
+  if(PREFS.relation)rel=PREFS.relation;
+  if(PREFS.growth)growth=PREFS.growth;
+  if(PREFS.conflict)conflict=PREFS.conflict;
   var opool=OPENING_STYLES;
   var opref=PREFS.opening&&PREF_MAPS.opening[PREFS.opening];
   if(opref){ var om=OPENING_STYLES.concat(OPENING_STYLES_X); opool=om.filter(function(x){return opref.indexOf(x.n)>=0;}); if(!opool.length)opool=OPENING_STYLES; }
-  var st=opool[Math.floor(Math.random()*opool.length)];
+  var allOpenings=OPENING_STYLES.concat(OPENING_STYLES_X);
+  var st=PREFS.scene?allOpenings.find(function(x){return x.n===PREFS.scene;}):null;
+  if(!st)st=opool[Math.floor(Math.random()*opool.length)];
   OPENING_PICK=st.n;
   var transLine='';
   var transRate=(WORLD==='fantasy')?0.5:(WORLD==='xianxia')?0.4:(WORLD==='occult'||WORLD==='space')?0.3:0.22;
@@ -1057,9 +1146,28 @@ function rollBlueprint(){
   else if(PREFS.entry==='game'){isTrans=true;forceFrame='游戏化世界';}
   else if(PREFS.entry==='book'){isTrans=true;forceFrame='穿书原作';}
   if(isTrans){
-    var mech=TRANSMIGRATE_MECH[Math.floor(Math.random()*TRANSMIGRATE_MECH.length)];
+    var transModeMap={
+      '普通转移':'主动移居或普通转移——没有死亡和神明，因工作、事故、学习或旅行进入另一个世界',
+      '从出生重生':'从出生开始的第二人生——可以是人类、亚人、魔物、动物、植物或其他形态，拥有真实成长经历',
+      '群体召唤非勇者':'群体召唤的非勇者位——勇者另有其人，主角可能是挚友、同学、后勤、家属或被忽略的同行者',
+      '原作边缘角色':'原作边缘身份——成为路人、配角、反派阵营普通成员或主角团身边的职业人，但拥有独立人生',
+      '非人或器物生命':'非人或器物生命——身体可能是魔物、人工生命、武器、建筑、迷宫核心或非实体意识，必须落实真实生活方式',
+      '写实无金手指':'写实无金手指——没有特殊权限，依靠职业经验、关系和长期积累生活',
+      '经典神明面谈':'经典神明面谈——仅在玩家确实选择经典转生流程时使用，技能和身份仍由玩家决定'
+    };
+    var transPool=TRANSMIGRATE_MECH.filter(function(x){return x.indexOf('本地人生')<0;});
+    var mech=(PREFS.transmode&&transModeMap[PREFS.transmode])||transPool[Math.floor(Math.random()*transPool.length)];
     var tim=REVEAL_TIMING[Math.floor(Math.random()*REVEAL_TIMING.length)];
-    var trig=TRANS_TRIGGERS[Math.floor(Math.random()*TRANS_TRIGGERS.length)];
+    var triggerMap={
+      '游戏弹窗':'深夜玩游戏时，屏幕弹出一个需要玩家亲自回应的异常确认框',
+      '游戏停服':'所玩游戏运营终止，停服倒计时归零前仍可自由行动',
+      'VR设备':'新接入的VR设备出现异常，但接入和确认过程必须由玩家操作',
+      '书或旧物':'一本书或一件旧物出现可观察、可试探的异常',
+      '睡眠或昏迷':'在正常生活中入睡或因劳累昏迷，醒来前完整描写可感知的过渡',
+      '意外事故':'发生有预兆且允许玩家反应的意外，不替玩家决定应对方式',
+      '主动移居，不发生意外':'主角主动通过公开通道移居或转移，不死亡、不昏迷，也不由神明强制召唤'
+    };
+    var trig=(PREFS.trigger&&triggerMap[PREFS.trigger])||TRANS_TRIGGERS[Math.floor(Math.random()*TRANS_TRIGGERS.length)];
     var frame;
     if(forceFrame){ frame=forceFrame; }
     else if(mech.indexOf('原作')>=0){ frame='穿书原作'; }
