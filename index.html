@@ -304,6 +304,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .pref-lbl{font-size:11px;color:var(--dm);flex-shrink:0;margin-top:5px;width:58px;text-align:right;}
 .pref-row .gen-chips{margin-bottom:0;}
 @media(max-width:768px){.pref-row{flex-direction:column;gap:4px;}.pref-lbl{text-align:left;width:auto;}}
+.gen-note{font-size:11px;color:var(--dm);border:1px dashed var(--bd);padding:9px 12px;margin-bottom:14px;line-height:1.8;}
 </style>
 </head>
 <body>
@@ -1783,6 +1784,10 @@ function buildSystemPrompt(recentText){
   if(STORY_DNA && TURNS<10){
     sp += '\n\n' + STORY_DNA;
   }
+  var lkw=WORLDS[WORLD];
+  if(lkw&&lkw.lockedTags&&lkw.lockedTags.length){
+    sp += '\n\n【世界定制时锁定的标签——最高优先级。开局变体、故事骨架等任何随机抽取与这些标签冲突时，一律以锁定标签为准】' + lkw.lockedTags.join('、');
+  }
   if(PINS.length){
     sp += '\n\n【不可更改的锁定设定——最高优先级，永远遵守，禁止篡改或遗忘】\n' + PINS.map(function(pn){ return '- '+pn.text; }).join('\n');
   }
@@ -2277,7 +2282,8 @@ function buildQuickWorld(){
   WORLDS['__custom__']={
     name:'快速·'+wf.substring(0,8), color:'#c8a96e', skillLabel:'技能',
     daily:['探索周边','与人交谈','处理手头的事','逛逛集市','歇口气','查看状态'],
-    prompt:prompt
+    prompt:prompt,
+    lockedTags:[]
   };
 }
 async function quickStart(){
@@ -2438,7 +2444,7 @@ document.addEventListener('click', function(e) {
 
 function getGenSelections() {
   var result = {};
-  var groups = ['genre','magic','era','scale','power','econ','origin','form','rolepos','sourceframe','relation','growth','storyengine','pressure','ability','style','rating','mechanic','ending'];
+  var groups = ['genre','magic','era','scale','power','econ','ability','rating','mechanic'];
   groups.forEach(function(g) {
     var selected = [];
     document.querySelectorAll('.chip[data-group="'+g+'"].on').forEach(function(c){
@@ -2473,7 +2479,7 @@ function buildMetaPrompt(sel) {
 
   Object.keys(sel).forEach(function(k) {
     if (k === 'research_tags') {
-      parts.push('叙事标签（选自2016-2024中日热门作品研究库，生成的世界观与叙事风格必须充分体现这些标签的类型特征）：' + sel[k].join('、'));
+      parts.push('叙事标签（最高优先级的世界基底，选自2016-2026中日热门作品研究库，生成的世界观必须充分体现这些标签的类型特征；若与下方其他选项冲突，一律以这些标签为准）：' + sel[k].join('、'));
       return;
     }
     if (k === 'extra') {
@@ -2552,7 +2558,8 @@ function confirmGenWorld() {
     color: '#c8a96e',
     skillLabel: '技能',
     daily: ['探索周边', '与NPC交谈', '查看状态', '整理背包', '休息恢复', '调查线索'],
-    prompt: GEN_WORLD
+    prompt: GEN_WORLD,
+    lockedTags: (typeof SELECTED_TAGS!=='undefined'?SELECTED_TAGS.slice():[])
   };
   document.getElementById('genscreen').classList.add('hidden');
   goStep(3);
@@ -2566,6 +2573,22 @@ document.getElementById('pinp').addEventListener('input',function(){
 });
 document.getElementById('imodal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 setTimeout(function(){ try{loadResearchDB();}catch(e){} },600);
+
+// generator jurisdiction: the world screen only defines the WORLD; run-axes live in the opening roll systems
+(function(){
+  ['origin','form','rolepos','sourceframe','relation','growth','storyengine','pressure','style','ending'].forEach(function(g){
+    var chip=document.querySelector('.chip[data-group="'+g+'"]');
+    if(chip){ var sec=chip.closest('.gen-section'); if(sec&&sec.parentNode)sec.parentNode.removeChild(sec); }
+  });
+  var inner=document.getElementById('genscreen-inner');
+  if(inner){
+    var note=document.createElement('div');
+    note.className='gen-note';
+    note.textContent='ℹ 这一页只定义世界本身。主角来历、进入方式（穿越/土著/游戏化/穿书）、基调、故事引擎、人际与成长模式都由开局时现场抽取——想锁定方向，请在下一页使用口味约束。已选研究标签优先于下方手动选项，冲突时以标签为准。';
+    var firstSec=inner.querySelector('.gen-section');
+    if(firstSec)inner.insertBefore(note,firstSec);
+  }
+})();
 
 // soft keyboard: re-pin the log to the bottom when the visual viewport shrinks
 if(window.visualViewport){
