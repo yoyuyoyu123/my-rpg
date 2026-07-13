@@ -112,6 +112,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .typing span:nth-child(2){animation-delay:0.2s}.typing span:nth-child(3){animation-delay:0.4s}
 @keyframes blink{0%,100%{opacity:0.2;transform:scale(0.8)}50%{opacity:1;transform:scale(1)}}
 .opts{margin-top:12px;display:flex;flex-direction:column;gap:6px;}
+.opt-title{font-size:11px;color:var(--g);letter-spacing:1px;margin:2px 0 1px;}
 .ob{background:rgba(200,169,110,0.05);border:1px solid rgba(200,169,110,0.25);color:var(--tx);font-family:'Share Tech Mono',monospace;font-size:12px;padding:9px 12px;cursor:pointer;text-align:left;transition:all 0.15s;line-height:1.5;}
 .ob:hover{background:rgba(200,169,110,0.12);border-color:var(--g);color:var(--g);transform:translateX(3px);}
 .ob .on{color:var(--r);margin-right:7px;font-weight:bold;}
@@ -1084,7 +1085,9 @@ function rollBlueprint(){
   if(PREFS.era){ b+='时代设定：玩家指定为「'+PREFS.era+'」，世界观细节按此时代呈现（与世界观默认时代不符时以此为准，做合理转译）。\n'; }
   b+='规模约束：故事默认留在当前生活圈与当前目标内纵深发展，只有玩家主动远行、晋升或完成阶段目标才扩大舞台；蓝图与玩家当前兴趣无关时就安静待在后台，不得硬塞。';
   STORY_DNA=b;
-  OPENING_TEXT='';
+  OPENING_TEXT=isTrans
+    ?'【本局开局起点——必须执行】这是穿越者路线，但当前仍处于穿越前。第一回合必须完整发生在原本世界，以主角当下正在做的具体事情呈现其职业、生活、生平痕迹和相关经历；本回合最多让触发事件出现，并在玩家需要反应的位置停下。绝不能从异世界醒来开场，不能在首回合完成穿越，不能使用“他已经来到这里数日”等既成设定。只有玩家明确触发穿越后，后续回合才能依次描写转移过程和初次落地。'
+    :'【本局开局起点】主角是本世界土著，从当下的一件具体生活或工作事务开始，不要先概括生平或直接抛出主线事件。';
 }
 
 // ── STORY DNA: distilled narratology decks (Polti/Plotto/webnovel skeletons) ──
@@ -1596,12 +1599,13 @@ function renderNar(text,hidx) {
     var optSec=text.slice(optIdx), lines=optSec.split('\n'), opts=[], hasFree=false;
     lines.forEach(function(ln){
       ln=ln.trim();
-      var m=ln.match(/^(\d+)[\s.、。．](.+)$/);
+      var m=ln.match(/^(\d+)(?:[\s.、。．:：\-]+)(.+)$/);
       if(m) opts.push({n:m[1],t:m[2].trim().replace(/\*\*/g,'')});
       if(ln.indexOf('或输入任何')>=0) hasFree=true;
     });
     if(opts.length){
       var ob=document.createElement('div'); ob.className='opts';
+      var ot=document.createElement('div'); ot.className='opt-title'; ot.textContent='选项：'; ob.appendChild(ot);
       opts.forEach(function(o){
         var b=document.createElement('button'); b.className='ob';
         b.innerHTML='<span class="on">'+o.n+'</span>'+esc(o.t);
@@ -1794,6 +1798,7 @@ var CORE_RULES='【叙事引擎核心规范】\n职责：你负责叙事与NPC�
 // prompt; the older declaration above remains only for save compatibility.
 CORE_RULES='【文字RPG叙事契约】\n玩家决定主角，AI负责世界与NPC。玩家输入通常只授权其中明确表达的动作；写完该动作及连续、直接的反馈后，在出现新选择、未知风险、承诺、转场或需要玩家表态的地方停下。不得替玩家点击、答应、拒绝、说话、接受任务、决定去向、使用物品、跨越时间或总结其心理结论。\n时间默认连续。职业、生活、观察、对话、赶路和适应都可正常展开；仅当玩家明确要求快进时使用蒙太奇。穿越、召唤、觉醒、入职和加入组织等转折应分阶段游玩，每个决定点都交还玩家。\nNPC有自己的立场、生活与有限视角，说话自然直接；不知道就说不知道。不要用神秘停顿、含糊警告、幕后观察者或凭空阴谋制造戏剧，也不要让所有人围着主角运转。\n叙事以当前行动为中心，但允许少量职业、环境和人物细节建立生活质感；细节不必都是伏笔。篇幅服从内容，不设最低字数，不重复玩家刚说过的话，不为了写长而新增事件。失败应有情境依据，普通无风险行动不检定。\n每回合末尾提供2-4个眼前可做的行动参考，数量服从场景，并保留“或输入任何你想做的事”。选项不得替玩家规划人生或预告剧情。任务只有在玩家明确接受、承诺或主动设定目标后才登记。数值、物品、技能、位置和重要关系确有变化时才输出【STATE】；普通路人无需进入长期关系记录。世界包要求的状态栏保持简洁，不得为了填栏擅自改变数值。';
 var INTERACTION_RULES='';
+var OPTION_RULES='【行动选项格式】回复末尾必须先单独写“选项：”，再提供2-4项；每项必须是“数字+空格+完整行动描述”，例如“1 检查弹窗来自哪个程序”。不得只输出序号、单个数字或空选项。最后写“或输入任何你想做的事”。';
 
 var ANTI_MYSTERY='【生活感与相关性】普通NPC说人话：问路给方向、买卖报价、闲聊就聊眼前话题。信息不完整只能来自不知道/记错/只听说过。禁用：你不该知道、现在还不是时候、别问、我只能告诉你这么多、这座城市不简单，以及无缘无故的停顿、眼神闪烁、神秘微笑。玩家没有询问的背景故事不要主动倾倒；与当前行动无关的世界变化不进入正文。';
 
@@ -1829,6 +1834,7 @@ function buildSystemPrompt(recentText){
   var p=PACE_CONFIG[PACE];
   if(!w||!p) return '';
   var sp=CORE_RULES;
+  sp+='\n\n'+OPTION_RULES;
   sp+='\n\n【世界包】\n'+w.prompt;
   sp+='\n【输出覆盖】世界包中的状态栏示例只定义字段，不代表每回合必须重写全部字段；无变化时可省略或只保留最简当前状态。任务仅在玩家明确接受、承诺或主动设定目标后登记。';
   if(WORLD_PRESET&&w.presets){ var pp=w.presets.filter(function(x){return x.id===WORLD_PRESET;})[0]; if(pp&&pp.note){ sp+='\n【本局特色侧重】'+pp.note; } }
@@ -1836,6 +1842,7 @@ function buildSystemPrompt(recentText){
   if(STORY_DNA){ sp+='\n\n'+STORY_DNA; }
   if(w.lockedTags&&w.lockedTags.length){ sp+='\n\n【定制锁定标签——最高优先级，蓝图任何随机元素与之冲突时一律以此为准】'+w.lockedTags.join('、'); }
   if(TURNS<8){ sp+='\n\n'+FIRST_CHAPTER; }
+  if(TURNS<8&&OPENING_TEXT){ sp+='\n\n'+OPENING_TEXT; }
   if(NAMES){ sp+='\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n'+NAMES; }
   if(OUTLINE){ sp+='\n\n【剧情备忘——保持目标与因果连续的编剧笔记，不是悬念清单】\n'+OUTLINE+'\n（剧情实质推进时才输出更新版【大纲】块）'; }
   var ss=stateSummary();
