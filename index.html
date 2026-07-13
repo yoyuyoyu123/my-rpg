@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>无界·叙事引擎 v7</title>
+<title>无界·叙事引擎 v12</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -133,6 +133,16 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .ss{border-bottom:1px solid var(--bd);padding:12px 10px;}
 .st{font-size:9px;color:var(--g);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;opacity:0.8;}
 #sdsp{font-size:10px;color:var(--dm);line-height:1.8;white-space:pre-wrap;min-height:40px;}
+.sheet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;}
+.sheet-stat{border:1px solid rgba(200,169,110,.18);padding:6px 7px;cursor:pointer;min-width:0;}
+.sheet-stat:hover{border-color:var(--g);}
+.sheet-stat .sk{display:block;color:var(--dm);font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sheet-stat .sv{display:block;color:var(--tx);font-size:13px;margin-top:2px;}
+.sheet-sub{font-size:9px;color:var(--g);letter-spacing:1px;margin:9px 0 5px;}
+.talent-grid{display:flex;flex-wrap:wrap;gap:5px;}
+.talent-item{border:1px solid rgba(152,232,154,.25);padding:4px 7px;font-size:10px;color:#98c878;cursor:pointer;}
+.last-check{font-size:10px;line-height:1.55;color:var(--dm);border-left:2px solid var(--bd);padding-left:7px;}
+.last-check.ok{border-color:#98c878;color:#98c878}.last-check.fail{border-color:#c86060;color:#c86060}
 .inv-grid{display:flex;flex-wrap:wrap;gap:5px;}
 .inv-item{border:1px solid rgba(200,169,110,0.2);padding:4px 7px;font-size:10px;color:var(--dm);cursor:pointer;transition:all 0.15s;background:transparent;}
 .inv-item:hover{border-color:var(--g);color:var(--g);background:rgba(200,169,110,0.06);}
@@ -304,6 +314,18 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .pref-row:last-child{margin-bottom:0;}
 .pref-lbl{font-size:11px;color:var(--dm);flex-shrink:0;margin-top:5px;width:58px;text-align:right;}
 .pref-row .gen-chips{margin-bottom:0;}
+.adv-pref-box{margin:12px 0 14px;border:1px dashed rgba(200,169,110,0.45);background:rgba(200,169,110,0.025);}
+.adv-pref-box summary{cursor:pointer;padding:11px 13px;color:var(--g);font-size:11px;letter-spacing:1.5px;list-style:none;user-select:none;}
+.adv-pref-box summary::-webkit-details-marker{display:none;}
+.adv-pref-box summary span{color:var(--dm);font-size:9px;letter-spacing:.5px;margin-left:8px;}
+.adv-pref-box[open] summary{border-bottom:1px solid var(--bd);}
+.adv-pref-note{font-size:9px;color:var(--dm);line-height:1.7;padding:9px 13px 2px;}
+#adv-pref-options{padding:8px 13px 12px;}
+#adv-pref-options .pref-lbl{width:76px;}
+#adv-pref-options .pref-row.adv-locked{opacity:.48;}
+#adv-pref-options .pref-row.adv-locked .chip{pointer-events:none;}
+.adv-lock-note{display:none;font-size:9px;color:var(--gold);margin:3px 0 0 76px;letter-spacing:.5px;}
+.adv-locked .adv-lock-note{display:block;}
 @media(max-width:768px){.pref-row{flex-direction:column;gap:4px;}.pref-lbl{text-align:left;width:auto;}}
 .gen-note{font-size:11px;color:var(--dm);border:1px dashed var(--bd);padding:9px 12px;margin-bottom:14px;line-height:1.8;}
 .fam-head{grid-column:1/-1;font-size:11px;color:var(--dm);letter-spacing:3px;border-bottom:1px solid var(--bd);padding:4px 2px 5px;margin-top:6px;}
@@ -314,7 +336,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 <body>
 <div class="gbg"></div>
 <div class="hdr">
-  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v7</small></div>
+  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v12</small></div>
   <div class="sbar">
     <div class="sdot" id="sdot"></div>
     <span id="stxt">选择世界</span>
@@ -720,6 +742,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
       <div class="pref-row"><span class="pref-lbl">主线方向</span><div class="gen-chips">
         <div class="chip on" data-group="pref-skeleton" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-skeleton" data-val="__none__">○ 无主线强调</div>
         <div class="chip" data-group="pref-skeleton" data-val="冒险探索">🗺️ 冒险探索</div>
         <div class="chip" data-group="pref-skeleton" data-val="经营生活">🌾 经营生活</div>
         <div class="chip" data-group="pref-skeleton" data-val="争锋上位">⚔️ 争锋上位</div>
@@ -741,6 +764,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
       <div class="pref-row"><span class="pref-lbl">具体开场</span><div class="gen-chips">
         <div class="chip on" data-group="pref-scene" data-val="">🎲 桶内随机</div>
+        <div class="chip" data-group="pref-scene" data-val="__none__">○ 无额外强调</div>
         <div class="chip" data-group="pref-scene" data-val="普通一天">🌅 普通一天</div>
         <div class="chip" data-group="pref-scene" data-val="工作现场">🧰 工作现场</div>
         <div class="chip" data-group="pref-scene" data-val="熟人见面">🤝 熟人见面</div>
@@ -753,6 +777,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
       <div class="pref-row"><span class="pref-lbl">社会位置</span><div class="gen-chips">
         <div class="chip on" data-group="pref-role" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-role" data-val="__none__">○ 无额外强调</div>
         <div class="chip" data-group="pref-role" data-val="本地普通人">🏠 本地普通人</div>
         <div class="chip" data-group="pref-role" data-val="外来者">🧳 外来者</div>
         <div class="chip" data-group="pref-role" data-val="职业人">🪪 职业人</div>
@@ -762,6 +787,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
       <div class="pref-row"><span class="pref-lbl">职业方向</span><div class="gen-chips">
         <div class="chip on" data-group="pref-prof" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-prof" data-val="__none__">○ 无额外强调</div>
         <div class="chip" data-group="pref-prof" data-val="医护人员">🩺 医护</div>
         <div class="chip" data-group="pref-prof" data-val="研究者或技术人员">🔬 研究技术</div>
         <div class="chip" data-group="pref-prof" data-val="商人或店主">🛒 商业经营</div>
@@ -773,6 +799,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
       <div class="pref-row"><span class="pref-lbl">关系底色</span><div class="gen-chips">
         <div class="chip on" data-group="pref-relation" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-relation" data-val="__none__">○ 无额外强调</div>
         <div class="chip" data-group="pref-relation" data-val="独自生活，关系从零建立">🚶 独自生活</div>
         <div class="chip" data-group="pref-relation" data-val="有稳定家人和日常家庭关系">🏡 有家人</div>
         <div class="chip" data-group="pref-relation" data-val="已有挚友或可靠伙伴">🫂 挚友伙伴</div>
@@ -783,6 +810,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
       <div class="pref-row"><span class="pref-lbl">成长方式</span><div class="gen-chips">
         <div class="chip on" data-group="pref-growth" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-growth" data-val="__none__">○ 无额外强调</div>
         <div class="chip" data-group="pref-growth" data-val="平凡日常，不以变强为目标">☕ 平凡日常</div>
         <div class="chip" data-group="pref-growth" data-val="职业专精，靠专业能力建立位置">🧰 职业专精</div>
         <div class="chip" data-group="pref-growth" data-val="缓慢积累，长期准备和成长">🌱 缓慢积累</div>
@@ -792,6 +820,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
       <div class="pref-row"><span class="pref-lbl">核心阻力</span><div class="gen-chips">
         <div class="chip on" data-group="pref-conflict" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-conflict" data-val="__none__">○ 无预设阻力</div>
         <div class="chip" data-group="pref-conflict" data-val="钱、时间和资源不足">💰 资源不足</div>
         <div class="chip" data-group="pref-conflict" data-val="能力或经验暂时达不到目标">📈 能力门槛</div>
         <div class="chip" data-group="pref-conflict" data-val="职业中的具体难题">🧾 职业难题</div>
@@ -802,6 +831,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
       <div class="pref-row"><span class="pref-lbl">穿越触发</span><div class="gen-chips">
         <div class="chip on" data-group="pref-trigger" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-trigger" data-val="__none__">○ 无额外强调</div>
         <div class="chip" data-group="pref-trigger" data-val="游戏弹窗">🖥 游戏弹窗</div>
         <div class="chip" data-group="pref-trigger" data-val="游戏停服">⌛ 停服时刻</div>
         <div class="chip" data-group="pref-trigger" data-val="VR设备">🥽 VR设备</div>
@@ -812,6 +842,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
       <div class="pref-row"><span class="pref-lbl">穿越形式</span><div class="gen-chips">
         <div class="chip on" data-group="pref-transmode" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-transmode" data-val="__none__">○ 无额外强调</div>
         <div class="chip" data-group="pref-transmode" data-val="普通转移">🚪 普通转移</div>
         <div class="chip" data-group="pref-transmode" data-val="从出生重生">🍼 从出生重生</div>
         <div class="chip" data-group="pref-transmode" data-val="群体召唤非勇者">👥 群体召唤</div>
@@ -827,6 +858,15 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         <div class="chip" data-group="pref-era" data-val="现代">🏙️ 现代</div>
         <div class="chip" data-group="pref-era" data-val="近未来">🛸 近未来</div>
         <div class="chip" data-group="pref-era" data-val="远未来">🌌 远未来</div>
+      </div></div>
+      <details class="adv-pref-box">
+        <summary>⚙ 展开高级世界自定义 <span>复用“自定义世界”的完整标签；默认均为无额外强调</span></summary>
+        <div class="adv-pref-note">这里只补充上方没有明确指定的维度。若常用设置已经控制同一项，对应高级标签会自动停用，避免两套要求互相冲突；自由备注仍拥有最高优先级。</div>
+        <div id="adv-pref-options"></div>
+      </details>
+      <div class="pref-row"><span class="pref-lbl">自由备注</span><div style="flex:1;min-width:0">
+        <textarea class="gen-custom" id="pref-extra" rows="4" placeholder="写下预设没有覆盖的开局或世界要求。比如：从毕业当天开始；主角与妹妹共同穿越；不要系统面板；参考某部作品的生活质感但不使用原作人物；不预设恋爱对象……"></textarea>
+        <div style="font-size:9px;color:var(--dm);margin-top:5px;line-height:1.6">自由备注优先于随机标签；留空则不追加要求。</div>
       </div></div>
     </div>
     <button class="wnext" id="wnext-p" onclick="launchGame()" disabled>开始冒险 ▶</button>
@@ -934,9 +974,10 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="hint" id="game-hint">无界·叙事引擎</div>
   </div>
   <div class="spnl" id="spnl">
-    <div class="ss"><div class="st">▸ 角色状态</div><div id="sdsp">— 游戏开始后显示 —</div></div>
+    <div class="ss"><div class="st">▸ 权威角色卡</div><div id="sdsp">— 尚未揭示 —</div><div id="sheet-gate"><button class="qb" onclick="requestCharacterSheet()"><span class="ic">◇</span>主动查看／建立角色卡</button></div><div class="sheet-sub">基础属性（揭示后可校准）</div><div id="attr-grid" class="sheet-grid"></div><div class="sheet-sub">状态与资源</div><div id="res-grid" class="sheet-grid"></div><div class="sheet-sub">天赋 <button class="pin-add" onclick="addSheetEntry('talent')">+ 添加</button></div><div id="talent-grid" class="talent-grid"><span class="skill-empty">— 未揭示 —</span></div></div>
+    <div class="ss"><div class="st">▸ 最近一次裁定</div><div id="last-check" class="last-check">— 尚无检定 —</div></div>
     <div class="ss"><div class="st">▸ 背包</div><div class="inv-grid" id="inv-grid"><span class="inv-empty">— 空 —</span></div></div>
-    <div class="ss"><div class="st" id="skill-panel-title">▸ 技能</div><div class="skill-grid" id="skill-grid"><span class="skill-empty">— 空 —</span></div></div>
+    <div class="ss"><div class="st" id="skill-panel-title">▸ 技能 <button class="pin-add" onclick="addSheetEntry('skill')">+ 添加</button></div><div class="skill-grid" id="skill-grid"><span class="skill-empty">— 空 —</span></div></div>
     <div class="ss"><div class="st">▸ 任务</div><div id="quest-list"><span class="no-quest">— 暂无任务 —</span></div></div>
     <div class="ss"><div class="st">👥 人物关系</div><div id="npc-list"><span class="no-quest">— 尚未结识 —</span></div></div>
     <div class="ss"><div class="st">🔒 锁定设定 <button class="pin-add" onclick="promptAddPin()">+ 锁定</button></div><div id="pin-list"><span class="no-quest">— 未锁定任何设定 —</span></div></div>
@@ -946,9 +987,9 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <div class="st">⚙ 设置</div>
       <div class="set-row">温度 <input type="range" id="set-temp" min="0.3" max="1.3" step="0.05" oninput="setTemp(this.value)"><span id="set-temp-v"></span></div>
       <label class="set-chk"><input type="checkbox" id="set-stream" onchange="SETTINGS.stream=this.checked;saveSettings()"> 流式输出（逐字显示）</label>
-      <label class="set-chk"><input type="checkbox" id="set-dice" onchange="SETTINGS.dice=this.checked;saveSettings()"> 裁定骰（行动可失败）</label>
+      <label class="set-chk"><input type="checkbox" id="set-dice" onchange="SETTINGS.dice=this.checked;saveSettings()"> 风险检定（仅危险或对抗行动）</label>
       <label class="set-chk"><input type="checkbox" id="set-automem" onchange="SETTINGS.autoMem=this.checked;saveSettings()"> 自动记忆提取</label>
-      <label class="set-chk"><input type="checkbox" id="set-director" onchange="SETTINGS.director=this.checked;saveSettings()"> GM双阶段裁定（更硬核，略慢）</label>
+      <label class="set-chk"><input type="checkbox" id="set-director" onchange="SETTINGS.director=this.checked;saveSettings()"> GM节拍审查（更稳，略慢）</label>
       <button class="qb" onclick="exportSave()"><span class="ic">⇩</span>导出进度JSON</button>
       <button class="qb" onclick="importSave()"><span class="ic">⇧</span>导入进度JSON</button>
     </div>
@@ -984,10 +1025,12 @@ var LORE_ACTIVE=[]; // currently injected lore chunk names
 var LOREBOOK=[]; // world book entries: {id,name,keywords[],text,cat}
 var TURNS=0; // player turns this run
 var OUTLINE=''; // JS-owned latest hidden outline (survives even if model forgets to re-output)
-var GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; // authoritative state, owned by JS
+var GAME_STATE={version:3,revealed:false,attrs:{},res:{},caps:{},talents:[],inv:[],skills:[],loc:'',npcs:{},lastCheck:null}; // authoritative state, owned by JS
 var STATE_ACTIVE=false; // true once the model starts reporting via STATE patches
+var TURN_BACKUPS=[]; // exact runtime snapshots for undo/regeneration
+var SHEET_INIT_ARMED=false; // only an explicit player action may reveal the sheet
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
-var PREFS={tone:'',skeleton:'',opening:'',scene:'',entry:'',era:'',role:'',prof:'',relation:'',growth:'',conflict:'',trigger:'',transmode:''};
+var PREFS={tone:'',skeleton:'',opening:'',scene:'',entry:'',era:'',role:'',prof:'',relation:'',growth:'',conflict:'',trigger:'',transmode:'',advanced:{},extra:''};
 var WORLD_PRESET=''; // second-level flavor preset id chosen for the selected world // player taste constraints from the pace screen
 var PREF_MAPS={
   tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'市井烟火':['市井烟火','群像生活流'],'荒诞喜剧':['荒诞喜剧','讽刺寓言'],'严肃正剧':['严肃正剧','冷峻现实'],'黑色悬疑':['冷峻现实']},
@@ -1046,8 +1089,60 @@ function weightedDraw(catId,allowed){
 }
 function readPrefChips(){
   var get=function(g){var el=document.querySelector('.chip[data-group="'+g+'"].on');return el?el.dataset.val:'';};
-  PREFS={tone:get('pref-tone'),skeleton:get('pref-skeleton'),opening:get('pref-opening'),scene:get('pref-scene'),entry:get('pref-entry'),era:get('pref-era'),role:get('pref-role'),prof:get('pref-prof'),relation:get('pref-relation'),growth:get('pref-growth'),conflict:get('pref-conflict'),trigger:get('pref-trigger'),transmode:get('pref-transmode')};
+  var ex=document.getElementById('pref-extra');
+  PREFS={tone:get('pref-tone'),skeleton:get('pref-skeleton'),opening:get('pref-opening'),scene:get('pref-scene'),entry:get('pref-entry'),era:get('pref-era'),role:get('pref-role'),prof:get('pref-prof'),relation:get('pref-relation'),growth:get('pref-growth'),conflict:get('pref-conflict'),trigger:get('pref-trigger'),transmode:get('pref-transmode'),advanced:readAdvancedPrefs(),extra:ex?ex.value.trim():''};
 }
+
+var ADV_GROUPS=['genre','magic','era','scale','power','econ','origin','form','rolepos','sourceframe','relation','growth','storyengine','pressure','ability','style','rating','mechanic','ending'];
+var ADV_LABELS={genre:'题材类型',magic:'超自然浓度',era:'时代背景',scale:'世界规模',power:'势力格局',econ:'经济系统',origin:'主角来历',form:'存在形态',rolepos:'叙事位置',sourceframe:'作品框架',relation:'人际关系',growth:'成长模式',storyengine:'叙事机制',pressure:'主线压力',ability:'能力系统',style:'叙事文风',rating:'叙事尺度',mechanic:'特殊机制',ending:'结局倾向'};
+var ADV_BASIC_LINKS={
+  era:['pref-era'], rolepos:['pref-role'], relation:['pref-relation'], growth:['pref-growth'],
+  storyengine:['pref-skeleton'], pressure:['pref-conflict'], style:['pref-tone'],
+  origin:['pref-entry','pref-transmode'], form:['pref-transmode'], sourceframe:['pref-entry','pref-transmode']
+};
+function buildAdvancedPrefs(){
+  var box=document.getElementById('adv-pref-options'); if(!box||box.dataset.ready)return;
+  box.dataset.ready='1';
+  ADV_GROUPS.forEach(function(g){
+    var src=Array.prototype.slice.call(document.querySelectorAll('#genscreen .chip[data-group="'+g+'"]'));
+    if(!src.length)return;
+    var row=document.createElement('div'); row.className='pref-row'; row.dataset.advGroup=g;
+    var lab=document.createElement('span'); lab.className='pref-lbl'; lab.textContent=ADV_LABELS[g]||g;
+    var chips=document.createElement('div'); chips.className='gen-chips';
+    var none=document.createElement('div'); none.className='chip on'; none.dataset.group='adv-'+g; none.dataset.val='__none__'; none.textContent='○ 无额外强调'; chips.appendChild(none);
+    src.forEach(function(s){
+      var c=s.cloneNode(true); c.dataset.group='adv-'+g; c.classList.remove('on'); chips.appendChild(c);
+    });
+    var lock=document.createElement('div'); lock.className='adv-lock-note'; lock.textContent='由上方常用设置控制；改回“随机”即可在这里自定义';
+    row.appendChild(lab); row.appendChild(chips); row.appendChild(lock); box.appendChild(row);
+  });
+}
+function basicGroupIsExplicit(group){
+  var el=document.querySelector('.chip[data-group="'+group+'"].on');
+  return !!(el&&el.dataset.val!=='');
+}
+function syncAdvancedPrefLocks(){
+  Object.keys(ADV_BASIC_LINKS).forEach(function(g){
+    var locked=ADV_BASIC_LINKS[g].some(basicGroupIsExplicit);
+    var row=document.querySelector('[data-adv-group="'+g+'"]'); if(!row)return;
+    row.classList.toggle('adv-locked',locked);
+    row.setAttribute('aria-disabled',locked?'true':'false');
+    if(locked){
+      row.querySelectorAll('.chip[data-group="adv-'+g+'"]').forEach(function(c){c.classList.toggle('on',c.dataset.val==='__none__');});
+    }
+  });
+}
+function readAdvancedPrefs(){
+  var out={};
+  ADV_GROUPS.forEach(function(g){
+    var row=document.querySelector('[data-adv-group="'+g+'"]'); if(row&&row.classList.contains('adv-locked'))return;
+    var vals=Array.prototype.slice.call(document.querySelectorAll('.chip[data-group="adv-'+g+'"].on')).map(function(c){return c.dataset.val;}).filter(function(v){return v&&v!=='__none__';});
+    if(vals.length)out[g]=vals;
+  });
+  return out;
+}
+buildAdvancedPrefs();
+syncAdvancedPrefLocks();
 var OPENING_STYLES=[
   {n:'普通一天',d:'主角以本地人的身份开始普通的一天。交代眼前要做的事、生活条件和一个明确的小目标；没有异象、暗示或隐藏危机。'},
   {n:'工作现场',d:'从一件正在进行的工作、学习、训练、买卖或家务切入。先让玩家完成眼前具体事务，再由玩家决定去向。'},
@@ -1125,16 +1220,17 @@ function rollBlueprint(){
     DNA_PICKS=null;
   }
   // Player-selected setup options override the hidden blueprint draw.
-  if(PREFS.prof)prof=PREFS.prof;
-  if(PREFS.role)pos=PREFS.role;
-  if(PREFS.relation)rel=PREFS.relation;
-  if(PREFS.growth)growth=PREFS.growth;
-  if(PREFS.conflict)conflict=PREFS.conflict;
+  if(PREFS.skeleton==='__none__')engine='';
+  if(PREFS.prof)prof=PREFS.prof==='__none__'?'':PREFS.prof;
+  if(PREFS.role)pos=PREFS.role==='__none__'?'':PREFS.role;
+  if(PREFS.relation)rel=PREFS.relation==='__none__'?'':PREFS.relation;
+  if(PREFS.growth)growth=PREFS.growth==='__none__'?'':PREFS.growth;
+  if(PREFS.conflict)conflict=PREFS.conflict==='__none__'?'':PREFS.conflict;
   var opool=OPENING_STYLES;
   var opref=PREFS.opening&&PREF_MAPS.opening[PREFS.opening];
   if(opref){ var om=OPENING_STYLES.concat(OPENING_STYLES_X); opool=om.filter(function(x){return opref.indexOf(x.n)>=0;}); if(!opool.length)opool=OPENING_STYLES; }
-  var allOpenings=OPENING_STYLES.concat(OPENING_STYLES_X);
-  var st=PREFS.scene?allOpenings.find(function(x){return x.n===PREFS.scene;}):null;
+  var allOpenings=OPENING_STYLES.concat(OPENING_STYLES_X),suppressScene=PREFS.scene==='__none__';
+  var st=(PREFS.scene&&!suppressScene)?allOpenings.find(function(x){return x.n===PREFS.scene;}):null;
   if(!st)st=opool[Math.floor(Math.random()*opool.length)];
   OPENING_PICK=st.n;
   var transLine='';
@@ -1156,7 +1252,7 @@ function rollBlueprint(){
       '经典神明面谈':'经典神明面谈——仅在玩家确实选择经典转生流程时使用，技能和身份仍由玩家决定'
     };
     var transPool=TRANSMIGRATE_MECH.filter(function(x){return x.indexOf('本地人生')<0;});
-    var mech=(PREFS.transmode&&transModeMap[PREFS.transmode])||transPool[Math.floor(Math.random()*transPool.length)];
+    var mech=PREFS.transmode==='__none__'?'普通的跨世界转移，不额外强调固定套路':((PREFS.transmode&&transModeMap[PREFS.transmode])||transPool[Math.floor(Math.random()*transPool.length)]);
     var tim=REVEAL_TIMING[Math.floor(Math.random()*REVEAL_TIMING.length)];
     var triggerMap={
       '游戏弹窗':'深夜玩游戏时，屏幕弹出一个需要玩家亲自回应的异常确认框',
@@ -1167,7 +1263,7 @@ function rollBlueprint(){
       '意外事故':'发生有预兆且允许玩家反应的意外，不替玩家决定应对方式',
       '主动移居，不发生意外':'主角主动通过公开通道移居或转移，不死亡、不昏迷，也不由神明强制召唤'
     };
-    var trig=(PREFS.trigger&&triggerMap[PREFS.trigger])||TRANS_TRIGGERS[Math.floor(Math.random()*TRANS_TRIGGERS.length)];
+    var trig=PREFS.trigger==='__none__'?'触发方式由眼前场景自然形成，不把某个按钮、任务或道具强调为唯一入口':((PREFS.trigger&&triggerMap[PREFS.trigger])||TRANS_TRIGGERS[Math.floor(Math.random()*TRANS_TRIGGERS.length)]);
     var frame;
     if(forceFrame){ frame=forceFrame; }
     else if(mech.indexOf('原作')>=0){ frame='穿书原作'; }
@@ -1187,10 +1283,19 @@ function rollBlueprint(){
   b+=transLine;
   if(prof)b+='身份参考：'+prof+(pos?(' · '+pos):'')+'（与世界观时代不符时转译为等价身份；开场必须生长在这个身份的具体日常里）\n';
   if(rel)b+='关系底色：'+rel+'｜成长模式：'+growth+'\n';
-  b+='故事引擎：'+engine+'\n核心困难：'+conflict+'（呈现强度必须服从基调）\n';
+  if(engine)b+='故事引擎：'+engine+'\n';
+  if(conflict)b+='核心困难：'+conflict+'（呈现强度必须服从基调）\n';
   if(anchors.length)b+='风味锚点：《'+anchors.join('》《')+'》——只借质感、节奏与题材组合，严禁复刻情节、人名与专有设定\n';
-  b+='开局切入：'+st.n+'——'+st.d+'\n';
+  if(!suppressScene)b+='开局切入：'+st.n+'——'+st.d+'\n';
   if(PREFS.era){ b+='时代设定：玩家指定为「'+PREFS.era+'」，世界观细节按此时代呈现（与世界观默认时代不符时以此为准，做合理转译）。\n'; }
+  var adv=PREFS.advanced||{},advLines=[];
+  ADV_GROUPS.forEach(function(g){
+    if(adv[g]&&adv[g].length)advLines.push((ADV_LABELS[g]||g)+'：'+adv[g].join('、'));
+  });
+  if(advLines.length){
+    b+='【高级世界自定义——高于后台随机蓝图】\n'+advLines.join('\n')+'\n若与上文随机抽取的身份、关系、成长、引擎、时代或框架冲突，以本块为准；这些是偏好与边界，不是必须立刻塞进开局的剧情清单。\n';
+  }
+  if(PREFS.extra){ b+='【玩家自由备注——高于随机蓝图】'+PREFS.extra+'\n'; }
   b+='规模约束：故事默认留在当前生活圈与当前目标内纵深发展，只有玩家主动远行、晋升或完成阶段目标才扩大舞台；蓝图与玩家当前兴趣无关时就安静待在后台，不得硬塞。';
   STORY_DNA=b;
   OPENING_TEXT=isTrans
@@ -1397,6 +1502,38 @@ var WORLDS = {
   }
 };
 
+// Program-owned character sheets. World prose may describe these values but
+// cannot rename the four core attributes or silently replace the sheet.
+var STATE_SCHEMAS={
+  wuxia:{attrs:['膂力','悟性','福缘','魅力'],res:{气血:20,内力:10,饱腹度:100,银两:100},caps:{气血:20,内力:10,饱腹度:100}},
+  xianxia:{attrs:['根骨','悟性','福缘','魅力'],res:{气血:20,灵力:10,饱腹度:100,灵石:100},caps:{气血:20,灵力:10,饱腹度:100}},
+  history:{attrs:['机敏','学识','人情','魅力'],res:{精神:20,体力:10,饱腹度:100,铜钱:500},caps:{精神:20,体力:10,饱腹度:100}},
+  fantasy:{attrs:['力量','敏捷','智力','魅力'],res:{HP:20,MP:10,饱腹度:100,金币:100},caps:{HP:20,MP:10,饱腹度:100}},
+  modernlife:{attrs:['体魄','才智','情商','魅力'],res:{精力:20,心情:10,饱腹度:100,存款:2000},caps:{精力:20,心情:10,饱腹度:100}},
+  occult:{attrs:['力量','智力','控制','魅力'],res:{HP:20,异能值:10,精力度:100,钱:500},caps:{HP:20,异能值:10,精力度:100}},
+  cyber:{attrs:['膂力','智力','反应','魅力'],res:{血量:20,神经值:10,饥饿度:100,电子货币:100},caps:{血量:20,神经值:10,饥饿度:100}},
+  space:{attrs:['力量','敏捷','智力','魅力'],res:{生命:20,精力:10,饥饿度:100,积分:100},caps:{生命:20,精力:10,饥饿度:100}},
+  apocalypse:{attrs:['力量','敏捷','医疗','领导'],res:{生命:20,体力:10,饥饿度:100,物资积分:100},caps:{生命:20,体力:10,饥饿度:100}},
+  horror:{attrs:['学识','感知','意志','魅力'],res:{生命:20,SAN:20,疲劳度:100,资金:100},caps:{生命:20,SAN:20,疲劳度:100}},
+  __custom__:{attrs:['体魄','灵巧','心智','社交'],res:{生命:20,精力:10,饱腹度:100,货币:100},caps:{生命:20,精力:10,饱腹度:100}}
+};
+function freshGameState(){
+  return {version:3,revealed:false,attrs:{},res:{},caps:{},talents:[],inv:[],skills:[],loc:'',npcs:{},lastCheck:null};
+}
+function revealedGameState(seed){
+  var s=STATE_SCHEMAS[WORLD]||STATE_SCHEMAS.__custom__,attrs={},src=seed&&seed.attrs||{},rseed=seed&&seed.res||{};
+  s.attrs.forEach(function(k){var v=Number(src[k]);attrs[k]=isFinite(v)?Math.max(0,Math.min(10,Math.round(v))):1;});
+  var res={};Object.keys(s.res).forEach(function(k){var v=Number(rseed[k]);res[k]=isFinite(v)?Math.max(0,v):s.res[k];});
+  return {version:3,revealed:true,attrs:attrs,res:res,caps:Object.assign({},s.caps),talents:Array.isArray(seed&&seed.talents)?seed.talents.slice(0,12):[],inv:[],skills:Array.isArray(seed&&seed.skills)?seed.skills.slice(0,20):[],loc:'',npcs:{},lastCheck:null};
+}
+function migrateGameState(old){
+  if(!old||typeof old!=='object')return freshGameState();
+  var n=old.revealed===false?freshGameState():revealedGameState(old);
+  Object.keys(n.attrs).forEach(function(k){if(isFinite(Number(old.attrs&&old.attrs[k])))n.attrs[k]=Math.max(0,Math.min(20,Number(old.attrs[k])));});
+  Object.keys(n.res).forEach(function(k){if(isFinite(Number(old.res&&old.res[k])))n.res[k]=Math.max(0,Number(old.res[k]));});
+  n.talents=Array.isArray(old.talents)?old.talents.slice():[];n.inv=Array.isArray(old.inv)?old.inv.slice():[];n.skills=Array.isArray(old.skills)?old.skills.slice():[];n.loc=old.loc||'';n.npcs=old.npcs&&typeof old.npcs==='object'?old.npcs:{};n.lastCheck=old.lastCheck||null;return n;
+}
+
 // Build world cards
 (function() {
   var grid = document.getElementById('world-grid');
@@ -1549,6 +1686,7 @@ function togglePanel() {
   var isOpen=p.classList.toggle('open');
   btn.textContent=isOpen?'▼ 收起面板':'▲ 状态面板';
   if(isOpen){ renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS);
+    renderCharacterSheet();
     if(HIST.length>0){ for(var i=HIST.length-1;i>=0;i--){ if(HIST[i].role==='assistant'){updateStatus(HIST[i].content);break;} } }
   }
 }
@@ -1568,6 +1706,7 @@ function renderSkills(skills) {
   var label=(WORLDS[WORLD]&&WORLDS[WORLD].skillLabel)||'技能';
   var titleEl=document.getElementById('skill-panel-title'); if(titleEl) titleEl.textContent='▸ '+label;
   var c=document.getElementById('skill-grid'); if(!c)return;
+  if(!GAME_STATE.revealed){c.innerHTML='<span class="skill-empty">— 未揭示 —</span>';return;}
   if(!skills||skills.length===0){c.innerHTML='<span class="skill-empty">— 空 —</span>';return;}
   c.innerHTML='';
   skills.forEach(function(sk){
@@ -1634,6 +1773,7 @@ function renderQuests() {
 }
 
 function updateStatus(text) {
+  if(STATE_ACTIVE){parseQuests(String(text));renderCharacterSheet();return;}
   var plain=text.replace(/<[^>]+>/g,'');
   var bm=plain.match(/[\[［][^\[\]［］\n]*\|[^\[\]［］\n]*[\]］]/);
   if(bm){
@@ -1687,7 +1827,7 @@ function addTyp(){var el=document.createElement('div');el.className='sb nar';el.
 function qcmd(c){if(!LOADING)send(c,false);}
 
 function renderNar(text,hidx) {
-  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【命名表】[\s\S]*?【\/命名表】/g,'').replace(/【裁定】[\s\S]*?【\/裁定】/g,'').replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*$/,'').replace(/【命名表】[\s\S]*$/,'').trim();
+  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'').replace(/【命名表】[\s\S]*?【\/命名表】/g,'').replace(/【裁定】[\s\S]*?【\/裁定】/g,'').replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*$/,'').replace(/【SHEET_INIT】[\s\S]*$/,'').replace(/【命名表】[\s\S]*$/,'').trim();
   var wrapper=document.createElement('div'); wrapper.className='sb nar';
   if(typeof hidx==='number') wrapper.dataset.hidx=hidx;
   var optIdx=text.search(/选项[：:]\s*\n/);
@@ -1732,16 +1872,17 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; TONE_LINE=sv.toneline||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; STATE_ACTIVE=true; TURN_BACKUPS=Array.isArray(sv.turnBackups)?sv.turnBackups.slice(-30):[]; SHEET_INIT_ARMED=!!sv.sheetArmed; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; TONE_LINE=sv.toneline||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
+  GAME_STATE=migrateGameState(sv.gstate);INVENTORY=GAME_STATE.inv.slice();SKILLS=GAME_STATE.skills.slice();
   // Migrate saves created by the old suspense-heavy DNA generator.
   if(/预埋反转种子|舞台阶梯|悬疑真相线|身份秘密线|卧底潜伏线/.test(STORY_DNA||'')) rollStoryDNA();
   if(STORY_TONE==='黑色悬疑') rollTone();
@@ -1751,7 +1892,7 @@ function applySnapshot(sv){
   }
   document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString();
   rebuildLog();
-  renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins(); renderLore(); renderNpcs(); renderDailyBtns();
+  renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins(); renderLore(); renderNpcs(); renderCharacterSheet(); renderDailyBtns();
   LOADING=false;
   document.getElementById('pinp').focus();
 }
@@ -1791,6 +1932,43 @@ function apiTimeoutMs(maxTok){
   if(maxTok&&maxTok<=400)return 60000;
   if(maxTok&&maxTok<=1200)return 120000;
   return 180000;
+}
+
+function renderCharacterSheet(){
+  var a=document.getElementById('attr-grid'),r=document.getElementById('res-grid'),t=document.getElementById('talent-grid'),lc=document.getElementById('last-check'),gate=document.getElementById('sheet-gate');
+  if(!GAME_STATE)return;
+  var sd=document.getElementById('sdsp');
+  if(!GAME_STATE.revealed){
+    if(sd){sd.textContent=(GAME_STATE.loc?'当前位置：'+GAME_STATE.loc+'\n':'')+'能力与数值尚未揭示。玩家的描述和实际经历会决定之后的角色卡。';sd.style.color='var(--dm)';}
+    if(gate)gate.style.display='block';if(a)a.innerHTML='';if(r)r.innerHTML='';if(t)t.innerHTML='<span class="skill-empty">— 未揭示 —</span>';if(lc){lc.className='last-check';lc.textContent='— 角色卡揭示前不进行数值检定 —';}return;
+  }
+  if(gate)gate.style.display='none';if(sd){sd.textContent=(GAME_STATE.loc?'当前位置：'+GAME_STATE.loc:'角色卡已建立；数值由程序持续保存');sd.style.color='var(--dm)';}
+  function fill(box,obj,kind){
+    if(!box)return; box.innerHTML='';
+    Object.keys(obj||{}).forEach(function(k){
+      var d=document.createElement('div');d.className='sheet-stat';d.title='点击手动校准';d.onclick=function(){editStateValue(kind,k);};
+      var cap=kind==='res'&&GAME_STATE.caps&&GAME_STATE.caps[k];
+      d.innerHTML='<span class="sk">'+esc(k)+'</span><span class="sv">'+esc(String(obj[k])+(cap?('/'+cap):''))+'</span>';box.appendChild(d);
+    });
+  }
+  fill(a,GAME_STATE.attrs,'attr');fill(r,GAME_STATE.res,'res');
+  if(t){t.innerHTML='';(GAME_STATE.talents||[]).forEach(function(x){var d=document.createElement('div');d.className='talent-item';d.textContent=x;d.title='点击删除';d.onclick=function(){if(confirm('删除天赋「'+x+'」？')){GAME_STATE.talents=GAME_STATE.talents.filter(function(v){return v!==x;});renderCharacterSheet();autoSave();}};t.appendChild(d);});if(!GAME_STATE.talents.length)t.innerHTML='<span class="skill-empty">— 空 —</span>';}
+  if(lc){var c=GAME_STATE.lastCheck;if(!c){lc.className='last-check';lc.textContent='— 尚无检定 —';}else{lc.className='last-check '+(c.success?'ok':'fail');lc.textContent=c.action+'｜'+c.attr+' '+c.attrValue+(c.skill?' + '+c.skill:'')+'｜d100 '+c.die+' → '+c.total+' / DC '+c.dc+'｜'+c.outcome;}}
+}
+function editStateValue(kind,key){
+  if(LOADING||!GAME_STATE.revealed)return;var obj=kind==='attr'?GAME_STATE.attrs:GAME_STATE.res;
+  var v=prompt('校准「'+key+'」的数值：',obj[key]);if(v===null)return;v=Number(v);if(!isFinite(v))return alert('请输入有效数字');
+  if(kind==='attr')obj[key]=Math.max(0,Math.min(20,Math.round(v)));else obj[key]=Math.max(0,v);
+  renderCharacterSheet();autoSave();
+}
+function addSheetEntry(kind){
+  if(LOADING)return;if(!GAME_STATE.revealed)return alert('请先由玩家主动查看或建立角色卡。');var label=kind==='talent'?'天赋':'技能',v=prompt('添加'+label+'名称：');if(!v||!v.trim())return;v=v.trim().substring(0,30);
+  var arr=kind==='talent'?GAME_STATE.talents:GAME_STATE.skills;if(arr.indexOf(v)<0)arr.push(v);
+  renderCharacterSheet();renderSkills(GAME_STATE.skills.slice());autoSave();
+}
+function requestCharacterSheet(){
+  if(LOADING||GAME_STATE.revealed)return;
+  send('我主动查看角色卡，检查并确认自己当前真实拥有的身体能力、状态、天赋与技能。请只依据我此前已经明确描述的背景、身份、身体和实际经历建立角色卡；没有说过的专长不要补造。',false);
 }
 
 async function doFetch(messages,maxTok){
@@ -1904,7 +2082,7 @@ var CORE_RULES='【叙事引擎核心规范】\n职责：你负责叙事与NPC�
 // The original rule set grew through several iterations and contained
 // conflicting pacing directives. Keep one compact contract as the sole core
 // prompt; the older declaration above remains only for save compatibility.
-CORE_RULES='【文字RPG叙事契约】\n玩家决定主角，AI负责世界与NPC。玩家输入通常只授权其中明确表达的动作；写完该动作及连续、直接的反馈后，在出现新选择、未知风险、承诺、转场或需要玩家表态的地方停下。不得替玩家点击、答应、拒绝、说话、接受任务、决定去向、使用物品、跨越时间或总结其心理结论。\n时间默认连续。职业、生活、观察、对话、赶路和适应都可正常展开；仅当玩家明确要求快进时使用蒙太奇。穿越、召唤、觉醒、入职和加入组织等转折应分阶段游玩，每个决定点都交还玩家。\nNPC有自己的立场、生活与有限视角，说话自然直接；不知道就说不知道。不要用神秘停顿、含糊警告、幕后观察者或凭空阴谋制造戏剧，也不要让所有人围着主角运转。\n叙事以当前行动为中心，但允许少量职业、环境和人物细节建立生活质感；细节不必都是伏笔。篇幅服从内容，不设最低字数，不重复玩家刚说过的话，不为了写长而新增事件。失败应有情境依据，普通无风险行动不检定。\n每回合末尾提供2-4个眼前可做的行动参考，数量服从场景，并保留“或输入任何你想做的事”。选项不得替玩家规划人生或预告剧情。任务只有在玩家明确接受、承诺或主动设定目标后才登记。数值、物品、技能、位置和重要关系确有变化时才输出【STATE】；普通路人无需进入长期关系记录。世界包要求的状态栏保持简洁，不得为了填栏擅自改变数值。';
+CORE_RULES='【文字RPG叙事契约】\n玩家决定主角，AI负责世界与NPC。玩家输入通常只授权其中明确表达的动作；写完该动作及连续、直接的反馈后，在出现新选择、未知风险、承诺、转场或需要玩家表态的地方停下。不得替玩家点击、答应、拒绝、说话、接受任务、决定去向、使用物品、跨越时间或总结其心理结论。\n时间默认连续。职业、生活、观察、对话、赶路和适应都可正常展开；仅当玩家明确要求快进时使用蒙太奇。穿越、召唤、觉醒、入职和加入组织等转折应分阶段游玩，每个决定点都交还玩家。\nNPC有自己的立场、生活与有限视角，说话自然直接；不知道就说不知道。不要用神秘停顿、含糊警告、幕后观察者或凭空阴谋制造戏剧，也不要让所有人围着主角运转。\n叙事以当前行动为中心，但允许少量职业、环境和人物细节建立生活质感；细节不必都是伏笔。篇幅服从内容，不设最低字数，不重复玩家刚说过的话，不为了写长而新增事件。失败应有情境依据，普通无风险行动不检定。\n每回合末尾提供2-4个眼前可做的行动参考，数量服从场景，并保留“或输入任何你想做的事”。选项不得替玩家规划人生或预告剧情。任务只有在玩家明确接受、承诺或主动设定目标后才登记。数值、物品、技能、位置和重要关系确有变化时才输出【STATE】；普通路人无需进入长期关系记录。角色数值只服从前端权威角色卡，正文不重复打印状态栏。';
 var INTERACTION_RULES='';
 var OPTION_RULES='【行动选项格式】回复末尾必须先单独写“选项：”，再提供2-4项；每项必须是“数字+空格+完整行动描述”，例如“1 检查弹窗来自哪个程序”。不得只输出序号、单个数字或空选项。选项只是平等的参考，不存在作者预设的正确路线；必须允许忽略线索、拒绝任务、继续原本生活或什么也不做，且这些选择不会被惩罚性地强行拉回同一剧情。最后写“或输入任何你想做的事”。正文结束处不得用“该……了”“看来只能……”“你决定……”等句子替玩家形成目标或催促行动。';
 var AGENCY_RULES='【禁止代替玩家】旁白可以描写玩家开场前已经在做的日常、非自主的感官和身体反应，但外部刺激出现后，任何新的主动行为都必须由玩家输入授权。不得擅自写玩家点开链接、关闭页面、回复消息、检查时间、拿起武器、出门、上线、接受委托或得出行动结论。场景应停在尚未回应的刺激上，不附加催促性收尾。剧情钩子不是强制入口；忽略、拒绝、绕开或继续生活都必须产生真实而可持续的后续。重大事件不得依赖玩家完成唯一任务或按下唯一按钮；若世界设定要求最终发生穿越，应由外部事件或多条不同路径自然实现，不能反复逼玩家选择同一入口。';
@@ -1948,8 +2126,13 @@ function buildSystemPrompt(recentText){
   var sp=CORE_RULES;
   sp+='\n\n'+OPTION_RULES;
   sp+='\n\n'+AGENCY_RULES;
-  sp+='\n\n【世界包】\n'+w.prompt;
-  sp+='\n【输出覆盖】世界包中的状态栏示例只定义字段，不代表每回合必须重写全部字段；无变化时可省略或只保留最简当前状态。任务仅在玩家明确接受、承诺或主动设定目标后登记。';
+  var worldPrompt=String(w.prompt||'').replace(/\n【状态栏】[\s\S]*?(?=\n【任务】|$)/,'').replace(/\n【任务】[^\n]*/g,'');
+  sp+='\n\n【世界包】\n'+worldPrompt;
+  sp+='\n【角色卡与状态协议——覆盖世界包旧状态栏要求】前端已经显示权威角色卡，正文不要再输出方括号状态栏，也不要自行重建属性表。核心属性名固定，只能在长期训练、升级或重大伤病确实发生时用attr_delta申报，单回合仅允许±1。资源只能修改权威状态中已经存在的键。获得或失去技能、天赋必须由剧情中已经完成的学习、觉醒、遗忘或剥夺直接造成。状态变化格式：【STATE】{"attr_delta":{"已有属性名":1},"res_delta":{"已有资源名":-1},"inv_add":[],"inv_rm":[],"skill_add":[],"skill_rm":[],"talent_add":[],"talent_rm":[],"loc":""}【/STATE】，没有真实变化就不输出。任务仅在玩家明确接受、承诺或主动设定目标后登记。';
+  if(!GAME_STATE.revealed){
+    var schema=STATE_SCHEMAS[WORLD]||STATE_SCHEMAS.__custom__;
+    sp+='\n【未揭示角色卡——最高优先级】当前尚未建立数值。穿越前、游戏外或身份尚未由玩家说明时，按叙事常识表现普通人的能力，不显示异世界数值，不掷骰，不暗中预设职业、Build、技能或天赋。只有玩家明确主动查看状态/面板/自身能力，或玩家已经亲自完成使能力可被认识的操作时，才可在回复最末输出一次【SHEET_INIT】JSON【/SHEET_INIT】。仅抵达异世界、醒来、被召唤或看见提示不构成授权。初始化属性键必须且只能是：'+schema.attrs.join('、')+'；数值0-10，根据玩家此前明确描述分配，未得到支持的一律为1。资源键必须且只能是：'+Object.keys(schema.res).join('、')+'。格式：【SHEET_INIT】{"attrs":{},"res":{},"talents":[],"skills":[]}【/SHEET_INIT】。不得补造玩家未声明的经历或专长。';
+  }
   if(WORLD_PRESET&&w.presets){ var pp=w.presets.filter(function(x){return x.id===WORLD_PRESET;})[0]; if(pp&&pp.note){ sp+='\n【本局特色侧重】'+pp.note; } }
   sp+='\n\n【篇幅】'+p.instruction;
   if(STORY_DNA){ sp+='\n\n'+STORY_DNA; }
@@ -2021,7 +2204,16 @@ function promptAddPin(){
   if(t) addPin(t, '手动');
 }
 
-// ── REAL UNDO: pop last player+AI turn from history ──
+// ── REAL UNDO: dialogue and authoritative runtime state move together ──
+function runtimeBackup(){
+  return JSON.parse(JSON.stringify({gstate:GAME_STATE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,turns:TURNS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,outline:OUTLINE,names:NAMES,stateActive:STATE_ACTIVE,sheetArmed:SHEET_INIT_ARMED}));
+}
+function restoreRuntime(b){
+  if(!b)return;
+  GAME_STATE=b.gstate||freshGameState();QUESTS=b.quests||{main:[],side:[]};INVENTORY=b.inv||GAME_STATE.inv||[];SKILLS=b.skills||GAME_STATE.skills||[];TURNS=b.turns||0;WORLD_CLOCK=b.wclock||0;EVENT_THRESHOLD=b.ethresh||8;OUTLINE=b.outline||'';NAMES=b.names||'';STATE_ACTIVE=b.stateActive!==false;
+  SHEET_INIT_ARMED=!!b.sheetArmed;
+  GAME_STATE.inv=INVENTORY.slice();GAME_STATE.skills=SKILLS.slice();renderQuests();renderInventory(INVENTORY);renderSkills(SKILLS);renderNpcs();renderCharacterSheet();
+}
 function requestSkip(){
   if(LOADING)return;
   var v=prompt('跳过多久？可附目标节点（例：三个月，练成基础剑法 / 直接到开春商队出发那天）：');
@@ -2030,22 +2222,24 @@ function requestSkip(){
 }
 function undoTurn(){
   if(LOADING) return;
+  if(!TURN_BACKUPS.length){ addBlk('sys','▸ 当前进度没有可安全回滚的状态快照'); return; }
   var ai=-1;
   for(var i=HIST.length-1;i>=0;i--){ if(HIST[i].role==='assistant'){ai=i;break;} }
   if(ai<1 || HIST[ai-1].role!=='user'){ addBlk('sys','▸ 没有可撤销的回合'); return; }
   HIST.splice(ai-1,2);
+  restoreRuntime(TURN_BACKUPS.pop());
   rebuildLog();
   addBlk('sys','▸ 已撤销上一回合');
 }
 
 function startGame(){
   HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0; OUTLINE=''; NAMES='';
-  GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=false; DNA_PICKS=null;
+  GAME_STATE=freshGameState(); STATE_ACTIVE=true; TURN_BACKUPS=[]; SHEET_INIT_ARMED=false; DNA_PICKS=null;
   LOREBOOK=((WORLDS[WORLD]&&WORLDS[WORLD].lorebook)||[]).slice();
   document.getElementById('slog').innerHTML='';
-  var d=document.getElementById('sdsp'); d.textContent='— 游戏开始后显示 —'; d.style.color='var(--dm)';
+  var d=document.getElementById('sdsp'); d.textContent='— 尚未揭示 —'; d.style.color='var(--dm)';
   var ig=document.getElementById('inv-grid'); if(ig) ig.innerHTML='<span class="inv-empty">— 空 —</span>';
-  renderSlots(); renderQuests(); renderPins(); renderLore(); renderNpcs();
+  renderSlots(); renderQuests(); renderPins(); renderLore(); renderNpcs(); renderInventory([]); renderSkills([]); renderCharacterSheet();
   rollBlueprint();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
   addBlk('sys','▸ 本局开局变体：'+OPENING_PICK+'（不满意可点「完全重置」重抽）');
@@ -2058,10 +2252,12 @@ function startGame(){
 function resetGame(){if(LOADING)return;TOKENS=0;document.getElementById('tkc').textContent='TOKENS: 0';startGame();}
 
 function stateSummary(){
+  if(!GAME_STATE.revealed)return '角色卡尚未揭示：不得假定属性值、技能、天赋或异世界面板；不得进行数值检定。玩家此前明确描述的背景仍然是事实。';
   var parts=[];
   var ak=Object.keys(GAME_STATE.attrs);
   if(ak.length)parts.push('属性:'+ak.map(function(k){return k+GAME_STATE.attrs[k];}).join('/'));
   if(GAME_STATE.skills.length)parts.push('技能(完整列表):'+GAME_STATE.skills.join('、'));
+  if((GAME_STATE.talents||[]).length)parts.push('天赋(完整列表):'+GAME_STATE.talents.join('、'));
   if(GAME_STATE.inv.length)parts.push('持有:'+GAME_STATE.inv.join('、'));
   var rk=Object.keys(GAME_STATE.res);
   if(rk.length)parts.push('资源:'+rk.map(function(k){return k+GAME_STATE.res[k];}).join('/'));
@@ -2073,13 +2269,19 @@ function stateSummary(){
 function applyStatePatch(p){
   if(!p||typeof p!=='object')return;
   STATE_ACTIVE=true;
-  if(p.attr_set)Object.keys(p.attr_set).forEach(function(k){var v=Number(p.attr_set[k]);if(isFinite(v))GAME_STATE.attrs[k]=v;});
-  if(p.res_delta)Object.keys(p.res_delta).forEach(function(k){var d=Number(p.res_delta[k]);if(isFinite(d))GAME_STATE.res[k]=Math.max(0,(Number(GAME_STATE.res[k])||0)+d);});
-  if(p.res_set)Object.keys(p.res_set).forEach(function(k){var v=Number(p.res_set[k]);if(isFinite(v))GAME_STATE.res[k]=Math.max(0,v);});
+  // Core attribute names are schema-locked. A normal patch may change an
+  // existing attribute by at most one point, preventing context drift.
+  if(p.attr_set&&GAME_STATE.revealed)Object.keys(p.attr_set).forEach(function(k){var v=Number(p.attr_set[k]);if(!(k in GAME_STATE.attrs)||!isFinite(v))return;var old=Number(GAME_STATE.attrs[k])||0;GAME_STATE.attrs[k]=Math.max(0,Math.min(20,Math.max(old-1,Math.min(old+1,Math.round(v)))));});
+  if(p.attr_delta&&GAME_STATE.revealed)Object.keys(p.attr_delta).forEach(function(k){var d=Number(p.attr_delta[k]);if(!(k in GAME_STATE.attrs)||!isFinite(d))return;GAME_STATE.attrs[k]=Math.max(0,Math.min(20,(Number(GAME_STATE.attrs[k])||0)+Math.max(-1,Math.min(1,Math.round(d)))));});
+  if(p.res_delta)Object.keys(p.res_delta).forEach(function(k){var d=Number(p.res_delta[k]);if(!(k in GAME_STATE.res)||!isFinite(d))return;var nv=Math.max(0,(Number(GAME_STATE.res[k])||0)+d),cap=GAME_STATE.caps&&GAME_STATE.caps[k];GAME_STATE.res[k]=cap?Math.min(cap,nv):nv;});
+  if(p.res_set)Object.keys(p.res_set).forEach(function(k){var v=Number(p.res_set[k]);if(!(k in GAME_STATE.res)||!isFinite(v))return;var nv=Math.max(0,v),cap=GAME_STATE.caps&&GAME_STATE.caps[k];GAME_STATE.res[k]=cap?Math.min(cap,nv):nv;});
   (Array.isArray(p.inv_add)?p.inv_add:[]).forEach(function(it){it=String(it).trim();if(it&&GAME_STATE.inv.indexOf(it)<0)GAME_STATE.inv.push(it);});
   (Array.isArray(p.inv_rm)?p.inv_rm:[]).forEach(function(it){it=String(it).trim();GAME_STATE.inv=GAME_STATE.inv.filter(function(x){return x!==it;});});
-  (Array.isArray(p.skill_add)?p.skill_add:[]).forEach(function(sk){sk=String(sk).trim();if(sk&&GAME_STATE.skills.indexOf(sk)<0)GAME_STATE.skills.push(sk);});
+  (GAME_STATE.revealed&&Array.isArray(p.skill_add)?p.skill_add:[]).forEach(function(sk){sk=String(sk).trim();if(sk&&GAME_STATE.skills.indexOf(sk)<0)GAME_STATE.skills.push(sk);});
   (Array.isArray(p.skill_rm)?p.skill_rm:[]).forEach(function(sk){sk=String(sk).trim();GAME_STATE.skills=GAME_STATE.skills.filter(function(x){return x!==sk;});});
+  if(!GAME_STATE.talents)GAME_STATE.talents=[];
+  (GAME_STATE.revealed&&Array.isArray(p.talent_add)?p.talent_add:[]).forEach(function(x){x=String(x).trim().substring(0,30);if(x&&GAME_STATE.talents.indexOf(x)<0)GAME_STATE.talents.push(x);});
+  (Array.isArray(p.talent_rm)?p.talent_rm:[]).forEach(function(x){x=String(x).trim();GAME_STATE.talents=GAME_STATE.talents.filter(function(v){return v!==x;});});
   if(p.loc)GAME_STATE.loc=String(p.loc);
   if(!GAME_STATE.npcs)GAME_STATE.npcs={};
   if(p.npc_set&&typeof p.npc_set==='object')Object.keys(p.npc_set).forEach(function(n){
@@ -2101,6 +2303,7 @@ function applyStatePatch(p){
   renderInventory(GAME_STATE.inv.slice());
   renderSkills(GAME_STATE.skills.slice());
   renderNpcs();
+  renderCharacterSheet();
 }
 function extractState(text){
   var m=String(text).match(/【STATE】([\s\S]*?)【\/STATE】/);
@@ -2112,7 +2315,7 @@ function extractState(text){
 // two-pass: silent GM adjudication call (judge mode — no storytelling, no sycophancy)
 async function directorPass(playerInput){
   var recent=HIST.slice(-8).map(function(m){
-    var c=String(m.content).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'');
+    var c=String(m.content).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'');
     return (m.role==='user'?'玩家':'叙事')+': '+c.substring(0,400);
   }).join('\n');
   var ak=Object.keys(GAME_STATE.attrs);
@@ -2122,13 +2325,15 @@ async function directorPass(playerInput){
     +'当前隐藏大纲:'+(OUTLINE||'无')+'\n'
     +'角色属性:'+attrs+'\n'
     +'角色技能:'+(GAME_STATE.skills.join('、')||'无')+'\n'
+    +'角色天赋:'+((GAME_STATE.talents||[]).join('、')||'无')+'\n'
     +'人物关系:'+(Object.keys(GAME_STATE.npcs||{}).slice(-10).map(function(n){var v=GAME_STATE.npcs[n];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+')';}).join('；')||'无')+'\n'
     +'最近剧情:\n'+recent+'\n\n'
     +'玩家本回合输入:'+playerInput+'\n\n'
     +'先划定行动授权边界：只把玩家明确说出的动作及完成该动作不可分割的连续过程视为已授权；任何新的购买、追问、移动、承诺、攻击、使用、关系决定或时间跨越都不在授权内。scene_note必须写明本回合在哪里停下。\n'
     +'节拍参考：发育（纯日常，让玩家安心积累）/互动（完整回应对话或当前事务）/推进（只推进玩家主动追求的现有目标）/收获（结算实打实的结果）。不要自动循环，不要为了节奏强行制造冲突或钩子；连续日常完全正常。裁定只授权回应玩家明确做出的这一步，不授权叙事者代替玩家继续下一步；若即将出现选择、转场、承诺、点击、接受或拒绝，scene_note必须要求在该节点前停下。玩家忽略钩子或拒绝任务时，应尊重该方向并继续模拟世界，禁止设计换皮事件把玩家强拉回原路线。\n'
+    +'检定门槛必须严格：角色卡未揭示时risky必须为false。角色卡已揭示后，只有同时满足①结果确实不确定；②存在正在抵抗的对手、危险环境或技术难题；③失败会立即产生与成功不同的实质后果，risky才为true。普通走路、观察可见物、正常交谈、查阅已掌握资料、吃饭休息、无压力的本职工作一律false。不要为了制造戏剧而检定。\n'
     +'若玩家输入是【时间跳跃】请求：risky填false，beat填发育，scene_note写"用蒙太奇概括跳过的时间并结算收获"。\n'
-    +'只输出一个JSON对象，不要任何其他文字:{"spoken":布尔值(这句输入是否说出口了,心理活动或内心想法为false),"risky":布尔值(此行动是否需要成败检定),"attr":"若risky为true,从角色属性中选出最相关的一个属性名","dc":若risky为true给难度数字(简单40,普通55,困难70,极难85,远超实力可更高),"npc":"仅填写本回合正在直接互动的NPC的态度,没有则空字符串","focus":"玩家输入要求得到的直接回应或结果,一句话","beat":"发育|互动|推进|收获,四选一","scene_note":"一句话说明本回合应该回答什么；同时明确哪些旁枝不要写","mainline":"只有玩家主动处理现有任务/目标时填写，否则必须是空字符串","fail_cost":"若检定失败应落实的直接代价,一句话"}';
+    +'只输出一个JSON对象，不要任何其他文字:{"spoken":布尔值,"risky":布尔值,"action":"若检定，用八字内概括受检行动","attr":"若risky，从现有属性中原样选择一个，否则空字符串","skill":"若某项现有技能直接适用则原样填写，否则空字符串","talent":"若某项现有天赋直接适用则原样填写，否则空字符串","dc":难度数字(简单40,普通55,困难70,极难85),"npc":"直接互动NPC态度或空字符串","focus":"直接回应或结果","beat":"发育|互动|推进|收获","scene_note":"本回合回答范围和停止点","mainline":"仅玩家主动处理现有目标时填写，否则空字符串","fail_cost":"失败的直接代价"}';
   var res=await doFetch([{role:'user',content:p}],350);
   var data=await res.json();
   if(data.error||!data.choices)return null;
@@ -2138,10 +2343,17 @@ async function directorPass(playerInput){
   return JSON.parse(m[0]);
 }
 
-function authorNote(dice){
+function authorNote(){
   var an='【本回合】只完成玩家明确行动及其直接反馈，在下一个决策边界前停下。心理活动未说出口；NPC只有有限视角。篇幅服从内容，允许自然细节，不新增无关事件。末尾给2-4个眼前行动参考并允许自由输入。';
-  if(dice!==null)an+='仅当行动存在明确风险且失败会产生实质不同后果时才检定。需要检定则选择最相关属性，按骰'+dice+'+属性×5对抗难度40/55/70/85，并输出【检定】行为·属性｜骰'+dice+'+属性名N×5=总值｜难度D｜结果【/检定】；普通观察、交谈和日常动作不检定。';
   return an;
+}
+function extractSheetInit(text){
+  if(GAME_STATE.revealed||!SHEET_INIT_ARMED)return;
+  var m=String(text).match(/【SHEET_INIT】([\s\S]*?)【\/SHEET_INIT】/);if(!m)return;
+  try{
+    var raw=m[1].trim().replace(/^```json/i,'').replace(/^```/,'').replace(/```$/,'').trim(),seed=JSON.parse(raw),old=GAME_STATE,n=revealedGameState(seed);
+    n.inv=(old.inv||[]).slice();n.loc=old.loc||'';n.npcs=old.npcs||{};GAME_STATE=n;STATE_ACTIVE=true;SHEET_INIT_ARMED=false;renderInventory(n.inv);renderSkills(n.skills);renderNpcs();renderCharacterSheet();addBlk('sys','▸ 角色卡已根据玩家已经确认的描述建立；可在侧栏校准');
+  }catch(e){addBlk('err','角色卡初始化格式无效，本回合未采用任何数值');}
 }
 
 async function _runTurn(){
@@ -2160,24 +2372,32 @@ async function _runTurn(){
       }
     }
     var SP=buildSystemPrompt(recentText) + worldPulse;
-    var dice = SETTINGS.dice ? (1+Math.floor(Math.random()*100)) : null;
-    var ruling=null, checkLine='';
-    if(SETTINGS.director && HIST.length>2 && !SUMMING){
+    var dice = null;
+    var ruling=null, checkLine='',pendingCheck=null;
+    if((SETTINGS.director||SETTINGS.dice) && HIST.length>2 && !SUMMING){
       try{ ruling=await directorPass(lastUser); }catch(e){ ruling=null; }
     }
     var noteContent;
     if(ruling){
       var rt='【GM裁定——后台裁判已完成本回合判定，你只负责按判定叙事，禁止改判，禁止向玩家提及裁判的存在】';
       if(ruling.spoken===false) rt+='玩家本回合的输入是心理活动，没有说出口，任何NPC都不知道其内容，不得回应它。';
-      if(ruling.risky && dice!==null){
+      if(ruling.risky && SETTINGS.dice && GAME_STATE.revealed){
+        dice=1+Math.floor(Math.random()*100);
         var atn=String(ruling.attr||'').trim();
+        if(!(atn in GAME_STATE.attrs))atn=Object.keys(GAME_STATE.attrs)[0]||'行动';
         var av=Number(GAME_STATE.attrs[atn]); if(!isFinite(av))av=1;
+        var sk=GAME_STATE.skills.indexOf(String(ruling.skill||''))>=0?String(ruling.skill):'';
+        var tl=(GAME_STATE.talents||[]).indexOf(String(ruling.talent||''))>=0?String(ruling.talent):'';
+        var bonus=(sk?10:0)+(tl?5:0);
         var dc=Number(ruling.dc)||55;
-        var total=dice+av*5;
+        dc=Math.max(40,Math.min(85,Math.round(dc)));
+        var total=dice+av*5+bonus;
         var outc=total>=dc?'成功':'失败';
         if(total-dc>=30)outc='大成功';
         if(dc-total>=30)outc='大失败';
-        checkLine='【检定】'+(atn||'行动')+'检定｜骰'+dice+'+'+atn+av+'×5='+total+'｜难度'+dc+'｜'+outc+'【/检定】';
+        var act=String(ruling.action||atn+'检定').substring(0,16);
+        checkLine='【检定】'+act+'｜d100 '+dice+' + '+atn+av+'×5'+(sk?' + 技能10':'')+(tl?' + 天赋5':'')+' = '+total+'｜难度'+dc+'｜'+outc+'【/检定】';
+        pendingCheck={action:act,attr:atn,attrValue:av,skill:sk||(tl?tl:''),die:dice,total:total,dc:dc,outcome:outc,success:outc.indexOf('成功')>=0};
         rt+='本回合检定已由系统算出，结果：'+outc+'。必须严格按此结果叙事。';
         if(outc.indexOf('失败')>=0 && ruling.fail_cost) rt+='失败的代价必须落实：'+ruling.fail_cost;
       }
@@ -2189,7 +2409,7 @@ async function _runTurn(){
       rt+='只完成玩家这一步及直接反馈，在新的选择或表态前停下。篇幅服从内容，可保留自然的生活与人物细节，不新增无关事件。末尾给2-4个眼前行动参考并允许自由输入；状态确有变化时才输出【STATE】。';
       noteContent=rt;
     } else {
-      noteContent=authorNote(dice);
+      noteContent=authorNote();
     }
     var msgs=[{role:'system',content:SP}].concat(HIST);
     msgs.splice(msgs.length-1,0,{role:'system',content:noteContent});
@@ -2200,7 +2420,7 @@ async function _runTurn(){
       document.getElementById('slog').appendChild(live);
       try{
         var r=await doFetchStream(msgs,4096,function(full){
-          var vis=full.replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*?(【\/STATE】|$)/g,'').replace(/【命名表】[\s\S]*?(【\/命名表】|$)/g,'').replace(/【裁定】[\s\S]*?(【\/裁定】|$)/g,'');
+          var vis=full.replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*?(【\/STATE】|$)/g,'').replace(/【SHEET_INIT】[\s\S]*?(【\/SHEET_INIT】|$)/g,'').replace(/【命名表】[\s\S]*?(【\/命名表】|$)/g,'').replace(/【裁定】[\s\S]*?(【\/裁定】|$)/g,'');
           live.innerHTML=vis.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');
           scrollB();
         });
@@ -2216,11 +2436,13 @@ async function _runTurn(){
     }
     if(checkLine && reply.indexOf('【检定】')<0){ reply=checkLine+'\n'+reply; }
     HIST.push({role:'assistant',content:reply});
+    if(pendingCheck){GAME_STATE.lastCheck=pendingCheck;renderCharacterSheet();}
     if(usage&&usage.total_tokens){TOKENS+=usage.total_tokens;}
     else{TOKENS+=Math.round((SP.length+reply.length)/3);}
     document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString()+' · '+((Date.now()-t0)/1000).toFixed(1)+'s';
     renderNar(reply,HIST.length-1);
     extractOutline(reply);
+    extractSheetInit(reply);
     extractState(reply);
     extractNames(reply);
     await maybeCompress(); autoSave(); maybeAutoMemory();
@@ -2231,7 +2453,7 @@ async function _runTurn(){
 async function send(text,isSystem){
   if(!text||!text.trim()||LOADING)return;
   LOADING=true;
-  if(!isSystem){ addBlk('ply',text,HIST.length); WORLD_CLOCK++; TURNS++; }
+  if(!isSystem){ TURN_BACKUPS.push(runtimeBackup());if(TURN_BACKUPS.length>30)TURN_BACKUPS.shift();if(!GAME_STATE.revealed&&/(查看|检查|打开|呼出|感受|确认|探索).{0,10}(状态|面板|属性|能力|身体|技能|天赋|角色卡)/.test(text))SHEET_INIT_ARMED=true;addBlk('ply',text,HIST.length); WORLD_CLOCK++; TURNS++; }
   HIST.push({role:'user',content:text});
   await _runTurn();
 }
@@ -2240,6 +2462,7 @@ function regenTurn(){
   if(LOADING)return;
   if(!HIST.length||HIST[HIST.length-1].role!=='assistant'){addBlk('sys','▸ 没有可重写的回复');return;}
   HIST.pop();
+  if(TURN_BACKUPS.length){var b=TURN_BACKUPS[TURN_BACKUPS.length-1];restoreRuntime(b);TURNS=b.turns+1;WORLD_CLOCK=b.wclock+1;}
   rebuildLog();
   addBlk('sys','▸ 正在重写本回合...');
   LOADING=true;
@@ -2320,7 +2543,7 @@ async function maybeAutoMemory(){
   if(TURNS===0||TURNS-_lastMemTurn<10)return;
   var recentSlice=HIST.slice(-24);
   var meaningfulChars=recentSlice.reduce(function(n,m){
-    return n+(m.role==='assistant'?String(m.content||'').replace(/【(?:STATE|大纲|命名表|裁定)】[\s\S]*?(?:【\/(?:STATE|大纲|命名表|裁定)】|$)/g,'').length:0);
+    return n+(m.role==='assistant'?String(m.content||'').replace(/【(?:STATE|SHEET_INIT|大纲|命名表|裁定)】[\s\S]*?(?:【\/(?:STATE|SHEET_INIT|大纲|命名表|裁定)】|$)/g,'').length:0);
   },0);
   if(meaningfulChars<3000)return;
   _memBusy=true;
@@ -2646,6 +2869,26 @@ document.addEventListener('click', function(e) {
   var group = chip.dataset.group;
   if (!group) return;
   var isMulti = chip.classList.contains('multi');
+  if(group.indexOf('adv-')===0){
+    var peers=document.querySelectorAll('.chip[data-group="'+group+'"]');
+    if(chip.dataset.val==='__none__'){
+      peers.forEach(function(c){c.classList.remove('on');});
+      chip.classList.add('on');
+    }else{
+      peers.forEach(function(c){if(c.dataset.val==='__none__')c.classList.remove('on');});
+      if(isMulti){
+        chip.classList.toggle('on');
+      }else{
+        peers.forEach(function(c){c.classList.remove('on');});
+        chip.classList.add('on');
+      }
+      if(!document.querySelector('.chip[data-group="'+group+'"].on')){
+        var none=document.querySelector('.chip[data-group="'+group+'"][data-val="__none__"]');
+        if(none)none.classList.add('on');
+      }
+    }
+    return;
+  }
   if (isMulti) {
     chip.classList.toggle('on');
   } else {
@@ -2654,6 +2897,7 @@ document.addEventListener('click', function(e) {
     });
     chip.classList.add('on');
   }
+  if(group.indexOf('pref-')===0)syncAdvancedPrefLocks();
 });
 
 function getGenSelections() {
