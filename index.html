@@ -712,6 +712,8 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         <div class="chip" data-group="pref-tone" data-val="欢乐搞笑">😆 欢乐搞笑</div>
         <div class="chip" data-group="pref-tone" data-val="爽快热血">🔥 爽快热血</div>
         <div class="chip" data-group="pref-tone" data-val="温馨日常">☕ 温馨日常</div>
+        <div class="chip" data-group="pref-tone" data-val="市井烟火">🏮 市井烟火</div>
+        <div class="chip" data-group="pref-tone" data-val="荒诞喜剧">🤡 荒诞喜剧</div>
         <div class="chip" data-group="pref-tone" data-val="严肃正剧">🎭 严肃正剧</div>
         <div class="chip" data-group="pref-tone" data-val="黑色悬疑">🕯️ 黑色悬疑</div>
       </div></div>
@@ -723,11 +725,26 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         <div class="chip" data-group="pref-skeleton" data-val="恩怨情仇">🩸 恩怨情仇</div>
         <div class="chip" data-group="pref-skeleton" data-val="悬疑真相">🔍 悬疑真相</div>
       </div></div>
+      <div class="pref-row"><span class="pref-lbl">主角身份</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-entry" data-val="">🎲 随机</div>
+        <div class="chip" data-group="pref-entry" data-val="native">🏠 本地土著</div>
+        <div class="chip" data-group="pref-entry" data-val="trans">🌀 穿越/转生</div>
+        <div class="chip" data-group="pref-entry" data-val="game">🎮 游戏化世界</div>
+        <div class="chip" data-group="pref-entry" data-val="book">📖 穿书原作</div>
+      </div></div>
       <div class="pref-row"><span class="pref-lbl">开局方式</span><div class="gen-chips">
         <div class="chip on" data-group="pref-opening" data-val="">🎲 随机</div>
         <div class="chip" data-group="pref-opening" data-val="经典问答">📝 经典问答建角</div>
         <div class="chip" data-group="pref-opening" data-val="平静日常切入">🌤 平静日常切入</div>
         <div class="chip" data-group="pref-opening" data-val="戏剧性切入">⚡ 戏剧性切入</div>
+      </div></div>
+      <div class="pref-row"><span class="pref-lbl">时代</span><div class="gen-chips">
+        <div class="chip on" data-group="pref-era" data-val="">🎲 随本世界观</div>
+        <div class="chip" data-group="pref-era" data-val="古代">🏯 古代</div>
+        <div class="chip" data-group="pref-era" data-val="近代">🚂 近代</div>
+        <div class="chip" data-group="pref-era" data-val="现代">🏙️ 现代</div>
+        <div class="chip" data-group="pref-era" data-val="近未来">🛸 近未来</div>
+        <div class="chip" data-group="pref-era" data-val="远未来">🌌 远未来</div>
       </div></div>
     </div>
     <button class="wnext" id="wnext-p" onclick="launchGame()" disabled>开始冒险 ▶</button>
@@ -888,10 +905,10 @@ var OUTLINE=''; // JS-owned latest hidden outline (survives even if model forget
 var GAME_STATE={attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; // authoritative state, owned by JS
 var STATE_ACTIVE=false; // true once the model starts reporting via STATE patches
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
-var PREFS={tone:'',skeleton:'',opening:''};
+var PREFS={tone:'',skeleton:'',opening:'',entry:'',era:''};
 var WORLD_PRESET=''; // second-level flavor preset id chosen for the selected world // player taste constraints from the pace screen
 var PREF_MAPS={
-  tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'严肃正剧':['严肃正剧'],'黑色悬疑':['冷峻现实']},
+  tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'市井烟火':['市井烟火','群像生活流'],'荒诞喜剧':['荒诞喜剧','讽刺寓言'],'严肃正剧':['严肃正剧','冷峻现实'],'黑色悬疑':['冷峻现实']},
   skeleton:{'冒险探索':['旅行见闻线','探索发现线','公开委托线'],'经营生活':['安身立业线','建设经营线','社区生活线','职业成长线'],'争锋上位':['竞技争锋线','权谋上位线','学习修炼线'],'恩怨情仇':['复仇线','救赎线','守护责任线','归乡重建线'],'悬疑真相':['悬疑真相线','身份秘密线','卧底潜伏线']},
   opening:{'经典问答':['经典问答'],'平静日常切入':['普通一天','工作现场','抵达新地','熟人见面','小麻烦','公开委托','自由闲暇'],'戏剧性切入':['错位苏醒','危机切入','事件余波','他人视角']}
 };
@@ -947,7 +964,7 @@ function weightedDraw(catId,allowed){
 }
 function readPrefChips(){
   var get=function(g){var el=document.querySelector('.chip[data-group="'+g+'"].on');return el?el.dataset.val:'';};
-  PREFS={tone:get('pref-tone'),skeleton:get('pref-skeleton'),opening:get('pref-opening')};
+  PREFS={tone:get('pref-tone'),skeleton:get('pref-skeleton'),opening:get('pref-opening'),entry:get('pref-entry'),era:get('pref-era')};
 }
 var OPENING_STYLES=[
   {n:'普通一天',d:'主角以本地人的身份开始普通的一天。交代眼前要做的事、生活条件和一个明确的小目标；没有异象、暗示或隐藏危机。'},
@@ -1031,12 +1048,18 @@ function rollBlueprint(){
   var transLine='';
   var transRate=(WORLD==='fantasy')?0.5:(WORLD==='xianxia')?0.4:(WORLD==='occult'||WORLD==='space')?0.3:0.22;
   var isTrans=Math.random()<transRate;
+  var forceFrame='';
+  if(PREFS.entry==='native')isTrans=false;
+  else if(PREFS.entry==='trans')isTrans=true;
+  else if(PREFS.entry==='game'){isTrans=true;forceFrame='游戏化世界';}
+  else if(PREFS.entry==='book'){isTrans=true;forceFrame='穿书原作';}
   if(isTrans){
     var mech=TRANSMIGRATE_MECH[Math.floor(Math.random()*TRANSMIGRATE_MECH.length)];
     var tim=REVEAL_TIMING[Math.floor(Math.random()*REVEAL_TIMING.length)];
     var trig=TRANS_TRIGGERS[Math.floor(Math.random()*TRANS_TRIGGERS.length)];
     var frame;
-    if(mech.indexOf('原作')>=0){ frame='穿书原作'; }
+    if(forceFrame){ frame=forceFrame; }
+    else if(mech.indexOf('原作')>=0){ frame='穿书原作'; }
     else { var fr=Math.random(); frame=fr<0.58?'真实异界':(fr<0.82?'游戏化世界':'穿书原作'); }
     var fd=frame==='游戏化世界'?'本世界以游戏规则运行：主角有仅自己可见的界面与等级，或认出这就是前世玩过的那款游戏；NPC是活人，死亡真实'
       :(frame==='穿书原作'?'主角前世读过这个世界的故事，记得大致剧情与关键人物走向，但身处边缘位置；主角的行动会使剧情逐渐偏离原作'
@@ -1056,6 +1079,7 @@ function rollBlueprint(){
   b+='故事引擎：'+engine+'\n核心困难：'+conflict+'（呈现强度必须服从基调）\n';
   if(anchors.length)b+='风味锚点：《'+anchors.join('》《')+'》——只借质感、节奏与题材组合，严禁复刻情节、人名与专有设定\n';
   b+='开局切入：'+st.n+'——'+st.d+'\n';
+  if(PREFS.era){ b+='时代设定：玩家指定为「'+PREFS.era+'」，世界观细节按此时代呈现（与世界观默认时代不符时以此为准，做合理转译）。\n'; }
   b+='规模约束：故事默认留在当前生活圈与当前目标内纵深发展，只有玩家主动远行、晋升或完成阶段目标才扩大舞台；蓝图与玩家当前兴趣无关时就安静待在后台，不得硬塞。';
   STORY_DNA=b;
   OPENING_TEXT='';
@@ -1591,13 +1615,13 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,names:NAMES,preset:WORLD_PRESET,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; TONE_LINE=sv.toneline||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||'';
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; OUTLINE=sv.outline||''; GAME_STATE=sv.gstate||{attrs:{},res:{},inv:[],skills:[],loc:'',npcs:{}}; STATE_ACTIVE=!!sv.stateActive; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; TONE_LINE=sv.toneline||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
