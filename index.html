@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>无界·叙事引擎 v14</title>
+<title>无界·叙事引擎 v15</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -172,6 +172,13 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .svs .sb2 button:hover{border-color:var(--g);color:var(--g);}
 .svs .sb2 button.dl:hover{border-color:var(--r);color:var(--r);}
 .svs.emp{opacity:0.45;}
+.startup-load{border:1px solid var(--bd);padding:12px 14px;margin-bottom:16px;background:rgba(200,169,110,.025);}
+.startup-load-title{font-size:11px;color:var(--g);letter-spacing:2px;margin-bottom:8px;}
+.startup-load-note{font-size:9px;color:var(--dm);line-height:1.6;margin-bottom:8px;}
+#startup-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;}
+#startup-slots .svs{margin:0;}
+#startup-slots .svs.chosen{border-color:var(--g);background:rgba(200,169,110,.08);}
+@media(max-width:560px){#startup-slots{grid-template-columns:1fr;}}
 #imodal{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:none;align-items:center;justify-content:center;}
 #imodal.on{display:flex;}
 .imod-box{background:#0f0a05;border:1px solid var(--g);padding:20px;max-width:400px;width:90%;box-shadow:0 0 30px rgba(200,169,110,0.2);}
@@ -336,7 +343,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 <body>
 <div class="gbg"></div>
 <div class="hdr">
-  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v14</small></div>
+  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v15</small></div>
   <div class="sbar">
     <div class="sdot" id="sdot"></div>
     <span id="stxt">选择世界</span>
@@ -889,6 +896,12 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   </div>
   <div style="padding:20px;max-width:700px;margin:0 auto;width:100%">
     <div class="sel-summary" id="sel-summary"></div>
+    <div class="startup-load">
+      <div class="startup-load-title">▸ 继续已有进度</div>
+      <div class="startup-load-note">先选择存档，再在下方连接任意后端；连接成功后将直接进入存档，不会创建新游戏。</div>
+      <div id="startup-slots"><span class="no-quest">正在读取本地存档…</span></div>
+      <div id="startup-load-status" style="font-size:10px;color:var(--g);margin-top:8px"></div>
+    </div>
     <div class="aplbl">▸ 选择后端</div>
     <div class="atabs">
       <button class="atab on" id="tds" onclick="setTab('ds')">DeepSeek</button>
@@ -1034,6 +1047,7 @@ var GAME_STATE={version:3,revealed:false,attrs:{},res:{},caps:{},talents:[],inv:
 var STATE_ACTIVE=false; // true once the model starts reporting via STATE patches
 var TURN_BACKUPS=[]; // exact runtime snapshots for undo/regeneration
 var SHEET_INIT_ARMED=false; // only an explicit player action may reveal the sheet
+var PENDING_STARTUP_LOAD=null; // selected save key, consumed after backend connection
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
 var PREMISE_STATE={kind:'none'}; // program-owned opening milestone, prevents premise drift/stalling
 var PREFS={tone:'',skeleton:'',opening:'',scene:'',entry:'',era:'',role:'',prof:'',relation:'',growth:'',conflict:'',trigger:'',transmode:'',advanced:{},canon:'',extra:''};
@@ -1669,6 +1683,12 @@ function doConnect(t) {
   else{APIKEY='';BASEURL=document.getElementById('olhost').value.trim();MODEL=document.getElementById('olman').value.trim()||document.getElementById('olmod').value;}
   if(!MODEL||(t!=='ol'&&!APIKEY)){st.textContent='▸ 请填写Key并选择模型';st.style.color='var(--r)';return;}
   BK=t;
+  if(PENDING_STARTUP_LOAD!==null){
+    document.getElementById('sdot').classList.add('on');
+    document.getElementById('stxt').textContent='已连接 · '+MODEL.split('/').pop();
+    resumeStartupSave(PENDING_STARTUP_LOAD);
+    return;
+  }
   document.getElementById('ascreen').classList.add('hidden');
   document.getElementById('wscreen').classList.remove('hidden');
   document.getElementById('sdot').classList.add('on');
@@ -1920,6 +1940,44 @@ function idbOpen(){return new Promise(function(ok,bad){ if(IDB)return ok(IDB); v
 function idbPut(k,v){return idbOpen().then(function(db){return new Promise(function(ok,bad){var tx=db.transaction('saves','readwrite');tx.objectStore('saves').put(v,k);tx.oncomplete=function(){ok();};tx.onerror=function(){bad(tx.error);};});});}
 function idbGet(k){return idbOpen().then(function(db){return new Promise(function(ok,bad){var rq=db.transaction('saves','readonly').objectStore('saves').get(k);rq.onsuccess=function(){ok(rq.result);};rq.onerror=function(){bad(rq.error);};});});}
 function idbDel(k){return idbOpen().then(function(db){return new Promise(function(ok,bad){var tx=db.transaction('saves','readwrite');tx.objectStore('saves').delete(k);tx.oncomplete=function(){ok();};tx.onerror=function(){bad(tx.error);};});});}
+async function migrateLegacySlots(){
+  for(var i=0;i<3;i++){
+    var raw=localStorage.getItem('wuji_sv_'+i);if(!raw)continue;
+    try{await idbPut('sv_'+i,JSON.parse(raw));localStorage.removeItem('wuji_sv_'+i);}catch(e){}
+  }
+}
+async function renderStartupSlots(){
+  var c=document.getElementById('startup-slots');if(!c)return;
+  try{await migrateLegacySlots();}catch(e){}
+  c.innerHTML='';var found=0;
+  var defs=[{key:'sv_0',name:'存档 1'},{key:'sv_1',name:'存档 2'},{key:'sv_2',name:'存档 3'},{key:'auto',name:'⟳ 自动存档'}];
+  for(var i=0;i<defs.length;i++){
+    var def=defs[i],sv=null;try{sv=await idbGet(def.key);}catch(e){}
+    var d=document.createElement('div');d.className='svs'+(PENDING_STARTUP_LOAD===def.key?' chosen':'')+(sv?'':' emp');
+    if(sv){
+      found++;d.innerHTML='<div class="sn">'+esc(def.name)+'</div><div class="si">'+esc(sv.desc||('第 '+(sv.turns||0)+' 回合'))+'</div><div class="si" style="opacity:.5">'+esc(sv.time||'')+'</div><div class="sb2"><button>选择并继续</button></div>';
+      (function(k){d.querySelector('button').onclick=function(){selectStartupSave(k);};})(def.key);
+    }else d.innerHTML='<div class="sn">'+esc(def.name)+' — 空</div>';
+    c.appendChild(d);
+  }
+  if(!found){var st=document.getElementById('startup-load-status');if(st){st.textContent='尚无可读取的本地存档';st.style.color='var(--dm)';}}
+}
+function selectStartupSave(key){
+  PENDING_STARTUP_LOAD=key;renderStartupSlots();
+  var st=document.getElementById('startup-load-status');if(st){st.style.color='var(--g)';st.textContent='✓ 已选择'+(key==='auto'?'自动存档':('存档 '+(Number(key.slice(3))+1)))+'；现在连接下方后端即可直接继续';}
+}
+async function resumeStartupSave(key){
+  var st=document.getElementById('startup-load-status');if(st)st.textContent='正在载入存档…';
+  try{
+    var sv=await idbGet(key);if(!sv)throw new Error('所选存档不存在');if(!Array.isArray(sv.history))throw new Error('存档格式无效或版本过旧');
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.add('hidden');});
+    document.getElementById('gscreen').classList.remove('hidden');document.getElementById('gscreen').style.display='flex';closePanel();
+    applySnapshot(sv);PENDING_STARTUP_LOAD=null;
+    document.getElementById('stxt').textContent=(WORLDS[WORLD]&&WORLDS[WORLD].name||'已读取存档')+' · '+(PACE_CONFIG[PACE]&&PACE_CONFIG[PACE].label||'');
+    document.getElementById('game-hint').textContent='无界·叙事引擎 · 已继续存档';
+    addBlk('sys','▸ 已从启动页读取'+(key==='auto'?'自动存档':('存档 '+(Number(key.slice(3))+1))));
+  }catch(e){PENDING_STARTUP_LOAD=null;if(st){st.style.color='var(--r)';st.textContent='读取失败：'+String(e&&e.message||e);}renderStartupSlots();}
+}
 function autoSave(){ if(HIST.length){ idbPut('auto',snapshot()).catch(function(){}); } }
 function saveSv(i){
   if(!HIST.length)return;
@@ -3133,6 +3191,7 @@ function setTemp(v){SETTINGS.temp=Number(v);var el=document.getElementById('set-
   var dc=document.getElementById('set-dice'); if(dc)dc.checked=!!SETTINGS.dice;
   var am=document.getElementById('set-automem'); if(am)am.checked=!!SETTINGS.autoMem;
   var dr=document.getElementById('set-director'); if(dr)dr.checked=!!SETTINGS.director;
+  renderStartupSlots();
 })();
 
 // double-click any logged message to edit it (rewrites history)
