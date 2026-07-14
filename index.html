@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>无界·叙事引擎 v16</title>
+<title>无界·叙事引擎 v17</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -338,12 +338,102 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .fam-head{grid-column:1/-1;font-size:11px;color:var(--dm);letter-spacing:3px;border-bottom:1px solid var(--bd);padding:4px 2px 5px;margin-top:6px;}
 .fam-head:first-child{margin-top:0;}
 #preset-chips .chip{font-size:11px;}
+
+/* ── v17 · GAME WORKSPACE ─────────────────────────── */
+#gscreen{
+  position:relative;
+  background:
+    radial-gradient(circle at 48% 0%,rgba(200,169,110,.055),transparent 34%),
+    rgba(5,4,4,.72);
+}
+.charhud{
+  width:272px;flex:0 0 272px;min-width:0;display:flex;flex-direction:column;
+  overflow:hidden;background:linear-gradient(180deg,rgba(16,12,8,.98),rgba(7,6,6,.96));
+  border-right:1px solid var(--bd);transition:width .22s ease,flex-basis .22s ease,transform .22s ease;
+}
+.charhud.collapsed{width:0;flex-basis:0;border-right:0;}
+.hud-head{padding:17px 15px 13px;border-bottom:1px solid var(--bd);background:rgba(200,169,110,.035);}
+.hud-kicker,.drawer-kicker{font-size:8px;letter-spacing:2.6px;color:var(--dm);margin-bottom:5px;}
+.hud-world{font-family:'Noto Serif SC',serif;font-size:15px;color:var(--g);letter-spacing:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hud-meta{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:var(--dm);font-size:9px;}
+.hud-meta span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.hud-scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bd) transparent;}
+.hud-scroll::-webkit-scrollbar,.drawer-body::-webkit-scrollbar{width:3px;}
+.hud-scroll::-webkit-scrollbar-thumb,.drawer-body::-webkit-scrollbar-thumb{background:var(--bd);}
+.hud-card{padding:15px 13px;background:rgba(255,255,255,.008);}
+.hud-card .st{font-size:10px;}
+.charhud .sheet-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;}
+.charhud .sheet-stat{position:relative;overflow:hidden;padding:7px 8px;background:rgba(200,169,110,.025);}
+.charhud .sheet-stat .sv{font-size:14px;}
+.charhud .sheet-stat.res-stat{padding-bottom:12px;}
+.res-track{position:absolute;left:7px;right:7px;bottom:5px;height:2px;background:rgba(255,255,255,.08);overflow:hidden;}
+.res-track i{display:block;height:100%;background:var(--g);box-shadow:0 0 5px rgba(200,169,110,.35);}
+.res-stat.danger .res-track i{background:#c86060;box-shadow:0 0 5px rgba(200,70,70,.35);}
+.res-stat.energy .res-track i{background:#7da4d6;box-shadow:0 0 5px rgba(90,150,220,.35);}
+.gcol{min-width:0;border-right:0;}
+#slog{width:100%;max-width:900px;margin:0 auto;padding:22px clamp(18px,4vw,44px);}
+.game-dock{
+  display:flex;flex-shrink:0;align-items:stretch;justify-content:center;overflow-x:auto;
+  scrollbar-width:none;border-top:1px solid var(--bd);background:rgba(6,5,4,.98);
+  padding:5px max(7px,env(safe-area-inset-left));
+}
+.game-dock::-webkit-scrollbar{display:none;}
+.game-dock button{
+  appearance:none;min-width:67px;padding:6px 9px 5px;border:0;border-right:1px solid rgba(200,169,110,.12);
+  background:transparent;color:var(--dm);font:9px 'Share Tech Mono',monospace;letter-spacing:.7px;cursor:pointer;
+  transition:color .15s,background .15s;white-space:nowrap;
+}
+.game-dock button:last-child{border-right:0;}
+.game-dock button span{display:block;color:var(--g);font-size:15px;line-height:16px;margin-bottom:2px;opacity:.78;}
+.game-dock button:hover,.game-dock button:focus-visible{color:var(--g);background:rgba(200,169,110,.065);outline:none;}
+.spnl{
+  position:absolute!important;right:0;top:0;bottom:0;z-index:130;width:min(390px,92vw)!important;
+  max-height:none!important;display:flex!important;flex-direction:column!important;flex-wrap:nowrap!important;
+  overflow:hidden!important;background:rgba(10,8,6,.985);border-left:1px solid var(--g);
+  box-shadow:-18px 0 45px rgba(0,0,0,.5);transform:translateX(105%);visibility:hidden;
+  transition:transform .24s ease,visibility 0s linear .24s;
+}
+.spnl.open{transform:translateX(0);visibility:visible;max-height:none!important;transition-delay:0s;}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 14px 12px;border-bottom:1px solid var(--bd);flex-shrink:0;}
+#drawer-title{font-family:'Noto Serif SC',serif;color:var(--g);font-size:15px;letter-spacing:2px;}
+.drawer-head button{width:34px;height:34px;background:transparent;border:1px solid var(--bd);color:var(--dm);cursor:pointer;font-size:12px;}
+.drawer-head button:hover{border-color:var(--g);color:var(--g);}
+.drawer-body{flex:1;min-height:0;overflow-y:auto;}
+.drawer-body>.ss{display:none!important;width:100%!important;border-right:0!important;padding:15px 14px;}
+.drawer-body>.ss.panel-visible{display:block!important;}
+.drawer-scrim{position:absolute;inset:0;z-index:120;background:rgba(0,0,0,.62);backdrop-filter:blur(1px);display:none;}
+.drawer-scrim.on{display:block;}
+.panel-toggle{display:none!important;}
+
+@media(max-width:900px){
+  #gscreen{flex-direction:row!important;}
+  .charhud{
+    position:absolute;left:0;top:0;bottom:0;z-index:140;width:min(332px,92vw);transform:translateX(-105%);
+    border-right:1px solid var(--g);box-shadow:18px 0 45px rgba(0,0,0,.5);visibility:hidden;
+    transition:transform .24s ease,visibility 0s linear .24s;
+  }
+  .charhud.open{transform:translateX(0);visibility:visible;transition-delay:0s;}
+  .charhud.collapsed{width:min(332px,92vw);flex-basis:auto;border-right:1px solid var(--g);}
+  .gcol{width:100%;border-bottom:0;}
+  .game-dock{justify-content:flex-start;padding-bottom:calc(5px + env(safe-area-inset-bottom));}
+  .game-dock button{min-width:70px;min-height:48px;}
+  .spnl{width:min(410px,94vw)!important;}
+}
+@media(max-width:560px){
+  #slog{padding:15px 14px 9px;}
+  .game-dock button{min-width:66px;padding-left:7px;padding-right:7px;}
+  .drawer-head{padding-top:13px;}
+  .drawer-body>.ss{padding:13px 12px;}
+  .hud-head{padding-top:14px;}
+  .sbar{gap:7px;}
+  #tkc{display:none;}
+}
 </style>
 </head>
 <body>
 <div class="gbg"></div>
 <div class="hdr">
-  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v15</small></div>
+  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v17</small></div>
   <div class="sbar">
     <div class="sdot" id="sdot"></div>
     <span id="stxt">选择世界</span>
@@ -370,6 +460,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <div class="gen-chips" id="preset-chips"></div>
     </div>
     <button class="wnext" id="wnext-w" onclick="goStep(3)" disabled>下一步 ▶</button>
+    <span class="wback" id="resume-game-link" style="display:none" onclick="returnToCurrentGame()">◀ 返回当前游戏（不会丢失进度）</span>
     <div style="text-align:center;margin-top:14px"><button class="btn sm" onclick="document.getElementById('cardfile').click()">📇 导入角色卡（SillyTavern PNG / JSON）</button><input type="file" id="cardfile" accept=".png,.json" style="display:none" onchange="importCard(this.files[0]);this.value=''"></div>
   </div>
 </div>
@@ -881,7 +972,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
     </div>
     <button class="wnext" id="wnext-p" onclick="launchGame()" disabled>开始冒险 ▶</button>
-    <span class="wback" id="connect-back" style="display:none" onclick="goStep(2)">◀ 返回世界选择</span>
+    <span class="wback" onclick="goStep(2)">◀ 返回</span>
   </div>
 </div>
 
@@ -972,12 +1063,23 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div>
     </div>
     <div id="ast" style="margin-top:8px"></div>
-    <span class="wback" onclick="goStep(2)">◀ 返回</span>
+    <span class="wback" id="connect-back" style="display:none" onclick="goStep(2)">◀ 返回世界选择</span>
   </div>
 </div>
 
 <!-- GAME -->
 <div class="screen" id="gscreen" style="display:none;flex-direction:row;">
+  <aside class="charhud" id="charhud">
+    <div class="hud-head">
+      <div class="hud-kicker">CURRENT CHARACTER</div>
+      <div class="hud-world" id="hud-world">—</div>
+      <div class="hud-meta"><span id="hud-location">位置未记录</span><span id="hud-turn">第 0 回合</span></div>
+    </div>
+    <div class="hud-scroll">
+      <div class="ss hud-card"><div class="st">▸ 权威角色卡</div><div id="sdsp">— 尚未揭示 —</div><div id="sheet-gate"><button class="qb" onclick="requestCharacterSheet()"><span class="ic">◇</span>主动查看／建立角色卡</button></div><div class="sheet-sub">基础属性（揭示后可校准）</div><div id="attr-grid" class="sheet-grid"></div><div class="sheet-sub">状态与资源</div><div id="res-grid" class="sheet-grid"></div><div class="sheet-sub">天赋 <button class="pin-add" onclick="addSheetEntry('talent')">+ 添加</button></div><div id="talent-grid" class="talent-grid"><span class="skill-empty">— 未揭示 —</span></div></div>
+      <div class="ss hud-card"><div class="st">▸ 最近一次裁定</div><div id="last-check" class="last-check">— 尚无检定 —</div></div>
+    </div>
+  </aside>
   <div class="gcol">
     <div id="slog"></div>
     <div class="deco"></div>
@@ -990,19 +1092,29 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div>
     </div>
     <div class="hint" id="game-hint">无界·叙事引擎</div>
+    <nav class="game-dock" aria-label="游戏功能">
+      <button onclick="toggleCharacterHud()"><span>◈</span>状态</button>
+      <button onclick="openGamePanel('inventory')"><span>▣</span>背包</button>
+      <button onclick="openGamePanel('skills')"><span>✦</span>技能</button>
+      <button onclick="openGamePanel('quests')"><span>◇</span>任务</button>
+      <button onclick="openGamePanel('people')"><span>♟</span>人物</button>
+      <button onclick="openGamePanel('memory')"><span>▤</span>记忆</button>
+      <button onclick="openGamePanel('saves')"><span>▥</span>存档</button>
+      <button onclick="openGamePanel('settings')"><span>⚙</span>设置</button>
+    </nav>
   </div>
-  <div class="spnl" id="spnl">
-    <div class="ss"><div class="st">▸ 权威角色卡</div><div id="sdsp">— 尚未揭示 —</div><div id="sheet-gate"><button class="qb" onclick="requestCharacterSheet()"><span class="ic">◇</span>主动查看／建立角色卡</button></div><div class="sheet-sub">基础属性（揭示后可校准）</div><div id="attr-grid" class="sheet-grid"></div><div class="sheet-sub">状态与资源</div><div id="res-grid" class="sheet-grid"></div><div class="sheet-sub">天赋 <button class="pin-add" onclick="addSheetEntry('talent')">+ 添加</button></div><div id="talent-grid" class="talent-grid"><span class="skill-empty">— 未揭示 —</span></div></div>
-    <div class="ss"><div class="st">▸ 最近一次裁定</div><div id="last-check" class="last-check">— 尚无检定 —</div></div>
-    <div class="ss"><div class="st">▸ 背包</div><div class="inv-grid" id="inv-grid"><span class="inv-empty">— 空 —</span></div></div>
-    <div class="ss"><div class="st" id="skill-panel-title">▸ 技能 <button class="pin-add" onclick="addSheetEntry('skill')">+ 添加</button></div><div class="skill-grid" id="skill-grid"><span class="skill-empty">— 空 —</span></div></div>
-    <div class="ss"><div class="st">▸ 任务</div><div id="quest-list"><span class="no-quest">— 暂无任务 —</span></div></div>
-    <div class="ss"><div class="st">👥 人物关系</div><div id="npc-list"><span class="no-quest">— 尚未结识 —</span></div></div>
-    <div class="ss"><div class="st">🪪 主角身份档案 <button class="pin-add" onclick="promptAddCanon()">+ 字段</button></div><div id="canon-list"><span class="no-quest">— 尚未锁定身份映射 —</span></div></div>
-    <div class="ss"><div class="st">🔒 锁定设定 <button class="pin-add" onclick="promptAddPin()">+ 锁定</button></div><div id="pin-list"><span class="no-quest">— 未锁定任何设定 —</span></div></div>
-    <div class="ss"><div class="st">📖 世界书 <button class="pin-add" onclick="promptAddLore()">+ 条目</button></div><div id="lore-list"><span class="no-quest">— 空 —</span></div></div>
-    <div class="ss"><div class="st">▸ 存档</div><div id="svslots"></div></div>
-    <div class="ss">
+  <div class="spnl" id="spnl" aria-hidden="true">
+    <div class="drawer-head"><div><span class="drawer-kicker">GAME ARCHIVE</span><div id="drawer-title">功能面板</div></div><button onclick="closeGamePanel()">✕</button></div>
+    <div class="drawer-body">
+    <div class="ss" data-panel="inventory"><div class="st">▸ 背包</div><div class="inv-grid" id="inv-grid"><span class="inv-empty">— 空 —</span></div></div>
+    <div class="ss" data-panel="skills"><div class="st" id="skill-panel-title">▸ 技能 <button class="pin-add" onclick="addSheetEntry('skill')">+ 添加</button></div><div class="skill-grid" id="skill-grid"><span class="skill-empty">— 空 —</span></div></div>
+    <div class="ss" data-panel="quests"><div class="st">▸ 任务与目标</div><div id="quest-list"><span class="no-quest">— 暂无任务 —</span></div></div>
+    <div class="ss" data-panel="people"><div class="st">👥 人物关系</div><div id="npc-list"><span class="no-quest">— 尚未结识 —</span></div></div>
+    <div class="ss" data-panel="people"><div class="st">🪪 主角身份档案 <button class="pin-add" onclick="promptAddCanon()">+ 字段</button></div><div id="canon-list"><span class="no-quest">— 尚未锁定身份映射 —</span></div></div>
+    <div class="ss" data-panel="memory"><div class="st">🔒 锁定设定 <button class="pin-add" onclick="promptAddPin()">+ 锁定</button></div><div id="pin-list"><span class="no-quest">— 未锁定任何设定 —</span></div></div>
+    <div class="ss" data-panel="memory"><div class="st">📖 世界书 <button class="pin-add" onclick="promptAddLore()">+ 条目</button></div><div id="lore-list"><span class="no-quest">— 空 —</span></div></div>
+    <div class="ss" data-panel="saves"><div class="st">▸ 存档</div><div id="svslots"></div></div>
+    <div class="ss" data-panel="settings">
       <div class="st">⚙ 设置</div>
       <div class="set-row">温度 <input type="range" id="set-temp" min="0.3" max="1.3" step="0.05" oninput="setTemp(this.value)"><span id="set-temp-v"></span></div>
       <label class="set-chk"><input type="checkbox" id="set-stream" onchange="SETTINGS.stream=this.checked;saveSettings()"> 流式输出（逐字显示）</label>
@@ -1012,17 +1124,19 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <button class="qb" onclick="exportSave()"><span class="ic">⇩</span>导出进度JSON</button>
       <button class="qb" onclick="importSave()"><span class="ic">⇧</span>导入进度JSON</button>
     </div>
-    <div class="ss">
+    <div class="ss" data-panel="settings">
       <div class="st">▸ 指令</div>
       <button class="qb" onclick="qcmd('/status')"><span class="ic">◈</span>查看详细状态</button>
       <button class="qb" onclick="qcmd('/world')"><span class="ic">◎</span>查看地图</button>
       <button class="qb" onclick="undoTurn()"><span class="ic">↩</span>撤销上一步</button>
       <button class="qb" onclick="qcmd('/restart')"><span class="ic">⟳</span>重建角色</button>
       <button class="qb red" onclick="resetGame()"><span class="ic">✕</span>完全重置</button>
-      <button class="qb" onclick="goStep(2)"><span class="ic">⇄</span>换世界观</button>
+      <button class="qb" onclick="openWorldSelectFromGame()"><span class="ic">⇄</span>换世界观</button>
+    </div>
     </div>
   </div>
-  <button class="panel-toggle" id="panel-toggle" onclick="togglePanel()">▲ 状态面板</button>
+  <div class="drawer-scrim" id="drawer-scrim" onclick="closeGamePanel()"></div>
+  <button class="panel-toggle" id="panel-toggle" onclick="toggleCharacterHud()">▲ 角色状态</button>
 </div>
 
 <div id="imodal">
@@ -1631,9 +1745,9 @@ function selPace(p) {
 }
 
 function goStep(n) {
+  if(n===2&&(!BK||!MODEL)){n=1;}
   document.getElementById('gscreen').style.display = 'none';
   closePanel();
-  if(n===2&&(!BK||!MODEL)){n=1;}
   document.getElementById('ascreen').classList.toggle('hidden', n !== 1);
   document.getElementById('wscreen').classList.toggle('hidden', n !== 2);
   document.getElementById('genscreen').classList.toggle('hidden', true);
@@ -1649,6 +1763,7 @@ function goStep(n) {
     document.getElementById('stxt').textContent = connected?('已连接 · '+MODEL.split('/').pop()):'连接后端';
     if(back)back.style.display=connected?'block':'none';
   }
+  var resume=document.getElementById('resume-game-link');if(resume)resume.style.display=(n===2&&HIST.length)?'block':'none';
 }
 
 function setTab(t) {
@@ -1708,21 +1823,60 @@ function renderDailyBtns() {
   });
 }
 
-function closePanel() {
-  var p=document.getElementById('spnl'), btn=document.getElementById('panel-toggle');
-  if(p)p.classList.remove('open');
-  if(btn)btn.textContent='▲ 状态面板';
+var PANEL_TITLES={inventory:'背包',skills:'技能',quests:'任务与目标',people:'人物与身份',memory:'记忆与世界书',saves:'存档',settings:'设置与指令'};
+function syncSettingsControls(){
+  var t=document.getElementById('set-temp');if(t)t.value=SETTINGS.temp;
+  var tv=document.getElementById('set-temp-v');if(tv)tv.textContent=Number(SETTINGS.temp).toFixed(2);
+  var st=document.getElementById('set-stream');if(st)st.checked=!!SETTINGS.stream;
+  var dc=document.getElementById('set-dice');if(dc)dc.checked=!!SETTINGS.dice;
+  var am=document.getElementById('set-automem');if(am)am.checked=!!SETTINGS.autoMem;
+  var dr=document.getElementById('set-director');if(dr)dr.checked=!!SETTINGS.director;
 }
-
-function togglePanel() {
-  var p=document.getElementById('spnl'), btn=document.getElementById('panel-toggle');
-  var isOpen=p.classList.toggle('open');
-  btn.textContent=isOpen?'▼ 收起面板':'▲ 状态面板';
-  if(isOpen){ renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderCanon();
-    renderCharacterSheet();
-    if(HIST.length>0){ for(var i=HIST.length-1;i>=0;i--){ if(HIST[i].role==='assistant'){updateStatus(HIST[i].content);break;} } }
+function closePanel(){
+  var p=document.getElementById('spnl'),hud=document.getElementById('charhud'),scrim=document.getElementById('drawer-scrim');
+  if(p){p.classList.remove('open');p.removeAttribute('data-active');p.setAttribute('aria-hidden','true');}
+  if(hud)hud.classList.remove('open');
+  if(scrim)scrim.classList.remove('on');
+}
+function closeGamePanel(){closePanel();}
+function openGamePanel(name){
+  var p=document.getElementById('spnl'),scrim=document.getElementById('drawer-scrim');if(!p)return;
+  if(p.classList.contains('open')&&p.dataset.active===name){closePanel();return;}
+  var hud=document.getElementById('charhud');if(hud)hud.classList.remove('open');
+  p.querySelectorAll('.drawer-body>[data-panel]').forEach(function(s){s.classList.toggle('panel-visible',s.dataset.panel===name);});
+  var title=document.getElementById('drawer-title');if(title)title.textContent=PANEL_TITLES[name]||'功能面板';
+  p.dataset.active=name;p.classList.add('open');p.setAttribute('aria-hidden','false');if(scrim)scrim.classList.add('on');
+  if(name==='inventory')renderInventory(INVENTORY);
+  else if(name==='skills')renderSkills(SKILLS);
+  else if(name==='quests')renderQuests();
+  else if(name==='people'){renderNpcs();renderCanon();}
+  else if(name==='memory'){renderPins();renderLore();}
+  else if(name==='saves')renderSlots();
+  else if(name==='settings')syncSettingsControls();
+}
+function toggleCharacterHud(){
+  var hud=document.getElementById('charhud'),scrim=document.getElementById('drawer-scrim');if(!hud)return;
+  renderCharacterSheet();
+  if(window.matchMedia&&window.matchMedia('(max-width:900px)').matches){
+    var opening=!hud.classList.contains('open');closePanel();
+    if(opening){hud.classList.add('open');if(scrim)scrim.classList.add('on');}
+  }else{
+    hud.classList.toggle('collapsed');
   }
 }
+function openWorldSelectFromGame(){
+  if(LOADING){alert('请等待当前回复结束后再离开游戏界面。');return;}
+  if(!confirm('进入世界选择页？当前局仍会保留，可点“返回当前游戏”继续；真正开始新局会覆盖自动存档，建议先手动保存。'))return;
+  goStep(2);
+}
+function returnToCurrentGame(){
+  if(!HIST.length)return;
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.add('hidden');});
+  var game=document.getElementById('gscreen');game.classList.remove('hidden');game.style.display='flex';closePanel();
+  document.getElementById('stxt').textContent=((WORLDS[WORLD]&&WORLDS[WORLD].name)||'当前游戏')+' · '+((PACE_CONFIG[PACE]&&PACE_CONFIG[PACE].label)||'');
+  renderDailyBtns();renderCharacterSheet();document.getElementById('pinp').focus();
+}
+function togglePanel(){openGamePanel('settings');}
 
 function renderInventory(items) {
   INVENTORY=items; var c=document.getElementById('inv-grid'); if(!c)return;
@@ -1964,20 +2118,18 @@ async function renderStartupSlots(){
     }else d.innerHTML='<div class="sn">'+esc(def.name)+' — 空</div>';
     c.appendChild(d);
   }
+  var cancel=document.getElementById('startup-cancel');if(cancel)cancel.style.display=PENDING_STARTUP_LOAD!==null?'inline-block':'none';
+  updateConnectButtons();
   if(!found){var st=document.getElementById('startup-load-status');if(st){st.textContent='尚无可读取的本地存档';st.style.color='var(--dm)';}}
 }
 function selectStartupSave(key){
   if(PENDING_STARTUP_LOAD===key){cancelStartupLoad();return;}
   PENDING_STARTUP_LOAD=key;renderStartupSlots();
   var st=document.getElementById('startup-load-status');if(st){st.style.color='var(--g)';st.textContent='✓ 已选择'+(key==='auto'?'自动存档':('存档 '+(Number(key.slice(3))+1)))+'；现在连接下方后端即可直接继续';}
-  var cancel=document.getElementById('startup-cancel');if(cancel)cancel.style.display=PENDING_STARTUP_LOAD!==null?'inline-block':'none';
-  updateConnectButtons();
 }
 function cancelStartupLoad(){
   PENDING_STARTUP_LOAD=null;var st=document.getElementById('startup-load-status');if(st){st.textContent='已取消存档选择；连接后端后将进入新游戏的世界选择';st.style.color='var(--dm)';}
   renderStartupSlots();
-  var cancel=document.getElementById('startup-cancel');if(cancel)cancel.style.display='none';
-  updateConnectButtons();
 }
 function updateConnectButtons(){
   document.querySelectorAll('.connect-btn').forEach(function(b){b.textContent=PENDING_STARTUP_LOAD!==null?'连接并读取所选存档':'连接并选择世界';});
@@ -1999,6 +2151,7 @@ function saveSv(i){
   if(!HIST.length)return;
   idbPut('sv_'+i,snapshot()).then(function(){renderSlots();addBlk('sys','▸ 已保存至存档 '+(i+1));}).catch(function(e){addBlk('err','保存失败：'+e);});
 }
+function confirmSaveSv(i){if(confirm('确定覆盖存档 '+(i+1)+'？原进度将被替换。'))saveSv(i);}
 
 function loadSv(i){
   idbGet(i==='auto'?'auto':'sv_'+i).then(function(sv){
@@ -2010,7 +2163,6 @@ function loadSv(i){
 function loadSvAuto(){loadSv('auto');}
 
 function delSv(i){if(!confirm('确定永久删除存档 '+(i+1)+'？此操作无法撤销。'))return;idbDel('sv_'+i).then(function(){renderSlots();renderStartupSlots();});}
-function confirmSaveSv(i){if(confirm('确定覆盖存档 '+(i+1)+'？原进度将被替换。'))saveSv(i);}
 
 function apiTimeoutMs(maxTok){
   // Short utility calls should fail reasonably quickly; long generations and
@@ -2023,6 +2175,10 @@ function apiTimeoutMs(maxTok){
 function renderCharacterSheet(){
   var a=document.getElementById('attr-grid'),r=document.getElementById('res-grid'),t=document.getElementById('talent-grid'),lc=document.getElementById('last-check'),gate=document.getElementById('sheet-gate');
   if(!GAME_STATE)return;
+  var hw=document.getElementById('hud-world'),hl=document.getElementById('hud-location'),ht=document.getElementById('hud-turn');
+  if(hw)hw.textContent=(WORLDS[WORLD]&&WORLDS[WORLD].name)||'未命名世界';
+  if(hl)hl.textContent=GAME_STATE.loc||'位置未记录';
+  if(ht)ht.textContent='第 '+TURNS+' 回合';
   var sd=document.getElementById('sdsp');
   if(!GAME_STATE.revealed){
     if(sd){sd.textContent=(GAME_STATE.loc?'当前位置：'+GAME_STATE.loc+'\n':'')+'能力与数值尚未揭示。玩家的描述和实际经历会决定之后的角色卡。';sd.style.color='var(--dm)';}
@@ -2032,9 +2188,15 @@ function renderCharacterSheet(){
   function fill(box,obj,kind){
     if(!box)return; box.innerHTML='';
     Object.keys(obj||{}).forEach(function(k){
-      var d=document.createElement('div');d.className='sheet-stat';d.title='点击手动校准';d.onclick=function(){editStateValue(kind,k);};
+      var d=document.createElement('div');d.className='sheet-stat '+kind+'-stat';d.title='点击手动校准';d.onclick=function(){editStateValue(kind,k);};
       var cap=kind==='res'&&GAME_STATE.caps&&GAME_STATE.caps[k];
-      d.innerHTML='<span class="sk">'+esc(k)+'</span><span class="sv">'+esc(String(obj[k])+(cap?('/'+cap):''))+'</span>';box.appendChild(d);
+      if(kind==='res'){
+        if(/生命|气血|血量|体力|hp/i.test(k))d.classList.add('danger');
+        else if(/魔力|法力|灵力|内力|精力|神经|异能|mp|sp/i.test(k))d.classList.add('energy');
+      }
+      var bar='';
+      if(cap&&isFinite(Number(cap))&&Number(cap)>0){var pct=Math.max(0,Math.min(100,Number(obj[k])/Number(cap)*100));bar='<span class="res-track"><i style="width:'+pct.toFixed(1)+'%"></i></span>';}
+      d.innerHTML='<span class="sk">'+esc(k)+'</span><span class="sv">'+esc(String(obj[k])+(cap?('/'+cap):''))+'</span>'+bar;box.appendChild(d);
     });
   }
   fill(a,GAME_STATE.attrs,'attr');fill(r,GAME_STATE.res,'res');
@@ -2362,6 +2524,7 @@ function undoTurn(){
 function startGame(){
   HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0; OUTLINE=''; NAMES='';
   GAME_STATE=freshGameState(); STATE_ACTIVE=true; TURN_BACKUPS=[]; SHEET_INIT_ARMED=false; PLAYER_CANON=parseCanonText(PREFS.canon||''); PREMISE_STATE={kind:'none'}; DNA_PICKS=null;
+  var hud=document.getElementById('charhud');if(hud)hud.classList.remove('collapsed','open');var resume=document.getElementById('resume-game-link');if(resume)resume.style.display='none';
   LOREBOOK=((WORLDS[WORLD]&&WORLDS[WORLD].lorebook)||[]).slice();
   document.getElementById('slog').innerHTML='';
   var d=document.getElementById('sdsp'); d.textContent='— 尚未揭示 —'; d.style.color='var(--dm)';
@@ -2575,6 +2738,7 @@ async function _runTurn(){
     extractSheetInit(reply);
     extractState(reply);
     extractNames(reply);
+    renderCharacterSheet();
     await maybeCompress(); autoSave(); maybeAutoMemory();
   }catch(e){ if(typ)typ.remove(); addBlk('err','连接失败：'+String(e&&e.message||e).substring(0,250)); }
   LOADING=false; document.getElementById('pinp').focus();
@@ -2583,7 +2747,7 @@ async function _runTurn(){
 async function send(text,isSystem){
   if(!text||!text.trim()||LOADING)return;
   LOADING=true;
-  if(!isSystem){ TURN_BACKUPS.push(runtimeBackup());if(TURN_BACKUPS.length>30)TURN_BACKUPS.shift();if(!GAME_STATE.revealed&&/(查看|检查|打开|呼出|感受|确认|探索).{0,10}(状态|面板|属性|能力|身体|技能|天赋|角色卡)/.test(text))SHEET_INIT_ARMED=true;addBlk('ply',text,HIST.length); WORLD_CLOCK++; TURNS++; }
+  if(!isSystem){ TURN_BACKUPS.push(runtimeBackup());if(TURN_BACKUPS.length>30)TURN_BACKUPS.shift();if(!GAME_STATE.revealed&&/(查看|检查|打开|呼出|感受|确认|探索).{0,10}(状态|面板|属性|能力|身体|技能|天赋|角色卡)/.test(text))SHEET_INIT_ARMED=true;addBlk('ply',text,HIST.length); WORLD_CLOCK++; TURNS++;renderCharacterSheet(); }
   HIST.push({role:'user',content:text});
   await _runTurn();
 }
@@ -3217,6 +3381,13 @@ document.getElementById('slog').addEventListener('dblclick',function(e){
   HIST[idx].content=nv;
   rebuildLog();
   addBlk('sys','▸ 已修改历史');
+});
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    var p=document.getElementById('spnl'),hud=document.getElementById('charhud');
+    if((p&&p.classList.contains('open'))||(hud&&hud.classList.contains('open')))closePanel();
+  }
 });
 
 // number keys 1-4 pick the latest options
