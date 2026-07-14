@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>无界·叙事引擎 v12</title>
+<title>无界·叙事引擎 v14</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -336,7 +336,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 <body>
 <div class="gbg"></div>
 <div class="hdr">
-  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v12</small></div>
+  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v14</small></div>
   <div class="sbar">
     <div class="sdot" id="sdot"></div>
     <span id="stxt">选择世界</span>
@@ -864,6 +864,10 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
         <div class="adv-pref-note">这里只补充上方没有明确指定的维度。若常用设置已经控制同一项，对应高级标签会自动停用，避免两套要求互相冲突；自由备注仍拥有最高优先级。</div>
         <div id="adv-pref-options"></div>
       </details>
+      <div class="pref-row"><span class="pref-lbl">身份映射</span><div style="flex:1;min-width:0">
+        <textarea class="gen-custom" id="pref-canon" rows="4" placeholder="每行写一个明确映射，例如：\n现实姓名 = 秦澈\n游戏ID = 火法永远是神\n游戏角色名 = 塞勒斯\n尚未确定的字段不要填写"></textarea>
+        <div style="font-size:9px;color:var(--dm);margin-top:5px;line-height:1.6">专门区分现实姓名、网名、账号ID、角色名与穿越后身份；未确定的项目可以不写。</div>
+      </div></div>
       <div class="pref-row"><span class="pref-lbl">自由备注</span><div style="flex:1;min-width:0">
         <textarea class="gen-custom" id="pref-extra" rows="4" placeholder="写下预设没有覆盖的开局或世界要求。比如：从毕业当天开始；主角与妹妹共同穿越；不要系统面板；参考某部作品的生活质感但不使用原作人物；不预设恋爱对象……"></textarea>
         <div style="font-size:9px;color:var(--dm);margin-top:5px;line-height:1.6">自由备注优先于随机标签；留空则不追加要求。</div>
@@ -980,6 +984,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="ss"><div class="st" id="skill-panel-title">▸ 技能 <button class="pin-add" onclick="addSheetEntry('skill')">+ 添加</button></div><div class="skill-grid" id="skill-grid"><span class="skill-empty">— 空 —</span></div></div>
     <div class="ss"><div class="st">▸ 任务</div><div id="quest-list"><span class="no-quest">— 暂无任务 —</span></div></div>
     <div class="ss"><div class="st">👥 人物关系</div><div id="npc-list"><span class="no-quest">— 尚未结识 —</span></div></div>
+    <div class="ss"><div class="st">🪪 主角身份档案 <button class="pin-add" onclick="promptAddCanon()">+ 字段</button></div><div id="canon-list"><span class="no-quest">— 尚未锁定身份映射 —</span></div></div>
     <div class="ss"><div class="st">🔒 锁定设定 <button class="pin-add" onclick="promptAddPin()">+ 锁定</button></div><div id="pin-list"><span class="no-quest">— 未锁定任何设定 —</span></div></div>
     <div class="ss"><div class="st">📖 世界书 <button class="pin-add" onclick="promptAddLore()">+ 条目</button></div><div id="lore-list"><span class="no-quest">— 空 —</span></div></div>
     <div class="ss"><div class="st">▸ 存档</div><div id="svslots"></div></div>
@@ -1030,7 +1035,9 @@ var STATE_ACTIVE=false; // true once the model starts reporting via STATE patche
 var TURN_BACKUPS=[]; // exact runtime snapshots for undo/regeneration
 var SHEET_INIT_ARMED=false; // only an explicit player action may reveal the sheet
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
-var PREFS={tone:'',skeleton:'',opening:'',scene:'',entry:'',era:'',role:'',prof:'',relation:'',growth:'',conflict:'',trigger:'',transmode:'',advanced:{},extra:''};
+var PREMISE_STATE={kind:'none'}; // program-owned opening milestone, prevents premise drift/stalling
+var PREFS={tone:'',skeleton:'',opening:'',scene:'',entry:'',era:'',role:'',prof:'',relation:'',growth:'',conflict:'',trigger:'',transmode:'',advanced:{},canon:'',extra:''};
+var PLAYER_CANON={}; // program-owned identity namespace; summaries and AI cannot overwrite it
 var WORLD_PRESET=''; // second-level flavor preset id chosen for the selected world // player taste constraints from the pace screen
 var PREF_MAPS={
   tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'市井烟火':['市井烟火','群像生活流'],'荒诞喜剧':['荒诞喜剧','讽刺寓言'],'严肃正剧':['严肃正剧','冷峻现实'],'黑色悬疑':['冷峻现实']},
@@ -1090,7 +1097,8 @@ function weightedDraw(catId,allowed){
 function readPrefChips(){
   var get=function(g){var el=document.querySelector('.chip[data-group="'+g+'"].on');return el?el.dataset.val:'';};
   var ex=document.getElementById('pref-extra');
-  PREFS={tone:get('pref-tone'),skeleton:get('pref-skeleton'),opening:get('pref-opening'),scene:get('pref-scene'),entry:get('pref-entry'),era:get('pref-era'),role:get('pref-role'),prof:get('pref-prof'),relation:get('pref-relation'),growth:get('pref-growth'),conflict:get('pref-conflict'),trigger:get('pref-trigger'),transmode:get('pref-transmode'),advanced:readAdvancedPrefs(),extra:ex?ex.value.trim():''};
+  var canon=document.getElementById('pref-canon');
+  PREFS={tone:get('pref-tone'),skeleton:get('pref-skeleton'),opening:get('pref-opening'),scene:get('pref-scene'),entry:get('pref-entry'),era:get('pref-era'),role:get('pref-role'),prof:get('pref-prof'),relation:get('pref-relation'),growth:get('pref-growth'),conflict:get('pref-conflict'),trigger:get('pref-trigger'),transmode:get('pref-transmode'),advanced:readAdvancedPrefs(),canon:canon?canon.value.trim():'',extra:ex?ex.value.trim():''};
 }
 
 var ADV_GROUPS=['genre','magic','era','scale','power','econ','origin','form','rolepos','sourceframe','relation','growth','storyengine','pressure','ability','style','rating','mechanic','ending'];
@@ -1277,6 +1285,7 @@ function rollBlueprint(){
   } else {
     transLine='主角来历：本世界土著，无前世记忆。\n';
   }
+  PREMISE_STATE=isTrans?{kind:'transmigration',frame:frame||'异世界',mechanism:mech||'',trigger:trig||'',startedAt:TURNS}:{kind:'none'};
   var b='【本局蓝图——编剧备忘：方向参考而非剧本，更不是秘密清单】\n';
   b+='基调：'+STORY_TONE+(toneTag?('（细分风味：'+toneTag+'）'):'')+'——'+(TONE_DESC||'')+'\n';
   b+='信息牌面：'+(TONE_TRANS||'明牌')+'\n';
@@ -1299,7 +1308,7 @@ function rollBlueprint(){
   b+='规模约束：故事默认留在当前生活圈与当前目标内纵深发展，只有玩家主动远行、晋升或完成阶段目标才扩大舞台；蓝图与玩家当前兴趣无关时就安静待在后台，不得硬塞。';
   STORY_DNA=b;
   OPENING_TEXT=isTrans
-    ?'【本局开局起点——必须执行】这是穿越者路线，但当前仍处于穿越前。第一回合必须完整发生在原本世界，以开场前已经进行中的工作或生活呈现主角的处境；最多让一项外部刺激抵达玩家面前，随后立即停下。刺激出现后不得替玩家点开、回复、关闭、准备、上线或形成目标。绝不能从异世界醒来开场，不能在首回合完成穿越，也不能使用“已经来到这里数日”等既成设定。触发线索不是必做任务：玩家忽略、拒绝、睡觉或继续原本生活都成立；若本局最终需要穿越，应通过外部事件或不同路径自然发生，不能逼玩家返回同一按钮或隐藏任务。玩家真正触发后，后续回合才依次描写转移过程与初次落地。'
+    ?'【本局第一回合起点——仅第一回合执行】这是穿越者路线，第一回合完整发生在原本世界，以正在进行的工作或生活呈现主角处境；最多让一项当下即可回应的外部刺激抵达玩家面前，随后停下。不得替玩家点击、回复、关闭、准备或上线。不要设置需要现实世界等待数小时、数日才能发生的遥远倒计时。第一回合不完成穿越，但本局选定的穿越是故事前提，不是可被永久搁置的可选任务；之后由阶段状态机推进。'
     :'【本局开局起点】主角是本世界土著，从当下的一件具体生活或工作事务开始，不要先概括生平或直接抛出主线事件。';
 }
 
@@ -1685,7 +1694,7 @@ function togglePanel() {
   var p=document.getElementById('spnl'), btn=document.getElementById('panel-toggle');
   var isOpen=p.classList.toggle('open');
   btn.textContent=isOpen?'▼ 收起面板':'▲ 状态面板';
-  if(isOpen){ renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS);
+  if(isOpen){ renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderCanon();
     renderCharacterSheet();
     if(HIST.length>0){ for(var i=HIST.length-1;i>=0;i--){ if(HIST[i].role==='assistant'){updateStatus(HIST[i].content);break;} } }
   }
@@ -1872,7 +1881,7 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
@@ -1883,6 +1892,8 @@ function applySnapshot(sv){
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
   GAME_STATE=migrateGameState(sv.gstate);INVENTORY=GAME_STATE.inv.slice();SKILLS=GAME_STATE.skills.slice();
+  PLAYER_CANON=sv.playerCanon&&typeof sv.playerCanon==='object'?sv.playerCanon:parseCanonText(PREFS.canon||'');
+  PREMISE_STATE=sv.premise&&typeof sv.premise==='object'?sv.premise:(/穿越者/.test(OPENING_PICK||'')?{kind:'transmigration',frame:'异世界',mechanism:'旧存档迁移',trigger:'',startedAt:Math.max(0,TURNS-2)}:{kind:'none'});
   // Migrate saves created by the old suspense-heavy DNA generator.
   if(/预埋反转种子|舞台阶梯|悬疑真相线|身份秘密线|卧底潜伏线/.test(STORY_DNA||'')) rollStoryDNA();
   if(STORY_TONE==='黑色悬疑') rollTone();
@@ -1892,7 +1903,7 @@ function applySnapshot(sv){
   }
   document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString();
   rebuildLog();
-  renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins(); renderLore(); renderNpcs(); renderCharacterSheet(); renderDailyBtns();
+  renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins(); renderLore(); renderNpcs(); renderCanon(); renderCharacterSheet(); renderDailyBtns();
   LOADING=false;
   document.getElementById('pinp').focus();
 }
@@ -2055,7 +2066,7 @@ async function maybeCompress(){
   SUMMING=true; addBlk('sys','▸ 正在压缩历史记忆...');
   var version=HIST.length;
   var toC=HIST.slice(0,cc), toK=HIST.slice(cc);
-  var prompt='以下是文字游戏对话历史，请生成【状态摘要】（400字内）：1)角色信息；2)关键事件时间线（保持因果顺序）；3)持有物品；4)重要NPC及其公开身份、当前态度和已知需求；5)当前地点局势；6)已公开信息；7)未完成承诺、任务或生活目标。不要把普通日常强行总结成阴谋或伏笔。若历史中出现过【大纲】块，请只保留最新一份的核心内容，不要增加新的秘密。\n\n'+toC.map(function(m){return m.role+': '+m.content;}).join('\n');
+  var prompt='以下是文字游戏对话历史，请生成【状态摘要】（400字内）：1)角色信息；2)关键事件时间线（保持因果顺序）；3)持有物品；4)重要NPC及其公开身份、当前态度和已知需求；5)当前地点局势；6)已公开信息；7)未完成承诺、任务或生活目标。不要把普通日常强行总结成阴谋或伏笔。若历史中出现过【大纲】块，请只保留最新一份的核心内容，不要增加新的秘密。\n【不可改写的主角身份映射】'+(canonSummary()||'尚无')+'。摘要必须原样保留这些字段的命名空间：现实姓名、游戏ID、角色名等不是同一个概念；不得把某字段的值移动到另一字段，也不得根据上下文猜测空字段。\n\n'+toC.map(function(m){return m.role+': '+m.content;}).join('\n');
   try{
     var res=await doFetch([{role:'user',content:prompt}],900);
     var data=await res.json();
@@ -2124,6 +2135,8 @@ function buildSystemPrompt(recentText){
   var p=PACE_CONFIG[PACE];
   if(!w||!p) return '';
   var sp=CORE_RULES;
+  var canon=canonSummary();
+  if(canon)sp+='\n\n【主角身份档案——程序锁定的最高优先级事实】'+canon+'。每个字段属于独立命名空间：现实姓名不等于游戏ID，游戏ID不等于游戏角色名，旧世界身份不等于穿越后身份。只能在对应语境使用对应值；不得合并、互换、缩写、改写或用摘要覆盖。档案中没有的字段就是尚未确定，不得擅自补全。玩家以后明确修改时，以程序下一回合提供的新档案为准。';
   sp+='\n\n'+OPTION_RULES;
   sp+='\n\n'+AGENCY_RULES;
   var worldPrompt=String(w.prompt||'').replace(/\n【状态栏】[\s\S]*?(?=\n【任务】|$)/,'').replace(/\n【任务】[^\n]*/g,'');
@@ -2137,8 +2150,9 @@ function buildSystemPrompt(recentText){
   sp+='\n\n【篇幅】'+p.instruction;
   if(STORY_DNA){ sp+='\n\n'+STORY_DNA; }
   if(w.lockedTags&&w.lockedTags.length){ sp+='\n\n【定制锁定标签——最高优先级，蓝图任何随机元素与之冲突时一律以此为准】'+w.lockedTags.join('、'); }
-  if(TURNS<8){ sp+='\n\n'+FIRST_CHAPTER; }
-  if(TURNS<8&&OPENING_TEXT){ sp+='\n\n'+OPENING_TEXT; }
+  if(TURNS===0){ sp+='\n\n'+FIRST_CHAPTER; }
+  if(TURNS===0&&OPENING_TEXT){ sp+='\n\n'+OPENING_TEXT; }
+  var pd=premiseDirective();if(pd)sp+='\n\n'+pd;
   if(NAMES){ sp+='\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n'+NAMES; }
   if(OUTLINE){ sp+='\n\n【剧情备忘——保持目标与因果连续的编剧笔记，不是悬念清单】\n'+OUTLINE+'\n（剧情实质推进时才输出更新版【大纲】块）'; }
   var ss=stateSummary();
@@ -2152,7 +2166,7 @@ function buildSystemPrompt(recentText){
       if(!pl||pinChars+pl.length>6000)continue;
       pinLines.unshift(pl); pinChars+=pl.length;
     }
-    sp+='\n\n【不可更改的锁定设定——最高优先级，永远遵守】\n'+pinLines.join('\n');
+    sp+='\n\n【不可更改的锁定设定——除程序身份档案与权威角色卡外的最高优先级】\n'+pinLines.join('\n')+'\n若其中某条旧记录与主角身份档案冲突，忽略该旧记录。';
   }
   var loreBlocks=getRelevantLore(recentText||'');
   if(loreBlocks){ sp+='\n\n【相关背景资料——本回合参考】\n'+loreBlocks; }
@@ -2208,6 +2222,49 @@ function promptAddPin(){
 function runtimeBackup(){
   return JSON.parse(JSON.stringify({gstate:GAME_STATE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,turns:TURNS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,outline:OUTLINE,names:NAMES,stateActive:STATE_ACTIVE,sheetArmed:SHEET_INIT_ARMED}));
 }
+
+function premiseDirective(){
+  if(!PREMISE_STATE||PREMISE_STATE.kind!=='transmigration')return '';
+  var n=Math.max(0,TURNS-(Number(PREMISE_STATE.startedAt)||0));
+  var base='【穿越前提状态机——覆盖“无限停留现实世界”的倾向】本局已经选定游戏世界/异世界穿越为故事前提。不得替玩家作出点击、接受、上线或心理决定；但服务器停服、设备异常、断电、空间错位、身体失重等外部事件可以自行发生。玩家拒绝或忽略某个入口，只会改变穿越路径与当下反应，不会取消本局前提。每回合仍只推进一个阶段并在可反应处停下。';
+  if(n===0)return base+'当前阶段0：原世界日常。只建立生活与第一项眼前刺激，不完成穿越。';
+  if(n===1)return base+'当前阶段1：回应与逼近。完整回应玩家刚才的行动；若玩家主动触发，可让转移征兆开始。若玩家忽略线索，世界照常运转并出现另一种与选择无关的直接征兆，不能把玩家劝回同一按钮。';
+  if(n===2)return base+'当前阶段2：阈限事件。本回合必须让穿越过程客观开始，例如停服时刻真正到来、连接被异常接管、空间或感官发生不可逆变化；这不是替玩家选择。重点描写过程，并在玩家仍能反应或观察的位置停下，不能继续写现实生活支线。';
+  if(n===3)return base+'当前阶段3：转移途中。完整描写时间、空间、身体、意识或数据层面的过渡，让玩家能够尝试观察、挣扎、呼喊或保持不动；本回合不得又退回普通现实日常，结尾接近或刚触及落点。';
+  if(n===4)return base+'当前阶段4：首次落地。本回合进入新世界并只呈现最初可感知环境与一个迫近的互动点；不得总结“已经适应数日”，不得一次讲完身份、系统和世界说明。';
+  if(n<=6)return base+'当前阶段5：落地探索与适应。穿越已经完成，故事重心留在新世界；身份、身体、游戏规则和能力只能由玩家逐项探索，不自动全知。';
+  return '';
+}
+
+// ── PLAYER CANON: exact identity namespaces, never inferred from summaries ──
+function parseCanonText(text){
+  var out={};String(text||'').split(/[\n；;]/).forEach(function(line){
+    var m=line.match(/^\s*([^=：:]{1,20})\s*[=：:]\s*(.+?)\s*$/);if(!m)return;
+    var k=m[1].trim(),v=m[2].trim();if(k&&v)out[k]=v.substring(0,100);
+  });return out;
+}
+function canonSummary(){
+  var ks=Object.keys(PLAYER_CANON||{});if(!ks.length)return '';
+  return ks.map(function(k){return '字段「'+k+'」=「'+PLAYER_CANON[k]+'」';}).join('；');
+}
+function renderCanon(){
+  var c=document.getElementById('canon-list');if(!c)return;var ks=Object.keys(PLAYER_CANON||{});c.innerHTML='';
+  if(!ks.length){c.innerHTML='<span class="no-quest">— 尚未锁定身份映射 —</span>';return;}
+  ks.forEach(function(k){
+    var d=document.createElement('div');d.className='pin-item';
+    var cat=document.createElement('span');cat.className='pin-cat';cat.textContent=k;
+    var tx=document.createElement('span');tx.className='pin-txt';tx.textContent=PLAYER_CANON[k];tx.title='点击修改';tx.onclick=function(){editCanon(k);};
+    var x=document.createElement('button');x.className='pin-x';x.textContent='✕';x.onclick=function(){if(confirm('删除身份字段「'+k+'」？')){delete PLAYER_CANON[k];renderCanon();autoSave();}};
+    d.appendChild(cat);d.appendChild(tx);d.appendChild(x);c.appendChild(d);
+  });
+}
+function promptAddCanon(){
+  if(LOADING)return;var k=prompt('字段名称（例如：现实姓名、游戏ID、游戏角色名、穿越后姓名、当前身份）：');if(!k||!k.trim())return;k=k.trim().substring(0,20);
+  var v=prompt('「'+k+'」的准确内容：');if(!v||!v.trim())return;PLAYER_CANON[k]=v.trim().substring(0,100);renderCanon();autoSave();
+}
+function editCanon(k){
+  if(LOADING)return;var v=prompt('修改「'+k+'」：',PLAYER_CANON[k]);if(v===null)return;if(!v.trim()){delete PLAYER_CANON[k];}else PLAYER_CANON[k]=v.trim().substring(0,100);renderCanon();autoSave();
+}
 function restoreRuntime(b){
   if(!b)return;
   GAME_STATE=b.gstate||freshGameState();QUESTS=b.quests||{main:[],side:[]};INVENTORY=b.inv||GAME_STATE.inv||[];SKILLS=b.skills||GAME_STATE.skills||[];TURNS=b.turns||0;WORLD_CLOCK=b.wclock||0;EVENT_THRESHOLD=b.ethresh||8;OUTLINE=b.outline||'';NAMES=b.names||'';STATE_ACTIVE=b.stateActive!==false;
@@ -2234,12 +2291,12 @@ function undoTurn(){
 
 function startGame(){
   HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0; OUTLINE=''; NAMES='';
-  GAME_STATE=freshGameState(); STATE_ACTIVE=true; TURN_BACKUPS=[]; SHEET_INIT_ARMED=false; DNA_PICKS=null;
+  GAME_STATE=freshGameState(); STATE_ACTIVE=true; TURN_BACKUPS=[]; SHEET_INIT_ARMED=false; PLAYER_CANON=parseCanonText(PREFS.canon||''); PREMISE_STATE={kind:'none'}; DNA_PICKS=null;
   LOREBOOK=((WORLDS[WORLD]&&WORLDS[WORLD].lorebook)||[]).slice();
   document.getElementById('slog').innerHTML='';
   var d=document.getElementById('sdsp'); d.textContent='— 尚未揭示 —'; d.style.color='var(--dm)';
   var ig=document.getElementById('inv-grid'); if(ig) ig.innerHTML='<span class="inv-empty">— 空 —</span>';
-  renderSlots(); renderQuests(); renderPins(); renderLore(); renderNpcs(); renderInventory([]); renderSkills([]); renderCharacterSheet();
+  renderSlots(); renderQuests(); renderPins(); renderLore(); renderNpcs(); renderCanon(); renderInventory([]); renderSkills([]); renderCharacterSheet();
   rollBlueprint();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
   addBlk('sys','▸ 本局开局变体：'+OPENING_PICK+'（不满意可点「完全重置」重抽）');
@@ -2326,6 +2383,7 @@ async function directorPass(playerInput){
     +'角色属性:'+attrs+'\n'
     +'角色技能:'+(GAME_STATE.skills.join('、')||'无')+'\n'
     +'角色天赋:'+((GAME_STATE.talents||[]).join('、')||'无')+'\n'
+    +'主角身份档案:'+(canonSummary()||'尚无锁定字段')+'\n'
     +'人物关系:'+(Object.keys(GAME_STATE.npcs||{}).slice(-10).map(function(n){var v=GAME_STATE.npcs[n];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+')';}).join('；')||'无')+'\n'
     +'最近剧情:\n'+recent+'\n\n'
     +'玩家本回合输入:'+playerInput+'\n\n'
@@ -2345,6 +2403,7 @@ async function directorPass(playerInput){
 
 function authorNote(){
   var an='【本回合】只完成玩家明确行动及其直接反馈，在下一个决策边界前停下。心理活动未说出口；NPC只有有限视角。篇幅服从内容，允许自然细节，不新增无关事件。末尾给2-4个眼前行动参考并允许自由输入。';
+  var ci=canonSummary();if(ci)an+='【本回合身份核对】'+ci+'。现实姓名、游戏ID、角色名和当前身份严格分栏，禁止互换。';
   return an;
 }
 function extractSheetInit(text){
@@ -2406,6 +2465,7 @@ async function _runTurn(){
       if(ruling.scene_note) rt+=String(ruling.scene_note)+' ';
       if(ruling.npc) rt+='在场NPC的真实态度：'+ruling.npc;
       if(ruling.mainline) rt+='本回合与主线的联系：'+ruling.mainline;
+      var ci=canonSummary();if(ci)rt+='身份核对：'+ci+'；各字段禁止互换。';
       rt+='只完成玩家这一步及直接反馈，在新的选择或表态前停下。篇幅服从内容，可保留自然的生活与人物细节，不新增无关事件。末尾给2-4个眼前行动参考并允许自由输入；状态确有变化时才输出【STATE】。';
       noteContent=rt;
     } else {
