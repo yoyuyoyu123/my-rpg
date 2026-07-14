@@ -1528,7 +1528,6 @@ var QUESTS={main:[],side:[]}, INVENTORY=[], SKILLS=[];
 var PINS=[]; // locked facts: {id, text, category}
 var WORLD_CLOCK=0; // turns since last world event
 var EVENT_THRESHOLD=8; // rising threshold for background world events
-var LORE_ACTIVE=[]; // currently injected lore chunk names
 var LOREBOOK=[]; // world book entries: {id,name,keywords[],text,cat}
 var TURNS=0; // player turns this run
 var OUTLINE=''; // JS-owned latest hidden outline (survives even if model forgets to re-output)
@@ -1544,7 +1543,7 @@ var PREFS={tone:'',skeleton:'',opening:'',scene:'',entry:'',era:'',role:'',prof:
 var PLAYER_CANON={}; // program-owned identity namespace; summaries and AI cannot overwrite it
 var WORLD_PRESET=''; // second-level flavor preset id chosen for the selected world // player taste constraints from the pace screen
 var PREF_MAPS={
-  tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'市井烟火':['市井烟火','群像生活流'],'荒诞喜剧':['荒诞喜剧','讽刺寓言'],'严肃正剧':['严肃正剧','冷峻现实'],'黑色悬疑':['冷峻现实']},
+  tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'市井烟火':['市井烟火','群像生活流'],'荒诞喜剧':['荒诞喜剧','讽刺寓言'],'严肃正剧':['严肃正剧','冷峻现实'],'黑色悬疑':['黑色悬疑']},
   skeleton:{'冒险探索':['旅行见闻线','探索发现线','公开委托线'],'经营生活':['安身立业线','建设经营线','社区生活线','职业成长线'],'争锋上位':['竞技争锋线','权谋上位线','学习修炼线'],'恩怨情仇':['复仇线','救赎线','守护责任线','归乡重建线'],'悬疑真相':['悬疑真相线','身份秘密线','卧底潜伏线']},
   opening:{'经典问答':['经典问答'],'平静日常切入':['普通一天','工作现场','抵达新地','熟人见面','小麻烦','公开委托','自由闲暇'],'戏剧性切入':['错位苏醒','危机切入','事件余波','他人视角']}
 };
@@ -1554,15 +1553,7 @@ var OPENING_STYLES_X=[
   {n:'事件余波',d:'某件大事刚刚结束（葬礼后/战败后/被逐出师门后/失业后），主角站在它的余波里，故事从收拾残局开始。'},
   {n:'他人视角',d:'第一幕先借一个路人或配角的眼睛看到主角登场，第二幕再切回主角本人。'}
 ];
-var DNA_SKELETONS_X=[
-  ['复仇线','仇不止一层，最上面那层出乎意料；报复的每一步都在改变主角自己'],
-  ['救赎线','一桩已经犯下的错需要漫长弥补，受害者不欠主角原谅'],
-  ['权谋上位线','从边缘向核心爬，每上一级都要交换或放弃某样东西'],
-  ['悬疑真相线','表面事件之下真相层层剥开，越接近真相越伤人'],
-  ['身份秘密线','主角藏着一个暴露即毁灭的秘密，瞒的成本越来越高'],
-  ['卧底潜伏线','身在对方阵营，每天都在暴露边缘，立场逐渐动摇']
-];
-var TAG_FREQ=null, CAT_TAGS=null, DNA_PICKS=null;
+var TAG_FREQ=null, CAT_TAGS=null;
 var TONE_TAG_MAP={
   '欢乐废萌':['轻松吐槽','喜剧','误解喜剧','荒诞喜剧','日轻会话感','黑色幽默'],
   '轻松爽快':['轻松吐槽','热血王道','低压力叙事','喜剧'],
@@ -1571,7 +1562,7 @@ var TONE_TAG_MAP={
   '热血王道':['热血王道','青春酸甜'],
   '严肃正剧':['成熟正剧','冷峻现实','哲学思辨','职业写实','极简克制','心理关系剧'],
   '黑色悬疑':['悬疑紧张','心理恐怖','压抑黑暗','黑色幽默','冷峻现实'],
-  '冷峻现实':['冷峻现实','压抑黑暗','悬疑紧张','心理恐怖','成熟正剧','哲学思辨'],
+  '冷峻现实':['冷峻现实','成熟正剧','哲学思辨','职业写实','极简克制'],
   '荒诞喜剧':['荒诞喜剧','讽刺寓言','误解喜剧','黑色幽默']
 };
 var ENGINE_BUCKETS={
@@ -1611,6 +1602,16 @@ var ADV_BASIC_LINKS={
   era:['pref-era'], rolepos:['pref-role'], relation:['pref-relation'], growth:['pref-growth'],
   storyengine:['pref-skeleton'], pressure:['pref-conflict'], style:['pref-tone'],
   origin:['pref-entry','pref-transmode'], form:['pref-transmode'], sourceframe:['pref-entry','pref-transmode']
+};
+var TONE_ENGINE_BUCKETS={
+  '欢乐废萌':['日常单元剧','群像生活流','职业成长','旅行见闻'],
+  '轻松爽快':['冒险探索','职业成长','旅行见闻','日常单元剧'],
+  '温馨治愈':['日常单元剧','群像生活流','职业成长','店铺经营'],
+  '市井烟火':['日常单元剧','群像生活流','职业成长','店铺经营'],
+  '热血王道':['冒险探索','职业成长','旅行见闻'],
+  '严肃正剧':['职业成长','旅行见闻','群像生活流'],
+  '冷峻现实':['职业成长','旅行见闻','群像生活流'],
+  '荒诞喜剧':['日常单元剧','群像生活流','旅行见闻']
 };
 function buildAdvancedPrefs(){
   var box=document.getElementById('adv-pref-options'); if(!box||box.dataset.ready)return;
@@ -1693,8 +1694,6 @@ var REVEAL_TIMING=[
   '保留前世常识与少量生活记忆，具体细节在相关场景自然想起，不作为悬疑线',
   '来历并不重要——主角接受当前人生，故事重心是现在的身份、关系与生活'
 ];
-function rollOpening(){ /* merged into rollBlueprint */ }
-
 function rollBlueprint(){
   rollTone();
   // A compact built-in ontology has no work samples, but is still useful for
@@ -1703,9 +1702,9 @@ function rollBlueprint(){
   var engine='',conflict='',prof='',pos='',rel='',growth='',toneTag='',anchors=[];
   if(dbOK){
     toneTag=weightedDraw('tone',TONE_TAG_MAP[STORY_TONE]||null);
-    var engineAllowed=(PREFS.skeleton&&ENGINE_BUCKETS[PREFS.skeleton])||null;
-    var lightTone=['欢乐废萌','轻松爽快','温馨治愈','市井烟火','荒诞喜剧'].indexOf(STORY_TONE)>=0;
-    var confAllowed=PREFS.skeleton==='恩怨情仇'?VENDETTA_CONFLICTS:(lightTone?LIGHT_CONFLICTS:null);
+    var engineAllowed=(PREFS.skeleton&&ENGINE_BUCKETS[PREFS.skeleton])||TONE_ENGINE_BUCKETS[STORY_TONE]||null;
+    var transparentTone=['欢乐废萌','轻松爽快','温馨治愈','市井烟火','荒诞喜剧','热血王道','严肃正剧','冷峻现实'].indexOf(STORY_TONE)>=0;
+    var confAllowed=PREFS.skeleton==='恩怨情仇'?VENDETTA_CONFLICTS:(transparentTone?LIGHT_CONFLICTS:null);
     var hist=[]; try{hist=JSON.parse(localStorage.getItem('wuji_dna_hist')||'[]');}catch(e){}
     var key,tries=0;
     do{
@@ -1719,7 +1718,6 @@ function rollBlueprint(){
     pos=Math.random()<0.6?weightedDraw('narrative_position',null):'';
     rel=weightedDraw('relationship',null);
     growth=weightedDraw('growth_mode',null);
-    DNA_PICKS={engine:engine,conflict:conflict,prof:prof,pos:pos,rel:rel,growth:growth,toneTag:toneTag};
     var drawn=[engine,conflict,rel,prof,growth,toneTag].filter(Boolean);
     function scoreW(min){return TAG_WORKS.map(function(w){var sc=(w.tags||[]).filter(function(t){return drawn.indexOf(t)>=0;}).length;return{w:w,sc:sc};}).filter(function(x){return x.sc>=min;}).sort(function(a,b){return b.sc-a.sc;}).slice(0,8);}
     var pool=scoreW(2); if(pool.length<2)pool=scoreW(1);
@@ -1729,7 +1727,6 @@ function rollBlueprint(){
     var ag=DNA_ANTAGONISTS[Math.floor(Math.random()*DNA_ANTAGONISTS.length)];
     engine=sk[0]+'——'+sk[1];
     conflict=DNA_CONFLICTS[Math.floor(Math.random()*DNA_CONFLICTS.length)]+'（阻力性质：'+ag[0]+'）';
-    DNA_PICKS=null;
   }
   // Player-selected setup options override the hidden blueprint draw.
   if(PREFS.skeleton==='__none__')engine='';
@@ -1843,8 +1840,7 @@ var DNA_ANTAGONISTS=[
   ['自身取舍','困难来自主角不能同时拥有所有选择，而不是隐藏真相'],
   ['普通误会','信息传递或表达造成的小误会，沟通后可以逐步澄清']
 ];
-var DNA_DEVELOPMENTS=['一次认真完成的工作带来新机会','普通熟人因长期相处成为可靠伙伴','学会的新技能改变解决问题的方式','先前兑现的承诺换来现实帮助','经营或建设开始形成稳定收益','一次失败暴露准备不足并促成调整','旅行中了解到一种不同的生活方式','竞争者在关键时刻选择公平合作','不起眼的日常积累终于产生明确成果'];
-var STORY_TONE='', TONE_LINE='', TONE_DESC='', TONE_TRANS='';
+var STORY_TONE='', TONE_DESC='', TONE_TRANS='';
 var DNA_TONES=(function(){
   var defs=[
     ['欢乐废萌','没有人苦大仇深，问题经常以滑稽的方式解决甚至自行消失，吐槽和笑点是日常的主要养分',2],
@@ -1854,6 +1850,7 @@ var DNA_TONES=(function(){
     ['市井烟火','鸡毛蒜皮与人情世故，冲突来自生活本身：钱、面子、家长里短',2],
     ['严肃正剧','认真但不阴暗，信息基本透明，冲突摆在明面上较量',1],
     ['冷峻现实','问题可以严肃，困难可以真实，但原因与利益关系尽量摆在明面上',1],
+    ['黑色悬疑','真相需要主动调查，悬念必须有证据链；普通人仍按自己的有限认知生活',1],
     ['荒诞喜剧','世界有点不对劲但没人当回事，一本正经地胡说八道',1]
   ];
   var pool=[];
@@ -1866,10 +1863,9 @@ function rollTone(){
   if(tpref){ tpool=DNA_TONES.filter(function(x){return tpref.indexOf(x[0])>=0;}); if(!tpool.length)tpool=DNA_TONES; }
   var t=tpool[Math.floor(Math.random()*tpool.length)];
   STORY_TONE=t[0]; TONE_DESC=t[1];
-  if(t[0]==='冷峻现实'||t[0]==='黑色悬疑'){ TONE_TRANS='暗牌——存在待揭开的真相，允许铺设悬念与暗流'; }
+  if(t[0]==='黑色悬疑'){ TONE_TRANS='暗牌——存在待揭开的真相，但线索必须有现实来源，未知不等于所有NPC都知情'; }
   else if(Math.random()<0.6){ TONE_TRANS='明牌——主角与玩家都清楚处境和目标，看点是怎么做成而不是猜真相；不存在幕后阴谋网'; }
   else{ TONE_TRANS='半明牌——目标清楚，部分背景随剧情自然了解即可，不存在处处针对主角的暗流'; }
-  TONE_LINE='【本局基调：'+t[0]+'】'+t[1]+'。信息牌面：'+TONE_TRANS;
 }
 // (merged into rollBlueprint)
 
@@ -2125,7 +2121,7 @@ function migrateGameState(old){
   var n=old.revealed===false?freshGameState():revealedGameState(old);
   Object.keys(n.attrs).forEach(function(k){if(isFinite(Number(old.attrs&&old.attrs[k])))n.attrs[k]=Math.max(0,Math.min(20,Number(old.attrs[k])));});
   Object.keys(n.res).forEach(function(k){if(isFinite(Number(old.res&&old.res[k])))n.res[k]=Math.max(0,Number(old.res[k]));});
-  n.talents=Array.isArray(old.talents)?old.talents.slice():[];n.inv=normalizeInventory(old.inv);n.skills=normalizeSkills(old.skills);n.loadout=old.loadout&&typeof old.loadout==='object'?Object.assign({activeCoreId:null},old.loadout):{activeCoreId:null};n.skillCapacity=clampNum(old.skillCapacity,1,100,20);n.ledger=Array.isArray(old.ledger)?old.ledger.slice(-300):[];n.loc=old.loc||'';n.npcs=old.npcs&&typeof old.npcs==='object'?old.npcs:{};n.lastCheck=old.lastCheck||null;n.version=4;return n;
+  n.talents=Array.isArray(old.talents)?old.talents.slice():[];n.inv=normalizeInventory(old.inv);n.skills=normalizeSkills(old.skills);n.loadout=old.loadout&&typeof old.loadout==='object'?Object.assign({activeCoreId:null},old.loadout):{activeCoreId:null};n.skillCapacity=clampNum(old.skillCapacity,1,100,20);n.ledger=Array.isArray(old.ledger)?old.ledger.slice(-300):[];n.loc=old.loc||'';n.npcs=old.npcs&&typeof old.npcs==='object'?old.npcs:{};Object.keys(n.npcs).forEach(function(k){var v=n.npcs[k]||{};v.knows=Array.isArray(v.knows)?v.knows.map(String).filter(Boolean).slice(0,30):[];n.npcs[k]=v;});n.lastCheck=old.lastCheck||null;n.version=4;return n;
 }
 
 // Build world cards
@@ -2348,8 +2344,6 @@ function returnToCurrentGame(){
   document.getElementById('stxt').textContent=((WORLDS[WORLD]&&WORLDS[WORLD].name)||'当前游戏')+' · '+((PACE_CONFIG[PACE]&&PACE_CONFIG[PACE].label)||'');
   renderDailyBtns();renderCharacterSheet();document.getElementById('pinp').focus();
 }
-function togglePanel(){openGamePanel('settings');}
-
 function appendArchiveGroup(root,title,entries,renderer){
   var sec=document.createElement('section');sec.className='archive-group';
   var h=document.createElement('div');h.className='archive-group-title';h.textContent=title;sec.appendChild(h);
@@ -2606,13 +2600,13 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,toneline:TONE_LINE,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; STATE_ACTIVE=true; TURN_BACKUPS=Array.isArray(sv.turnBackups)?sv.turnBackups.slice(-30):[]; SHEET_INIT_ARMED=!!sv.sheetArmed; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; TONE_LINE=sv.toneline||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; STATE_ACTIVE=true; TURN_BACKUPS=Array.isArray(sv.turnBackups)?sv.turnBackups.slice(-30):[]; SHEET_INIT_ARMED=!!sv.sheetArmed; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
@@ -2898,14 +2892,12 @@ function launchGame() {
 }
 
 var CORE_RULES='【文字RPG叙事契约】\n职责：玩家决定主角；AI只负责世界、NPC与玩家行动的直接结果；程序负责检定、数值、物品、技能和长期状态。后台裁定与权威角色卡是不可改判的事实。\n一、玩家主权与授权边界\n1. 玩家输入是意图，不自动等于成功；但只授权其中明确表达的动作及不可分割的直接过程。完成这一步后，在新的选择、风险、承诺、交易、转场或需要表态处停下。\n2. 查看不等于取得，询问不等于购买，靠近不等于接触，听见不等于回应，拥有选项不等于已经选择。不得替玩家点击、答应、拒绝、说话、接受任务、决定去向、使用物品或总结心理结论。\n3. 心理活动和未说出口的话NPC永远听不见；拿不准时默认没有说出口。玩家明确忽略或拒绝某条线索后，不得让同一钩子跟随、换皮或借其他人物强拉回来。\n二、节奏与时间\n4. 时间默认连续，日常、职业、观察、对话、赶路和适应都可以成为完整回合。只有玩家明确要求快进，或当前动作本身明确包含长时间，才使用蒙太奇；必须说明经过时间并结算真实变化。\n5. 穿越、召唤、觉醒、入职、加入组织等重大转折分阶段游玩，每个可反应、可选择的节点都交还玩家，不得用摘要一口气写完。\n三、世界与NPC\n6. NPC拥有自己的生活、立场与有限视角；不知道就说不知道。绝大多数人没有秘密，问路就给方向，买卖就报价，寒暄可以只是寒暄。不要用神秘停顿、欲言又止、幕后观察者或凭空阴谋制造戏剧，也不要让世界围着主角运转。\n7. 失败、拒绝、平淡与无事发生都是合法结果。危险和代价必须有情境依据；普通无风险行动不检定，不用刚好赶到、突然放水或强制任务维持剧情。\n四、文风、命名与章节\n8. 一回合一个重点，篇幅服从内容；允许感官、职业和生活细节，但不重复玩家输入，不为写长而新增事件，不把每个细节都写成伏笔。\n9. 新地名、势力名和人名使用真实语言中的地理、姓氏、行业、方言与历史构词法，例如陈家渡、三里坡、广盛号、下瓦窑、槐树巷。除非玩家或原作已经明确使用，禁止自动生成青石镇、黑风寨、悦来客栈等模板名，以及暗影兄弟会、血色黎明等中二直译名。气氛来自事件，不靠夸张名字。\n10. 只有进入真正的新阶段、首次落地新世界、章节目标转换或发生较大时间跳跃时，正文第一行输出一次【章：四到十字标题】；普通回合不得重复章节标题。\n五、输出与状态协议\n11. 每回合末尾提供2-4个眼前可做的行动参考，数量服从场景，保留“或输入任何你想做的事”。选项不暗示最优解，不替玩家规划后续人生。\n12. 正文不打印另一套状态栏。数值、资源、物品、技能、装备、地点或重要关系确实变化时，必须输出隐藏【STATE】块；允许字段为attr_delta、res_delta、inv_delta、inv_upsert、equip_set、skill_upsert、skill_progress、active_skill、talent_add、talent_rm、loc、npc_set、npc_rm，具体JSON结构服从紧随其后的“角色卡与状态协议”。没有真实变化就不输出。普通对话、查看面板和整理记忆不消耗生理资源。\n13. 任务只有在玩家明确接受、承诺或主动设定目标后才登记。剧情实质推进时才更新隐藏【大纲】块；普通路人无需进入长期人物记录。';
-var INTERACTION_RULES='';
 var OPTION_RULES='【行动选项格式】回复末尾必须先单独写“选项：”，再提供2-4项；每项必须是“数字+空格+完整行动描述”，例如“1 检查弹窗来自哪个程序”。不得只输出序号、单个数字或空选项。选项只是平等的参考，不存在作者预设的正确路线；必须允许忽略线索、拒绝任务、继续原本生活或什么也不做，且这些选择不会被惩罚性地强行拉回同一剧情。最后写“或输入任何你想做的事”。正文结束处不得用“该……了”“看来只能……”“你决定……”等句子替玩家形成目标或催促行动。';
-var AGENCY_RULES='【禁止代替玩家】旁白可以描写玩家开场前已经在做的日常、非自主的感官和身体反应，但外部刺激出现后，任何新的主动行为都必须由玩家输入授权。不得擅自写玩家点开链接、关闭页面、回复消息、检查时间、拿起武器、出门、上线、接受委托或得出行动结论。场景应停在尚未回应的刺激上，不附加催促性收尾。剧情钩子不是强制入口；忽略、拒绝、绕开或继续生活都必须产生真实而可持续的后续。重大事件不得依赖玩家完成唯一任务或按下唯一按钮；若世界设定要求最终发生穿越，应由外部事件或多条不同路径自然实现，不能反复逼玩家选择同一入口。';
-// Universal action-authority contract. This replacement applies to every turn,
-// not only openings or transmigration scenes.
-AGENCY_RULES='【全回合行动授权协议——始终生效】每一回合先区分“玩家明确做了什么”和“叙事者觉得玩家接下来大概会做什么”。只能叙述前者及其连续、直接的结果，后者一律停下等待输入。玩家说“去商店”可写完整路程和抵达；但抵达后购买、交谈、接受推荐或离开都需要新授权。玩家说“问价格”只授权提问和听到回答，不授权购买。玩家说“攻击”不授权追杀、搜尸或继续前进。玩家说一句台词不授权叙事者补写后续台词、态度、承诺或内心结论。\n没有玩家授权时，主角可以有非自主的感官、疼痛、反射和外界可观察的生理反应，但不得主动点击、查看、回复、拿取、使用、移动、答应、拒绝、接受任务、建立关系、选择目标、睡觉、醒来、快进时间或总结“已经接受现实”。NPC和世界可以主动行动，但其行动只能创造局面，不能替主角完成回应。\n任何场景、任务和关系都不存在作者预设的正确路线。玩家可以忽略、拒绝、离开、绕行、失败或继续原本生活；必须认真模拟这些选择的自然后续，禁止用换皮事件、NPC反复劝说、倒计时突袭或无关巧合把玩家强拉回原路线。正文不得用“该行动了”“看来只能”“你决定”“你下意识地”之类句子偷渡玩家行为。此协议适用于序章以及之后所有对话、探索、战斗、交易、调查、恋爱、任务和日常回合。';
+var AGENCY_RULES='【全回合行动授权协议——始终生效】每一回合先区分“玩家明确做了什么”和“叙事者觉得玩家接下来大概会做什么”。只能叙述前者及其连续、直接的结果，后者一律停下等待输入。玩家说“去商店”可写完整路程和抵达；但抵达后购买、交谈、接受推荐或离开都需要新授权。玩家说“问价格”只授权提问和听到回答，不授权购买。玩家说“攻击”不授权追杀、搜尸或继续前进。玩家说一句台词不授权叙事者补写后续台词、态度、承诺或内心结论。\n没有玩家授权时，主角可以有非自主的感官、疼痛、反射和外界可观察的生理反应，但不得主动点击、查看、回复、拿取、使用、移动、答应、拒绝、接受任务、建立关系、选择目标、睡觉、醒来、快进时间或总结“已经接受现实”。NPC和世界可以主动行动，但其行动只能创造局面，不能替主角完成回应。重大转折可以由外部事件客观发生，但不得依赖玩家按下唯一按钮或完成唯一任务。\n任何场景、任务和关系都不存在作者预设的正确路线。玩家可以忽略、拒绝、离开、绕行、失败或继续原本生活；必须认真模拟这些选择的自然后续，禁止用换皮事件、NPC反复劝说、倒计时突袭或无关巧合把玩家强拉回原路线。正文不得用“该行动了”“看来只能”“你决定”“你下意识地”之类句子偷渡玩家行为。此协议适用于序章以及之后所有对话、探索、战斗、交易、调查、恋爱、任务和日常回合。';
 
 var ANTI_MYSTERY='【生活感与相关性】普通NPC说人话：问路给方向、买卖报价、闲聊就聊眼前话题。信息不完整只能来自不知道/记错/只听说过。禁用：你不该知道、现在还不是时候、别问、我只能告诉你这么多、这座城市不简单，以及无缘无故的停顿、眼神闪烁、神秘微笑。玩家没有询问的背景故事不要主动倾倒；与当前行动无关的世界变化不进入正文。';
+
+var NPC_KNOWLEDGE_RULES='【NPC信息权限——高于蓝图与类型惯例】系统提示、隐藏蓝图、玩家内心、前世记忆、现实姓名、游戏ID、角色面板和“主角是穿越者”均不自动成为世界公开事实。叙事者知道，不等于NPC知道。每名重要NPC只能使用其人物记录knows中已有的事实、玩家当面对其说出口的内容，以及本回合亲眼可见的直接证据；一名NPC知道的事不会自动同步给其他人。陌生言行最多让普通人判断主角是外地人、记忆混乱、缺乏常识或举止奇怪，绝不能直接推出“穿越者、异界灵魂、天命之人、不属于这里”。识魂、预言、读心等能力必须在相遇前已由世界设定或记录明确成立，而且只能得到能力实际能观察到的信息，不能凭能力名称读取完整来历。只有玩家明确告知、可靠证据完成验证或NPC之间确实发生了信息传递，才可用npc_set.knows_add记录新知；猜测不算知道。';
 
 var IDENTITY_FREEDOM='【身份开放规则——覆盖各世界观中的固定列表】世界观提示里出现的职业、种族、出身、阵营、性别、身体形态和社会身份都只是例子，不是可选范围。玩家可以声明任何符合该世界基本规律的身份，也可以要求打破常规；玩家的明确声明优先于预设。主角不默认是人类、勇者、救世主、指挥官、天选者或故事中心。若玩家已经给出某项身份，不得重复询问或擅自改回预设。若需要提问，每次提供4-6个跨度明显的例子，并明确允许玩家自由输入。非人形态必须认真落实身体结构、感官、移动、交流、社会待遇和日常需求，不能只把外观换皮后仍按普通人类书写。';
 
@@ -2934,6 +2926,26 @@ var WORLD_EXPANSIONS={
   isekai:'【异世界身份扩展】采用现代日轻母题库与作品/游戏世界变体；所有身份、关系、性别、种族、身体和职业均由玩家决定。'
 };
 
+var WORLD_EXPANSION_KEYS={wuxia:'wuxia',xianxia:'xianxia',cyber:'cyberpunk',space:'spaceopera',apocalypse:'apocalypse'};
+var PRESET_EXPANSION_KEYS={elona:'elona',undertale:'undertale',tianzai:'arknights',yineng:'esper',tishen:'jojo',zhentan:'discoelysium',dianbo:'zato',tiaojiu:'vallhalla',cthulhu:'cthulhu',scp:'scp'};
+function activeNarrativeRules(){
+  var packs=[],seen={};
+  function add(key,text){if(!text||seen[key])return;seen[key]=true;packs.push(text);}
+  add('ordinary',ANTI_MYSTERY);
+  add('knowledge',NPC_KNOWLEDGE_RULES);
+  add('identity',IDENTITY_FREEDOM);
+  var trans=PREMISE_STATE&&PREMISE_STATE.kind==='transmigration';
+  var frame=trans?String(PREMISE_STATE.frame||''):'';
+  if(trans)add('isekai',ISEKAI_MODERN);
+  if(/游戏|穿书|原作/.test(frame))add('gameworld',GAMEWORLD_VARIANTS);
+  if(/游戏/.test(frame))add('exp-gamerpunk',WORLD_EXPANSIONS.gamerpunk);
+  var presetKey=PRESET_EXPANSION_KEYS[WORLD_PRESET];
+  if(presetKey)add('exp-'+presetKey,WORLD_EXPANSIONS[presetKey]);
+  var worldKey=WORLD_EXPANSION_KEYS[WORLD];
+  if(worldKey)add('exp-'+worldKey,WORLD_EXPANSIONS[worldKey]);
+  return packs.join('\n\n');
+}
+
 function buildSystemPrompt(recentText){
   var w=WORLDS[WORLD];
   var p=PACE_CONFIG[PACE];
@@ -2945,7 +2957,7 @@ function buildSystemPrompt(recentText){
   sp+='\n\n'+AGENCY_RULES;
   var worldPrompt=String(w.prompt||'').replace(/\n【状态栏】[\s\S]*?(?=\n【任务】|$)/,'').replace(/\n【任务】[^\n]*/g,'');
   sp+='\n\n【世界包】\n'+worldPrompt;
-  sp+='\n【角色卡与状态协议——覆盖世界包旧状态栏要求】前端已经显示唯一权威角色卡，正文不要输出另一套方括号状态栏，也不要自行重建属性表。核心属性名固定，只有长期训练、升级或重大伤病确实发生时才能用attr_delta，单回合最多±1；资源只能修改已经存在的键。物品、技能与重要人物是有ID或稳定名称的结构化记录，不得只在正文里声称变化。\n真实变化必须在末尾申报：【STATE】{"attr_delta":{"已有属性名":1},"res_delta":{"已有资源名":-1},"inv_delta":[{"name":"物品原名","delta":-1}],"inv_upsert":[{"name":"新物品","category":"分类","quantity":1,"description":"稳定说明","equipped":false}],"equip_set":{"物品原名":true},"skill_upsert":[{"name":"技能原名","category":"类别","realm":"境界","coefficient":1.0,"proficiency":0,"attribute":"关联属性","description":"稳定效果说明"}],"skill_progress":[{"name":"技能原名","delta":2,"realm":"可选的新境界"}],"active_skill":"技能原名或null","talent_add":[],"talent_rm":[],"npc_set":{"NPC原名":{"rel":"与玩家的已确认关系","att":0,"note":"一句话当前事实"}},"npc_rm":[],"loc":""}【/STATE】。只写实际发生的字段；同名物品增加或消耗用inv_delta，不得重复造新名称；修炼必须更新skill_progress，学会技能必须提供完整档案；只有值得长期记住的具名人物初次建立关系或其关系、态度、现状确实改变时才写npc_set，普通路人不登记；npc_rm只用于关系明确终结且不再需要追踪的人物。没有真实变化就不输出。普通对话、查看面板和整理记忆不消耗生理资源。任务仅在玩家明确接受、承诺或主动设定目标后登记。';
+  sp+='\n【角色卡与状态协议——覆盖世界包旧状态栏要求】前端已经显示唯一权威角色卡，正文不要输出另一套方括号状态栏，也不要自行重建属性表。核心属性名固定，只有长期训练、升级或重大伤病确实发生时才能用attr_delta，单回合最多±1；资源只能修改已经存在的键。物品、技能与重要人物是有ID或稳定名称的结构化记录，不得只在正文里声称变化。\n真实变化必须在末尾申报：【STATE】{"attr_delta":{"已有属性名":1},"res_delta":{"已有资源名":-1},"inv_delta":[{"name":"物品原名","delta":-1}],"inv_upsert":[{"name":"新物品","category":"分类","quantity":1,"description":"稳定说明","equipped":false}],"equip_set":{"物品原名":true},"skill_upsert":[{"name":"技能原名","category":"类别","realm":"境界","coefficient":1.0,"proficiency":0,"attribute":"关联属性","description":"稳定效果说明"}],"skill_progress":[{"name":"技能原名","delta":2,"realm":"可选的新境界"}],"active_skill":"技能原名或null","talent_add":[],"talent_rm":[],"npc_set":{"NPC原名":{"rel":"与玩家的已确认关系","att":0,"note":"一句话当前事实","knows_add":["该NPC新确认的具体事实"],"knows_rm":["该NPC已明确推翻的旧事实"]}},"npc_rm":[],"loc":""}【/STATE】。只写实际发生的字段；同名物品增加或消耗用inv_delta，不得重复造新名称；修炼必须更新skill_progress，学会技能必须提供完整档案；只有值得长期记住的具名人物初次建立关系或其关系、态度、现状、独立知情事实确实改变时才写npc_set，普通路人不登记。knows_add只能记录玩家当面对其说出口、该NPC直接观察并可靠确认、或剧情明确发生信息传递的事实；猜测、旁白知识和隐藏蓝图禁止写入。npc_rm只用于关系明确终结且不再需要追踪的人物。没有真实变化就不输出。普通对话、查看面板和整理记忆不消耗生理资源。任务仅在玩家明确接受、承诺或主动设定目标后登记。';
   if(!GAME_STATE.revealed){
     var schema=STATE_SCHEMAS[WORLD]||STATE_SCHEMAS.__custom__;
     sp+='\n【未揭示角色卡——最高优先级】当前尚未建立数值。穿越前、游戏外或身份尚未由玩家说明时，按叙事常识表现普通人的能力，不显示异世界数值，不掷骰，不暗中预设职业、Build、技能或天赋。只有玩家明确主动查看状态/面板/自身能力，或玩家已经亲自完成使能力可被认识的操作时，才可在回复最末输出一次【SHEET_INIT】JSON【/SHEET_INIT】。仅抵达异世界、醒来、被召唤或看见提示不构成授权。初始化属性键必须且只能是：'+schema.attrs.join('、')+'；数值0-10，根据玩家此前明确描述分配，未得到支持的一律为1。资源键必须且只能是：'+Object.keys(schema.res).join('、')+'。格式：【SHEET_INIT】{"attrs":{},"res":{},"talents":[],"skills":[{"name":"名称","category":"类别","realm":"境界","coefficient":1,"proficiency":0,"attribute":"关联属性","description":"效果"}]}【/SHEET_INIT】。没有确凿技能就返回空数组，不得补造玩家未声明的经历或专长。';
@@ -2974,6 +2986,8 @@ function buildSystemPrompt(recentText){
   }
   var loreBlocks=getRelevantLore(recentText||'');
   if(loreBlocks){ sp+='\n\n【相关背景资料——本回合参考】\n'+loreBlocks; }
+  var activeRules=activeNarrativeRules();
+  if(activeRules)sp+='\n\n【本局实际启用的叙事规则包——只包含当前路线相关内容】\n'+activeRules;
   return sp;
 }
 
@@ -2982,13 +2996,12 @@ function getRelevantLore(recentText){
   var w = WORLDS[WORLD];
   var pool = ((w&&w.lore)||[]).concat(LOREBOOK);
   if(!pool.length) return '';
-  LORE_ACTIVE = [];
   var hay = (recentText||'').toLowerCase();
   var picked = [];
   pool.forEach(function(chunk){
-    if(chunk.always){ picked.push(chunk); LORE_ACTIVE.push(chunk.name); return; }
+    if(chunk.always){ picked.push(chunk); return; }
     var hit = (chunk.keywords||[]).some(function(kw){ return hay.indexOf(kw.toLowerCase())>=0; });
-    if(hit){ picked.push(chunk); LORE_ACTIVE.push(chunk.name); }
+    if(hit){ picked.push(chunk); }
   });
   if(picked.length>6) picked = picked.slice(0,6);
   return picked.map(function(c){ return '['+c.name+'] '+c.text; }).join('\n\n');
@@ -3096,7 +3109,7 @@ function undoTurn(){
 
 function startGame(){
   HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0; OUTLINE=''; NAMES='';
-  GAME_STATE=freshGameState(); STATE_ACTIVE=true; TURN_BACKUPS=[]; SHEET_INIT_ARMED=false; PLAYER_CANON=parseCanonText(PREFS.canon||''); PREMISE_STATE={kind:'none'}; DNA_PICKS=null;
+  GAME_STATE=freshGameState(); STATE_ACTIVE=true; TURN_BACKUPS=[]; SHEET_INIT_ARMED=false; PLAYER_CANON=parseCanonText(PREFS.canon||''); PREMISE_STATE={kind:'none'};
   var hud=document.getElementById('charhud');if(hud)hud.classList.remove('collapsed','open');var resume=document.getElementById('resume-game-link');if(resume)resume.style.display='none';
   LOREBOOK=((WORLDS[WORLD]&&WORLDS[WORLD].lorebook)||[]).slice();
   document.getElementById('slog').innerHTML='';
@@ -3116,11 +3129,13 @@ function resetGame(){if(LOADING)return;if(!confirm('确定完全重置当前游�
 
 function stateSummary(){
   syncStateCollections();
+  var nk=Object.keys(GAME_STATE.npcs||{});
+  var npcText=nk.length?'人物认知(各自独立，不得共享):'+nk.slice(-12).map(function(n){var v=GAME_STATE.npcs[n]||{},kn=Array.isArray(v.knows)?v.knows:[];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+(v.note?','+v.note:'')+',已知='+(kn.length?kn.join('／'):'无额外秘密')+')';}).join('；'):'';
   if(!GAME_STATE.revealed){
     var hidden=['角色卡尚未揭示：不得假定属性值、职业Build或异世界面板，不得进行数值检定。'];
     if(GAME_STATE.inv.length)hidden.push('已确认背包:'+GAME_STATE.inv.map(function(x){return x.name+'×'+x.quantity;}).join('、'));
     if(GAME_STATE.skills.length)hidden.push('已由剧情明确获得但尚未建卡的能力:'+GAME_STATE.skills.map(function(x){return x.name;}).join('、'));
-    if(GAME_STATE.loc)hidden.push('位置:'+GAME_STATE.loc);return hidden.join('｜');
+    if(GAME_STATE.loc)hidden.push('位置:'+GAME_STATE.loc);if(npcText)hidden.push(npcText);return hidden.join('｜');
   }
   var parts=[];
   var ak=Object.keys(GAME_STATE.attrs);
@@ -3131,8 +3146,7 @@ function stateSummary(){
   var rk=Object.keys(GAME_STATE.res);
   if(rk.length)parts.push('资源:'+rk.map(function(k){return k+GAME_STATE.res[k];}).join('/'));
   if(GAME_STATE.loc)parts.push('位置:'+GAME_STATE.loc);
-  var nk=Object.keys(GAME_STATE.npcs||{});
-  if(nk.length)parts.push('人物关系(态度-5敌对~5挚交,变化需渐进):'+nk.slice(-12).map(function(n){var v=GAME_STATE.npcs[n];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+(v.note?','+v.note:'')+')';}).join('；'));
+  if(npcText)parts.push(npcText);
   return parts.join('｜');
 }
 function findInventoryTarget(ref){ref=String(ref||'').trim();return GAME_STATE.inv.find(function(x){return x.id===ref||x.name===ref;});}
@@ -3189,7 +3203,8 @@ function applyStatePatch(p){
   if(p.npc_set&&typeof p.npc_set==='object')Object.keys(p.npc_set).forEach(function(n){
     n=String(n).trim(); if(!n)return;
     var v=p.npc_set[n]||{};
-    var cur=GAME_STATE.npcs[n]||{rel:'',att:0,note:''};
+    var cur=GAME_STATE.npcs[n]||{rel:'',att:0,note:'',knows:[]};
+    if(!Array.isArray(cur.knows))cur.knows=[];
     if(v.rel)cur.rel=String(v.rel).substring(0,12);
     if(v.att!==undefined&&isFinite(Number(v.att))){
       var target=Math.max(-5,Math.min(5,Math.round(Number(v.att))));
@@ -3199,6 +3214,8 @@ function applyStatePatch(p){
       cur.att=target;
     }
     if(v.note)cur.note=String(v.note).substring(0,40);
+    (Array.isArray(v.knows_add)?v.knows_add:[]).forEach(function(f){f=String(f).trim().substring(0,80);if(f&&cur.knows.indexOf(f)<0&&cur.knows.length<30)cur.knows.push(f);});
+    (Array.isArray(v.knows_rm)?v.knows_rm:[]).forEach(function(f){f=String(f).trim();cur.knows=cur.knows.filter(function(x){return x!==f;});});
     GAME_STATE.npcs[n]=cur;
   });
   (Array.isArray(p.npc_rm)?p.npc_rm:[]).forEach(function(n){delete GAME_STATE.npcs[String(n).trim()];});
@@ -3213,10 +3230,6 @@ function extractStatePatches(text){
   while((m=re.exec(String(text)))!==null){var raw=m[1].trim().replace(/^```json/i,'').replace(/^```/,'').replace(/```$/,'').trim();try{var p=JSON.parse(raw);if(p&&typeof p==='object')out.push(p);}catch(e){}}
   return out;
 }
-function extractState(text){
-  var ps=extractStatePatches(text);ps.forEach(applyStatePatch);return ps.length;
-}
-
 function stateChangeLikely(input,reply){
   var s=String(input||'')+' '+String(reply||'').replace(/【(?:STATE|大纲|SHEET_INIT)】[\s\S]*?【\/(?:STATE|大纲|SHEET_INIT)】/g,'');
   return /(获得|得到|拿到|捡到|拾取|收到|领取|买下|购买|买了|付钱|付款|支付|花费|出售|卖出|吃下|吃完|喝下|喝完|服用|使用|消耗|丢弃|交给|归还|装备|卸下|穿上|脱下|学会|领悟|掌握|修炼|训练|熟练|升级|受伤|恢复|治疗|抵达|来到|进入|离开|前往|搬到|住进|加入|离队|死亡)/.test(s);
@@ -3226,7 +3239,7 @@ function compactStateForAudit(s){
 }
 async function reconcileTurnState(before,input,reply,declared){
   var visible=String(reply||'').replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'').substring(0,7000);
-  var prompt='你是文字RPG的确定性状态结算器，不写剧情。根据“回合前权威状态、玩家行动、已经发生的可见结果、叙事模型申报”输出一份相对于回合前状态的完整且最小状态补丁。\n原则：只有可见结果明确完成的变化才结算；意图、准备、尝试、报价、查看、询问不算完成。普通对话、查看背包、整理记忆不消耗饱腹、体力或其他生理资源。不得创造结果里没有的物品、技能、金额或数量；同名物品必须使用原id或原名。进食/消耗用负数inv_delta；获得用正数，只有全新物品才用inv_upsert。技能训练仅在结果明确完成训练时增加熟练度，通常1-5；没有明确进展就不改。地点确实改变才写loc。叙事模型申报只是候选，若与可见结果冲突则忽略。\n只输出一个JSON对象，可用字段：attr_delta,res_delta,inv_delta:[{id或name,delta}],inv_upsert:[完整物品],equip_set:{id或name:true/false},skill_upsert:[完整技能],skill_progress:[{id或name,delta,realm可选}],active_skill,npc_set,npc_rm,loc,talent_add,talent_rm。无变化输出{}。\n回合前：'+JSON.stringify(compactStateForAudit(before))+'\n玩家行动：'+String(input||'').substring(0,1600)+'\n可见结果：'+visible+'\n候选申报：'+JSON.stringify(declared||[]);
+  var prompt='你是文字RPG的确定性状态结算器，不写剧情。根据“回合前权威状态、玩家行动、已经发生的可见结果、叙事模型申报”输出一份相对于回合前状态的完整且最小状态补丁。\n原则：只有可见结果明确完成的变化才结算；意图、准备、尝试、报价、查看、询问不算完成。普通对话、查看背包、整理记忆不消耗饱腹、体力或其他生理资源。不得创造结果里没有的物品、技能、金额或数量；同名物品必须使用原id或原名。进食/消耗用负数inv_delta；获得用正数，只有全新物品才用inv_upsert。技能训练仅在结果明确完成训练时增加熟练度，通常1-5；没有明确进展就不改。地点确实改变才写loc。NPC独立知识只能通过npc_set中的knows_add/knows_rm改变；只有玩家当面对该NPC说出口、该NPC直接观察并可靠确认、或剧情明确发生信息传递时才能knows_add。旁白、隐藏蓝图、玩家内心、异常猜测以及别的NPC知道的事均不得写入。叙事模型申报只是候选，若与可见结果冲突则忽略。\n只输出一个JSON对象，可用字段：attr_delta,res_delta,inv_delta:[{id或name,delta}],inv_upsert:[完整物品],equip_set:{id或name:true/false},skill_upsert:[完整技能],skill_progress:[{id或name,delta,realm可选}],active_skill,npc_set:{NPC名:{rel,att,note,knows_add:[],knows_rm:[]}},npc_rm,loc,talent_add,talent_rm。无变化输出{}。\n回合前：'+JSON.stringify(compactStateForAudit(before))+'\n玩家行动：'+String(input||'').substring(0,1600)+'\n可见结果：'+visible+'\n候选申报：'+JSON.stringify(declared||[]);
   try{
     var res=await doFetch([{role:'user',content:prompt}],400),data=await res.json();if(data.error)return null;if(data.usage&&data.usage.total_tokens)TOKENS+=data.usage.total_tokens;
     var m=chatContent(data).match(/\{[\s\S]*\}/);if(!m)return null;var p=JSON.parse(m[0]);return p&&typeof p==='object'?p:null;
@@ -3248,10 +3261,10 @@ async function directorPass(playerInput){
     +'角色技能:'+(GAME_STATE.skills.map(function(s){return s.name+'('+s.realm+',熟练'+s.proficiency+'%,系数'+s.coefficient+(s.active?',运转中':'')+')';}).join('、')||'无')+'\n'
     +'角色天赋:'+((GAME_STATE.talents||[]).join('、')||'无')+'\n'
     +'主角身份档案:'+(canonSummary()||'尚无锁定字段')+'\n'
-    +'人物关系:'+(Object.keys(GAME_STATE.npcs||{}).slice(-10).map(function(n){var v=GAME_STATE.npcs[n];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+')';}).join('；')||'无')+'\n'
+    +'人物关系与各自知情:'+(Object.keys(GAME_STATE.npcs||{}).slice(-10).map(function(n){var v=GAME_STATE.npcs[n],kn=Array.isArray(v.knows)?v.knows:[];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+',已知='+(kn.length?kn.join('／'):'无额外秘密')+')';}).join('；')||'无')+'\n'
     +'最近剧情:\n'+recent+'\n\n'
     +'玩家本回合输入:'+playerInput+'\n\n'
-    +'先划定行动授权边界：只把玩家明确说出的动作及完成该动作不可分割的连续过程视为已授权；任何新的购买、追问、移动、承诺、攻击、使用、关系决定或时间跨越都不在授权内。scene_note必须写明本回合在哪里停下。\n'
+    +'先划定行动授权边界：只把玩家明确说出的动作及完成该动作不可分割的连续过程视为已授权；任何新的购买、追问、移动、承诺、攻击、使用、关系决定或时间跨越都不在授权内。scene_note必须写明本回合在哪里停下。NPC不得使用其“已知”列表之外的主角秘密；陌生言行不能直接推导穿越身份。\n'
     +'节拍参考：发育（纯日常，让玩家安心积累）/互动（完整回应对话或当前事务）/推进（只推进玩家主动追求的现有目标）/收获（结算实打实的结果）。不要自动循环，不要为了节奏强行制造冲突或钩子；连续日常完全正常。裁定只授权回应玩家明确做出的这一步，不授权叙事者代替玩家继续下一步；若即将出现选择、转场、承诺、点击、接受或拒绝，scene_note必须要求在该节点前停下。玩家忽略钩子或拒绝任务时，应尊重该方向并继续模拟世界，禁止设计换皮事件把玩家强拉回原路线。\n'
     +'检定门槛必须严格：角色卡未揭示时risky必须为false。角色卡已揭示后，只有同时满足①结果确实不确定；②存在正在抵抗的对手、危险环境或技术难题；③失败会立即产生与成功不同的实质后果，risky才为true。普通走路、观察可见物、正常交谈、查阅已掌握资料、吃饭休息、无压力的本职工作一律false。不要为了制造戏剧而检定。\n'
     +'若玩家输入是【时间跳跃】请求：risky填false，beat填发育，scene_note写"用蒙太奇概括跳过的时间并结算收获"。\n'
@@ -3266,7 +3279,7 @@ async function directorPass(playerInput){
 }
 
 function authorNote(){
-  var an='【本回合】只完成玩家明确行动及其直接反馈，在下一个决策边界前停下。心理活动未说出口；NPC只有有限视角。篇幅服从内容，允许自然细节，不新增无关事件。末尾给2-4个眼前行动参考并允许自由输入。';
+  var an='【本回合】只完成玩家明确行动及其直接反馈，在下一个决策边界前停下。心理活动未说出口；NPC只能使用其独立已知事实与眼前直接证据，不能读取蓝图、旁白或穿越身份。篇幅服从内容，允许自然细节，不新增无关事件。末尾给2-4个眼前行动参考并允许自由输入。';
   var ci=canonSummary();if(ci)an+='【本回合身份核对】'+ci+'。现实姓名、游戏ID、角色名和当前身份严格分栏，禁止互换。';
   return an;
 }
@@ -3448,7 +3461,8 @@ function renderNpcs(){
     var s2=document.createElement('span'); s2.className='npc-rel'; s2.textContent=v.rel||'';
     var s3=document.createElement('span'); s3.className='npc-att'; s3.style.color=col; s3.textContent=(att>0?'+':'')+att;
     d.appendChild(s1); d.appendChild(s2); d.appendChild(s3);
-    if(v.note)d.title=v.note;
+    var known=Array.isArray(v.knows)?v.knows:[];
+    if(v.note||known.length)d.title=(v.note||'')+(known.length?'\n该人物已知：'+known.join('；'):'');
     c.appendChild(d);
   });
 }
@@ -3637,7 +3651,7 @@ async function quickStart(){ var pb=document.getElementById('preset-box'); if(pb
 }
 
 // ── RESEARCH TAG DB ──
-var TAG_ONTO=null, TAG_WORKS=[], SELECTED_TAGS=[], TAG_DB_LOADING=false, TAG_DB_PROMISE=null;
+var TAG_ONTO=null, TAG_WORKS=[], SELECTED_TAGS=[], TAG_DB_PROMISE=null;
 function fallbackResearchDB(){
   if(TAG_ONTO)return;
   TAG_ONTO={categories:[
@@ -3662,7 +3676,6 @@ function loadResearchDB(){
     renderTagResults();return Promise.resolve(false);
   }
   TAG_DB_PROMISE=(async function(){
-  TAG_DB_LOADING=true;
   var stats=document.getElementById('tag-db-stats');
   try{
     // 优先读聚合库（含归一化标签与内嵌ontology），失败再退回7个原始文件
@@ -3710,7 +3723,6 @@ function loadResearchDB(){
     renderTagResults();
     return false;
   }finally{
-    TAG_DB_LOADING=false;
     TAG_DB_PROMISE=null;
   }
   })();
