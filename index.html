@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>无界·叙事引擎 v17</title>
+<title>无界·叙事引擎 v19 · 权威角色档案</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -339,7 +339,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .fam-head:first-child{margin-top:0;}
 #preset-chips .chip{font-size:11px;}
 
-/* ── v17 · GAME WORKSPACE ─────────────────────────── */
+/* ── GAME WORKSPACE STRUCTURE ─────────────────────── */
 #gscreen{
   position:relative;
   background:
@@ -428,12 +428,369 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   .sbar{gap:7px;}
   #tkc{display:none;}
 }
+
+/* ══════════════════════════════════════════════════════
+   v19 · LIVING CHARACTER ARCHIVE
+   High-contrast parchment reading surface + illustrated adventure chrome
+   ══════════════════════════════════════════════════════ */
+:root{
+  --g:#d7a95f;--r:#c15b4b;--dark:#061419;
+  --bd:rgba(224,183,108,.36);--tx:#f6eddd;--dm:#b9aa90;
+  --panel:#0b2429;--ink:#2b251d;--ink-soft:#655845;
+  --paper:#efe2c6;--paper-hi:#faf2df;--paper-edge:#b99a67;
+  --teal:#3a9c96;--blue:#638bc4;--green:#6e9e68;--violet:#9178b5;
+  --story-size:16px;--story-leading:1.9;
+}
+*{scrollbar-color:rgba(215,169,95,.48) rgba(0,0,0,.14);}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #f0c97e;outline-offset:2px;}
+body{
+  background:#061419;color:var(--tx);
+  background-image:radial-gradient(circle at 50% -20%,rgba(56,135,132,.22),transparent 44%);
+}
+body::before{
+  background-image:repeating-linear-gradient(0deg,transparent 0,transparent 4px,rgba(255,255,255,.012) 5px);
+  opacity:.55;z-index:200;
+}
+.gbg{
+  background-color:#061419;
+  background-image:
+    radial-gradient(circle at 16% 16%,rgba(55,145,139,.15),transparent 27%),
+    radial-gradient(circle at 87% 80%,rgba(176,87,63,.11),transparent 31%),
+    linear-gradient(rgba(219,177,100,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(219,177,100,.035) 1px,transparent 1px);
+  background-size:auto,auto,48px 48px,48px 48px;
+}
+.gbg::before,.gbg::after{content:'';position:absolute;pointer-events:none;}
+.gbg::before{inset:18px;border:1px solid rgba(215,169,95,.12);box-shadow:inset 0 0 80px rgba(0,0,0,.45);}
+.gbg::after{width:340px;height:340px;right:-170px;top:18%;border:1px solid rgba(215,169,95,.09);border-radius:50%;box-shadow:0 0 0 42px rgba(215,169,95,.018),0 0 0 90px rgba(215,169,95,.014);}
+
+/* App header */
+.hdr{
+  min-height:60px;padding:9px 22px;border-bottom:1px solid rgba(231,190,112,.52);
+  background:linear-gradient(180deg,rgba(13,39,44,.99),rgba(6,24,29,.99));
+  box-shadow:0 8px 28px rgba(0,0,0,.38),inset 0 -1px rgba(0,0,0,.5);
+}
+.logo{display:flex;align-items:center;gap:10px;font-size:19px;color:#f0c979;text-shadow:0 2px 12px rgba(240,190,100,.2);}
+.logo::before{
+  content:'✦';width:34px;height:34px;display:grid;place-items:center;border:1px solid #d6a75c;
+  color:#f0cf8d;background:radial-gradient(circle,rgba(215,169,95,.25),rgba(0,0,0,.18));
+  transform:rotate(45deg);border-radius:4px;box-shadow:0 0 0 3px rgba(215,169,95,.07);
+}
+.logo::first-letter{transform:rotate(-45deg);}
+.logo small{padding:3px 6px;border:1px solid rgba(215,169,95,.28);border-radius:10px;background:rgba(0,0,0,.2);}
+.sbar{padding:7px 10px;border:1px solid rgba(215,169,95,.19);border-radius:18px;background:rgba(0,0,0,.16);color:#c4b69c;}
+.sdot{width:8px;height:8px;border:2px solid rgba(255,255,255,.18);}
+
+/* Setup screens */
+.screen:not(#gscreen){background:linear-gradient(180deg,rgba(6,24,29,.28),rgba(4,15,19,.64));}
+.steps{padding-top:22px;}
+.step{font-size:10px;color:#9e927d;}
+.step.active{color:#f0c979;}
+.step-num{width:28px;height:28px;background:rgba(5,18,22,.72);box-shadow:0 3px 12px rgba(0,0,0,.3);}
+.step.active .step-num{background:linear-gradient(145deg,#f0cc82,#bd8338);box-shadow:0 0 18px rgba(215,169,95,.32);}
+.step-line{width:54px;background:linear-gradient(90deg,rgba(215,169,95,.18),rgba(215,169,95,.55),rgba(215,169,95,.18));}
+.screen-title{font-size:27px;color:#f2d08d;letter-spacing:6px;text-shadow:0 3px 18px rgba(0,0,0,.45);}
+.screen-title::after{content:'◆';display:block;margin:8px auto 0;font-size:9px;color:#a75a49;letter-spacing:0;}
+.screen-sub{max-width:720px;margin:0 auto 25px;color:#c5b79e;font-size:11px;line-height:1.7;}
+
+/* World and pace cards */
+.worlds{max-width:1180px;gap:16px;}
+.wcard{
+  position:relative;min-height:164px;padding:19px 17px 17px;overflow:hidden;border:1px solid rgba(215,169,95,.34);
+  border-radius:12px;background:linear-gradient(145deg,rgba(18,53,57,.96),rgba(8,27,33,.97));
+  box-shadow:0 11px 28px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.035);
+}
+.wcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(#e7c177,#9c5144);opacity:.72;}
+.wcard::after{content:'◇';position:absolute;right:-5px;bottom:-25px;font-size:90px;color:rgba(215,169,95,.045);pointer-events:none;}
+.wcard:hover{border-color:#e3ba6d;background:linear-gradient(145deg,rgba(25,68,70,.98),rgba(10,34,40,.98));transform:translateY(-4px);box-shadow:0 16px 36px rgba(0,0,0,.35),0 0 0 2px rgba(215,169,95,.08);}
+.wcard.sel{border-color:#f1cb80;background:linear-gradient(145deg,rgba(41,81,76,.98),rgba(15,43,47,.98));box-shadow:0 0 0 2px rgba(235,193,110,.2),0 15px 38px rgba(0,0,0,.36);}
+.wcard-icon{width:44px;height:44px;display:grid;place-items:center;margin-bottom:12px;border-radius:10px;font-size:25px;background:rgba(0,0,0,.23);border:1px solid rgba(215,169,95,.24);}
+.wcard-name{font-size:15px;color:#f2d08d;margin-bottom:8px;}
+.wcard-desc{font-family:'Noto Serif SC',serif;font-size:11px;color:#ddd1bd;line-height:1.8;}
+.wcard-tag{padding:4px 7px;border-radius:10px;color:#d9c9aa;background:rgba(0,0,0,.18);}
+.wcard.generator{border:1px dashed #6daaa3;background:linear-gradient(145deg,rgba(20,61,64,.95),rgba(9,33,39,.98));}
+.pace-cards{max-width:940px;gap:18px;}
+.pcard{position:relative;padding:28px 22px;border-radius:14px;background:linear-gradient(155deg,rgba(18,53,57,.96),rgba(8,27,33,.98));box-shadow:0 12px 32px rgba(0,0,0,.28);overflow:hidden;}
+.pcard::after{content:'';position:absolute;inset:auto 20% 0;height:3px;background:linear-gradient(90deg,transparent,#d7a95f,transparent);opacity:.4;}
+.pcard.sel{border-color:#efc878;background:linear-gradient(155deg,rgba(38,75,72,.98),rgba(12,38,43,.98));}
+.pcard-icon{font-size:40px;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35));}
+.pcard-name{font-size:18px;color:#f2d08d;}
+.pcard-desc{font-family:'Noto Serif SC',serif;color:#d8ccba;font-size:12px;}
+.pcard-rounds{color:#e0bd7b;}
+.pcard-examples{color:#aeb8ad;}
+.wnext,.btn{
+  border-radius:8px;border-color:#d9aa5b;background:linear-gradient(180deg,rgba(215,169,95,.12),rgba(112,72,27,.1));
+  color:#f1cc83;box-shadow:0 7px 18px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.04);
+}
+.wnext:hover,.btn:hover{background:linear-gradient(180deg,#efc97d,#bd843c);color:#18201f;box-shadow:0 9px 24px rgba(0,0,0,.3),0 0 18px rgba(215,169,95,.16);}
+.wnext:disabled{filter:grayscale(.8);box-shadow:none;}
+.wback{color:#c2b398;padding:7px 10px;}
+.wback:hover{color:#f0c979;}
+
+/* Forms, chips and setup panels */
+#ascreen{max-width:none;}
+#genscreen{max-width:1180px;}
+.sel-summary,.startup-load,.pref-box,.gen-section,#preset-box{
+  border:1px solid rgba(215,169,95,.32)!important;border-radius:12px!important;
+  background:linear-gradient(145deg,rgba(14,45,50,.94),rgba(8,28,34,.96))!important;
+  box-shadow:0 10px 30px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.025);
+}
+.sel-summary{color:#cfc2ad;}
+.sel-summary span{color:#f0c979;font-weight:bold;}
+.startup-load{padding:16px 17px;}
+.startup-load-title,.pref-title,.gen-section-title{font-size:12px;color:#f1cb80;}
+.startup-load-note,.gen-note,.adv-pref-note{color:#c2b59f;font-size:10px;}
+.atabs{padding:5px;border:1px solid rgba(215,169,95,.25);border-radius:10px;background:rgba(0,0,0,.17);}
+.atab{border:0;border-radius:7px;color:#b8ad9a;}
+.atab.on{background:linear-gradient(180deg,rgba(215,169,95,.26),rgba(215,169,95,.12));box-shadow:inset 0 0 0 1px rgba(239,199,119,.36);color:#f1ce89;}
+.apnl{padding:15px;border:1px solid rgba(215,169,95,.2);border-radius:10px;background:rgba(4,17,21,.48);}
+.pdsc{color:#c3b7a5;}
+.fld,.gen-custom,select{
+  border:1px solid rgba(215,169,95,.34);border-radius:7px;background:rgba(2,15,19,.72);color:#f4dfb9;
+  box-shadow:inset 0 2px 7px rgba(0,0,0,.2);
+}
+.fld::placeholder,.gen-custom::placeholder{color:#8f8779;}
+.fld:focus,.gen-custom:focus{border-color:#e8bd6e;box-shadow:0 0 0 3px rgba(215,169,95,.09);}
+.gen-section{padding:18px 19px;margin-bottom:16px;}
+.gen-section-title{padding-bottom:10px;border-bottom:1px solid rgba(215,169,95,.16);}
+.chip{
+  border:1px solid rgba(215,169,95,.3);border-radius:16px;padding:7px 11px;color:#cbbfae;background:rgba(2,15,19,.42);
+}
+.chip:hover{border-color:#e6bd72;color:#f5d99f;background:rgba(215,169,95,.11);transform:translateY(-1px);}
+.chip.on,.chip.multi.on{border-color:#f0cc84;background:linear-gradient(180deg,#e7bf75,#b87937);color:#122326;box-shadow:0 4px 12px rgba(0,0,0,.25);}
+.tag-db-section{border-color:rgba(74,163,157,.55)!important;background:linear-gradient(145deg,rgba(14,57,59,.96),rgba(8,31,38,.96))!important;}
+.tag-db-selected{border-radius:8px;background:rgba(0,0,0,.16);color:#a9d5d1;}
+.tag-db-results{padding:8px;border-radius:8px;background:rgba(0,0,0,.11);}
+.pref-box{padding:18px 20px;}
+.pref-row{padding:10px 0;border-bottom:1px dashed rgba(215,169,95,.13);}
+.pref-row:last-child{border-bottom:0;}
+.pref-lbl{color:#d9c7a6;font-weight:bold;}
+.adv-pref-box{border:1px solid rgba(78,159,153,.4);border-radius:10px;background:rgba(8,36,41,.65);overflow:hidden;}
+.adv-pref-box summary{padding:13px 15px;color:#a9d5d1;background:rgba(52,135,130,.08);}
+.svs{padding:10px;border-radius:8px;background:rgba(0,0,0,.16);border-color:rgba(215,169,95,.27);}
+.svs.chosen{box-shadow:0 0 0 2px rgba(239,199,119,.18);}
+
+/* Game frame and reading surface */
+#gscreen{background:linear-gradient(135deg,#06171b,#0a2529 48%,#07191e);}
+.gcol{position:relative;background:radial-gradient(circle at 50% 12%,rgba(65,141,135,.12),transparent 34%),linear-gradient(180deg,#0a2227,#07191e);}
+#slog{
+  width:calc(100% - 30px);max-width:930px;margin:15px auto 8px;padding:31px clamp(22px,5vw,58px);
+  border:1px solid #c2a16d;border-radius:16px;background-color:var(--paper);
+  background-image:
+    radial-gradient(circle at 10% 10%,rgba(145,97,47,.085),transparent 24%),
+    radial-gradient(circle at 91% 86%,rgba(123,77,40,.07),transparent 28%),
+    repeating-linear-gradient(0deg,transparent 0,transparent 31px,rgba(83,63,38,.027) 32px);
+  box-shadow:0 18px 44px rgba(0,0,0,.38),inset 0 0 55px rgba(109,72,31,.095),inset 0 0 0 5px rgba(255,249,228,.24);
+  scrollbar-color:#9c7b4d rgba(93,67,36,.09);
+}
+#slog::-webkit-scrollbar{width:7px;}
+#slog::-webkit-scrollbar-thumb{background:#9c7b4d;border-radius:8px;border:2px solid var(--paper);}
+.sb{font-family:'Noto Serif SC','Microsoft YaHei',serif;font-size:var(--story-size)!important;line-height:var(--story-leading)!important;color:var(--ink);letter-spacing:.015em;}
+.sb.nar{padding:15px 17px;border:1px solid rgba(91,66,37,.14);border-left:5px solid #3c8e89;border-radius:4px 11px 11px 4px;background:rgba(255,251,239,.43);box-shadow:0 3px 10px rgba(93,62,29,.065);color:var(--ink);}
+.sb.ply{align-self:flex-end;max-width:84%;margin-left:12%;padding:12px 15px;border-radius:12px 12px 3px 12px;background:linear-gradient(145deg,#164f52,#0d3a40);color:#fff4dd;box-shadow:0 7px 18px rgba(41,61,52,.19);}
+.sb.ply::before{color:#f0c979;font-size:19px;}
+.sb.sys{align-self:center;padding:6px 12px;border:1px solid rgba(97,70,39,.2);border-radius:14px;background:rgba(112,84,48,.08);color:#6f614f;font-family:'Share Tech Mono',monospace;font-size:10px!important;text-align:center;}
+.sb.err{padding:12px 14px;border:1px solid rgba(159,58,47,.32);border-left:5px solid #ad4539;border-radius:5px;background:rgba(172,65,50,.09);color:#8a2e27;}
+.typing span{width:7px;height:7px;background:#2f817d;}
+.chap{padding:10px 0 13px;margin-bottom:13px;border-bottom:1px solid rgba(91,66,37,.2);color:#764a2b;font-size:18px;letter-spacing:5px;}
+.check{padding:5px 11px;border-radius:10px;background:#f9edd3;color:#4d4335;box-shadow:0 2px 6px rgba(80,53,25,.08);}
+.check.ck-ok{color:#3b6d3e;border-color:#769d6f;background:#e7efd9;}
+.check.ck-fail{color:#8f342e;border-color:#bf756c;background:#f4dcd5;}
+.opts{margin-top:18px;padding-top:15px;border-top:1px dashed rgba(82,59,33,.3);gap:9px;}
+.opt-title{font-family:'Share Tech Mono',monospace;color:#785a35;font-size:11px;font-weight:bold;}
+.ob{
+  position:relative;padding:12px 14px;border:1px solid rgba(93,66,36,.27);border-radius:9px;
+  background:linear-gradient(180deg,rgba(255,252,242,.72),rgba(232,215,181,.5));color:#332a20;
+  font-family:'Noto Serif SC',serif;font-size:13px;box-shadow:0 3px 8px rgba(86,57,26,.075);
+}
+.ob:hover{border-color:#2d827e;background:linear-gradient(180deg,#fdf8e9,#dce7d9);color:#174e4c;transform:translateX(4px);box-shadow:0 5px 13px rgba(50,91,76,.12);}
+.ob .on{display:inline-grid;place-items:center;width:25px;height:25px;margin-right:10px;border-radius:7px;background:#1f6867;color:#fff5df;font-family:'Share Tech Mono',monospace;}
+.ofr{color:#796b57;font-size:11px;}
+.deco{display:none;}
+.daily,.inpa{width:calc(100% - 30px);max-width:930px;margin-left:auto;margin-right:auto;}
+#daily-btns{padding:8px 11px;border:1px solid rgba(215,169,95,.28);border-radius:10px 10px 0 0;background:rgba(5,24,29,.92);}
+#turn-tools{padding:6px 11px;background:rgba(5,19,24,.95);border-left:1px solid rgba(215,169,95,.2);border-right:1px solid rgba(215,169,95,.2);}
+.db{padding:7px 11px;border-radius:13px;border-color:rgba(215,169,95,.27);color:#cbbca3;background:rgba(255,255,255,.02);}
+.db:hover{border-color:#e6bd72;color:#f4d496;background:rgba(215,169,95,.12);transform:translateY(-1px);}
+.inpa{padding:11px 12px;border:1px solid rgba(215,169,95,.34);border-top-color:rgba(215,169,95,.18);border-radius:0 0 12px 12px;background:linear-gradient(180deg,rgba(7,27,32,.98),rgba(4,18,23,.99));box-shadow:0 10px 24px rgba(0,0,0,.26);}
+#pinp{height:52px;max-height:150px;padding:13px 15px 13px 34px;border:1px solid #b99a67;border-radius:9px;background:#f4ead4;color:#2c251d;font-family:'Noto Serif SC',serif;font-size:15px;box-shadow:inset 0 2px 7px rgba(81,54,25,.09);}
+#pinp::placeholder{color:#8b7961;}
+#pinp:focus{border-color:#4b9b96;box-shadow:0 0 0 3px rgba(69,147,141,.18),inset 0 2px 7px rgba(81,54,25,.08);}
+.ipr{top:13px;color:#276d6b;font-size:21px;font-weight:bold;}
+.hint{height:6px;padding:0;font-size:0;}
+
+/* Character HUD */
+.charhud{width:292px;flex-basis:292px;background:linear-gradient(180deg,#0d3033,#071d23 55%,#06161b);border-right:1px solid #b9884b;box-shadow:12px 0 30px rgba(0,0,0,.22);}
+.hud-head{position:relative;padding:22px 17px 17px;overflow:hidden;background:radial-gradient(circle at 85% 15%,rgba(226,177,88,.19),transparent 30%),linear-gradient(145deg,#16494a,#0a2b31);border-bottom:1px solid rgba(226,184,108,.42);}
+.hud-head::after{content:'✦';position:absolute;right:14px;top:7px;font-size:52px;color:rgba(238,196,113,.07);}
+.hud-kicker,.drawer-kicker{color:#9fd0cb;font-size:8px;font-weight:bold;}
+.hud-world{font-size:17px;color:#f1cb80;}
+.hud-meta{padding-top:8px;border-top:1px solid rgba(215,169,95,.16);color:#d0c3ab;font-size:10px;}
+.hud-scroll{padding:11px;}
+.charhud .ss{margin-bottom:11px;padding:14px;border:1px solid rgba(215,169,95,.24);border-radius:11px;background:linear-gradient(145deg,rgba(7,29,34,.84),rgba(4,20,25,.9));box-shadow:0 7px 16px rgba(0,0,0,.17);}
+.st{font-size:10px;color:#f0c979;font-weight:bold;letter-spacing:1.5px;opacity:1;}
+#sdsp{font-family:'Noto Serif SC',serif;font-size:11px;color:#d8cebd!important;line-height:1.85;}
+.sheet-sub{margin:13px 0 7px;padding-bottom:5px;border-bottom:1px solid rgba(215,169,95,.13);color:#bcd4cf;font-size:9px;}
+.charhud .sheet-stat{padding:9px;border:1px solid rgba(117,177,170,.2);border-radius:8px;background:rgba(52,119,116,.09);}
+.charhud .sheet-stat:hover{border-color:#6eb1aa;background:rgba(72,145,139,.15);}
+.sheet-stat .sk{color:#aebeb5;font-size:9px;}
+.charhud .sheet-stat .sv{color:#fff0cf;font-size:15px;font-weight:bold;}
+.charhud .sheet-stat.res-stat{padding-bottom:18px;}
+.res-track{left:8px;right:8px;bottom:7px;height:6px;border-radius:5px;background:rgba(0,0,0,.32);box-shadow:inset 0 1px 2px rgba(0,0,0,.3);}
+.res-track i{border-radius:5px;background:linear-gradient(90deg,#bd843c,#efca7e);}
+.res-stat.danger .res-track i{background:linear-gradient(90deg,#8f3635,#d86c58);}
+.res-stat.energy .res-track i{background:linear-gradient(90deg,#346d9c,#6fa9d9);}
+.talent-item,.skill-item,.inv-item{padding:6px 9px;border-radius:13px;background:rgba(255,255,255,.025);}
+.talent-item{color:#b9dc9f;border-color:rgba(156,205,125,.32);}
+.last-check{padding:9px;border-left:0;border-radius:8px;background:rgba(0,0,0,.18);color:#c9baa2;}
+.last-check.ok{background:rgba(105,154,92,.12);color:#b8db9f;}.last-check.fail{background:rgba(184,74,64,.12);color:#e09386;}
+.state-ledger{display:grid;gap:6px;color:#aaa293;font-size:9px;line-height:1.45;}
+.ledger-row{display:grid;grid-template-columns:auto 1fr auto;gap:6px;padding:6px 7px;border-radius:7px;background:rgba(0,0,0,.16);}
+.ledger-row b{color:#d8c7a8;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}.ledger-row em{color:#94bbb5;font-style:normal;}.ledger-row i{color:#e0b866;font-style:normal;}
+
+/* Bottom function dock */
+.game-dock{gap:6px;justify-content:center;padding:7px 10px 8px;border-top:1px solid rgba(231,190,112,.55);background:linear-gradient(180deg,#0d3033,#071d23);box-shadow:0 -8px 25px rgba(0,0,0,.25);}
+.game-dock button{--tone:#d7a95f;min-width:72px;padding:7px 9px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:rgba(0,0,0,.14);color:#d4c8b6;font-size:10px;}
+.game-dock button[data-tone="teal"]{--tone:#56b1a8}.game-dock button[data-tone="amber"]{--tone:#daa857}.game-dock button[data-tone="blue"]{--tone:#77a2d9}.game-dock button[data-tone="green"]{--tone:#8abb78}.game-dock button[data-tone="rose"]{--tone:#d37b76}.game-dock button[data-tone="violet"]{--tone:#a78bd0}.game-dock button[data-tone="cyan"]{--tone:#6ab8c6}.game-dock button[data-tone="slate"]{--tone:#b8b4a8}
+.game-dock button span{width:29px;height:29px;display:grid;place-items:center;margin:0 auto 4px;border:1px solid var(--tone);border-radius:9px;background:rgba(0,0,0,.2);color:var(--tone);font-size:16px;box-shadow:0 0 12px color-mix(in srgb,var(--tone) 14%,transparent);}
+.game-dock button:hover,.game-dock button.active{border-color:var(--tone);background:rgba(255,255,255,.055);color:#fff2d6;transform:translateY(-2px);}
+.game-dock button.active{box-shadow:inset 0 -3px var(--tone);}
+
+/* Drawers and content cards */
+.spnl{width:min(440px,94vw)!important;background:linear-gradient(180deg,#10353a,#071e24 55%,#05171c);border-left:1px solid #d4a458;box-shadow:-24px 0 55px rgba(0,0,0,.55);}
+.drawer-head{padding:19px 17px 15px;background:radial-gradient(circle at 82% 0,rgba(215,169,95,.17),transparent 34%),rgba(8,29,34,.9);border-bottom-color:rgba(215,169,95,.36);}
+#drawer-title{font-size:18px;color:#f1cc82;}
+.drawer-head button{border-radius:9px;background:rgba(0,0,0,.2);color:#d8c7aa;}
+.drawer-body{padding:2px 0 20px;background:linear-gradient(180deg,rgba(12,43,47,.55),rgba(4,20,25,.72));}
+.drawer-body>.ss.panel-visible{width:calc(100% - 24px)!important;margin:12px 12px 0;padding:16px!important;border:1px solid rgba(215,169,95,.23)!important;border-radius:11px;background:rgba(4,22,27,.62);box-shadow:0 8px 20px rgba(0,0,0,.17);}
+.drawer-body .st{padding-bottom:8px;border-bottom:1px solid rgba(215,169,95,.14);}
+.qb{padding:10px 11px;border-radius:8px;border-color:rgba(215,169,95,.29);background:rgba(255,255,255,.025);color:#ddd1bd;font-size:11px;}
+.qb:hover{border-color:#e4b96b;color:#f4d79d;background:rgba(215,169,95,.11);transform:translateX(2px);}
+.qb.red{border-color:rgba(190,79,66,.35);color:#cf9a8f;}.qb.red:hover{background:rgba(190,79,66,.1);}
+.inv-grid,.skill-grid,.talent-grid{gap:7px;}
+.inv-item{color:#e2c487;border-color:rgba(222,170,77,.3);}.inv-item:hover{color:#ffe0a0;background:rgba(215,169,95,.12);}
+.skill-item{color:#a9c7ec;border-color:rgba(100,146,204,.36);}.skill-item:hover{color:#cce2ff;background:rgba(85,132,190,.13);}
+.panel-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.panel-title-row .pin-add{flex:0 0 auto;}
+.archive-summary{margin:-2px 0 12px;color:#9fb5b0;font-size:10px;line-height:1.6;}
+.inv-grid,.skill-grid{display:block;}
+.archive-group{margin-top:13px;}
+.archive-group:first-child{margin-top:0;}
+.archive-group-title{display:flex;align-items:center;gap:8px;margin:0 0 7px;color:#9fd0cb;font-size:9px;font-weight:bold;letter-spacing:1.4px;}
+.archive-group-title::after{content:'';height:1px;flex:1;background:rgba(159,208,203,.13);}
+.archive-card{position:relative;margin-bottom:7px;padding:11px 12px;border:1px solid rgba(215,169,95,.22);border-radius:9px;background:linear-gradient(145deg,rgba(255,255,255,.038),rgba(0,0,0,.07));cursor:pointer;transition:.16s ease;}
+.archive-card:last-child{margin-bottom:0;}
+.archive-card:hover{transform:translateX(2px);border-color:rgba(235,190,105,.62);background:rgba(215,169,95,.08);}
+.archive-card-head{display:flex;align-items:flex-start;gap:9px;}
+.archive-card-main{min-width:0;flex:1;}
+.archive-name{display:flex;align-items:center;gap:7px;color:#f2dfbb;font-family:'Noto Serif SC',serif;font-size:13px;font-weight:700;}
+.archive-qty{margin-left:auto;color:#f0c979;font-family:'Share Tech Mono',monospace;font-size:12px;white-space:nowrap;}
+.archive-desc{margin-top:5px;color:#bcb4a7;font-size:10px;line-height:1.65;}
+.archive-meta{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.archive-badge{padding:2px 6px;border:1px solid rgba(142,179,175,.25);border-radius:8px;color:#9fc8c2;font-size:8px;line-height:1.4;}
+.archive-badge.equipped,.archive-badge.active{border-color:rgba(239,190,93,.55);background:rgba(218,160,61,.12);color:#ffd98b;}
+.archive-badge.muted{color:#918b80;border-color:rgba(145,139,128,.18);}
+.skill-card{border-color:rgba(101,149,207,.27);}
+.skill-card:hover{border-color:rgba(126,175,233,.65);background:rgba(78,126,184,.1);}
+.skill-card.active-skill{box-shadow:inset 3px 0 #e2b65e;border-color:rgba(226,182,94,.5);}
+.skill-rank{color:#a9c7ec;font-size:9px;white-space:nowrap;}
+.skill-progress{height:5px;margin-top:9px;border-radius:5px;background:rgba(0,0,0,.32);overflow:hidden;}
+.skill-progress i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#4d79ad,#8eb7e4);}
+.skill-dashboard{display:grid;grid-template-columns:minmax(0,1fr) 132px;gap:9px;margin-bottom:14px;}
+.active-core-card,.memory-meter{padding:10px;border:1px solid rgba(215,169,95,.23);border-radius:9px;background:rgba(0,0,0,.12);}
+.archive-eyebrow{display:block;color:#9fc8c2;font-size:8px;letter-spacing:1.2px;}
+.active-core-card strong{display:block;margin:5px 0 3px;color:#f1cb80;font-family:'Noto Serif SC',serif;font-size:13px;}
+.active-core-card small{display:block;color:#928d83;font-size:8px;line-height:1.45;}
+.memory-meter>div{display:flex;align-items:center;justify-content:space-between;color:#aebdb8;font-size:8px;}
+.memory-meter b{color:#d8c7a9;font-family:'Share Tech Mono',monospace;font-size:9px;}
+.memory-meter>span{display:block;height:6px;margin-top:10px;border-radius:5px;background:rgba(0,0,0,.35);overflow:hidden;}
+.memory-meter i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,#477ea1,#7ec3c0);}
+.imod-box{max-width:520px;border-radius:12px;background:linear-gradient(155deg,#10343a,#071c22 65%,#0d2328);box-shadow:0 24px 70px rgba(0,0,0,.7);}
+.imod-desc{color:#d5cbbb;font-size:11px;line-height:1.85;}
+.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0;}
+.detail-cell{padding:8px;border:1px solid rgba(145,184,180,.17);border-radius:7px;background:rgba(0,0,0,.13);}
+.detail-cell span{display:block;color:#91aba7;font-size:8px;letter-spacing:1px;}
+.detail-cell b{display:block;margin-top:3px;color:#eee0c7;font-size:11px;}
+.imod-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:15px;}
+.imod-action{flex:1 1 130px;padding:9px 10px;border:1px solid rgba(215,169,95,.32);border-radius:8px;background:rgba(215,169,95,.06);color:#e6d4b3;font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;}
+.imod-action:hover{border-color:#e4b96b;background:rgba(215,169,95,.13);color:#ffe1a1;}
+.imod-action.blue{border-color:rgba(104,155,216,.4);background:rgba(68,115,174,.1);color:#bed8f5;}
+.imod-action.red{border-color:rgba(190,79,66,.35);background:rgba(190,79,66,.08);color:#dca096;}
+.imod-action.full{flex-basis:100%;}
+.archive-form{display:grid;gap:10px;}
+.archive-form label{display:grid;gap:5px;color:#9fb6b1;font-size:9px;letter-spacing:.8px;}
+.archive-form input,.archive-form textarea{width:100%;padding:9px 10px;border:1px solid rgba(151,186,181,.22);border-radius:7px;outline:none;background:rgba(0,0,0,.18);color:#eee1ca;font:11px/1.55 'Noto Sans SC',sans-serif;resize:vertical;}
+.archive-form input:focus,.archive-form textarea:focus{border-color:#70aaa5;box-shadow:0 0 0 2px rgba(83,151,145,.12);}
+.archive-form-split{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.archive-check{display:flex!important;grid-template-columns:none!important;align-items:center;gap:7px!important;}
+.archive-check input{width:auto;}
+.quest{padding:10px 11px;border-radius:0 8px 8px 0;background:rgba(255,255,255,.025);font-size:11px;}
+.quest .qn{color:#eee2cf;}.quest .qt{color:#b7a88f;}
+.npc-item{padding:8px;border-radius:7px;background:rgba(255,255,255,.025);font-size:11px;}
+.pin-item{padding:8px;border-radius:0 7px 7px 0;background:rgba(212,160,60,.075);font-size:11px;}
+.pin-add{border-radius:10px;color:#d6c4a5;}
+.set-row{padding:7px 0;color:#d4c6b1;font-size:11px;}
+.set-row input[type=range]{height:5px;}
+.set-chk{padding:7px 8px;margin-bottom:5px;border-radius:7px;background:rgba(255,255,255,.025);color:#d4c7b3;font-size:11px;}
+.setting-divider{margin:13px 0 3px;padding:7px 0;border-top:1px solid rgba(215,169,95,.18);border-bottom:1px solid rgba(215,169,95,.1);color:#9fd0cb;font-size:9px;letter-spacing:1.5px;}
+.svs .sn{color:#f0c979;font-size:11px;}.svs .si{color:#bfb39f;font-size:10px;}
+.svs .sb2 button{padding:6px;border-radius:6px;color:#cfc0a6;}
+.drawer-scrim{background:rgba(0,8,11,.72);backdrop-filter:blur(3px);}
+
+/* Responsive */
+@media(max-width:900px){
+  .charhud{width:min(350px,94vw);background:linear-gradient(180deg,#10383b,#061b21);}
+  .charhud.collapsed{width:min(350px,94vw);}
+  #slog,.daily,.inpa{width:calc(100% - 18px);}
+  #slog{margin-top:9px;}
+  .game-dock{justify-content:flex-start;gap:5px;}
+  .game-dock button{min-width:70px;}
+}
+@media(max-width:768px){
+  .hdr{min-height:53px;padding:7px 11px;}
+  .logo{font-size:15px;letter-spacing:2px;gap:8px;}
+  .logo::before{width:28px;height:28px;}
+  .sbar{padding:5px 8px;}
+  .steps{padding-top:14px;}
+  .step-line{width:27px;}
+  .screen-title{font-size:22px;letter-spacing:4px;}
+  #wscreen,#pscreen,#genscreen{padding-left:10px;padding-right:10px;}
+  .worlds{gap:10px;padding:0;}
+  .wcard{min-height:150px;padding:15px 13px;}
+  .pace-cards{padding:0;}
+  #slog{padding:20px 16px 13px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.35),inset 0 0 35px rgba(109,72,31,.08);}
+  .sb.ply{max-width:94%;margin-left:4%;}
+  .sb.nar{padding:13px 13px;border-left-width:4px;}
+  .ob{min-height:48px;padding:11px 12px;font-size:13px;}
+  #daily-btns{border-radius:9px 9px 0 0;}
+  .inpa{padding:8px;border-radius:0 0 9px 9px;}
+  #pinp{height:49px;padding-top:11px;padding-bottom:11px;}
+  .game-dock{padding:6px 7px calc(7px + env(safe-area-inset-bottom));}
+  .game-dock button{min-width:66px;min-height:55px;padding:5px 7px;}
+  .game-dock button span{width:27px;height:27px;margin-bottom:3px;}
+  .drawer-body>.ss.panel-visible{margin:9px;width:calc(100% - 18px)!important;}
+}
+@media(max-width:520px){
+  .hdr .logo small{display:none;}
+  .sbar>span:nth-last-child(2),.sbar>span:last-child{display:none;}
+  .worlds{grid-template-columns:1fr;}
+  .wcard{min-height:auto;}
+  .gen-section{padding:14px 12px;}
+  .pref-box{padding:14px 12px;}
+  #slog{width:calc(100% - 12px);margin-top:6px;padding:17px 12px 10px;}
+  .daily,.inpa{width:calc(100% - 12px);}
+  .sb.ply{max-width:98%;margin-left:0;}
+  .game-dock button{min-width:64px;}
+  .skill-dashboard{grid-template-columns:1fr;}
+  .archive-form-split,.detail-grid{grid-template-columns:1fr;}
+  .imod-box{max-height:88vh;overflow-y:auto;}
+}
 </style>
 </head>
 <body>
 <div class="gbg"></div>
 <div class="hdr">
-  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v17</small></div>
+  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v19</small></div>
   <div class="sbar">
     <div class="sdot" id="sdot"></div>
     <span id="stxt">选择世界</span>
@@ -1078,6 +1435,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="hud-scroll">
       <div class="ss hud-card"><div class="st">▸ 权威角色卡</div><div id="sdsp">— 尚未揭示 —</div><div id="sheet-gate"><button class="qb" onclick="requestCharacterSheet()"><span class="ic">◇</span>主动查看／建立角色卡</button></div><div class="sheet-sub">基础属性（揭示后可校准）</div><div id="attr-grid" class="sheet-grid"></div><div class="sheet-sub">状态与资源</div><div id="res-grid" class="sheet-grid"></div><div class="sheet-sub">天赋 <button class="pin-add" onclick="addSheetEntry('talent')">+ 添加</button></div><div id="talent-grid" class="talent-grid"><span class="skill-empty">— 未揭示 —</span></div></div>
       <div class="ss hud-card"><div class="st">▸ 最近一次裁定</div><div id="last-check" class="last-check">— 尚无检定 —</div></div>
+      <div class="ss hud-card"><div class="st">▸ 最近状态变更</div><div id="state-ledger" class="state-ledger">— 暂无记录 —</div></div>
     </div>
   </aside>
   <div class="gcol">
@@ -1093,21 +1451,32 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     </div>
     <div class="hint" id="game-hint">无界·叙事引擎</div>
     <nav class="game-dock" aria-label="游戏功能">
-      <button onclick="toggleCharacterHud()"><span>◈</span>状态</button>
-      <button onclick="openGamePanel('inventory')"><span>▣</span>背包</button>
-      <button onclick="openGamePanel('skills')"><span>✦</span>技能</button>
-      <button onclick="openGamePanel('quests')"><span>◇</span>任务</button>
-      <button onclick="openGamePanel('people')"><span>♟</span>人物</button>
-      <button onclick="openGamePanel('memory')"><span>▤</span>记忆</button>
-      <button onclick="openGamePanel('saves')"><span>▥</span>存档</button>
-      <button onclick="openGamePanel('settings')"><span>⚙</span>设置</button>
+      <button data-panel="status" data-tone="teal" onclick="toggleCharacterHud()"><span>◈</span>状态</button>
+      <button data-panel="inventory" data-tone="amber" onclick="openGamePanel('inventory')"><span>▣</span>背包</button>
+      <button data-panel="skills" data-tone="blue" onclick="openGamePanel('skills')"><span>✦</span>技能</button>
+      <button data-panel="quests" data-tone="green" onclick="openGamePanel('quests')"><span>◇</span>任务</button>
+      <button data-panel="people" data-tone="rose" onclick="openGamePanel('people')"><span>♟</span>人物</button>
+      <button data-panel="memory" data-tone="violet" onclick="openGamePanel('memory')"><span>▤</span>记忆</button>
+      <button data-panel="saves" data-tone="cyan" onclick="openGamePanel('saves')"><span>▥</span>存档</button>
+      <button data-panel="settings" data-tone="slate" onclick="openGamePanel('settings')"><span>⚙</span>设置</button>
     </nav>
   </div>
   <div class="spnl" id="spnl" aria-hidden="true">
     <div class="drawer-head"><div><span class="drawer-kicker">GAME ARCHIVE</span><div id="drawer-title">功能面板</div></div><button onclick="closeGamePanel()">✕</button></div>
     <div class="drawer-body">
-    <div class="ss" data-panel="inventory"><div class="st">▸ 背包</div><div class="inv-grid" id="inv-grid"><span class="inv-empty">— 空 —</span></div></div>
-    <div class="ss" data-panel="skills"><div class="st" id="skill-panel-title">▸ 技能 <button class="pin-add" onclick="addSheetEntry('skill')">+ 添加</button></div><div class="skill-grid" id="skill-grid"><span class="skill-empty">— 空 —</span></div></div>
+    <div class="ss" data-panel="inventory">
+      <div class="st panel-title-row"><span>▸ 背包</span><button class="pin-add" onclick="openItemEditor()">+ 添加</button></div>
+      <div class="archive-summary" id="inventory-summary">0 类物品</div>
+      <div class="inv-grid" id="inv-grid"><span class="inv-empty">— 空 —</span></div>
+    </div>
+    <div class="ss" data-panel="skills">
+      <div class="st panel-title-row" id="skill-panel-title"><span>▸ 技能</span><button class="pin-add" onclick="openSkillEditor()">+ 添加</button></div>
+      <div class="skill-dashboard">
+        <div class="active-core-card"><span class="archive-eyebrow" id="active-core-label">当前运转</span><strong id="active-core-name">— 无 —</strong><small id="active-core-meta">点击技能可选择当前心法／专精</small></div>
+        <div class="memory-meter" onclick="editSkillCapacity()" title="点击调整技能容量"><div><span id="skill-memory-label">技能记忆</span><b id="skill-memory-count">0 / 20</b></div><span><i id="skill-memory-fill" style="width:0%"></i></span></div>
+      </div>
+      <div class="skill-grid" id="skill-grid"><span class="skill-empty">— 空 —</span></div>
+    </div>
     <div class="ss" data-panel="quests"><div class="st">▸ 任务与目标</div><div id="quest-list"><span class="no-quest">— 暂无任务 —</span></div></div>
     <div class="ss" data-panel="people"><div class="st">👥 人物关系</div><div id="npc-list"><span class="no-quest">— 尚未结识 —</span></div></div>
     <div class="ss" data-panel="people"><div class="st">🪪 主角身份档案 <button class="pin-add" onclick="promptAddCanon()">+ 字段</button></div><div id="canon-list"><span class="no-quest">— 尚未锁定身份映射 —</span></div></div>
@@ -1117,10 +1486,14 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
     <div class="ss" data-panel="settings">
       <div class="st">⚙ 设置</div>
       <div class="set-row">温度 <input type="range" id="set-temp" min="0.3" max="1.3" step="0.05" oninput="setTemp(this.value)"><span id="set-temp-v"></span></div>
+      <div class="setting-divider">阅读显示</div>
+      <div class="set-row">正文字号 <input type="range" id="set-font" min="14" max="21" step="1" oninput="setReadingSize(this.value)"><span id="set-font-v"></span></div>
+      <div class="set-row">正文行距 <input type="range" id="set-leading" min="1.55" max="2.2" step="0.05" oninput="setReadingLeading(this.value)"><span id="set-leading-v"></span></div>
       <label class="set-chk"><input type="checkbox" id="set-stream" onchange="SETTINGS.stream=this.checked;saveSettings()"> 流式输出（逐字显示）</label>
       <label class="set-chk"><input type="checkbox" id="set-dice" onchange="SETTINGS.dice=this.checked;saveSettings()"> 风险检定（仅危险或对抗行动）</label>
       <label class="set-chk"><input type="checkbox" id="set-automem" onchange="SETTINGS.autoMem=this.checked;saveSettings()"> 自动记忆提取</label>
       <label class="set-chk"><input type="checkbox" id="set-director" onchange="SETTINGS.director=this.checked;saveSettings()"> GM节拍审查（更稳，略慢）</label>
+      <label class="set-chk"><input type="checkbox" id="set-statesync" onchange="SETTINGS.stateSync=this.checked;saveSettings()"> 状态自动结算（物品／技能变化更可靠，略增消耗）</label>
       <button class="qb" onclick="exportSave()"><span class="ic">⇩</span>导出进度JSON</button>
       <button class="qb" onclick="importSave()"><span class="ic">⇧</span>导入进度JSON</button>
     </div>
@@ -1143,6 +1516,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
   <div class="imod-box">
     <div class="imod-name" id="imod-name"></div>
     <div class="imod-desc" id="imod-desc"></div>
+    <div class="imod-actions" id="imod-actions"></div>
     <button class="imod-close" onclick="closeModal()">关闭</button>
   </div>
 </div>
@@ -1158,10 +1532,11 @@ var LORE_ACTIVE=[]; // currently injected lore chunk names
 var LOREBOOK=[]; // world book entries: {id,name,keywords[],text,cat}
 var TURNS=0; // player turns this run
 var OUTLINE=''; // JS-owned latest hidden outline (survives even if model forgets to re-output)
-var GAME_STATE={version:3,revealed:false,attrs:{},res:{},caps:{},talents:[],inv:[],skills:[],loc:'',npcs:{},lastCheck:null}; // authoritative state, owned by JS
+var GAME_STATE={version:4,revealed:false,attrs:{},res:{},caps:{},talents:[],inv:[],skills:[],loadout:{activeCoreId:null},skillCapacity:20,ledger:[],loc:'',npcs:{},lastCheck:null}; // single authoritative state, owned by JS
 var STATE_ACTIVE=false; // true once the model starts reporting via STATE patches
 var TURN_BACKUPS=[]; // exact runtime snapshots for undo/regeneration
 var SHEET_INIT_ARMED=false; // only an explicit player action may reveal the sheet
+var SHEET_BUILDING=false, PENDING_SHEET_SEED=null, ARCHIVE_ENRICHING=false; // dedicated structured-state workflows, independent from narration
 var PENDING_STARTUP_LOAD=null; // selected save key, consumed after backend connection
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
 var PREMISE_STATE={kind:'none'}; // program-owned opening milestone, prevents premise drift/stalling
@@ -1501,7 +1876,7 @@ function rollTone(){
 function rollStoryDNA(){ rollBlueprint(); }
 
 // (merged into rollBlueprint)
-var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,director:true};
+var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,director:true,stateSync:true,fontSize:16,lineHeight:1.9};
 try{var _st=localStorage.getItem('wuji_settings'); if(_st) SETTINGS=Object.assign(SETTINGS,JSON.parse(_st));}catch(e){}
 function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(SETTINGS));}catch(e){}}
 
@@ -1655,21 +2030,102 @@ var STATE_SCHEMAS={
   horror:{attrs:['学识','感知','意志','魅力'],res:{生命:20,SAN:20,疲劳度:100,资金:100},caps:{生命:20,SAN:20,疲劳度:100}},
   __custom__:{attrs:['体魄','灵巧','心智','社交'],res:{生命:20,精力:10,饱腹度:100,货币:100},caps:{生命:20,精力:10,饱腹度:100}}
 };
+function stableStateId(prefix,value){
+  var s=String(value||'item'),h=2166136261;
+  for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h+=(h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24);}
+  return prefix+'_'+(h>>>0).toString(36);
+}
+function clampNum(v,min,max,fallback){v=Number(v);if(!isFinite(v))v=fallback;return Math.max(min,Math.min(max,v));}
+function guessItemCategory(name){
+  name=String(name||'');
+  if(/剑|刀|枪|弓|杖|刃|兵器|武器|匕首|火器/.test(name))return '兵器';
+  if(/甲|衣|袍|盔|靴|护腕|戒指|项链|饰物|装备/.test(name))return '装备';
+  if(/药|丹|散|丸|剂|绷带/.test(name))return '药品';
+  if(/饼|粮|肉|果|水|酒|茶|食物|面包/.test(name))return '食物';
+  if(/钱|银|金币|货币|积分|灵石/.test(name))return '货币';
+  if(/钥匙|令|信物|凭证|任务/.test(name))return '关键物品';
+  return '其他';
+}
+function normalizeItem(raw,index){
+  var o={};
+  if(typeof raw==='string'){
+    var m=raw.trim().match(/^(.*?)(?:\s*[x×]\s*(\d+(?:\.\d+)?))?$/i);
+    o.name=(m&&m[1]||raw).trim();o.quantity=m&&m[2]?Number(m[2]):1;
+  }else if(raw&&typeof raw==='object')o=Object.assign({},raw);
+  o.name=String(o.name||o.label||o.id||('物品'+((index||0)+1))).trim().substring(0,60);
+  o.id=String(o.id||stableStateId('item',o.name));
+  o.category=String(o.category||o.type||guessItemCategory(o.name)).substring(0,20);
+  o.quantity=clampNum(o.quantity===undefined?(o.qty===undefined?1:o.qty):o.quantity,0,999999,1);
+  o.description=String(o.description||o.desc||'').substring(0,500);
+  o.equipped=!!o.equipped;o.consumable=o.consumable===undefined?/食物|药品/.test(o.category):!!o.consumable;
+  o.tags=Array.isArray(o.tags)?o.tags.map(String).slice(0,8):[];
+  return o;
+}
+function normalizeInventory(list){var out=[];(Array.isArray(list)?list:[]).map(normalizeItem).filter(function(x){return x.quantity>0&&x.name;}).forEach(function(x){var old=out.find(function(v){return v.id===x.id||v.name===x.name;});if(old){old.quantity+=x.quantity;if(!old.description&&x.description)old.description=x.description;old.equipped=old.equipped||x.equipped;}else out.push(x);});return out;}
+function guessSkillCategory(name){
+  name=String(name||'');
+  if(/心法|内功|吐纳|冥想|魔力循环|协议|核心/.test(name))return '核心';
+  if(/步|身法|闪避|移动|潜行/.test(name))return '身法';
+  if(/被动|抗性|感知|洞察|专精|天赋/.test(name))return '被动';
+  return (WORLDS[WORLD]&&WORLDS[WORLD].skillLabel)||'技能';
+}
+function normalizeSkill(raw,index){
+  var o=typeof raw==='string'?{name:raw}:Object.assign({},raw||{});
+  o.name=String(o.name||o.label||o.id||('技能'+((index||0)+1))).trim().substring(0,60);
+  o.id=String(o.id||stableStateId('skill',o.name));
+  o.category=String(o.category||o.type||guessSkillCategory(o.name)).substring(0,20);
+  o.realm=String(o.realm||o.rank||'初学').substring(0,20);
+  o.coefficient=clampNum(o.coefficient===undefined?1:o.coefficient,0,5,1);
+  o.proficiency=clampNum(o.proficiency===undefined?(o.mastery===undefined?0:o.mastery):o.proficiency,0,100,0);
+  o.attribute=String(o.attribute||o.attr||'').substring(0,20);
+  o.description=String(o.description||o.desc||'').substring(0,600);
+  o.active=!!o.active;
+  return o;
+}
+function normalizeSkills(list){var out=[];(Array.isArray(list)?list:[]).map(normalizeSkill).filter(function(x){return x.name;}).forEach(function(x){var old=out.find(function(v){return v.id===x.id||v.name===x.name;});if(!old)out.push(x);else if(x.description&&!old.description)old.description=x.description;});return out;}
+function skillSystemLabels(){
+  var map={
+    wuxia:{active:'当前丹田运转',memory:'武学记忆',core:'内功'},xianxia:{active:'当前功法运转',memory:'功法记忆',core:'主修功法'},
+    fantasy:{active:'当前战斗专精',memory:'技能记忆',core:'核心专精'},modernlife:{active:'当前发展重心',memory:'能力档案',core:'核心专长'},
+    occult:{active:'当前异能回路',memory:'能力记忆',core:'核心能力'},cyber:{active:'当前运行协议',memory:'程序容量',core:'核心协议'},
+    space:{active:'当前作战专精',memory:'技能容量',core:'核心专精'},apocalypse:{active:'当前生存专精',memory:'技能容量',core:'核心专精'},
+    horror:{active:'当前调查专精',memory:'能力档案',core:'核心专长'},history:{active:'当前研习方向',memory:'技艺记忆',core:'核心技艺'}
+  };
+  return map[WORLD]||{active:'当前运转／专精',memory:'技能记忆',core:'核心'};
+}
+function syncStateCollections(){
+  if(!GAME_STATE.loadout)GAME_STATE.loadout={activeCoreId:null};
+  GAME_STATE.inv=normalizeInventory(GAME_STATE.inv);GAME_STATE.skills=normalizeSkills(GAME_STATE.skills);
+  if(!GAME_STATE.skillCapacity)GAME_STATE.skillCapacity=20;if(!Array.isArray(GAME_STATE.ledger))GAME_STATE.ledger=[];
+  var active=GAME_STATE.skills.find(function(s){return s.id===GAME_STATE.loadout.activeCoreId;})||GAME_STATE.skills.find(function(s){return s.active;});
+  GAME_STATE.loadout.activeCoreId=active?active.id:null;GAME_STATE.skills.forEach(function(s){s.active=!!active&&s.id===active.id;});
+  INVENTORY=GAME_STATE.inv;SKILLS=GAME_STATE.skills;
+}
+function addLedger(type,ref,note,delta){
+  if(!Array.isArray(GAME_STATE.ledger))GAME_STATE.ledger=[];
+  GAME_STATE.ledger.push({turn:TURNS,time:Date.now(),type:String(type||'state'),ref:String(ref||''),note:String(note||''),delta:delta===undefined?null:delta});
+  if(GAME_STATE.ledger.length>300)GAME_STATE.ledger=GAME_STATE.ledger.slice(-300);
+  renderLedger();
+}
+function renderLedger(){
+  var c=document.getElementById('state-ledger');if(!c)return;var rows=(GAME_STATE.ledger||[]).slice(-5).reverse();if(!rows.length){c.textContent='— 暂无记录 —';return;}c.innerHTML='';
+  rows.forEach(function(x){var d=document.createElement('div');d.className='ledger-row';var t=document.createElement('em');t.textContent='T'+x.turn;var b=document.createElement('b');b.textContent=(x.note?x.note+' · ':'')+x.ref;var v=document.createElement('i');v.textContent=x.delta===null?'':((Number(x.delta)>0?'+':'')+x.delta);d.appendChild(t);d.appendChild(b);d.appendChild(v);c.appendChild(d);});
+}
 function freshGameState(){
-  return {version:3,revealed:false,attrs:{},res:{},caps:{},talents:[],inv:[],skills:[],loc:'',npcs:{},lastCheck:null};
+  return {version:4,revealed:false,attrs:{},res:{},caps:{},talents:[],inv:[],skills:[],loadout:{activeCoreId:null},skillCapacity:20,ledger:[],loc:'',npcs:{},lastCheck:null};
 }
 function revealedGameState(seed){
   var s=STATE_SCHEMAS[WORLD]||STATE_SCHEMAS.__custom__,attrs={},src=seed&&seed.attrs||{},rseed=seed&&seed.res||{};
   s.attrs.forEach(function(k){var v=Number(src[k]);attrs[k]=isFinite(v)?Math.max(0,Math.min(10,Math.round(v))):1;});
   var res={};Object.keys(s.res).forEach(function(k){var v=Number(rseed[k]);res[k]=isFinite(v)?Math.max(0,v):s.res[k];});
-  return {version:3,revealed:true,attrs:attrs,res:res,caps:Object.assign({},s.caps),talents:Array.isArray(seed&&seed.talents)?seed.talents.slice(0,12):[],inv:[],skills:Array.isArray(seed&&seed.skills)?seed.skills.slice(0,20):[],loc:'',npcs:{},lastCheck:null};
+  return {version:4,revealed:true,attrs:attrs,res:res,caps:Object.assign({},s.caps),talents:Array.isArray(seed&&seed.talents)?seed.talents.slice(0,12):[],inv:normalizeInventory(seed&&seed.inv),skills:normalizeSkills(seed&&seed.skills).slice(0,40),loadout:{activeCoreId:seed&&seed.activeCoreId||null},skillCapacity:clampNum(seed&&seed.skillCapacity,1,100,20),ledger:[],loc:'',npcs:{},lastCheck:null};
 }
 function migrateGameState(old){
   if(!old||typeof old!=='object')return freshGameState();
   var n=old.revealed===false?freshGameState():revealedGameState(old);
   Object.keys(n.attrs).forEach(function(k){if(isFinite(Number(old.attrs&&old.attrs[k])))n.attrs[k]=Math.max(0,Math.min(20,Number(old.attrs[k])));});
   Object.keys(n.res).forEach(function(k){if(isFinite(Number(old.res&&old.res[k])))n.res[k]=Math.max(0,Number(old.res[k]));});
-  n.talents=Array.isArray(old.talents)?old.talents.slice():[];n.inv=Array.isArray(old.inv)?old.inv.slice():[];n.skills=Array.isArray(old.skills)?old.skills.slice():[];n.loc=old.loc||'';n.npcs=old.npcs&&typeof old.npcs==='object'?old.npcs:{};n.lastCheck=old.lastCheck||null;return n;
+  n.talents=Array.isArray(old.talents)?old.talents.slice():[];n.inv=normalizeInventory(old.inv);n.skills=normalizeSkills(old.skills);n.loadout=old.loadout&&typeof old.loadout==='object'?Object.assign({activeCoreId:null},old.loadout):{activeCoreId:null};n.skillCapacity=clampNum(old.skillCapacity,1,100,20);n.ledger=Array.isArray(old.ledger)?old.ledger.slice(-300):[];n.loc=old.loc||'';n.npcs=old.npcs&&typeof old.npcs==='object'?old.npcs:{};n.lastCheck=old.lastCheck||null;n.version=4;return n;
 }
 
 // Build world cards
@@ -1827,16 +2283,30 @@ var PANEL_TITLES={inventory:'背包',skills:'技能',quests:'任务与目标',pe
 function syncSettingsControls(){
   var t=document.getElementById('set-temp');if(t)t.value=SETTINGS.temp;
   var tv=document.getElementById('set-temp-v');if(tv)tv.textContent=Number(SETTINGS.temp).toFixed(2);
+  var fs=document.getElementById('set-font');if(fs)fs.value=SETTINGS.fontSize||16;
+  var fsv=document.getElementById('set-font-v');if(fsv)fsv.textContent=(SETTINGS.fontSize||16)+'px';
+  var ld=document.getElementById('set-leading');if(ld)ld.value=SETTINGS.lineHeight||1.9;
+  var ldv=document.getElementById('set-leading-v');if(ldv)ldv.textContent=Number(SETTINGS.lineHeight||1.9).toFixed(2);
   var st=document.getElementById('set-stream');if(st)st.checked=!!SETTINGS.stream;
   var dc=document.getElementById('set-dice');if(dc)dc.checked=!!SETTINGS.dice;
   var am=document.getElementById('set-automem');if(am)am.checked=!!SETTINGS.autoMem;
   var dr=document.getElementById('set-director');if(dr)dr.checked=!!SETTINGS.director;
+  var ss=document.getElementById('set-statesync');if(ss)ss.checked=SETTINGS.stateSync!==false;
+  applyReadingPrefs();
+}
+function syncDockState(active){
+  var hud=document.getElementById('charhud');
+  document.querySelectorAll('.game-dock button').forEach(function(b){
+    var on=active?b.dataset.panel===active:(b.dataset.panel==='status'&&hud&&!hud.classList.contains('collapsed')&&(window.innerWidth>900||hud.classList.contains('open')));
+    b.classList.toggle('active',!!on);
+  });
 }
 function closePanel(){
   var p=document.getElementById('spnl'),hud=document.getElementById('charhud'),scrim=document.getElementById('drawer-scrim');
   if(p){p.classList.remove('open');p.removeAttribute('data-active');p.setAttribute('aria-hidden','true');}
   if(hud)hud.classList.remove('open');
   if(scrim)scrim.classList.remove('on');
+  syncDockState();
 }
 function closeGamePanel(){closePanel();}
 function openGamePanel(name){
@@ -1846,6 +2316,7 @@ function openGamePanel(name){
   p.querySelectorAll('.drawer-body>[data-panel]').forEach(function(s){s.classList.toggle('panel-visible',s.dataset.panel===name);});
   var title=document.getElementById('drawer-title');if(title)title.textContent=PANEL_TITLES[name]||'功能面板';
   p.dataset.active=name;p.classList.add('open');p.setAttribute('aria-hidden','false');if(scrim)scrim.classList.add('on');
+  syncDockState(name);
   if(name==='inventory')renderInventory(INVENTORY);
   else if(name==='skills')renderSkills(SKILLS);
   else if(name==='quests')renderQuests();
@@ -1863,6 +2334,7 @@ function toggleCharacterHud(){
   }else{
     hud.classList.toggle('collapsed');
   }
+  syncDockState();
 }
 function openWorldSelectFromGame(){
   if(LOADING){alert('请等待当前回复结束后再离开游戏界面。');return;}
@@ -1878,58 +2350,132 @@ function returnToCurrentGame(){
 }
 function togglePanel(){openGamePanel('settings');}
 
+function appendArchiveGroup(root,title,entries,renderer){
+  var sec=document.createElement('section');sec.className='archive-group';
+  var h=document.createElement('div');h.className='archive-group-title';h.textContent=title;sec.appendChild(h);
+  entries.forEach(function(x){sec.appendChild(renderer(x));});root.appendChild(sec);
+}
 function renderInventory(items) {
-  INVENTORY=items; var c=document.getElementById('inv-grid'); if(!c)return;
-  if(!items||items.length===0){c.innerHTML='<span class="inv-empty">— 空 —</span>';return;}
-  c.innerHTML='';
-  items.forEach(function(item){
-    var el=document.createElement('div'); el.className='inv-item'; el.textContent=item.trim();
-    el.onclick=(function(it){return function(){openItemModal(it);};})(item.trim()); c.appendChild(el);
-  });
+  if(Array.isArray(items)&&items!==GAME_STATE.inv)GAME_STATE.inv=normalizeInventory(items);
+  syncStateCollections();
+  var c=document.getElementById('inv-grid'),sum=document.getElementById('inventory-summary');if(!c)return;
+  var total=GAME_STATE.inv.reduce(function(n,x){return n+Number(x.quantity||0);},0);
+  var money=Object.keys(GAME_STATE.res||{}).filter(function(k){return /银|钱|金|币|存款|积分|灵石|资金/.test(k);}).map(function(k){return k+' '+GAME_STATE.res[k];}).join(' · ');
+  if(sum)sum.textContent=(money?money+' · ':'')+GAME_STATE.inv.length+' 类物品 · '+total+' 件'+(GAME_STATE.inv.some(function(x){return x.equipped;})?' · 含已装备物品':'');
+  if(!GAME_STATE.inv.length){c.innerHTML='<span class="inv-empty">— 空 —</span>';return;}
+  c.innerHTML='';var groups={};
+  GAME_STATE.inv.forEach(function(item){(groups[item.category]||(groups[item.category]=[])).push(item);});
+  Object.keys(groups).forEach(function(cat){appendArchiveGroup(c,cat,groups[cat],function(item){
+    var card=document.createElement('div');card.className='archive-card item-card';card.onclick=function(){openItemModal(item.id);};
+    var head=document.createElement('div');head.className='archive-card-head';
+    var main=document.createElement('div');main.className='archive-card-main';
+    var name=document.createElement('div');name.className='archive-name';name.textContent=item.name;
+    var qty=document.createElement('div');qty.className='archive-qty';qty.textContent='×'+item.quantity;
+    main.appendChild(name);if(item.description){var d=document.createElement('div');d.className='archive-desc';d.textContent=item.description;main.appendChild(d);}
+    var meta=document.createElement('div');meta.className='archive-meta';
+    if(item.equipped){var eq=document.createElement('span');eq.className='archive-badge equipped';eq.textContent='⚔ 已装备';meta.appendChild(eq);}
+    if(item.consumable){var co=document.createElement('span');co.className='archive-badge';co.textContent='可消耗';meta.appendChild(co);}
+    (item.tags||[]).slice(0,3).forEach(function(t){var b=document.createElement('span');b.className='archive-badge muted';b.textContent=t;meta.appendChild(b);});
+    if(meta.childNodes.length)main.appendChild(meta);head.appendChild(main);head.appendChild(qty);card.appendChild(head);return card;
+  });});
 }
 
 function renderSkills(skills) {
-  SKILLS=skills;
-  var label=(WORLDS[WORLD]&&WORLDS[WORLD].skillLabel)||'技能';
-  var titleEl=document.getElementById('skill-panel-title'); if(titleEl) titleEl.textContent='▸ '+label;
-  var c=document.getElementById('skill-grid'); if(!c)return;
-  if(!GAME_STATE.revealed){c.innerHTML='<span class="skill-empty">— 未揭示 —</span>';return;}
-  if(!skills||skills.length===0){c.innerHTML='<span class="skill-empty">— 空 —</span>';return;}
-  c.innerHTML='';
-  skills.forEach(function(sk){
-    var el=document.createElement('div'); el.className='skill-item'; el.textContent=sk.trim();
-    el.onclick=(function(s){return function(){openSkillModal(s);};})(sk.trim()); c.appendChild(el);
-  });
+  if(Array.isArray(skills)&&skills!==GAME_STATE.skills)GAME_STATE.skills=normalizeSkills(skills);
+  syncStateCollections();
+  var label=(WORLDS[WORLD]&&WORLDS[WORLD].skillLabel)||'技能',labels=skillSystemLabels();
+  var titleEl=document.querySelector('#skill-panel-title>span');if(titleEl)titleEl.textContent='▸ '+label;
+  var al=document.getElementById('active-core-label'),an=document.getElementById('active-core-name'),am=document.getElementById('active-core-meta');
+  if(al)al.textContent=labels.active;var active=GAME_STATE.revealed?GAME_STATE.skills.find(function(s){return s.id===GAME_STATE.loadout.activeCoreId;}):null;
+  if(an)an.textContent=!GAME_STATE.revealed?'— 未揭示 —':(active?active.name:'— 无 —');if(am)am.textContent=!GAME_STATE.revealed?'建立角色卡后显示并可操作':(active?(active.realm+' · 熟练 '+active.proficiency+'%'):'点击技能可选择当前心法／专精');
+  var ml=document.getElementById('skill-memory-label'),mc=document.getElementById('skill-memory-count'),mf=document.getElementById('skill-memory-fill');
+  if(ml)ml.textContent=labels.memory;if(mc)mc.textContent=(GAME_STATE.revealed?GAME_STATE.skills.length:'—')+' / '+GAME_STATE.skillCapacity;if(mf)mf.style.width=GAME_STATE.revealed?Math.min(100,GAME_STATE.skills.length/GAME_STATE.skillCapacity*100)+'%':'0%';
+  var c=document.getElementById('skill-grid');if(!c)return;
+  if(!GAME_STATE.revealed){c.innerHTML='<span class="skill-empty">— 角色卡尚未建立 —</span>';return;}
+  if(!GAME_STATE.skills.length){c.innerHTML='<span class="skill-empty">— 尚未掌握任何'+label+' —</span>';return;}
+  c.innerHTML='';var groups={};GAME_STATE.skills.forEach(function(sk){(groups[sk.category]||(groups[sk.category]=[])).push(sk);});
+  Object.keys(groups).forEach(function(cat){appendArchiveGroup(c,cat,groups[cat],function(sk){
+    var card=document.createElement('div');card.className='archive-card skill-card'+(sk.active?' active-skill':'');card.onclick=function(){openSkillModal(sk.id);};
+    var head=document.createElement('div');head.className='archive-card-head';var main=document.createElement('div');main.className='archive-card-main';
+    var name=document.createElement('div');name.className='archive-name';name.textContent=sk.name;var rank=document.createElement('div');rank.className='skill-rank';rank.textContent=sk.realm;
+    main.appendChild(name);if(sk.description){var d=document.createElement('div');d.className='archive-desc';d.textContent=sk.description;main.appendChild(d);}
+    var meta=document.createElement('div');meta.className='archive-meta';
+    [['系数 '+Number(sk.coefficient).toFixed(1),''],['熟练 '+sk.proficiency+'%',''],[sk.attribute||'属性未定','muted']].forEach(function(x){var b=document.createElement('span');b.className='archive-badge '+x[1];b.textContent=x[0];meta.appendChild(b);});
+    if(sk.active){var ac=document.createElement('span');ac.className='archive-badge active';ac.textContent='☯ 运转中';meta.appendChild(ac);}
+    main.appendChild(meta);var prog=document.createElement('div');prog.className='skill-progress';prog.innerHTML='<i style="width:'+sk.proficiency+'%"></i>';main.appendChild(prog);
+    head.appendChild(main);head.appendChild(rank);card.appendChild(head);return card;
+  });});
 }
 
-async function openItemModal(item) {
-  document.getElementById('imodal').classList.add('on');
-  document.getElementById('imod-name').textContent=item;
-  document.getElementById('imod-desc').innerHTML='<span style="color:var(--dm)">查询中...</span>';
-  var prompt='在'+(WORLDS[WORLD]&&WORLDS[WORLD].name||'游戏')+'世界观中，简要描述道具"'+item+'"的外观、用途和价值，100字以内，用符合世界观的文风。';
-  try {
-    var res=await doFetch([{role:'user',content:prompt}],200);
-    var data=await res.json();
-    if(!data.error) document.getElementById('imod-desc').textContent=chatContent(data);
-    else document.getElementById('imod-desc').textContent='无法获取描述。';
-  } catch(e){document.getElementById('imod-desc').textContent='查询失败：'+String(e&&e.message||e).substring(0,120);}
+function modalAction(text,fn,cls){var b=document.createElement('button');b.className='imod-action '+(cls||'');b.textContent=text;b.onclick=fn;document.getElementById('imod-actions').appendChild(b);}
+function openArchiveModal(title,html){document.getElementById('imodal').classList.add('on');document.getElementById('imod-name').textContent=title;document.getElementById('imod-desc').innerHTML=html||'';document.getElementById('imod-actions').innerHTML='';}
+function itemById(id){return GAME_STATE.inv.find(function(x){return x.id===id||x.name===id;});}
+function skillById(id){return GAME_STATE.skills.find(function(x){return x.id===id||x.name===id;});}
+function queueArchiveAction(text){closeModal();closeGamePanel();var p=document.getElementById('pinp');p.value=text;p.dispatchEvent(new Event('input'));p.focus();}
+function openItemModal(id) {
+  var item=typeof id==='object'?id:itemById(id);if(!item)return;
+  var html='<div class="detail-grid"><div class="detail-cell"><span>分类</span><b>'+esc(item.category)+'</b></div><div class="detail-cell"><span>数量</span><b>'+esc(String(item.quantity))+'</b></div></div><div>'+esc(item.description||'尚未记录详细说明。')+'</div>';
+  openArchiveModal(item.name,html);
+  if(item.consumable)modalAction('使用／消耗',function(){queueArchiveAction('我取出「'+item.name+'」并尝试使用它。请在实际使用成功后结算数量。');},'blue');
+  modalAction(item.equipped?'卸下装备':'装备物品',function(){queueArchiveAction('我尝试'+(item.equipped?'卸下':'装备')+'「'+item.name+'」。请在动作实际完成后更新装备状态。');},'blue');
+  modalAction('AI整理档案',function(){enrichArchiveEntry('item',item.id);});
+  modalAction('编辑档案',function(){openItemEditor(item.id);});
+  modalAction('丢弃／移交',function(){queueArchiveAction('我准备丢弃或移交「'+item.name+'」。请先描述眼前条件并在真正失去物品后结算。');},'red');
 }
-
-async function openSkillModal(skill) {
-  document.getElementById('imodal').classList.add('on');
-  document.getElementById('imod-name').textContent=skill;
-  document.getElementById('imod-desc').innerHTML='<span style="color:var(--dm)">查询中...</span>';
-  var label=(WORLDS[WORLD]&&WORLDS[WORLD].skillLabel)||'技能';
-  var prompt='在'+(WORLDS[WORLD]&&WORLDS[WORLD].name||'游戏')+'世界观中，简要描述'+label+'"'+skill+'"的来源、效果和使用方式，100字以内，用符合世界观的文风。';
-  try {
-    var res=await doFetch([{role:'user',content:prompt}],200);
-    var data=await res.json();
-    if(!data.error) document.getElementById('imod-desc').textContent=chatContent(data);
-    else document.getElementById('imod-desc').textContent='无法获取描述。';
-  } catch(e){document.getElementById('imod-desc').textContent='查询失败：'+String(e&&e.message||e).substring(0,120);}
+function openSkillModal(id) {
+  var sk=typeof id==='object'?id:skillById(id);if(!sk)return;
+  var html='<div class="detail-grid"><div class="detail-cell"><span>境界</span><b>'+esc(sk.realm)+'</b></div><div class="detail-cell"><span>系数</span><b>'+Number(sk.coefficient).toFixed(1)+'</b></div><div class="detail-cell"><span>熟练度</span><b>'+sk.proficiency+'%</b></div><div class="detail-cell"><span>关联属性</span><b>'+esc(sk.attribute||'未指定')+'</b></div></div><div>'+esc(sk.description||'尚未记录详细说明。')+'</div>';
+  openArchiveModal(sk.name,html);
+  modalAction(sk.active?'停止当前运转':'设为当前运转',function(){setActiveCore(sk.active?null:sk.id);},'blue');
+  modalAction('开始修炼',function(){queueArchiveAction('我开始有意识地修炼「'+sk.name+'」。请根据实际投入的时间、环境与训练结果结算熟练度，不要自动跳过未经我同意的长时间。');},'blue');
+  modalAction('AI整理说明',function(){enrichArchiveEntry('skill',sk.id);});
+  modalAction('编辑技能',function(){openSkillEditor(sk.id);});
+  modalAction('遗忘／移除',function(){removeSkillDirect(sk.id);},'red');
 }
-
-function closeModal(){document.getElementById('imodal').classList.remove('on');}
+function openItemEditor(id){
+  var item=id?itemById(id):normalizeItem({name:'',quantity:1,category:'其他'},0),editing=!!id;
+  openArchiveModal(editing?'编辑物品':'添加物品','<div class="archive-form"><label>名称<input id="edit-item-name" value="'+escAttr(item.name)+'"></label><label>分类<input id="edit-item-cat" value="'+escAttr(item.category)+'"></label><label>数量<input id="edit-item-qty" type="number" min="0" step="1" value="'+item.quantity+'"></label><label>说明<textarea id="edit-item-desc" rows="4">'+esc(item.description||'')+'</textarea></label><label class="archive-check"><input id="edit-item-equipped" type="checkbox" '+(item.equipped?'checked':'')+'> 已装备</label></div>');
+  modalAction('保存物品',function(){saveItemEditor(editing?item.id:null);},'blue full');if(editing)modalAction('删除物品',function(){removeItemDirect(item.id);},'red');
+}
+function saveItemEditor(id){
+  var name=document.getElementById('edit-item-name').value.trim();if(!name)return alert('请填写物品名称');
+  var raw={id:id||stableStateId('item',name+'_'+Date.now()),name:name,category:document.getElementById('edit-item-cat').value.trim()||guessItemCategory(name),quantity:Number(document.getElementById('edit-item-qty').value),description:document.getElementById('edit-item-desc').value.trim(),equipped:document.getElementById('edit-item-equipped').checked};
+  var item=normalizeItem(raw);if(id){var ix=GAME_STATE.inv.findIndex(function(x){return x.id===id;});if(ix>=0)GAME_STATE.inv[ix]=item;}else GAME_STATE.inv.push(item);
+  addLedger('manual_item',item.name,id?'编辑物品':'添加物品');syncStateCollections();renderInventory();autoSave();closeModal();
+}
+function openSkillEditor(id){
+  if(!GAME_STATE.revealed)return alert('请先建立角色卡。');var sk=id?skillById(id):normalizeSkill({name:'',category:skillSystemLabels().core,realm:'初学',coefficient:1,proficiency:0},0),editing=!!id;
+  openArchiveModal(editing?'编辑技能':'添加技能','<div class="archive-form"><label>名称<input id="edit-skill-name" value="'+escAttr(sk.name)+'"></label><label>类别<input id="edit-skill-cat" value="'+escAttr(sk.category)+'"></label><label>境界<input id="edit-skill-realm" value="'+escAttr(sk.realm)+'"></label><div class="archive-form-split"><label>系数（0-5）<input id="edit-skill-coef" type="number" min="0" max="5" step="0.1" value="'+sk.coefficient+'"></label><label>熟练度<input id="edit-skill-prof" type="number" min="0" max="100" step="1" value="'+sk.proficiency+'"></label></div><label>关联属性<input id="edit-skill-attr" value="'+escAttr(sk.attribute||'')+'"></label><label>说明<textarea id="edit-skill-desc" rows="5">'+esc(sk.description||'')+'</textarea></label></div>');
+  modalAction('保存技能',function(){saveSkillEditor(editing?sk.id:null);},'blue full');if(editing)modalAction('删除技能',function(){removeSkillDirect(sk.id);},'red');
+}
+function saveSkillEditor(id){
+  var name=document.getElementById('edit-skill-name').value.trim();if(!name)return alert('请填写技能名称');
+  if(!id&&GAME_STATE.skills.length>=GAME_STATE.skillCapacity&&!confirm('当前技能记忆已满，仍要添加并临时超出容量吗？'))return;
+  var raw={id:id||stableStateId('skill',name+'_'+Date.now()),name:name,category:document.getElementById('edit-skill-cat').value.trim()||guessSkillCategory(name),realm:document.getElementById('edit-skill-realm').value.trim()||'初学',coefficient:Number(document.getElementById('edit-skill-coef').value),proficiency:Number(document.getElementById('edit-skill-prof').value),attribute:document.getElementById('edit-skill-attr').value.trim(),description:document.getElementById('edit-skill-desc').value.trim(),active:id&&GAME_STATE.loadout.activeCoreId===id};
+  var sk=normalizeSkill(raw);if(id){var ix=GAME_STATE.skills.findIndex(function(x){return x.id===id;});if(ix>=0)GAME_STATE.skills[ix]=sk;}else GAME_STATE.skills.push(sk);
+  addLedger('manual_skill',sk.name,id?'编辑技能':'添加技能');syncStateCollections();renderSkills();renderCharacterSheet();autoSave();closeModal();
+}
+function setActiveCore(id){
+  GAME_STATE.loadout.activeCoreId=id||null;GAME_STATE.skills.forEach(function(s){s.active=!!id&&s.id===id;});
+  var sk=id&&skillById(id);addLedger('loadout',sk?sk.name:'无',sk?'设为当前运转':'停止当前运转');renderSkills();autoSave();closeModal();addBlk('sys',sk?'▸ 当前运转已切换为「'+sk.name+'」':'▸ 已停止当前运转');
+}
+function editSkillCapacity(){if(!GAME_STATE.revealed)return;var v=prompt('调整技能／功法容量：',GAME_STATE.skillCapacity);if(v===null)return;v=Math.round(Number(v));if(!isFinite(v)||v<1||v>100)return alert('请输入 1—100 的整数');GAME_STATE.skillCapacity=v;addLedger('skill_capacity','容量','调整容量',v);renderSkills();autoSave();}
+async function enrichArchiveEntry(kind,id){
+  if(ARCHIVE_ENRICHING)return;var entry=kind==='skill'?skillById(id):itemById(id);if(!entry)return;ARCHIVE_ENRICHING=true;
+  openArchiveModal('正在整理「'+entry.name+'」','<span style="color:var(--dm)">正在从已经发生的剧情中提取稳定说明，不会推进游戏时间……</span>');
+  try{
+    var evidence=HIST.filter(function(m){return String(m.content).indexOf(entry.name)>=0;}).slice(-8).map(function(m){return (m.role==='user'?'玩家':'叙事')+':'+String(m.content).substring(0,700);}).join('\n');
+    var shape=kind==='skill'?'{"category":"类别","realm":"境界或现状","coefficient":0到5,"attribute":"关联属性或空","description":"120字内稳定效果说明"}':'{"category":"分类","description":"120字内稳定外观用途说明","consumable":false,"tags":[]}';
+    var prompt='你是文字RPG档案整理器，不写剧情，不新增能力、用途或历史。根据世界、现有条目和包含该名称的历史证据补齐稳定档案；证据不足时使用保守描述并明确限制，不把名称里的夸张词自动当成实际威力。只输出JSON '+shape+'。\n世界：'+((WORLDS[WORLD]&&WORLDS[WORLD].name)||WORLD)+'\n现有条目：'+JSON.stringify(entry)+'\n证据：'+(evidence||'无额外证据');
+    var res=await doFetch([{role:'user',content:prompt}],500),data=await res.json();if(data.error)throw new Error('整理失败');if(data.usage&&data.usage.total_tokens)TOKENS+=data.usage.total_tokens;
+    var m=chatContent(data).match(/\{[\s\S]*\}/);if(!m)throw new Error('档案格式无效');var patch=JSON.parse(m[0]);
+    if(kind==='skill'){patch.id=entry.id;patch.name=entry.name;patch.proficiency=entry.proficiency;patch.active=entry.active;upsertSkill(patch);syncStateCollections();renderSkills();openSkillModal(entry.id);}else{patch.id=entry.id;patch.name=entry.name;patch.quantity=entry.quantity;patch.equipped=entry.equipped;upsertInventoryItem(patch);syncStateCollections();renderInventory();openItemModal(entry.id);}autoSave();
+  }catch(e){openArchiveModal('整理失败','<span style="color:#d99">'+esc(String(e&&e.message||e).substring(0,160))+'</span>');}
+  ARCHIVE_ENRICHING=false;
+}
+function removeItemDirect(id){var it=itemById(id);if(!it||!confirm('从权威背包中删除「'+it.name+'」？'))return;GAME_STATE.inv=GAME_STATE.inv.filter(function(x){return x.id!==id;});addLedger('manual_item',it.name,'删除物品');syncStateCollections();renderInventory();autoSave();closeModal();}
+function removeSkillDirect(id){var sk=skillById(id);if(!sk||!confirm('从权威角色卡中移除「'+sk.name+'」？'))return;GAME_STATE.skills=GAME_STATE.skills.filter(function(x){return x.id!==id;});if(GAME_STATE.loadout.activeCoreId===id)GAME_STATE.loadout.activeCoreId=null;addLedger('manual_skill',sk.name,'移除技能');syncStateCollections();renderSkills();autoSave();closeModal();}
+function closeModal(){document.getElementById('imodal').classList.remove('on');document.getElementById('imod-actions').innerHTML='';}
 
 function parseQuests(text) {
   var doneRe=/【任务完成】([^\n]+)/g, dm;
@@ -2008,6 +2554,7 @@ async function renderSlots() {
 }
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function escAttr(s){return esc(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function scrollB(){var l=document.getElementById('slog');l.scrollTop=l.scrollHeight;}
 function addBlk(cls,txt,hidx){var el=document.createElement('div');el.className='sb '+cls;el.textContent=txt;if(typeof hidx==='number')el.dataset.hidx=hidx;document.getElementById('slog').appendChild(el);scrollB();return el;}
 function addTyp(){var el=document.createElement('div');el.className='sb nar';el.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';document.getElementById('slog').appendChild(el);scrollB();return el;}
@@ -2069,7 +2616,10 @@ function applySnapshot(sv){
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
-  GAME_STATE=migrateGameState(sv.gstate);INVENTORY=GAME_STATE.inv.slice();SKILLS=GAME_STATE.skills.slice();
+  var savedState=sv.gstate&&typeof sv.gstate==='object'?Object.assign({},sv.gstate):freshGameState();
+  if((!Array.isArray(savedState.inv)||!savedState.inv.length)&&Array.isArray(sv.inv))savedState.inv=sv.inv;
+  if((!Array.isArray(savedState.skills)||!savedState.skills.length)&&Array.isArray(sv.skills))savedState.skills=sv.skills;
+  GAME_STATE=migrateGameState(savedState);syncStateCollections();STATE_ACTIVE=sv.stateActive!==false;
   PLAYER_CANON=sv.playerCanon&&typeof sv.playerCanon==='object'?sv.playerCanon:parseCanonText(PREFS.canon||'');
   PREMISE_STATE=sv.premise&&typeof sv.premise==='object'?sv.premise:(/穿越者/.test(OPENING_PICK||'')?{kind:'transmigration',frame:'异世界',mechanism:'旧存档迁移',trigger:'',startedAt:Math.max(0,TURNS-2)}:{kind:'none'});
   // Migrate saves created by the old suspense-heavy DNA generator.
@@ -2179,6 +2729,7 @@ function renderCharacterSheet(){
   if(hw)hw.textContent=(WORLDS[WORLD]&&WORLDS[WORLD].name)||'未命名世界';
   if(hl)hl.textContent=GAME_STATE.loc||'位置未记录';
   if(ht)ht.textContent='第 '+TURNS+' 回合';
+  renderLedger();
   var sd=document.getElementById('sdsp');
   if(!GAME_STATE.revealed){
     if(sd){sd.textContent=(GAME_STATE.loc?'当前位置：'+GAME_STATE.loc+'\n':'')+'能力与数值尚未揭示。玩家的描述和实际经历会决定之后的角色卡。';sd.style.color='var(--dm)';}
@@ -2210,13 +2761,34 @@ function editStateValue(kind,key){
   renderCharacterSheet();autoSave();
 }
 function addSheetEntry(kind){
-  if(LOADING)return;if(!GAME_STATE.revealed)return alert('请先由玩家主动查看或建立角色卡。');var label=kind==='talent'?'天赋':'技能',v=prompt('添加'+label+'名称：');if(!v||!v.trim())return;v=v.trim().substring(0,30);
-  var arr=kind==='talent'?GAME_STATE.talents:GAME_STATE.skills;if(arr.indexOf(v)<0)arr.push(v);
-  renderCharacterSheet();renderSkills(GAME_STATE.skills.slice());autoSave();
+  if(LOADING)return;if(!GAME_STATE.revealed)return alert('请先由玩家主动查看或建立角色卡。');if(kind==='skill'){openSkillEditor();return;}
+  var v=prompt('添加天赋名称：');if(!v||!v.trim())return;v=v.trim().substring(0,30);if(GAME_STATE.talents.indexOf(v)<0)GAME_STATE.talents.push(v);
+  renderCharacterSheet();autoSave();
 }
-function requestCharacterSheet(){
-  if(LOADING||GAME_STATE.revealed)return;
-  send('我主动查看角色卡，检查并确认自己当前真实拥有的身体能力、状态、天赋与技能。请只依据我此前已经明确描述的背景、身份、身体和实际经历建立角色卡；没有说过的专长不要补造。',false);
+async function requestCharacterSheet(){
+  if(LOADING||SHEET_BUILDING||GAME_STATE.revealed)return;SHEET_BUILDING=true;
+  var btn=document.querySelector('#sheet-gate button'),oldText=btn&&btn.textContent;if(btn){btn.disabled=true;btn.textContent='正在整理已确认设定…';}
+  try{
+    var schema=STATE_SCHEMAS[WORLD]||STATE_SCHEMAS.__custom__,recent=HIST.slice(-24).map(function(m){return (m.role==='user'?'玩家':'叙事')+': '+String(m.content).replace(/【(?:STATE|大纲|SHEET_INIT)】[\s\S]*?【\/(?:STATE|大纲|SHEET_INIT)】/g,'').substring(0,900);}).join('\n');
+    var prompt='你是文字RPG的角色卡整理器，不写剧情。只依据玩家已经明确确认的背景、身份、身体、训练与实际经历建立角色卡；不因世界类型擅自赠送职业、技能、血统或高数值。未获支持的普通能力取1。\n世界：'+((WORLDS[WORLD]&&WORLDS[WORLD].name)||WORLD)+'\n身份锁定：'+(canonSummary()||'无')+'\n允许且必须完整输出的属性键：'+schema.attrs.join('、')+'；范围0-10。\n允许且必须完整输出的资源键与默认上限：'+Object.keys(schema.res).map(function(k){return k+'='+schema.res[k];}).join('、')+'。资源按当前实际状态填写；没有受伤或消耗就用默认值。\n技能必须是对象，字段为name/category/realm/coefficient(0-5)/proficiency(0-100)/attribute/description；没有确凿技能就返回空数组。天赋同理只保留明确成立的简短名称。\n只输出JSON：{"attrs":{},"res":{},"talents":[],"skills":[],"skillCapacity":20,"activeCoreName":null}\n\n可用历史：\n'+recent;
+    var res=await doFetch([{role:'user',content:prompt}],1200),data=await res.json();if(data.error)throw new Error('建卡请求失败');
+    if(data.usage&&data.usage.total_tokens){TOKENS+=data.usage.total_tokens;document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString();}
+    var txt=chatContent(data),m=txt.match(/\{[\s\S]*\}/);if(!m)throw new Error('没有获得有效角色卡');var seed=JSON.parse(m[0]);
+    showSheetPreview(seed);
+  }catch(e){alert('角色卡整理失败：'+String(e&&e.message||e).substring(0,160)+'。你仍可稍后重试，或在角色卡建立后手动校准。');}
+  finally{SHEET_BUILDING=false;if(btn){btn.disabled=false;btn.textContent=oldText||'主动查看／建立角色卡';}}
+}
+function showSheetPreview(seed){
+  var preview=revealedGameState(seed),attrs=Object.keys(preview.attrs).map(function(k){return '<div class="detail-cell"><span>'+esc(k)+'</span><b>'+preview.attrs[k]+'</b></div>';}).join(''),res=Object.keys(preview.res).map(function(k){return '<div class="detail-cell"><span>'+esc(k)+'</span><b>'+preview.res[k]+'</b></div>';}).join('');
+  var skills=preview.skills.length?preview.skills.map(function(s){return esc(s.name)+'（'+esc(s.category)+' · '+s.proficiency+'%）';}).join('、'):'无';
+  PENDING_SHEET_SEED=seed;openArchiveModal('确认角色卡','<div class="archive-summary">这是独立建卡结果，确认前不会写入游戏。没有依据的内容可以确认后在侧栏修改。</div><div class="detail-grid">'+attrs+res+'</div><div class="archive-desc"><b>天赋：</b>'+esc((preview.talents||[]).join('、')||'无')+'<br><b>技能：</b>'+skills+'</div>');
+  modalAction('确认并建立',commitSheetPreview,'blue full');modalAction('取消',function(){PENDING_SHEET_SEED=null;closeModal();});
+}
+function commitSheetPreview(){
+  if(!PENDING_SHEET_SEED)return;var seed=PENDING_SHEET_SEED,old=GAME_STATE,n=revealedGameState(seed);
+  n.inv=normalizeInventory(old.inv);n.skills=normalizeSkills(n.skills.concat(old.skills||[]));n.loc=old.loc||'';n.npcs=old.npcs||{};n.ledger=Array.isArray(old.ledger)?old.ledger:[];n.lastCheck=old.lastCheck||null;n.skillCapacity=clampNum(seed.skillCapacity,1,100,20);
+  if(seed.activeCoreName){var active=n.skills.find(function(s){return s.name===seed.activeCoreName;});if(active)n.loadout.activeCoreId=active.id;}
+  GAME_STATE=n;STATE_ACTIVE=true;SHEET_INIT_ARMED=false;PENDING_SHEET_SEED=null;syncStateCollections();addLedger('sheet','角色卡','建立角色卡');renderInventory();renderSkills();renderNpcs();renderCharacterSheet();autoSave();closeModal();addBlk('sys','▸ 角色卡已建立；后续数值、物品与技能由统一状态账本持续保存');
 }
 
 async function doFetch(messages,maxTok){
@@ -2303,7 +2875,7 @@ async function maybeCompress(){
   SUMMING=true; addBlk('sys','▸ 正在压缩历史记忆...');
   var version=HIST.length;
   var toC=HIST.slice(0,cc), toK=HIST.slice(cc);
-  var prompt='以下是文字游戏对话历史，请生成【状态摘要】（400字内）：1)角色信息；2)关键事件时间线（保持因果顺序）；3)持有物品；4)重要NPC及其公开身份、当前态度和已知需求；5)当前地点局势；6)已公开信息；7)未完成承诺、任务或生活目标。不要把普通日常强行总结成阴谋或伏笔。若历史中出现过【大纲】块，请只保留最新一份的核心内容，不要增加新的秘密。\n【不可改写的主角身份映射】'+(canonSummary()||'尚无')+'。摘要必须原样保留这些字段的命名空间：现实姓名、游戏ID、角色名等不是同一个概念；不得把某字段的值移动到另一字段，也不得根据上下文猜测空字段。\n\n'+toC.map(function(m){return m.role+': '+m.content;}).join('\n');
+  var prompt='以下是文字游戏的较早对话，请生成700字内的【叙事记忆摘要】，用于接续因果而不是充当数值数据库。按顺序保留：1)已经确认的身份与处境；2)关键事件时间线及其结果；3)玩家明确接受、拒绝、忽略或尚未决定的事项；4)重要NPC的公开身份、双方实际互动和当前关系；5)当前地点局势、公开信息、未完成承诺与生活目标。普通日常可以简短保留，不得改造成阴谋、伏笔或任务。人物、事件、物品名称相似也不得合并；不确定的内容明确写“未确认”，禁止补全。若历史中出现【大纲】只保留最新一份已经兑现的核心内容，不增加秘密。\n精确属性、资源、物品数量、技能熟练度和装备状态由程序账本维护，摘要不得重新计算或改写；只在某件物品具有剧情意义时提及名称。当前程序账本仅供冲突校验：'+stateSummary()+'。\n【不可改写的主角身份映射】'+(canonSummary()||'尚无')+'。现实姓名、游戏ID、角色名、公开化名与当前身份属于不同命名空间，不得互换；空字段保持未确认。\n\n'+toC.map(function(m){return m.role+': '+m.content;}).join('\n');
   try{
     var res=await doFetch([{role:'user',content:prompt}],900);
     var data=await res.json();
@@ -2325,7 +2897,7 @@ function launchGame() {
   startGame();
 }
 
-var CORE_RULES='【文字RPG叙事契约】\n玩家决定主角，AI负责世界与NPC。玩家输入通常只授权其中明确表达的动作；写完该动作及连续、直接的反馈后，在出现新选择、未知风险、承诺、转场或需要玩家表态的地方停下。不得替玩家点击、答应、拒绝、说话、接受任务、决定去向、使用物品、跨越时间或总结其心理结论。\n时间默认连续。职业、生活、观察、对话、赶路和适应都可正常展开；仅当玩家明确要求快进时使用蒙太奇。穿越、召唤、觉醒、入职和加入组织等转折应分阶段游玩，每个决定点都交还玩家。\nNPC有自己的立场、生活与有限视角，说话自然直接；不知道就说不知道。不要用神秘停顿、含糊警告、幕后观察者或凭空阴谋制造戏剧，也不要让所有人围着主角运转。\n叙事以当前行动为中心，但允许少量职业、环境和人物细节建立生活质感；细节不必都是伏笔。篇幅服从内容，不设最低字数，不重复玩家刚说过的话，不为了写长而新增事件。失败应有情境依据，普通无风险行动不检定。\n命名要平实有来历，用真实世界的构词法（如陈家渡、三里坡、广盛号）；禁止模板名（青石镇、黑风寨）与中二直译名（暗影兄弟会）。进入新阶段或发生大时间跳跃时，正文第一行输出【章：四到十字标题】，其余回合不输出。\n每回合末尾提供2-4个眼前可做的行动参考，数量服从场景，并保留“或输入任何你想做的事”。选项不得替玩家规划人生或预告剧情。任务只有在玩家明确接受、承诺或主动设定目标后才登记。数值、物品、技能、位置和重要关系确有变化时才输出【STATE】{"attr_set":{"属性名":变化后的新值},"res_set":{"资源名":变化后的新数值},"inv_add":["获得的物品"],"inv_rm":["失去的物品"],"skill_add":["新学会的技能"],"skill_rm":[],"loc":"新位置","npc_set":{"NPC名":{"rel":"关系","att":-5到5的态度整数,"note":"一句话现状"}},"npc_rm":["离场的NPC名"]}【/STATE】，未变化字段省略；普通路人无需进入长期关系记录，态度单回合变化不超过1。角色数值只服从前端权威角色卡，正文不重复打印状态栏。';
+var CORE_RULES='【文字RPG叙事契约】\n职责：玩家决定主角；AI只负责世界、NPC与玩家行动的直接结果；程序负责检定、数值、物品、技能和长期状态。后台裁定与权威角色卡是不可改判的事实。\n一、玩家主权与授权边界\n1. 玩家输入是意图，不自动等于成功；但只授权其中明确表达的动作及不可分割的直接过程。完成这一步后，在新的选择、风险、承诺、交易、转场或需要表态处停下。\n2. 查看不等于取得，询问不等于购买，靠近不等于接触，听见不等于回应，拥有选项不等于已经选择。不得替玩家点击、答应、拒绝、说话、接受任务、决定去向、使用物品或总结心理结论。\n3. 心理活动和未说出口的话NPC永远听不见；拿不准时默认没有说出口。玩家明确忽略或拒绝某条线索后，不得让同一钩子跟随、换皮或借其他人物强拉回来。\n二、节奏与时间\n4. 时间默认连续，日常、职业、观察、对话、赶路和适应都可以成为完整回合。只有玩家明确要求快进，或当前动作本身明确包含长时间，才使用蒙太奇；必须说明经过时间并结算真实变化。\n5. 穿越、召唤、觉醒、入职、加入组织等重大转折分阶段游玩，每个可反应、可选择的节点都交还玩家，不得用摘要一口气写完。\n三、世界与NPC\n6. NPC拥有自己的生活、立场与有限视角；不知道就说不知道。绝大多数人没有秘密，问路就给方向，买卖就报价，寒暄可以只是寒暄。不要用神秘停顿、欲言又止、幕后观察者或凭空阴谋制造戏剧，也不要让世界围着主角运转。\n7. 失败、拒绝、平淡与无事发生都是合法结果。危险和代价必须有情境依据；普通无风险行动不检定，不用刚好赶到、突然放水或强制任务维持剧情。\n四、文风、命名与章节\n8. 一回合一个重点，篇幅服从内容；允许感官、职业和生活细节，但不重复玩家输入，不为写长而新增事件，不把每个细节都写成伏笔。\n9. 新地名、势力名和人名使用真实语言中的地理、姓氏、行业、方言与历史构词法，例如陈家渡、三里坡、广盛号、下瓦窑、槐树巷。除非玩家或原作已经明确使用，禁止自动生成青石镇、黑风寨、悦来客栈等模板名，以及暗影兄弟会、血色黎明等中二直译名。气氛来自事件，不靠夸张名字。\n10. 只有进入真正的新阶段、首次落地新世界、章节目标转换或发生较大时间跳跃时，正文第一行输出一次【章：四到十字标题】；普通回合不得重复章节标题。\n五、输出与状态协议\n11. 每回合末尾提供2-4个眼前可做的行动参考，数量服从场景，保留“或输入任何你想做的事”。选项不暗示最优解，不替玩家规划后续人生。\n12. 正文不打印另一套状态栏。数值、资源、物品、技能、装备、地点或重要关系确实变化时，必须输出隐藏【STATE】块；允许字段为attr_delta、res_delta、inv_delta、inv_upsert、equip_set、skill_upsert、skill_progress、active_skill、talent_add、talent_rm、loc、npc_set、npc_rm，具体JSON结构服从紧随其后的“角色卡与状态协议”。没有真实变化就不输出。普通对话、查看面板和整理记忆不消耗生理资源。\n13. 任务只有在玩家明确接受、承诺或主动设定目标后才登记。剧情实质推进时才更新隐藏【大纲】块；普通路人无需进入长期人物记录。';
 var INTERACTION_RULES='';
 var OPTION_RULES='【行动选项格式】回复末尾必须先单独写“选项：”，再提供2-4项；每项必须是“数字+空格+完整行动描述”，例如“1 检查弹窗来自哪个程序”。不得只输出序号、单个数字或空选项。选项只是平等的参考，不存在作者预设的正确路线；必须允许忽略线索、拒绝任务、继续原本生活或什么也不做，且这些选择不会被惩罚性地强行拉回同一剧情。最后写“或输入任何你想做的事”。正文结束处不得用“该……了”“看来只能……”“你决定……”等句子替玩家形成目标或催促行动。';
 var AGENCY_RULES='【禁止代替玩家】旁白可以描写玩家开场前已经在做的日常、非自主的感官和身体反应，但外部刺激出现后，任何新的主动行为都必须由玩家输入授权。不得擅自写玩家点开链接、关闭页面、回复消息、检查时间、拿起武器、出门、上线、接受委托或得出行动结论。场景应停在尚未回应的刺激上，不附加催促性收尾。剧情钩子不是强制入口；忽略、拒绝、绕开或继续生活都必须产生真实而可持续的后续。重大事件不得依赖玩家完成唯一任务或按下唯一按钮；若世界设定要求最终发生穿越，应由外部事件或多条不同路径自然实现，不能反复逼玩家选择同一入口。';
@@ -2373,10 +2945,10 @@ function buildSystemPrompt(recentText){
   sp+='\n\n'+AGENCY_RULES;
   var worldPrompt=String(w.prompt||'').replace(/\n【状态栏】[\s\S]*?(?=\n【任务】|$)/,'').replace(/\n【任务】[^\n]*/g,'');
   sp+='\n\n【世界包】\n'+worldPrompt;
-  sp+='\n【角色卡与状态协议——覆盖世界包旧状态栏要求】前端已经显示权威角色卡，正文不要再输出方括号状态栏，也不要自行重建属性表。核心属性名固定，只能在长期训练、升级或重大伤病确实发生时用attr_delta申报，单回合仅允许±1。资源只能修改权威状态中已经存在的键。获得或失去技能、天赋必须由剧情中已经完成的学习、觉醒、遗忘或剥夺直接造成。状态变化格式：【STATE】{"attr_delta":{"已有属性名":1},"res_delta":{"已有资源名":-1},"inv_add":[],"inv_rm":[],"skill_add":[],"skill_rm":[],"talent_add":[],"talent_rm":[],"loc":""}【/STATE】，没有真实变化就不输出。任务仅在玩家明确接受、承诺或主动设定目标后登记。';
+  sp+='\n【角色卡与状态协议——覆盖世界包旧状态栏要求】前端已经显示唯一权威角色卡，正文不要输出另一套方括号状态栏，也不要自行重建属性表。核心属性名固定，只有长期训练、升级或重大伤病确实发生时才能用attr_delta，单回合最多±1；资源只能修改已经存在的键。物品、技能与重要人物是有ID或稳定名称的结构化记录，不得只在正文里声称变化。\n真实变化必须在末尾申报：【STATE】{"attr_delta":{"已有属性名":1},"res_delta":{"已有资源名":-1},"inv_delta":[{"name":"物品原名","delta":-1}],"inv_upsert":[{"name":"新物品","category":"分类","quantity":1,"description":"稳定说明","equipped":false}],"equip_set":{"物品原名":true},"skill_upsert":[{"name":"技能原名","category":"类别","realm":"境界","coefficient":1.0,"proficiency":0,"attribute":"关联属性","description":"稳定效果说明"}],"skill_progress":[{"name":"技能原名","delta":2,"realm":"可选的新境界"}],"active_skill":"技能原名或null","talent_add":[],"talent_rm":[],"npc_set":{"NPC原名":{"rel":"与玩家的已确认关系","att":0,"note":"一句话当前事实"}},"npc_rm":[],"loc":""}【/STATE】。只写实际发生的字段；同名物品增加或消耗用inv_delta，不得重复造新名称；修炼必须更新skill_progress，学会技能必须提供完整档案；只有值得长期记住的具名人物初次建立关系或其关系、态度、现状确实改变时才写npc_set，普通路人不登记；npc_rm只用于关系明确终结且不再需要追踪的人物。没有真实变化就不输出。普通对话、查看面板和整理记忆不消耗生理资源。任务仅在玩家明确接受、承诺或主动设定目标后登记。';
   if(!GAME_STATE.revealed){
     var schema=STATE_SCHEMAS[WORLD]||STATE_SCHEMAS.__custom__;
-    sp+='\n【未揭示角色卡——最高优先级】当前尚未建立数值。穿越前、游戏外或身份尚未由玩家说明时，按叙事常识表现普通人的能力，不显示异世界数值，不掷骰，不暗中预设职业、Build、技能或天赋。只有玩家明确主动查看状态/面板/自身能力，或玩家已经亲自完成使能力可被认识的操作时，才可在回复最末输出一次【SHEET_INIT】JSON【/SHEET_INIT】。仅抵达异世界、醒来、被召唤或看见提示不构成授权。初始化属性键必须且只能是：'+schema.attrs.join('、')+'；数值0-10，根据玩家此前明确描述分配，未得到支持的一律为1。资源键必须且只能是：'+Object.keys(schema.res).join('、')+'。格式：【SHEET_INIT】{"attrs":{},"res":{},"talents":[],"skills":[]}【/SHEET_INIT】。不得补造玩家未声明的经历或专长。';
+    sp+='\n【未揭示角色卡——最高优先级】当前尚未建立数值。穿越前、游戏外或身份尚未由玩家说明时，按叙事常识表现普通人的能力，不显示异世界数值，不掷骰，不暗中预设职业、Build、技能或天赋。只有玩家明确主动查看状态/面板/自身能力，或玩家已经亲自完成使能力可被认识的操作时，才可在回复最末输出一次【SHEET_INIT】JSON【/SHEET_INIT】。仅抵达异世界、醒来、被召唤或看见提示不构成授权。初始化属性键必须且只能是：'+schema.attrs.join('、')+'；数值0-10，根据玩家此前明确描述分配，未得到支持的一律为1。资源键必须且只能是：'+Object.keys(schema.res).join('、')+'。格式：【SHEET_INIT】{"attrs":{},"res":{},"talents":[],"skills":[{"name":"名称","category":"类别","realm":"境界","coefficient":1,"proficiency":0,"attribute":"关联属性","description":"效果"}]}【/SHEET_INIT】。没有确凿技能就返回空数组，不得补造玩家未声明的经历或专长。';
   }
   if(WORLD_PRESET&&w.presets){ var pp=w.presets.filter(function(x){return x.id===WORLD_PRESET;})[0]; if(pp&&pp.note){ sp+='\n【本局特色侧重】'+pp.note; } }
   sp+='\n\n【篇幅】'+p.instruction;
@@ -2499,9 +3071,10 @@ function editCanon(k){
 }
 function restoreRuntime(b){
   if(!b)return;
-  GAME_STATE=b.gstate||freshGameState();QUESTS=b.quests||{main:[],side:[]};INVENTORY=b.inv||GAME_STATE.inv||[];SKILLS=b.skills||GAME_STATE.skills||[];TURNS=b.turns||0;WORLD_CLOCK=b.wclock||0;EVENT_THRESHOLD=b.ethresh||8;OUTLINE=b.outline||'';NAMES=b.names||'';STATE_ACTIVE=b.stateActive!==false;
+  var bs=b.gstate&&typeof b.gstate==='object'?Object.assign({},b.gstate):freshGameState();if((!bs.inv||!bs.inv.length)&&b.inv)bs.inv=b.inv;if((!bs.skills||!bs.skills.length)&&b.skills)bs.skills=b.skills;
+  GAME_STATE=migrateGameState(bs);QUESTS=b.quests||{main:[],side:[]};TURNS=b.turns||0;WORLD_CLOCK=b.wclock||0;EVENT_THRESHOLD=b.ethresh||8;OUTLINE=b.outline||'';NAMES=b.names||'';STATE_ACTIVE=b.stateActive!==false;
   SHEET_INIT_ARMED=!!b.sheetArmed;
-  GAME_STATE.inv=INVENTORY.slice();GAME_STATE.skills=SKILLS.slice();renderQuests();renderInventory(INVENTORY);renderSkills(SKILLS);renderNpcs();renderCharacterSheet();
+  syncStateCollections();renderQuests();renderInventory();renderSkills();renderNpcs();renderCharacterSheet();
 }
 function requestSkip(){
   if(LOADING)return;
@@ -2542,13 +3115,19 @@ function startGame(){
 function resetGame(){if(LOADING)return;if(!confirm('确定完全重置当前游戏并重新生成开局？建议先保存到手动存档；新游戏开始后会覆盖自动存档。'))return;TOKENS=0;document.getElementById('tkc').textContent='TOKENS: 0';startGame();}
 
 function stateSummary(){
-  if(!GAME_STATE.revealed)return '角色卡尚未揭示：不得假定属性值、技能、天赋或异世界面板；不得进行数值检定。玩家此前明确描述的背景仍然是事实。';
+  syncStateCollections();
+  if(!GAME_STATE.revealed){
+    var hidden=['角色卡尚未揭示：不得假定属性值、职业Build或异世界面板，不得进行数值检定。'];
+    if(GAME_STATE.inv.length)hidden.push('已确认背包:'+GAME_STATE.inv.map(function(x){return x.name+'×'+x.quantity;}).join('、'));
+    if(GAME_STATE.skills.length)hidden.push('已由剧情明确获得但尚未建卡的能力:'+GAME_STATE.skills.map(function(x){return x.name;}).join('、'));
+    if(GAME_STATE.loc)hidden.push('位置:'+GAME_STATE.loc);return hidden.join('｜');
+  }
   var parts=[];
   var ak=Object.keys(GAME_STATE.attrs);
   if(ak.length)parts.push('属性:'+ak.map(function(k){return k+GAME_STATE.attrs[k];}).join('/'));
-  if(GAME_STATE.skills.length)parts.push('技能(完整列表):'+GAME_STATE.skills.join('、'));
+  if(GAME_STATE.skills.length)parts.push('技能索引:'+GAME_STATE.skills.map(function(s){return s.name+'{'+s.category+','+s.realm+',系数'+s.coefficient+',熟练'+s.proficiency+'%'+(s.attribute?','+s.attribute:'')+(s.active?',当前运转':'')+'}';}).join('、'));
   if((GAME_STATE.talents||[]).length)parts.push('天赋(完整列表):'+GAME_STATE.talents.join('、'));
-  if(GAME_STATE.inv.length)parts.push('持有:'+GAME_STATE.inv.join('、'));
+  if(GAME_STATE.inv.length)parts.push('背包索引:'+GAME_STATE.inv.map(function(x){return x.name+'×'+x.quantity+'{'+x.category+(x.equipped?',已装备':'')+'}';}).join('、'));
   var rk=Object.keys(GAME_STATE.res);
   if(rk.length)parts.push('资源:'+rk.map(function(k){return k+GAME_STATE.res[k];}).join('/'));
   if(GAME_STATE.loc)parts.push('位置:'+GAME_STATE.loc);
@@ -2556,19 +3135,52 @@ function stateSummary(){
   if(nk.length)parts.push('人物关系(态度-5敌对~5挚交,变化需渐进):'+nk.slice(-12).map(function(n){var v=GAME_STATE.npcs[n];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+(v.note?','+v.note:'')+')';}).join('；'));
   return parts.join('｜');
 }
+function findInventoryTarget(ref){ref=String(ref||'').trim();return GAME_STATE.inv.find(function(x){return x.id===ref||x.name===ref;});}
+function applyItemDelta(raw,defaultDelta){
+  var spec=typeof raw==='string'?normalizeItem(raw):Object.assign({},raw||{}),ref=spec.id||spec.name,cur=findInventoryTarget(ref),delta=Number(spec.delta);
+  if(!isFinite(delta))delta=defaultDelta===undefined?Number(spec.quantity||spec.qty||1):defaultDelta;
+  if(!cur&&delta>0){spec.quantity=delta;cur=normalizeItem(spec);GAME_STATE.inv.push(cur);addLedger('item',cur.name,'获得',delta);return;}
+  if(!cur)return;
+  cur.quantity=Math.max(0,Number(cur.quantity||0)+delta);
+  if(spec.category)cur.category=String(spec.category).substring(0,20);if(spec.description||spec.desc)cur.description=String(spec.description||spec.desc).substring(0,500);if(spec.equipped!==undefined)cur.equipped=!!spec.equipped;
+  addLedger('item',cur.name,delta>=0?'增加':'减少',delta);if(cur.quantity<=0)GAME_STATE.inv=GAME_STATE.inv.filter(function(x){return x.id!==cur.id;});
+}
+function upsertInventoryItem(raw){
+  if(!raw)return;var spec=normalizeItem(raw),cur=findInventoryTarget(spec.id)||findInventoryTarget(spec.name);
+  if(!cur){GAME_STATE.inv.push(spec);addLedger('item',spec.name,'新增档案',spec.quantity);return;}
+  ['name','category','description','equipped','consumable','tags'].forEach(function(k){if(raw[k]!==undefined||raw[k==='description'?'desc':k]!==undefined)cur[k]=spec[k];});
+  if(raw.quantity!==undefined||raw.qty!==undefined)cur.quantity=spec.quantity;addLedger('item',cur.name,'更新档案');
+}
+function upsertSkill(raw){
+  if(!raw)return;var spec=normalizeSkill(raw),cur=GAME_STATE.skills.find(function(x){return x.id===spec.id||x.name===spec.name;});
+  if(!cur){GAME_STATE.skills.push(spec);cur=spec;addLedger('skill',cur.name,'学会技能');}
+  else{['name','category','realm','coefficient','proficiency','attribute','description'].forEach(function(k){if(raw[k]!==undefined||raw[k==='realm'?'rank':k]!==undefined||raw[k==='description'?'desc':k]!==undefined)cur[k]=spec[k];});addLedger('skill',cur.name,'更新技能');}
+  if(raw.active===true)GAME_STATE.loadout.activeCoreId=cur.id;
+}
 function applyStatePatch(p){
   if(!p||typeof p!=='object')return;
-  STATE_ACTIVE=true;
+  STATE_ACTIVE=true;syncStateCollections();
   // Core attribute names are schema-locked. A normal patch may change an
   // existing attribute by at most one point, preventing context drift.
   if(p.attr_set&&GAME_STATE.revealed)Object.keys(p.attr_set).forEach(function(k){var v=Number(p.attr_set[k]);if(!(k in GAME_STATE.attrs)||!isFinite(v))return;var old=Number(GAME_STATE.attrs[k])||0;GAME_STATE.attrs[k]=Math.max(0,Math.min(20,Math.max(old-1,Math.min(old+1,Math.round(v)))));});
   if(p.attr_delta&&GAME_STATE.revealed)Object.keys(p.attr_delta).forEach(function(k){var d=Number(p.attr_delta[k]);if(!(k in GAME_STATE.attrs)||!isFinite(d))return;GAME_STATE.attrs[k]=Math.max(0,Math.min(20,(Number(GAME_STATE.attrs[k])||0)+Math.max(-1,Math.min(1,Math.round(d)))));});
   if(p.res_delta)Object.keys(p.res_delta).forEach(function(k){var d=Number(p.res_delta[k]);if(!(k in GAME_STATE.res)||!isFinite(d))return;var nv=Math.max(0,(Number(GAME_STATE.res[k])||0)+d),cap=GAME_STATE.caps&&GAME_STATE.caps[k];GAME_STATE.res[k]=cap?Math.min(cap,nv):nv;});
   if(p.res_set)Object.keys(p.res_set).forEach(function(k){var v=Number(p.res_set[k]);if(!(k in GAME_STATE.res)||!isFinite(v))return;var nv=Math.max(0,v),cap=GAME_STATE.caps&&GAME_STATE.caps[k];GAME_STATE.res[k]=cap?Math.min(cap,nv):nv;});
-  (Array.isArray(p.inv_add)?p.inv_add:[]).forEach(function(it){it=String(it).trim();if(it&&GAME_STATE.inv.indexOf(it)<0)GAME_STATE.inv.push(it);});
-  (Array.isArray(p.inv_rm)?p.inv_rm:[]).forEach(function(it){it=String(it).trim();GAME_STATE.inv=GAME_STATE.inv.filter(function(x){return x!==it;});});
-  (GAME_STATE.revealed&&Array.isArray(p.skill_add)?p.skill_add:[]).forEach(function(sk){sk=String(sk).trim();if(sk&&GAME_STATE.skills.indexOf(sk)<0)GAME_STATE.skills.push(sk);});
-  (Array.isArray(p.skill_rm)?p.skill_rm:[]).forEach(function(sk){sk=String(sk).trim();GAME_STATE.skills=GAME_STATE.skills.filter(function(x){return x!==sk;});});
+  (Array.isArray(p.inv_add)?p.inv_add:[]).forEach(function(it){var q=typeof it==='object'?Number(it.quantity||it.qty||it.delta||1):normalizeItem(it).quantity;applyItemDelta(it,isFinite(q)?q:1);});
+  (Array.isArray(p.inv_rm)?p.inv_rm:[]).forEach(function(it){var q=typeof it==='object'?Number(it.quantity||it.qty||1):normalizeItem(it).quantity;applyItemDelta(it,-Math.abs(isFinite(q)?q:1));});
+  (Array.isArray(p.inv_upsert)?p.inv_upsert:[]).forEach(upsertInventoryItem);
+  if(Array.isArray(p.inv_delta))p.inv_delta.forEach(function(x){applyItemDelta(x,Number(x&&x.delta)||0);});
+  else if(p.inv_delta&&typeof p.inv_delta==='object')Object.keys(p.inv_delta).forEach(function(k){applyItemDelta({name:k,delta:Number(p.inv_delta[k])},Number(p.inv_delta[k]));});
+  if(p.inv_set&&typeof p.inv_set==='object')Object.keys(p.inv_set).forEach(function(k){var cur=findInventoryTarget(k),v=Math.max(0,Number(p.inv_set[k])||0);if(cur){cur.quantity=v;addLedger('item',cur.name,'校准数量',v);}else if(v>0)upsertInventoryItem({name:k,quantity:v});});
+  if(p.equip_set&&typeof p.equip_set==='object')Object.keys(p.equip_set).forEach(function(k){var it=findInventoryTarget(k);if(it){it.equipped=!!p.equip_set[k];addLedger('equip',it.name,it.equipped?'装备':'卸下');}});
+  (Array.isArray(p.skill_add)?p.skill_add:[]).forEach(upsertSkill);
+  (Array.isArray(p.skill_upsert)?p.skill_upsert:[]).forEach(upsertSkill);
+  (Array.isArray(p.skill_rm)?p.skill_rm:[]).forEach(function(ref){ref=typeof ref==='object'?(ref.id||ref.name):ref;var sk=skillById(String(ref));if(sk){GAME_STATE.skills=GAME_STATE.skills.filter(function(x){return x.id!==sk.id;});if(GAME_STATE.loadout.activeCoreId===sk.id)GAME_STATE.loadout.activeCoreId=null;addLedger('skill',sk.name,'失去技能');}});
+  if(p.skill_progress&&typeof p.skill_progress==='object'){
+    var rows=Array.isArray(p.skill_progress)?p.skill_progress:Object.keys(p.skill_progress).map(function(k){return {name:k,delta:p.skill_progress[k]};});
+    rows.forEach(function(x){var sk=skillById(String(x.id||x.name||''));if(!sk)return;var d=Number(x.delta);if(isFinite(d)){sk.proficiency=clampNum(sk.proficiency+d,0,100,sk.proficiency);addLedger('skill_progress',sk.name,'熟练度变化',d);}if(x.realm)sk.realm=String(x.realm).substring(0,20);if(x.coefficient!==undefined)sk.coefficient=clampNum(x.coefficient,0,5,sk.coefficient);});
+  }
+  if(p.active_skill!==undefined){var ask=p.active_skill===null?null:skillById(String(p.active_skill));GAME_STATE.loadout.activeCoreId=ask?ask.id:null;addLedger('loadout',ask?ask.name:'无',ask?'切换当前运转':'停止当前运转');}
   if(!GAME_STATE.talents)GAME_STATE.talents=[];
   (GAME_STATE.revealed&&Array.isArray(p.talent_add)?p.talent_add:[]).forEach(function(x){x=String(x).trim().substring(0,30);if(x&&GAME_STATE.talents.indexOf(x)<0)GAME_STATE.talents.push(x);});
   (Array.isArray(p.talent_rm)?p.talent_rm:[]).forEach(function(x){x=String(x).trim();GAME_STATE.talents=GAME_STATE.talents.filter(function(v){return v!==x;});});
@@ -2590,16 +3202,35 @@ function applyStatePatch(p){
     GAME_STATE.npcs[n]=cur;
   });
   (Array.isArray(p.npc_rm)?p.npc_rm:[]).forEach(function(n){delete GAME_STATE.npcs[String(n).trim()];});
-  renderInventory(GAME_STATE.inv.slice());
-  renderSkills(GAME_STATE.skills.slice());
+  syncStateCollections();
+  renderInventory();
+  renderSkills();
   renderNpcs();
   renderCharacterSheet();
 }
+function extractStatePatches(text){
+  var re=/【STATE】([\s\S]*?)【\/STATE】/g,m,out=[];
+  while((m=re.exec(String(text)))!==null){var raw=m[1].trim().replace(/^```json/i,'').replace(/^```/,'').replace(/```$/,'').trim();try{var p=JSON.parse(raw);if(p&&typeof p==='object')out.push(p);}catch(e){}}
+  return out;
+}
 function extractState(text){
-  var m=String(text).match(/【STATE】([\s\S]*?)【\/STATE】/);
-  if(!m)return;
-  var raw=m[1].trim().replace(/^```json/i,'').replace(/^```/,'').replace(/```$/,'').trim();
-  try{ applyStatePatch(JSON.parse(raw)); }catch(e){}
+  var ps=extractStatePatches(text);ps.forEach(applyStatePatch);return ps.length;
+}
+
+function stateChangeLikely(input,reply){
+  var s=String(input||'')+' '+String(reply||'').replace(/【(?:STATE|大纲|SHEET_INIT)】[\s\S]*?【\/(?:STATE|大纲|SHEET_INIT)】/g,'');
+  return /(获得|得到|拿到|捡到|拾取|收到|领取|买下|购买|买了|付钱|付款|支付|花费|出售|卖出|吃下|吃完|喝下|喝完|服用|使用|消耗|丢弃|交给|归还|装备|卸下|穿上|脱下|学会|领悟|掌握|修炼|训练|熟练|升级|受伤|恢复|治疗|抵达|来到|进入|离开|前往|搬到|住进|加入|离队|死亡)/.test(s);
+}
+function compactStateForAudit(s){
+  s=s||GAME_STATE;return {revealed:!!s.revealed,attrs:s.attrs||{},res:s.res||{},inv:normalizeInventory(s.inv).map(function(x){return {id:x.id,name:x.name,category:x.category,quantity:x.quantity,equipped:x.equipped};}),skills:normalizeSkills(s.skills).map(function(x){return {id:x.id,name:x.name,category:x.category,realm:x.realm,coefficient:x.coefficient,proficiency:x.proficiency,attribute:x.attribute,active:x.active};}),talents:s.talents||[],loc:s.loc||'',npcs:s.npcs||{}};
+}
+async function reconcileTurnState(before,input,reply,declared){
+  var visible=String(reply||'').replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'').substring(0,7000);
+  var prompt='你是文字RPG的确定性状态结算器，不写剧情。根据“回合前权威状态、玩家行动、已经发生的可见结果、叙事模型申报”输出一份相对于回合前状态的完整且最小状态补丁。\n原则：只有可见结果明确完成的变化才结算；意图、准备、尝试、报价、查看、询问不算完成。普通对话、查看背包、整理记忆不消耗饱腹、体力或其他生理资源。不得创造结果里没有的物品、技能、金额或数量；同名物品必须使用原id或原名。进食/消耗用负数inv_delta；获得用正数，只有全新物品才用inv_upsert。技能训练仅在结果明确完成训练时增加熟练度，通常1-5；没有明确进展就不改。地点确实改变才写loc。叙事模型申报只是候选，若与可见结果冲突则忽略。\n只输出一个JSON对象，可用字段：attr_delta,res_delta,inv_delta:[{id或name,delta}],inv_upsert:[完整物品],equip_set:{id或name:true/false},skill_upsert:[完整技能],skill_progress:[{id或name,delta,realm可选}],active_skill,npc_set,npc_rm,loc,talent_add,talent_rm。无变化输出{}。\n回合前：'+JSON.stringify(compactStateForAudit(before))+'\n玩家行动：'+String(input||'').substring(0,1600)+'\n可见结果：'+visible+'\n候选申报：'+JSON.stringify(declared||[]);
+  try{
+    var res=await doFetch([{role:'user',content:prompt}],400),data=await res.json();if(data.error)return null;if(data.usage&&data.usage.total_tokens)TOKENS+=data.usage.total_tokens;
+    var m=chatContent(data).match(/\{[\s\S]*\}/);if(!m)return null;var p=JSON.parse(m[0]);return p&&typeof p==='object'?p:null;
+  }catch(e){return null;}
 }
 
 // two-pass: silent GM adjudication call (judge mode — no storytelling, no sycophancy)
@@ -2614,7 +3245,7 @@ async function directorPass(playerInput){
     +'本局基调:'+(STORY_TONE||'未定')+'——节拍判断与裁定的松紧要符合基调\n'
     +'当前隐藏大纲:'+(OUTLINE||'无')+'\n'
     +'角色属性:'+attrs+'\n'
-    +'角色技能:'+(GAME_STATE.skills.join('、')||'无')+'\n'
+    +'角色技能:'+(GAME_STATE.skills.map(function(s){return s.name+'('+s.realm+',熟练'+s.proficiency+'%,系数'+s.coefficient+(s.active?',运转中':'')+')';}).join('、')||'无')+'\n'
     +'角色天赋:'+((GAME_STATE.talents||[]).join('、')||'无')+'\n'
     +'主角身份档案:'+(canonSummary()||'尚无锁定字段')+'\n'
     +'人物关系:'+(Object.keys(GAME_STATE.npcs||{}).slice(-10).map(function(n){var v=GAME_STATE.npcs[n];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+')';}).join('；')||'无')+'\n'
@@ -2644,13 +3275,14 @@ function extractSheetInit(text){
   var m=String(text).match(/【SHEET_INIT】([\s\S]*?)【\/SHEET_INIT】/);if(!m)return;
   try{
     var raw=m[1].trim().replace(/^```json/i,'').replace(/^```/,'').replace(/```$/,'').trim(),seed=JSON.parse(raw),old=GAME_STATE,n=revealedGameState(seed);
-    n.inv=(old.inv||[]).slice();n.loc=old.loc||'';n.npcs=old.npcs||{};GAME_STATE=n;STATE_ACTIVE=true;SHEET_INIT_ARMED=false;renderInventory(n.inv);renderSkills(n.skills);renderNpcs();renderCharacterSheet();addBlk('sys','▸ 角色卡已根据玩家已经确认的描述建立；可在侧栏校准');
+    n.inv=normalizeInventory(old.inv);n.skills=normalizeSkills(n.skills.concat(old.skills||[]));n.loc=old.loc||'';n.npcs=old.npcs||{};n.ledger=Array.isArray(old.ledger)?old.ledger:[];GAME_STATE=n;STATE_ACTIVE=true;SHEET_INIT_ARMED=false;syncStateCollections();addLedger('sheet','角色卡','由叙事中的主动查看建立');renderInventory();renderSkills();renderNpcs();renderCharacterSheet();addBlk('sys','▸ 角色卡已根据玩家已经确认的描述建立；可在侧栏校准');
   }catch(e){addBlk('err','角色卡初始化格式无效，本回合未采用任何数值');}
 }
 
 async function _runTurn(){
   var typ=addTyp(), t0=Date.now();
   try{
+    var stateBefore=JSON.parse(JSON.stringify(GAME_STATE));
     var lastUser='';
     for(var li=HIST.length-1;li>=0;li--){ if(HIST[li].role==='user'){lastUser=HIST[li].content;break;} }
     var recentText = lastUser + ' ' + HIST.slice(-6).map(function(m){return m.content;}).join(' ');
@@ -2678,9 +3310,12 @@ async function _runTurn(){
         var atn=String(ruling.attr||'').trim();
         if(!(atn in GAME_STATE.attrs))atn=Object.keys(GAME_STATE.attrs)[0]||'行动';
         var av=Number(GAME_STATE.attrs[atn]); if(!isFinite(av))av=1;
-        var sk=GAME_STATE.skills.indexOf(String(ruling.skill||''))>=0?String(ruling.skill):'';
+        var sk=skillById(String(ruling.skill||''));
         var tl=(GAME_STATE.talents||[]).indexOf(String(ruling.talent||''))>=0?String(ruling.talent):'';
-        var bonus=(sk?10:0)+(tl?5:0);
+        var skillBonus=sk?Math.round(Number(sk.coefficient||1)*(1+Number(sk.proficiency||0)/100)):0;
+        var activeCore=skillById(GAME_STATE.loadout&&GAME_STATE.loadout.activeCoreId||'');
+        var activeBonus=activeCore&&(!sk||activeCore.id!==sk.id)?Math.round(Number(activeCore.coefficient||1)*Number(activeCore.proficiency||0)/100):0;
+        var bonus=skillBonus+activeBonus+(tl?5:0);
         var dc=Number(ruling.dc)||55;
         dc=Math.max(40,Math.min(85,Math.round(dc)));
         var total=dice+av*5+bonus;
@@ -2688,8 +3323,8 @@ async function _runTurn(){
         if(total-dc>=30)outc='大成功';
         if(dc-total>=30)outc='大失败';
         var act=String(ruling.action||atn+'检定').substring(0,16);
-        checkLine='【检定】'+act+'｜d100 '+dice+' + '+atn+av+'×5'+(sk?' + 技能10':'')+(tl?' + 天赋5':'')+' = '+total+'｜难度'+dc+'｜'+outc+'【/检定】';
-        pendingCheck={action:act,attr:atn,attrValue:av,skill:sk||(tl?tl:''),die:dice,total:total,dc:dc,outcome:outc,success:outc.indexOf('成功')>=0};
+        checkLine='【检定】'+act+'｜d100 '+dice+' + '+atn+av+'×5'+(sk?' + '+sk.name+skillBonus:'')+(activeBonus?' + 运转'+activeBonus:'')+(tl?' + 天赋5':'')+' = '+total+'｜难度'+dc+'｜'+outc+'【/检定】';
+        pendingCheck={action:act,attr:atn,attrValue:av,skill:sk?sk.name:(tl||''),die:dice,total:total,dc:dc,outcome:outc,success:outc.indexOf('成功')>=0};
         rt+='本回合检定已由系统算出，结果：'+outc+'。必须严格按此结果叙事。';
         if(outc.indexOf('失败')>=0 && ruling.fail_cost) rt+='失败的代价必须落实：'+ruling.fail_cost;
       }
@@ -2736,9 +3371,12 @@ async function _runTurn(){
     renderNar(reply,HIST.length-1);
     extractOutline(reply);
     extractSheetInit(reply);
-    extractState(reply);
+    var declaredPatches=extractStatePatches(reply),auditedPatch=null;
+    if(SETTINGS.stateSync!==false&&stateChangeLikely(lastUser,reply))auditedPatch=await reconcileTurnState(stateBefore,lastUser,reply,declaredPatches);
+    if(auditedPatch!==null&&Object.keys(auditedPatch).length)applyStatePatch(auditedPatch);else declaredPatches.forEach(applyStatePatch);
     extractNames(reply);
     renderCharacterSheet();
+    document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString()+' · '+((Date.now()-t0)/1000).toFixed(1)+'s';
     await maybeCompress(); autoSave(); maybeAutoMemory();
   }catch(e){ if(typ)typ.remove(); addBlk('err','连接失败：'+String(e&&e.message||e).substring(0,250)); }
   LOADING=false; document.getElementById('pinp').focus();
@@ -2843,7 +3481,7 @@ async function maybeAutoMemory(){
   _memBusy=true;
   try{
     var recent=recentSlice.map(function(m){return m.role+': '+m.content;}).join('\n').substring(0,9000);
-    var p='从以下文字游戏最近的剧情中，提取1-3条今后必须记住的既成事实（NPC关系变化、许下的承诺、结下的恩怨、重要物品去向、地点变化）。每行一条，格式严格为：名称|逗号分隔的触发关键词|一句话事实。只输出这些行，没有值得记的就输出：无\n\n'+recent;
+    var p='从以下文字游戏最近剧情中提取1-3条以后必须记住、且在原文中明确成立的叙事事实。优先：NPC实际关系变化、玩家明确接受或拒绝的事项、承诺与恩怨、事件结果、尚未解决的具体目标。不得推断动机、秘密、伏笔或未来；相似人物和事件不得合并；玩家不回应只能记录为“不回应”，不能写成同意或敌对。精确属性、货币、物品数量、技能与装备由程序账本管理，不在这里重算。每行严格为：名称|逗号分隔触发关键词|一句话事实。证据不足则不提取；没有就输出：无\n\n'+recent;
     var res=await doFetch([{role:'user',content:p}],300);
     var data=await res.json();
     if(!data.error&&data.choices){
@@ -2851,8 +3489,9 @@ async function maybeAutoMemory(){
         var parts=ln.split('|'); if(parts.length<3)return;
         var name=parts[0].trim().replace(/^[-\d.、\s]+/,''), kws=parts[1].split(/[,，]/).map(function(x){return x.trim();}).filter(Boolean), txt=parts.slice(2).join('|').trim();
         if(!name||name==='无'||!txt)return;
-        if(LOREBOOK.some(function(l){return l.name===name;}))return;
-        LOREBOOK.push({id:'lore_'+Date.now()+'_'+Math.floor(Math.random()*1e3),name:name,keywords:kws.length?kws:[name],text:txt,cat:'记忆'});
+        var existing=LOREBOOK.find(function(l){return l.cat==='记忆'&&l.name===name;});
+        if(existing){existing.keywords=kws.length?kws:existing.keywords;existing.text=txt;existing.sourceTurnTo=TURNS;existing.confidence='explicit';return;}
+        LOREBOOK.push({id:'lore_'+Date.now()+'_'+Math.floor(Math.random()*1e3),name:name,keywords:kws.length?kws:[name],text:txt,cat:'记忆',sourceTurnFrom:Math.max(0,TURNS-10),sourceTurnTo:TURNS,confidence:'explicit'});
       });
       var autos=LOREBOOK.filter(function(l){return l.cat==='记忆';});
       if(autos.length>40){
@@ -3016,6 +3655,12 @@ function fallbackResearchDB(){
 function loadResearchDB(){
   if(TAG_ONTO) return Promise.resolve(true);
   if(TAG_DB_PROMISE) return TAG_DB_PROMISE;
+  if(typeof location!=='undefined'&&location.protocol==='file:'){
+    fallbackResearchDB();buildTagStats();
+    var localStats=document.getElementById('tag-db-stats');if(localStats)localStats.textContent='已启用内置精简标签库（单文件模式）';
+    var localSel=document.getElementById('tag-db-category');if(localSel&&localSel.options.length<=1)TAG_ONTO.categories.forEach(function(c){var o=document.createElement('option');o.value=c.id;o.textContent=c.label||c.id;localSel.appendChild(o);});
+    renderTagResults();return Promise.resolve(false);
+  }
   TAG_DB_PROMISE=(async function(){
   TAG_DB_LOADING=true;
   var stats=document.getElementById('tag-db-stats');
@@ -3360,13 +4005,17 @@ if(window.matchMedia&&window.matchMedia('(max-width:768px)').matches){
 
 // settings init
 function setTemp(v){SETTINGS.temp=Number(v);var el=document.getElementById('set-temp-v');if(el)el.textContent=Number(v).toFixed(2);saveSettings();}
+function applyReadingPrefs(){
+  var fs=Math.max(14,Math.min(21,Number(SETTINGS.fontSize)||16));
+  var lh=Math.max(1.55,Math.min(2.2,Number(SETTINGS.lineHeight)||1.9));
+  SETTINGS.fontSize=fs;SETTINGS.lineHeight=lh;
+  document.documentElement.style.setProperty('--story-size',fs+'px');
+  document.documentElement.style.setProperty('--story-leading',String(lh));
+}
+function setReadingSize(v){SETTINGS.fontSize=Number(v);applyReadingPrefs();var el=document.getElementById('set-font-v');if(el)el.textContent=SETTINGS.fontSize+'px';saveSettings();}
+function setReadingLeading(v){SETTINGS.lineHeight=Number(v);applyReadingPrefs();var el=document.getElementById('set-leading-v');if(el)el.textContent=Number(SETTINGS.lineHeight).toFixed(2);saveSettings();}
 (function(){
-  var t=document.getElementById('set-temp'); if(t){t.value=SETTINGS.temp;}
-  var tv=document.getElementById('set-temp-v'); if(tv){tv.textContent=Number(SETTINGS.temp).toFixed(2);}
-  var st=document.getElementById('set-stream'); if(st)st.checked=!!SETTINGS.stream;
-  var dc=document.getElementById('set-dice'); if(dc)dc.checked=!!SETTINGS.dice;
-  var am=document.getElementById('set-automem'); if(am)am.checked=!!SETTINGS.autoMem;
-  var dr=document.getElementById('set-director'); if(dr)dr.checked=!!SETTINGS.director;
+  syncSettingsControls();
   renderStartupSlots();
 })();
 
