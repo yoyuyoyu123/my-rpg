@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>无界·叙事引擎 v15</title>
+<title>无界·叙事引擎 v16</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -881,7 +881,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div></div>
     </div>
     <button class="wnext" id="wnext-p" onclick="launchGame()" disabled>开始冒险 ▶</button>
-    <span class="wback" onclick="goStep(2)">◀ 返回</span>
+    <span class="wback" id="connect-back" style="display:none" onclick="goStep(2)">◀ 返回世界选择</span>
   </div>
 </div>
 
@@ -901,6 +901,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <div class="startup-load-note">先选择存档，再在下方连接任意后端；连接成功后将直接进入存档，不会创建新游戏。</div>
       <div id="startup-slots"><span class="no-quest">正在读取本地存档…</span></div>
       <div id="startup-load-status" style="font-size:10px;color:var(--g);margin-top:8px"></div>
+      <button id="startup-cancel" class="btn sm" style="display:none;margin-top:8px" onclick="cancelStartupLoad()">取消存档选择</button>
     </div>
     <div class="aplbl">▸ 选择后端</div>
     <div class="atabs">
@@ -922,7 +923,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div>
       <div class="prow">
         <button class="btn sm" onclick="qMod('ds')">查询模型</button>
-        <button class="btn" onclick="doConnect('ds')">开始冒险</button>
+        <button class="btn connect-btn" onclick="doConnect('ds')">连接并选择世界</button>
       </div>
     </div>
     <div class="apnl" id="por">
@@ -939,7 +940,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div>
       <div class="prow">
         <button class="btn sm" onclick="qMod('or')">查询模型</button>
-        <button class="btn" onclick="doConnect('or')">开始冒险</button>
+        <button class="btn connect-btn" onclick="doConnect('or')">连接并选择世界</button>
       </div>
     </div>
     <div class="apnl" id="psf">
@@ -955,7 +956,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       </div>
       <div class="prow">
         <button class="btn sm" onclick="qMod('sf')">查询模型</button>
-        <button class="btn" onclick="doConnect('sf')">开始冒险</button>
+        <button class="btn connect-btn" onclick="doConnect('sf')">连接并选择世界</button>
       </div>
     </div>
     <div class="apnl" id="pol">
@@ -967,7 +968,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <div class="prow" style="margin-top:6px">
         <select id="olmod" class="fld"><option value="">— 选择模型 —</option></select>
         <input type="text" id="olman" class="fld" placeholder="或手动输入...">
-        <button class="btn" onclick="doConnect('ol')">开始冒险</button>
+        <button class="btn connect-btn" onclick="doConnect('ol')">连接并选择世界</button>
       </div>
     </div>
     <div id="ast" style="margin-top:8px"></div>
@@ -1018,7 +1019,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
       <button class="qb" onclick="undoTurn()"><span class="ic">↩</span>撤销上一步</button>
       <button class="qb" onclick="qcmd('/restart')"><span class="ic">⟳</span>重建角色</button>
       <button class="qb red" onclick="resetGame()"><span class="ic">✕</span>完全重置</button>
-      <button class="qb" onclick="goStep(1)"><span class="ic">⇄</span>换世界观</button>
+      <button class="qb" onclick="goStep(2)"><span class="ic">⇄</span>换世界观</button>
     </div>
   </div>
   <button class="panel-toggle" id="panel-toggle" onclick="togglePanel()">▲ 状态面板</button>
@@ -1632,6 +1633,7 @@ function selPace(p) {
 function goStep(n) {
   document.getElementById('gscreen').style.display = 'none';
   closePanel();
+  if(n===2&&(!BK||!MODEL)){n=1;}
   document.getElementById('ascreen').classList.toggle('hidden', n !== 1);
   document.getElementById('wscreen').classList.toggle('hidden', n !== 2);
   document.getElementById('genscreen').classList.toggle('hidden', true);
@@ -1642,8 +1644,10 @@ function goStep(n) {
     summary.innerHTML = '世界观：<span>' + (w ? w.name : '') + '</span> &nbsp;|&nbsp; 后端：<span>' + MODEL.split('/').pop() + '</span>';
   }
   if (n === 1) {
-    document.getElementById('sdot').classList.remove('on');
-    document.getElementById('stxt').textContent = '连接后端';
+    var connected=!!(BK&&MODEL),back=document.getElementById('connect-back');
+    document.getElementById('sdot').classList.toggle('on',connected);
+    document.getElementById('stxt').textContent = connected?('已连接 · '+MODEL.split('/').pop()):'连接后端';
+    if(back)back.style.display=connected?'block':'none';
   }
 }
 
@@ -1834,7 +1838,7 @@ async function renderSlots() {
     var d=document.createElement('div');
     if(sv){
       d.className='svs';
-      d.innerHTML='<div class="sn">存档 '+(i+1)+'</div><div class="si">'+esc(sv.desc||'')+'</div><div class="si" style="opacity:0.5">'+esc(sv.time||'')+'</div><div class="sb2"><button onclick="loadSv('+i+')">读取</button><button onclick="saveSv('+i+')">覆盖</button><button class="dl" onclick="delSv('+i+')">删除</button></div>';
+      d.innerHTML='<div class="sn">存档 '+(i+1)+'</div><div class="si">'+esc(sv.desc||'')+'</div><div class="si" style="opacity:0.5">'+esc(sv.time||'')+'</div><div class="sb2"><button onclick="loadSv('+i+')">读取</button><button onclick="confirmSaveSv('+i+')">覆盖</button><button class="dl" onclick="delSv('+i+')">删除</button></div>';
     } else {
       d.className='svs emp';
       d.innerHTML='<div class="sn">存档 '+(i+1)+' — 空</div><div class="sb2"><button onclick="saveSv('+i+')">保存</button></div>';
@@ -1963,8 +1967,20 @@ async function renderStartupSlots(){
   if(!found){var st=document.getElementById('startup-load-status');if(st){st.textContent='尚无可读取的本地存档';st.style.color='var(--dm)';}}
 }
 function selectStartupSave(key){
+  if(PENDING_STARTUP_LOAD===key){cancelStartupLoad();return;}
   PENDING_STARTUP_LOAD=key;renderStartupSlots();
   var st=document.getElementById('startup-load-status');if(st){st.style.color='var(--g)';st.textContent='✓ 已选择'+(key==='auto'?'自动存档':('存档 '+(Number(key.slice(3))+1)))+'；现在连接下方后端即可直接继续';}
+  var cancel=document.getElementById('startup-cancel');if(cancel)cancel.style.display=PENDING_STARTUP_LOAD!==null?'inline-block':'none';
+  updateConnectButtons();
+}
+function cancelStartupLoad(){
+  PENDING_STARTUP_LOAD=null;var st=document.getElementById('startup-load-status');if(st){st.textContent='已取消存档选择；连接后端后将进入新游戏的世界选择';st.style.color='var(--dm)';}
+  renderStartupSlots();
+  var cancel=document.getElementById('startup-cancel');if(cancel)cancel.style.display='none';
+  updateConnectButtons();
+}
+function updateConnectButtons(){
+  document.querySelectorAll('.connect-btn').forEach(function(b){b.textContent=PENDING_STARTUP_LOAD!==null?'连接并读取所选存档':'连接并选择世界';});
 }
 async function resumeStartupSave(key){
   var st=document.getElementById('startup-load-status');if(st)st.textContent='正在载入存档…';
@@ -1993,7 +2009,8 @@ function loadSv(i){
 }
 function loadSvAuto(){loadSv('auto');}
 
-function delSv(i){idbDel('sv_'+i).then(function(){renderSlots();});}
+function delSv(i){if(!confirm('确定永久删除存档 '+(i+1)+'？此操作无法撤销。'))return;idbDel('sv_'+i).then(function(){renderSlots();renderStartupSlots();});}
+function confirmSaveSv(i){if(confirm('确定覆盖存档 '+(i+1)+'？原进度将被替换。'))saveSv(i);}
 
 function apiTimeoutMs(maxTok){
   // Short utility calls should fail reasonably quickly; long generations and
@@ -2359,7 +2376,7 @@ function startGame(){
   send('开始游戏',true);
 }
 
-function resetGame(){if(LOADING)return;TOKENS=0;document.getElementById('tkc').textContent='TOKENS: 0';startGame();}
+function resetGame(){if(LOADING)return;if(!confirm('确定完全重置当前游戏并重新生成开局？建议先保存到手动存档；新游戏开始后会覆盖自动存档。'))return;TOKENS=0;document.getElementById('tkc').textContent='TOKENS: 0';startGame();}
 
 function stateSummary(){
   if(!GAME_STATE.revealed)return '角色卡尚未揭示：不得假定属性值、技能、天赋或异世界面板；不得进行数值检定。玩家此前明确描述的背景仍然是事实。';
