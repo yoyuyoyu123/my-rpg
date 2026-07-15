@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>无界·叙事引擎 v21 · 存档修复与调试追踪</title>
+<title>无界·叙事引擎 v23 · 协调随机生成</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -430,7 +430,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 }
 
 /* ══════════════════════════════════════════════════════
-   v21 · SAVE DOCTOR + DEBUG TRACE
+   v23 · COHERENT RANDOM PROFILES
    High-contrast parchment reading surface + illustrated adventure chrome
    ══════════════════════════════════════════════════════ */
 :root{
@@ -797,7 +797,7 @@ body::before{
 <body>
 <div class="gbg"></div>
 <div class="hdr">
-  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v21</small></div>
+  <div class="logo">无界<span>·</span>叙事引擎 <small style="font-size:9px;letter-spacing:1px;color:var(--dm)">v23</small></div>
   <div class="sbar">
     <div class="sdot" id="sdot"></div>
     <span id="stxt">选择世界</span>
@@ -1191,7 +1191,7 @@ body::before{
       </div>
     </div>
     <div class="pref-box">
-      <div class="pref-title">本局口味约束 <span>不选=完全随机；选了就在该范围内随机抽取</span></div>
+      <div class="pref-title">本局口味约束 <span>不选=先抽一套相容配置再补空位；玩家选择始终优先</span></div>
       <div class="pref-row"><span class="pref-lbl">基调</span><div class="gen-chips">
         <div class="chip on" data-group="pref-tone" data-val="">🎲 随机</div>
         <div class="chip" data-group="pref-tone" data-val="欢乐搞笑">😆 欢乐搞笑</div>
@@ -1501,7 +1501,8 @@ body::before{
       <label class="set-chk"><input type="checkbox" id="set-automem" onchange="SETTINGS.autoMem=this.checked;saveSettings()"> 自动记忆提取</label>
       <label class="set-chk"><input type="checkbox" id="set-director" onchange="SETTINGS.director=this.checked;saveSettings()"> GM节拍审查（更稳，略慢）</label>
       <label class="set-chk"><input type="checkbox" id="set-statesync" onchange="SETTINGS.stateSync=this.checked;saveSettings()"> 状态自动结算（物品／技能变化更可靠，略增消耗）</label>
-      <div class="setting-divider">问题诊断 · v21</div>
+      <label class="set-chk"><input type="checkbox" id="set-agencyguard" onchange="SETTINGS.agencyGuard=this.checked;saveSettings()"> 玩家主权自动重写（拦截AI替玩家行动）</label>
+      <div class="setting-divider">问题诊断 · v23</div>
       <label class="set-chk"><input type="checkbox" id="set-debug" onchange="setDebugMode(this.checked)"> 调试追踪（复现问题前开启）</label>
       <div class="debug-card" id="debug-card">
         <span class="debug-status" id="debug-status">调试关闭；不会记录回合诊断。</span>
@@ -1509,6 +1510,7 @@ body::before{
         <div class="debug-actions">
           <button class="qb" onclick="exportDebugTrace()"><span class="ic">⇩</span>导出调试JSON</button>
           <button class="qb red" onclick="clearDebugTrace()"><span class="ic">⌫</span>清空调试记录</button>
+          <button class="qb" style="grid-column:1/-1" onclick="openRandomAudit()"><span class="ic">◫</span>查看本局后台补全</button>
           <button class="qb" style="grid-column:1/-1" onclick="openSaveDoctor()"><span class="ic">✚</span>体检／修复当前存档</button>
         </div>
       </div>
@@ -1540,13 +1542,13 @@ body::before{
 </div>
 
 <script>
-var APP_VERSION='21.0-save-doctor';
+var APP_VERSION='23.0-coherent-random';
 var BK='ds', APIKEY='', MODEL='', BASEURL='', WORLD='', PACE='';
 var HIST=[], TOKENS=0, LOADING=false, SUMMING=false;
 var QUESTS={main:[],side:[]}, INVENTORY=[], SKILLS=[];
 var PINS=[]; // locked facts: {id, text, category}
-var WORLD_CLOCK=0; // turns since last world event
-var EVENT_THRESHOLD=8; // rising threshold for background world events
+var WORLD_CLOCK=0; // turns since the last profile-compatible world pulse
+var EVENT_THRESHOLD=8; // deterministic cadence; content never rerolls the run type
 var LOREBOOK=[]; // world book entries: {id,name,keywords[],text,cat}
 var TURNS=0; // player turns this run
 var OUTLINE=''; // JS-owned latest hidden outline (survives even if model forgets to re-output)
@@ -1559,10 +1561,11 @@ var PENDING_STARTUP_LOAD=null; // selected save key, consumed after backend conn
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
 var PREMISE_STATE={kind:'none'}; // program-owned opening milestone, prevents premise drift/stalling
 var PREFS={tone:'',skeleton:'',opening:'',scene:'',entry:'',era:'',role:'',prof:'',relation:'',growth:'',conflict:'',trigger:'',transmode:'',advanced:{},canon:'',extra:''};
+var EFFECTIVE_SETUP={}; // compiled, conflict-free run contract; the model never receives discarded draws
 var PLAYER_CANON={}; // program-owned identity namespace; summaries and AI cannot overwrite it
 var WORLD_PRESET=''; // second-level flavor preset id chosen for the selected world // player taste constraints from the pace screen
 var PREF_MAPS={
-  tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'市井烟火':['市井烟火','群像生活流'],'荒诞喜剧':['荒诞喜剧','讽刺寓言'],'严肃正剧':['严肃正剧','冷峻现实'],'黑色悬疑':['黑色悬疑']},
+  tone:{'欢乐搞笑':['欢乐废萌','荒诞喜剧'],'爽快热血':['轻松爽快','热血王道'],'温馨日常':['温馨治愈','市井烟火'],'市井烟火':['市井烟火','群像生活流'],'荒诞喜剧':['荒诞喜剧','讽刺寓言'],'严肃正剧':['严肃正剧'],'黑色悬疑':['黑色悬疑']},
   skeleton:{'冒险探索':['旅行见闻线','探索发现线','公开委托线'],'经营生活':['安身立业线','建设经营线','社区生活线','职业成长线'],'争锋上位':['竞技争锋线','权谋上位线','学习修炼线'],'恩怨情仇':['复仇线','救赎线','守护责任线','归乡重建线'],'悬疑真相':['悬疑真相线','身份秘密线','卧底潜伏线']},
   opening:{'经典问答':['经典问答'],'平静日常切入':['普通一天','工作现场','抵达新地','熟人见面','小麻烦','公开委托','自由闲暇'],'戏剧性切入':['错位苏醒','危机切入','事件余波','他人视角']}
 };
@@ -1572,41 +1575,29 @@ var OPENING_STYLES_X=[
   {n:'事件余波',d:'某件大事刚刚结束（葬礼后/战败后/被逐出师门后/失业后），主角站在它的余波里，故事从收拾残局开始。'},
   {n:'他人视角',d:'第一幕先借一个路人或配角的眼睛看到主角登场，第二幕再切回主角本人。'}
 ];
-var TAG_FREQ=null, CAT_TAGS=null;
+var TAG_FREQ=null;
 var TONE_TAG_MAP={
   '欢乐废萌':['轻松吐槽','喜剧','误解喜剧','荒诞喜剧','日轻会话感','黑色幽默'],
   '轻松爽快':['轻松吐槽','热血王道','低压力叙事','喜剧'],
   '温馨治愈':['温馨治愈','悠闲慢生活','青春酸甜','群像生活流','低压力叙事'],
   '市井烟火':['市井烟火','地域生活书写','群像生活流','职业写实'],
   '热血王道':['热血王道','青春酸甜'],
-  '严肃正剧':['成熟正剧','冷峻现实','哲学思辨','职业写实','极简克制','心理关系剧'],
+  '严肃正剧':['成熟正剧','职业写实','心理关系剧'],
   '黑色悬疑':['悬疑紧张','心理恐怖','压抑黑暗','黑色幽默','冷峻现实'],
   '冷峻现实':['冷峻现实','成熟正剧','哲学思辨','职业写实','极简克制'],
   '荒诞喜剧':['荒诞喜剧','讽刺寓言','误解喜剧','黑色幽默']
 };
 var ENGINE_BUCKETS={
-  '冒险探索':['谜题调查','旅行见闻','迷宫攻略','副本循环','无限流','任务系统'],
-  '经营生活':['店铺经营','美食制作','日常单元剧','公司经营','领地建设','内政治理','创作活动','直播弹幕'],
-  '争锋上位':['竞技联赛','科研研发','工业科技树','战争经营','职业技能树','职业案件单元剧'],
-  '恩怨情仇':['马甲身份','婚姻契约','潜伏谍报','幕后组织经营'],
+  '冒险探索':['冒险探索','旅行见闻','迷宫攻略','任务系统'],
+  '经营生活':['店铺经营','美食制作','日常单元剧','公司经营','领地建设','内政治理','创作活动','群像生活流'],
+  '争锋上位':['竞技联赛','科研研发','工业科技树','职业技能树','公开竞争','学习修炼'],
+  '恩怨情仇':['人物关系','守护责任','救赎成长','归乡重建','公开复仇'],
   '悬疑真相':['谜题调查','马甲身份','潜伏谍报','职业案件单元剧','幕后组织经营']
 };
-var LIGHT_CONFLICTS=['资源不足','规则公开限制','利益不同','市场竞争','职业难题','舆论压力','代际差异','认知规范错位','孤独处境','阶层差异','疾病伤痛','价值观冲突','性别身份错位','流程官僚'];
-var VENDETTA_CONFLICTS=['复仇血债','阶层差异','价值观冲突','心理创伤','政治权力'];
 function buildTagStats(){
   if(!TAG_ONTO)return;
-  TAG_FREQ={}; CAT_TAGS={};
-  TAG_ONTO.categories.forEach(function(c){CAT_TAGS[c.id]=(c.tags||[]).slice();});
+  TAG_FREQ={};
   TAG_WORKS.forEach(function(w){(w.tags||[]).forEach(function(t){TAG_FREQ[t]=(TAG_FREQ[t]||0)+1;});});
-}
-function weightedDraw(catId,allowed){
-  var tags=(CAT_TAGS&&CAT_TAGS[catId])||[];
-  if(allowed&&allowed.length){var f=tags.filter(function(t){return allowed.indexOf(t)>=0;});if(f.length)tags=f;}
-  if(!tags.length)return '';
-  var total=0,ws=tags.map(function(t){var wv=(TAG_FREQ[t]||0)+1;total+=wv;return wv;});
-  var r=Math.random()*total;
-  for(var i=0;i<tags.length;i++){ r-=ws[i]; if(r<0)return tags[i]; }
-  return tags[tags.length-1];
 }
 function readPrefChips(){
   var get=function(g){var el=document.querySelector('.chip[data-group="'+g+'"].on');return el?el.dataset.val:'';};
@@ -1622,16 +1613,60 @@ var ADV_BASIC_LINKS={
   storyengine:['pref-skeleton'], pressure:['pref-conflict'], style:['pref-tone'],
   origin:['pref-entry','pref-transmode'], form:['pref-transmode'], sourceframe:['pref-entry','pref-transmode']
 };
-var TONE_ENGINE_BUCKETS={
-  '欢乐废萌':['日常单元剧','群像生活流','职业成长','旅行见闻'],
-  '轻松爽快':['冒险探索','职业成长','旅行见闻','日常单元剧'],
-  '温馨治愈':['日常单元剧','群像生活流','职业成长','店铺经营'],
-  '市井烟火':['日常单元剧','群像生活流','职业成长','店铺经营'],
-  '热血王道':['冒险探索','职业成长','旅行见闻'],
-  '严肃正剧':['职业成长','旅行见闻','群像生活流'],
-  '冷峻现实':['职业成长','旅行见闻','群像生活流'],
-  '荒诞喜剧':['日常单元剧','群像生活流','旅行见闻']
+var RANDOM_PROFILES={
+  adventure:{label:'冒险成长',tones:['轻松爽快','热血王道','严肃正剧'],toneDetails:['热血王道','成熟正剧','职业写实'],engines:['冒险探索','旅行见闻','迷宫攻略','任务系统'],conflicts:['资源不足','自然环境','能力门槛','规则公开限制'],professions:['冒险者','工匠','医生','商人'],positions:['外来者','职业人','边缘角色'],relationships:['挚友伙伴','职业搭档','独自生活','师徒前后辈'],growth:['热血成长','缓慢积累','职业专精'],openings:['普通一天','工作现场','自由闲暇','小麻烦','公开委托','抵达新地'],routes:['direct','direct','rebirth','summon','game','book']},
+  life:{label:'生活群像',tones:['温馨治愈','市井烟火','欢乐废萌'],toneDetails:['温馨治愈','市井烟火','群像生活流','职业写实','轻松吐槽','荒诞喜剧'],engines:['日常单元剧','群像生活流','职业成长','店铺经营'],conflicts:['资源不足','职业难题','利益不同','市场竞争','规则公开限制'],professions:['商人','工匠','医生','教师','普通职员'],positions:['本地普通人','职业人','经营者'],relationships:['挚友伙伴','选择家庭','职业搭档','独自生活'],growth:['平凡日常','缓慢积累','职业专精','经营建设'],openings:['普通一天','工作现场','熟人见面','自由闲暇','小麻烦'],routes:['direct','direct','rebirth','book']},
+  career:{label:'职业成长',tones:['严肃正剧','市井烟火','轻松爽快'],toneDetails:['职业写实','成熟正剧','市井烟火'],engines:['职业成长','旅行见闻','群像生活流','职业技能树'],conflicts:['职业难题','规则公开限制','资源不足','市场竞争','流程官僚'],professions:['医生','教师','研究者','普通职员','工匠'],positions:['职业人','本地普通人','前辈导师'],relationships:['职业搭档','师徒前后辈','挚友伙伴','独自生活'],growth:['职业专精','缓慢积累','热血成长'],openings:['工作现场','普通一天','熟人见面','小麻烦','公开委托'],routes:['direct','direct','game','book']},
+  building:{label:'经营建设',tones:['市井烟火','温馨治愈','严肃正剧'],toneDetails:['市井烟火','职业写实','群像生活流'],engines:['店铺经营','领地建设','公司经营','群像生活流','日常单元剧'],conflicts:['资源不足','市场竞争','职业难题','利益不同','规则公开限制'],professions:['商人','工匠','普通职员','教师'],positions:['经营者','职业人','本地普通人'],relationships:['职业搭档','选择家庭','挚友伙伴','师徒前后辈'],growth:['经营建设','缓慢积累','职业专精'],openings:['工作现场','普通一天','自由闲暇','小麻烦','熟人见面'],routes:['direct','rebirth','game','book']},
+  rivalry:{label:'公开争锋',tones:['热血王道','轻松爽快','严肃正剧'],toneDetails:['热血王道','成熟正剧','职业写实'],engines:['竞技联赛','职业成长','学习修炼','公开竞争'],conflicts:['市场竞争','能力门槛','利益不同','规则公开限制','资源不足'],professions:['冒险者','研究者','工匠','普通职员'],positions:['职业人','外来者','边缘角色'],relationships:['挚友伙伴','职业搭档','师徒前后辈'],growth:['热血成长','职业专精','缓慢积累'],openings:['工作现场','公开委托','普通一天','小麻烦','事件余波'],routes:['direct','summon','game','book']},
+  relationship:{label:'关系群像',tones:['温馨治愈','严肃正剧','市井烟火'],toneDetails:['心理关系剧','温馨治愈','群像生活流','市井烟火'],engines:['群像生活流','日常单元剧','人物关系','旅行见闻'],conflicts:['利益不同','价值观冲突','代际差异','关系取舍','资源不足'],professions:['教师','医生','商人','普通职员'],positions:['本地普通人','职业人','边缘角色'],relationships:['挚友伙伴','选择家庭','师徒前后辈','职业搭档'],growth:['平凡日常','缓慢积累','职业专精'],openings:['熟人见面','普通一天','自由闲暇','工作现场','事件余波'],routes:['direct','rebirth','book']},
+  drama:{label:'恩怨与责任',tones:['严肃正剧','热血王道','温馨治愈'],toneDetails:['成熟正剧','心理关系剧','热血王道'],engines:['守护责任','救赎成长','归乡重建','人物关系','公开复仇'],conflicts:['价值观冲突','心理创伤','阶层差异','利益不同','资源不足'],professions:['冒险者','医生','教师','工匠'],positions:['边缘角色','职业人','外来者'],relationships:['挚友伙伴','选择家庭','师徒前后辈','独自生活'],growth:['热血成长','缓慢积累','成长有代价'],openings:['事件余波','熟人见面','普通一天','工作现场','小麻烦'],routes:['direct','rebirth','summon','book','deity']},
+  mystery:{label:'证据悬疑',tones:['黑色悬疑','严肃正剧'],toneDetails:['悬疑紧张','成熟正剧','职业写实'],engines:['谜题调查','职业案件单元剧','潜伏谍报'],conflicts:['价值观冲突','政治权力','心理创伤','职业难题'],professions:['调查员','医生','研究者','普通职员'],positions:['职业人','外来者','边缘角色'],relationships:['职业搭档','独自生活','挚友伙伴'],growth:['职业专精','缓慢积累','成长有代价'],openings:['工作现场','普通一天','事件余波','小麻烦'],routes:['direct','game','book']}
 };
+var PROFILE_BY_SKELETON={'冒险探索':['adventure'],'经营生活':['life','building'],'争锋上位':['rivalry','career'],'恩怨情仇':['drama','relationship'],'悬疑真相':['mystery']};
+var PROFILE_BY_TONE={'欢乐搞笑':['life'],'爽快热血':['adventure','rivalry'],'温馨日常':['life','relationship'],'市井烟火':['life','building','career'],'荒诞喜剧':['life'],'严肃正剧':['career','adventure','drama'],'黑色悬疑':['mystery']};
+function pickOne(arr){arr=(arr||[]).filter(Boolean);return arr.length?arr[Math.floor(Math.random()*arr.length)]:'';}
+function profileCandidate(catId,candidates){
+  var seen={},list=(candidates||[]).filter(function(x){x=String(x||'').trim();if(!x||seen[x])return false;seen[x]=1;return true;});
+  if(!list.length)return '';
+  var total=0,weights=list.map(function(t){var w=(TAG_FREQ&&TAG_FREQ[t]||0)+1;total+=w;return w;});
+  var r=Math.random()*total;
+  for(var i=0;i<list.length;i++){r-=weights[i];if(r<0)return list[i];}
+  return list[list.length-1];
+}
+function profileFromAdvanced(adv){
+  var text=['storyengine','genre','style','growth','rolepos'].map(function(k){return (adv[k]||[]).join(' ');}).join(' ');
+  if(/悬疑|推理|恐怖|克苏鲁|谜题|谍报|潜伏/.test(text))return 'mystery';
+  if(/经营|建设|店铺|领地|公司|种田|内政/.test(text))return 'building';
+  if(/复仇|恩怨|救赎|守护|宿敌|血债/.test(text))return 'drama';
+  if(/群像|家庭|恋爱|挚友|师徒|关系/.test(text))return 'relationship';
+  if(/竞技|争锋|上位|比赛|战争|政治/.test(text))return 'rivalry';
+  if(/职业|科研|工业|创作|直播|论坛/.test(text))return 'career';
+  if(/冒险|迷宫|旅行|任务|召唤|奇幻/.test(text))return 'adventure';
+  if(/日常|治愈|平凡|慢生活/.test(text))return 'life';
+  return '';
+}
+function chooseRandomProfile(adv){
+  var candidates=[],source='fully-random';
+  if(PREFS.skeleton&&PREFS.skeleton!=='__none__'&&PROFILE_BY_SKELETON[PREFS.skeleton]){candidates=PROFILE_BY_SKELETON[PREFS.skeleton];source='main-direction';}
+  if(!candidates.length){var ap=profileFromAdvanced(adv);if(ap){candidates=[ap];source='advanced-setting';}}
+  if(!candidates.length&&PREFS.tone&&PROFILE_BY_TONE[PREFS.tone]){candidates=PROFILE_BY_TONE[PREFS.tone];source='tone-range';}
+  if(!candidates.length){
+    // Mystery is an opt-in profile in practice: only a small fully-random
+    // chance remains so it cannot contaminate ordinary adventure or life runs.
+    if(Math.random()<0.03)candidates=['mystery'];
+    else candidates=['adventure','adventure','life','life','career','career','building','rivalry','relationship','drama'];
+  }
+  var id=pickOne(candidates)||'adventure';
+  return {id:id,source:source,profile:RANDOM_PROFILES[id]||RANDOM_PROFILES.adventure};
+}
+function explicitSetupFields(adv){
+  var out=[];
+  ['tone','skeleton','opening','scene','entry','era','role','prof','relation','growth','conflict','trigger','transmode'].forEach(function(k){if(PREFS[k])out.push(k);});
+  Object.keys(adv||{}).forEach(function(k){if(Array.isArray(adv[k])&&adv[k].length)out.push('advanced.'+k);});
+  if(PREFS.canon)out.push('canon');if(PREFS.extra)out.push('playerNote');
+  return out;
+}
 function buildAdvancedPrefs(){
   var box=document.getElementById('adv-pref-options'); if(!box||box.dataset.ready)return;
   box.dataset.ready='1';
@@ -1685,214 +1720,235 @@ var OPENING_STYLES=[
   {n:'自由闲暇',d:'主角暂时没有迫切危机，拥有一段可以自行安排的时间。提供几个贴合身份的生活、社交、训练或探索方向。'},
   {n:'经典问答',d:'按世界观原有的分步建角问答执行。'}
 ];
-var TRANSMIGRATE_MECH=[
-  '本地人生——没有穿越，主角本来就是这个世界的人，只采用日轻式人际和生活节奏',
-  '从出生开始的第二人生——可以是人类、亚人、魔物、动物、植物或其他形态，拥有真实成长经历',
-  '群体召唤的非勇者位——勇者另有其人，主角可能是挚友、同学、后勤、家属或被忽略的同行者',
-  '原作边缘身份——成为路人、配角、反派阵营普通成员或主角团身边的职业人，但拥有独立人生',
-  '完成冒险后的第二职业——故事从退队、退休、转职、开店、任教或回乡之后开始',
-  '非人或器物生命——身体可能是魔物、人工生命、武器、建筑、迷宫核心或非实体意识，必须落实真实生活方式',
-  '主动移居或普通转移——没有死亡和神明，因工作、事故、学习或旅行进入另一个世界',
-  '经典神明面谈——仅在玩家确实喜欢经典转生流程时使用，技能和身份仍由玩家决定',
-  '写实无金手指——没有特殊权限，依靠职业经验、关系和长期积累生活'
-];
-var TRANS_TRIGGERS=[
-  '深夜游戏界面出现一个来源不明、尚未被操作的确认框',
-  '所玩游戏即将停服，倒计时与旧友消息同时出现，但玩家可以自由决定是否上线',
-  'VR设备自行推送异常固件提示，是否连接完全交给玩家',
-  '连续加班的深夜出现不寻常的困倦与环境变化，玩家仍可尝试应对',
-  '街道上发生一场玩家尚未介入的意外',
-  '考试或面试结束后，出口附近出现不合常理的空间错位',
-  '旧货店带回的老物件在午夜发出微光，但尚未被触碰',
-  '雷雨让屋内电器与光线出现异常，玩家不必主动走到危险处',
-  '图书馆书架上出现一本没有书名的书，玩家尚未取下',
-  '手机弹出一条无法关闭但也不要求立刻回应的异常推送'
-];
-var REVEAL_TIMING=[
-  '开局即知晓自己的全部来历',
-  '保留前世常识与少量生活记忆，具体细节在相关场景自然想起，不作为悬疑线',
-  '来历并不重要——主角接受当前人生，故事重心是现在的身份、关系与生活'
-];
+var TRANS_MODE_TEXT={
+  '普通转移':'主动移居或普通转移——没有默认死亡与神明安排，通过一个可感知的跨世界过程抵达',
+  '从出生重生':'从出生开始的第二人生——保留前世记忆，但新身体、家庭与成长经历必须逐步展开',
+  '群体召唤非勇者':'群体召唤的非勇者位——勇者另有其人，每名被召者都拥有独立选择与生活',
+  '原作边缘角色':'原作边缘身份——进入作品边缘位置，原作剧情不是强制轨道，主角拥有独立人生',
+  '非人或器物生命':'非人或器物生命——身体结构、感官、移动、交流与日常需求必须真实落实',
+  '写实无金手指':'写实无金手指——没有特殊权限，依靠经验、关系与长期积累生活',
+  '经典神明面谈':'经典神明面谈——真实神明亲自现身，用清楚直白的话说明求助原因；是否答应、询问什么以及选择何种身份和能力完全由玩家决定'
+};
+var TRANS_TRIGGER_TEXT={
+  '游戏弹窗':'游戏界面出现异常确认框；玩家可以点击、检查、关闭或忽略，但跨世界前提不依赖接受按钮才成立',
+  '游戏停服':'游戏停服时刻临近；玩家可以自由决定是否上线，真正的阈限变化由服务器与环境客观发生',
+  'VR设备':'VR设备出现可观察的异常；玩家不必主动接入，后续外部阈限不会把“不连接”写成错误选择',
+  '书或旧物':'一本书或旧物出现可观察、可试探的异常；是否触碰由玩家决定',
+  '睡眠或昏迷':'正常生活中的睡眠或非自愿失去意识；必须完整呈现进入过渡前后可感知的过程',
+  '意外事故':'发生有清楚前兆且允许玩家反应的意外；只写客观后果，不替玩家选择应对',
+  '主动移居，不发生意外':'通过公开、主动的跨界通道移居；不死亡、不昏迷，也不强制接受任务'
+};
+var CROSSING_ROUTES={
+  direct:{frame:'真实异界',modes:['普通转移','写实无金手指'],triggers:['睡眠或昏迷','意外事故','主动移居，不发生意外','书或旧物']},
+  rebirth:{frame:'真实异界',modes:['从出生重生'],triggers:['睡眠或昏迷','意外事故']},
+  summon:{frame:'真实异界',modes:['群体召唤非勇者'],triggers:['意外事故','睡眠或昏迷']},
+  deity:{frame:'真实异界',modes:['经典神明面谈'],triggers:['睡眠或昏迷','意外事故']},
+  nonhuman:{frame:'真实异界',modes:['非人或器物生命'],triggers:['睡眠或昏迷','意外事故']},
+  game:{frame:'游戏化世界',modes:['写实无金手指','普通转移'],triggers:['游戏弹窗','游戏停服','VR设备']},
+  book:{frame:'穿书原作',modes:['原作边缘角色','写实无金手指'],triggers:['书或旧物','睡眠或昏迷']}
+};
+function recordRandomChoice(audit,key,value,source){
+  if(value===undefined||value===null||value==='')return value;
+  audit.randomFilled[key]=debugClone(value);audit.randomSources[key]=source||'coherent-profile';return value;
+}
+function routeForMode(mode){return mode==='从出生重生'?'rebirth':mode==='群体召唤非勇者'?'summon':mode==='原作边缘角色'?'book':mode==='非人或器物生命'?'nonhuman':mode==='经典神明面谈'?'deity':mode?'direct':'';}
+function routeForTrigger(trigger){return /^(游戏弹窗|游戏停服|VR设备)$/.test(trigger)?'game':trigger==='书或旧物'?'book':'';}
+function resolveTransmigration(adv,profile,audit){
+  var origin=(adv.origin||[]).join('；'),source=(adv.sourceframe||[]).join('；'),note=String(PREFS.extra||''),isTrans=null,forceFrame='',entrySource='',noteMode='';
+  if(PREFS.entry==='native'){isTrans=false;entrySource='player-entry';}
+  else if(PREFS.entry==='trans'){isTrans=true;entrySource='player-entry';}
+  else if(PREFS.entry==='game'){isTrans=true;forceFrame='游戏化世界';entrySource='player-entry';}
+  else if(PREFS.entry==='book'){isTrans=true;forceFrame='穿书原作';entrySource='player-entry';}
+  if(isTrans===null&&origin){
+    if(/本地土著/.test(origin)){isTrans=false;entrySource='advanced-origin';}
+    else if(/转生者|外来者|穿越/.test(origin)){isTrans=true;entrySource='advanced-origin';}
+  }
+  if(isTrans!==false&&source){
+    if(/游戏|MMO|RPG|Galgame|乙女|百合|BL|经营模拟/.test(source)){isTrans=true;forceFrame='游戏化世界';entrySource=entrySource||'advanced-sourceframe';}
+    else if(/小说|漫画|动画|原作/.test(source)){isTrans=true;forceFrame='穿书原作';entrySource=entrySource||'advanced-sourceframe';}
+    else if(/完全原创/.test(source)&&isTrans===null){forceFrame='真实异界';}
+  }
+  var noteRejectsCross=/(?:不要|禁止|不想|并非|不是|没有|无).{0,6}(?:穿越|转生|异世界)/.test(note);
+  var noteGame=!/(?:不要|禁止|并非|不是).{0,6}(?:游戏世界|游戏化)/.test(note)&&/(?:穿进|进入|身处|来到).{0,8}(?:游戏世界|游戏里)|游戏世界穿越/.test(note);
+  var noteBook=!/(?:不要|禁止|并非|不是).{0,6}(?:穿书|原作世界)/.test(note)&&/(?:穿书|进入原作|来到作品世界)/.test(note);
+  var noteDeity=!/(?:不要|禁止|没有|无).{0,6}(?:神明|女神|神祇)/.test(note)&&/(?:经典.{0,6}异世界|神明.{0,10}(?:求救|面谈|召唤)|(?:求救|面谈).{0,8}神明)/.test(note);
+  if(PREFS.entry!=='native'&&!forceFrame&&noteGame){isTrans=true;forceFrame='游戏化世界';entrySource=entrySource||'player-note';}
+  else if(PREFS.entry!=='native'&&!forceFrame&&noteBook){isTrans=true;forceFrame='穿书原作';entrySource=entrySource||'player-note';}
+  if(isTrans===null&&noteRejectsCross){isTrans=false;entrySource='player-note';}
+  else if(isTrans===null&&!noteRejectsCross&&/(?:穿越|转生|异世界)/.test(note)){isTrans=true;forceFrame=forceFrame||'真实异界';entrySource='player-note';}
+  if(isTrans!==false&&noteDeity&&!PREFS.transmode){isTrans=true;noteMode='经典神明面谈';forceFrame=forceFrame||'真实异界';entrySource=entrySource||'player-note';}
+  if(isTrans===null&&PREFS.transmode&&PREFS.transmode!=='__none__'){isTrans=true;entrySource='player-transmode';}
+  if(isTrans===null&&PREFS.trigger&&PREFS.trigger!=='__none__'){isTrans=true;entrySource='player-trigger';}
+  if(isTrans===null){
+    var rate=(WORLD==='fantasy')?0.42:(WORLD==='xianxia')?0.34:(WORLD==='occult'||WORLD==='space')?0.25:0.18;
+    if(profile===RANDOM_PROFILES.life||profile===RANDOM_PROFILES.career)rate-=0.06;
+    if(profile===RANDOM_PROFILES.adventure||profile===RANDOM_PROFILES.drama)rate+=0.04;
+    isTrans=Math.random()<Math.max(0.08,Math.min(0.55,rate));entrySource='profile-rate';
+    recordRandomChoice(audit,'entry',isTrans?'穿越者':'本地土著',entrySource);
+  }else audit.derived.entry=entrySource;
+  if(!isTrans){
+    if((PREFS.transmode&&PREFS.transmode!=='__none__')||(PREFS.trigger&&PREFS.trigger!=='__none__'))audit.explicitTensions.push('主角身份指定为本地土著，因此穿越形式与触发不进入最终设定');
+    return {isTrans:false,frame:'',route:'',mechanism:'',trigger:'',timing:'',line:'主角来历：本世界土著，无前世记忆。\n'};
+  }
+  var modeKey=(PREFS.transmode&&PREFS.transmode!=='__none__')?PREFS.transmode:noteMode,triggerKey=(PREFS.trigger&&PREFS.trigger!=='__none__')?PREFS.trigger:'';
+  var routeId='';
+  if(forceFrame==='游戏化世界')routeId='game';
+  else if(forceFrame==='穿书原作')routeId='book';
+  else routeId=routeForMode(modeKey)||routeForTrigger(triggerKey);
+  if(!routeId){routeId=pickOne(profile.routes)||'direct';recordRandomChoice(audit,'crossingRoute',routeId,'profile-route');}
+  else audit.derived.crossingRoute=routeId;
+  var route=CROSSING_ROUTES[routeId]||CROSSING_ROUTES.direct;
+  var frame=forceFrame||route.frame;
+  if(!forceFrame&&modeKey==='经典神明面谈')frame='真实异界';
+  if(!forceFrame&&modeKey==='原作边缘角色')frame='穿书原作';
+  var mech='';
+  if(PREFS.transmode==='__none__'){
+    mech=frame==='游戏化世界'?'进入以游戏规则运行的世界，不额外强调固定转生套路':frame==='穿书原作'?'进入作品世界，不额外强调固定角色套路':'普通的跨世界转移，不额外强调固定套路';
+    audit.derived.mechanism='player-none';
+  }else if(modeKey){mech=TRANS_MODE_TEXT[modeKey]||modeKey;audit.derived.mechanism=noteMode&&!PREFS.transmode?'player-note':'player-transmode';}
+  else{var generatedMode=pickOne(route.modes)||'普通转移';mech=TRANS_MODE_TEXT[generatedMode]||generatedMode;recordRandomChoice(audit,'mechanism',generatedMode,'crossing-route');}
+  var trig='';
+  if(PREFS.trigger==='__none__'){
+    trig='触发方式由眼前场景自然形成；不把按钮、任务、答应邀请或触碰道具设为唯一入口';audit.derived.trigger='player-none';
+  }else if(triggerKey){trig=TRANS_TRIGGER_TEXT[triggerKey]||triggerKey;audit.derived.trigger='player-trigger';}
+  else{var generatedTrigger=pickOne(route.triggers)||'睡眠或昏迷';trig=TRANS_TRIGGER_TEXT[generatedTrigger]||generatedTrigger;recordRandomChoice(audit,'trigger',generatedTrigger,'crossing-route');}
+  var modeRoute=routeForMode(modeKey),modeFrame=modeRoute&&CROSSING_ROUTES[modeRoute]&&CROSSING_ROUTES[modeRoute].frame;
+  if(forceFrame&&modeFrame&&modeFrame!==forceFrame)audit.explicitTensions.push('穿越形式与作品框架指向不同类型；作品框架优先，穿越形式只作为进入方式保留');
+  var timing='前世身份、已发生的穿越过程与当前身体对玩家保持清楚；未知只能是尚未探索的世界信息，不用失忆制造悬疑';
+  var fd=frame==='游戏化世界'?'本世界以游戏规则运行，但NPC是拥有有限认知的活人；界面、等级与Build只有在玩家描述或亲自探索后才建立'
+    :(frame==='穿书原作'?'主角只记得自己合理接触过的原作内容；原作不是强制轨道，行动会自然改变后续'
+    :'世界完全真实，没有默认游戏机制；前世经验只在玩家描述或剧情证实时成立，不自动生成外挂');
+  var line='主角来历：穿越者｜起点：'+mech+'\n进入框架：'+frame+'——'+fd+'\n'
+    +'穿越链条：先游玩原世界生活，再让固定触发抵达（'+trig+'），随后分阶段经历阈限、转移途中与首次落地。'+timing+'。\n';
+  return {isTrans:true,frame:frame,route:routeId,mechanism:mech,trigger:trig,timing:timing,line:line};
+}
+function chooseOpening(profile,isTrans,audit){
+  var all=OPENING_STYLES.concat(OPENING_STYLES_X),suppress=PREFS.scene==='__none__',st=null,candidates=[];
+  if(PREFS.scene&&!suppress)st=all.find(function(x){return x.n===PREFS.scene;})||null;
+  if(!st){
+    var range=PREFS.opening&&PREF_MAPS.opening[PREFS.opening];
+    candidates=range&&range.length?range.slice():(profile.openings||[]).slice();
+    if(isTrans&&!PREFS.opening){
+      var originSafe=['普通一天','工作现场','熟人见面','自由闲暇','小麻烦'];
+      candidates=candidates.filter(function(x){return originSafe.indexOf(x)>=0;});
+      if(!candidates.length)candidates=originSafe;
+    }
+    var chosen=pickOne(candidates)||'普通一天';
+    st=all.find(function(x){return x.n===chosen;})||OPENING_STYLES[0];
+    recordRandomChoice(audit,'opening',st.n,PREFS.opening?'selected-opening-range':'profile-opening');
+  }else audit.derived.opening='player-scene';
+  return {style:st,suppress:suppress};
+}
+function repairGeneratedCoherence(values,profileId,profile,audit){
+  var mysteryRequested=profileId==='mystery'||PREFS.tone==='黑色悬疑'||PREFS.skeleton==='悬疑真相'||/悬疑|恐怖|推理|谜题|谍报|潜伏/.test(((PREFS.advanced||{}).style||[]).concat(((PREFS.advanced||{}).storyengine||[])).join(' '));
+  if(!mysteryRequested&&Object.prototype.hasOwnProperty.call(audit.randomFilled,'engine')&&/悬疑|谜题|潜伏|谍报|幕后|身份秘密/.test(values.engine||'')){
+    var safe=(profile.engines||[]).filter(function(x){return !/悬疑|谜题|潜伏|谍报|幕后|身份秘密/.test(x);});
+    values.engine=profileCandidate('story_engine',safe)||'日常单元剧';audit.randomFilled.engine=values.engine;audit.coherenceRepairs.push('移除非玩家选择的悬疑引擎');
+  }
+  if((PREFS.advanced||{}).growth&&PREFS.advanced.growth.length)values.growth=PREFS.advanced.growth.join('；');
+  return values;
+}
 function rollBlueprint(){
-  rollTone();
-  // A compact built-in ontology has no work samples, but is still useful for
-  // uniform tag draws. TAG_FREQ simply becomes an optional weighting source.
-  var dbOK=!!(TAG_ONTO&&CAT_TAGS);
-  var engine='',conflict='',prof='',pos='',rel='',growth='',toneTag='',anchors=[];
-  if(dbOK){
-    toneTag=weightedDraw('tone',TONE_TAG_MAP[STORY_TONE]||null);
-    var engineAllowed=(PREFS.skeleton&&ENGINE_BUCKETS[PREFS.skeleton])||TONE_ENGINE_BUCKETS[STORY_TONE]||null;
-    var transparentTone=['欢乐废萌','轻松爽快','温馨治愈','市井烟火','荒诞喜剧','热血王道','严肃正剧','冷峻现实'].indexOf(STORY_TONE)>=0;
-    var confAllowed=PREFS.skeleton==='恩怨情仇'?VENDETTA_CONFLICTS:(transparentTone?LIGHT_CONFLICTS:null);
-    var hist=[]; try{hist=JSON.parse(localStorage.getItem('wuji_dna_hist')||'[]');}catch(e){}
-    var key,tries=0;
-    do{
-      engine=weightedDraw('story_engine',engineAllowed);
-      conflict=weightedDraw('conflict_source',confAllowed);
-      prof=weightedDraw('profession',null);
-      key=engine+'|'+conflict+'|'+prof; tries++;
-    }while(hist.indexOf(key)>=0&&tries<8);
-    hist.push(key); if(hist.length>12)hist=hist.slice(-12);
-    try{localStorage.setItem('wuji_dna_hist',JSON.stringify(hist));}catch(e){}
-    pos=Math.random()<0.6?weightedDraw('narrative_position',null):'';
-    rel=weightedDraw('relationship',null);
-    growth=weightedDraw('growth_mode',null);
-    var drawn=[engine,conflict,rel,prof,growth,toneTag].filter(Boolean);
-    function scoreW(min){return TAG_WORKS.map(function(w){var sc=(w.tags||[]).filter(function(t){return drawn.indexOf(t)>=0;}).length;return{w:w,sc:sc};}).filter(function(x){return x.sc>=min;}).sort(function(a,b){return b.sc-a.sc;}).slice(0,8);}
-    var pool=scoreW(2); if(pool.length<2)pool=scoreW(1);
-    while(anchors.length<2&&pool.length){ anchors.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0].w.title); }
-  } else {
-    var sk=DNA_SKELETONS[Math.floor(Math.random()*DNA_SKELETONS.length)];
-    var ag=DNA_ANTAGONISTS[Math.floor(Math.random()*DNA_ANTAGONISTS.length)];
-    engine=sk[0]+'——'+sk[1];
-    conflict=DNA_CONFLICTS[Math.floor(Math.random()*DNA_CONFLICTS.length)]+'（阻力性质：'+ag[0]+'）';
+  var adv=PREFS.advanced||{},chosen=chooseRandomProfile(adv),profile=chosen.profile;
+  var audit={randomProfile:{id:chosen.id,label:profile.label,source:chosen.source},explicitFields:explicitSetupFields(adv),randomFilled:{},randomSources:{},derived:{},coherenceRepairs:[],explicitTensions:[]};
+  if(PREFS.tone&&PREFS.skeleton&&PREFS.skeleton!=='__none__'){
+    var toneProfiles=PROFILE_BY_TONE[PREFS.tone]||[],lineProfiles=PROFILE_BY_SKELETON[PREFS.skeleton]||[];
+    if(toneProfiles.length&&lineProfiles.length&&!toneProfiles.some(function(x){return lineProfiles.indexOf(x)>=0;}))audit.explicitTensions.push('基调与主线方向来自不同叙事类型；两项均为玩家明确选择，因此保留为有意混合');
   }
-  // Player-selected setup options override the hidden blueprint draw.
-  if(PREFS.skeleton==='__none__')engine='';
-  if(PREFS.prof)prof=PREFS.prof==='__none__'?'':PREFS.prof;
-  if(PREFS.role)pos=PREFS.role==='__none__'?'':PREFS.role;
-  if(PREFS.relation)rel=PREFS.relation==='__none__'?'':PREFS.relation;
-  if(PREFS.growth)growth=PREFS.growth==='__none__'?'':PREFS.growth;
+  rollTone(profile,audit);
+  var toneTag='',engine='',conflict='',prof='',pos='',rel='',growth='';
+  if(!(adv.style&&adv.style.length)){
+    var tonePool=profile.toneDetails||[];
+    var mapped=TONE_TAG_MAP[STORY_TONE]||[];
+    if(mapped.length){var shared=tonePool.filter(function(x){return mapped.indexOf(x)>=0;});tonePool=shared.length?shared:mapped;}
+    toneTag=profileCandidate('tone',tonePool);recordRandomChoice(audit,'toneDetail',toneTag,'profile-tone');
+  }
+  if(adv.storyengine&&adv.storyengine.length)engine=adv.storyengine.join('；');
+  else if(PREFS.skeleton==='__none__')engine='';
+  else{var ePool=(PREFS.skeleton&&ENGINE_BUCKETS[PREFS.skeleton])||profile.engines;engine=profileCandidate('story_engine',ePool);recordRandomChoice(audit,'engine',engine,PREFS.skeleton?'selected-main-direction':'profile-engine');}
   if(PREFS.conflict)conflict=PREFS.conflict==='__none__'?'':PREFS.conflict;
-  var opool=OPENING_STYLES;
-  var opref=PREFS.opening&&PREF_MAPS.opening[PREFS.opening];
-  if(opref){ var om=OPENING_STYLES.concat(OPENING_STYLES_X); opool=om.filter(function(x){return opref.indexOf(x.n)>=0;}); if(!opool.length)opool=OPENING_STYLES; }
-  var allOpenings=OPENING_STYLES.concat(OPENING_STYLES_X),suppressScene=PREFS.scene==='__none__';
-  var st=(PREFS.scene&&!suppressScene)?allOpenings.find(function(x){return x.n===PREFS.scene;}):null;
-  if(!st)st=opool[Math.floor(Math.random()*opool.length)];
+  else{conflict=profileCandidate('conflict_source',profile.conflicts);recordRandomChoice(audit,'conflict',conflict,'profile-conflict');}
+  if(PREFS.prof)prof=PREFS.prof==='__none__'?'':PREFS.prof;
+  else{prof=profileCandidate('profession',profile.professions);recordRandomChoice(audit,'profession',prof,'profile-profession');}
+  if(adv.rolepos&&adv.rolepos.length)pos=adv.rolepos.join('；');
+  else if(PREFS.role)pos=PREFS.role==='__none__'?'':PREFS.role;
+  else{pos=profileCandidate('narrative_position',profile.positions);recordRandomChoice(audit,'position',pos,'profile-position');}
+  if(adv.relation&&adv.relation.length)rel=adv.relation.join('；');
+  else if(PREFS.relation)rel=PREFS.relation==='__none__'?'':PREFS.relation;
+  else{rel=profileCandidate('relationship',profile.relationships);recordRandomChoice(audit,'relationship',rel,'profile-relationship');}
+  if(adv.growth&&adv.growth.length)growth=adv.growth.join('；');
+  else if(PREFS.growth)growth=PREFS.growth==='__none__'?'':PREFS.growth;
+  else{growth=profileCandidate('growth_mode',profile.growth);recordRandomChoice(audit,'growth',growth,'profile-growth');}
+  var values=repairGeneratedCoherence({engine:engine,conflict:conflict,profession:prof,position:pos,relationship:rel,growth:growth},chosen.id,profile,audit);
+  engine=values.engine;conflict=values.conflict;prof=values.profession;pos=values.position;rel=values.relationship;growth=values.growth;
+  var trans=resolveTransmigration(adv,profile,audit),opening=chooseOpening(profile,trans.isTrans,audit),st=opening.style,suppressScene=opening.suppress;
   OPENING_PICK=st.n;
-  var transLine='';
-  var transRate=(WORLD==='fantasy')?0.5:(WORLD==='xianxia')?0.4:(WORLD==='occult'||WORLD==='space')?0.3:0.22;
-  var isTrans=Math.random()<transRate;
-  var forceFrame='';
-  if(PREFS.entry==='native')isTrans=false;
-  else if(PREFS.entry==='trans')isTrans=true;
-  else if(PREFS.entry==='game'){isTrans=true;forceFrame='游戏化世界';}
-  else if(PREFS.entry==='book'){isTrans=true;forceFrame='穿书原作';}
-  if(isTrans){
-    var transModeMap={
-      '普通转移':'主动移居或普通转移——没有死亡和神明，因工作、事故、学习或旅行进入另一个世界',
-      '从出生重生':'从出生开始的第二人生——可以是人类、亚人、魔物、动物、植物或其他形态，拥有真实成长经历',
-      '群体召唤非勇者':'群体召唤的非勇者位——勇者另有其人，主角可能是挚友、同学、后勤、家属或被忽略的同行者',
-      '原作边缘角色':'原作边缘身份——成为路人、配角、反派阵营普通成员或主角团身边的职业人，但拥有独立人生',
-      '非人或器物生命':'非人或器物生命——身体可能是魔物、人工生命、武器、建筑、迷宫核心或非实体意识，必须落实真实生活方式',
-      '写实无金手指':'写实无金手指——没有特殊权限，依靠职业经验、关系和长期积累生活',
-      '经典神明面谈':'经典神明面谈——仅在玩家确实选择经典转生流程时使用，技能和身份仍由玩家决定'
-    };
-    var transPool=TRANSMIGRATE_MECH.filter(function(x){return x.indexOf('本地人生')<0;});
-    var mech=PREFS.transmode==='__none__'?'普通的跨世界转移，不额外强调固定套路':((PREFS.transmode&&transModeMap[PREFS.transmode])||transPool[Math.floor(Math.random()*transPool.length)]);
-    var tim=REVEAL_TIMING[Math.floor(Math.random()*REVEAL_TIMING.length)];
-    var triggerMap={
-      '游戏弹窗':'深夜玩游戏时，屏幕弹出一个需要玩家亲自回应的异常确认框',
-      '游戏停服':'所玩游戏运营终止，停服倒计时归零前仍可自由行动',
-      'VR设备':'新接入的VR设备出现异常，但接入和确认过程必须由玩家操作',
-      '书或旧物':'一本书或一件旧物出现可观察、可试探的异常',
-      '睡眠或昏迷':'在正常生活中入睡或因劳累昏迷，醒来前完整描写可感知的过渡',
-      '意外事故':'发生有预兆且允许玩家反应的意外，不替玩家决定应对方式',
-      '主动移居，不发生意外':'主角主动通过公开通道移居或转移，不死亡、不昏迷，也不由神明强制召唤'
-    };
-    var trig=PREFS.trigger==='__none__'?'触发方式由眼前场景自然形成，不把某个按钮、任务或道具强调为唯一入口':((PREFS.trigger&&triggerMap[PREFS.trigger])||TRANS_TRIGGERS[Math.floor(Math.random()*TRANS_TRIGGERS.length)]);
-    var frame;
-    if(forceFrame){ frame=forceFrame; }
-    else if(mech.indexOf('原作')>=0){ frame='穿书原作'; }
-    else { var fr=Math.random(); frame=fr<0.58?'真实异界':(fr<0.82?'游戏化世界':'穿书原作'); }
-    var fd=frame==='游戏化世界'?'本世界以游戏规则运行：主角有仅自己可见的界面与等级，或认出这就是前世玩过的那款游戏；NPC是活人，死亡真实'
-      :(frame==='穿书原作'?'主角前世读过这个世界的故事，记得大致剧情与关键人物走向，但身处边缘位置；主角的行动会使剧情逐渐偏离原作'
-      :'世界完全真实，没有任何游戏机制；前世记忆带来的是知识、视角与心态差，不是外挂');
-    transLine='主角来历：穿越者｜起点：'+mech+'\n进入框架：'+frame+'——'+fd+'\n'
-      +'穿越链条：前世（普通人优先，细节由你按基调定）→触发一幕（参考：'+trig+'，可按世界观改编）→落地新世界。揭示节奏：'+tim.split('——')[0]+'——只藏为什么会穿越；前世记忆与当前形态对玩家始终可见，禁止无缘由失忆。\n';
-    OPENING_PICK+=' · 穿越者·'+mech.split('——')[0]+(frame!=='真实异界'?('·'+frame):'');
-  } else {
-    transLine='主角来历：本世界土著，无前世记忆。\n';
-  }
-  PREMISE_STATE=isTrans?{kind:'transmigration',frame:frame||'异世界',mechanism:mech||'',trigger:trig||'',startedAt:TURNS,phase:0,phaseTurns:0,lastAdvancedAt:TURNS}:{kind:'none'};
-  var b='【本局蓝图——编剧备忘：方向参考而非剧本，更不是秘密清单】\n';
+  if(trans.isTrans)OPENING_PICK+=' · 穿越者·'+trans.mechanism.split('——')[0]+(trans.frame!=='真实异界'?('·'+trans.frame):'');
+  PREMISE_STATE=trans.isTrans?{kind:'transmigration',frame:trans.frame,mechanism:trans.mechanism,trigger:trans.trigger,route:trans.route,startedAt:TURNS,phase:0,phaseTurns:0,lastAdvancedAt:TURNS}:{kind:'none'};
+  var openingDesc=st.d;
+  if(trans.isTrans)openingDesc='这一切先发生在原世界：'+st.d+'只呈现玩家此刻能感知和回应的部分；触发抵达后立即停下，不把主角提前写成新世界居民。';
+  var integrated={origin:1,form:1,rolepos:1,sourceframe:1,relation:1,growth:1,storyengine:1,style:1},worldLines=[];
+  ADV_GROUPS.forEach(function(g){if(!integrated[g]&&adv[g]&&adv[g].length)worldLines.push((ADV_LABELS[g]||g)+'：'+adv[g].join('、'));});
+  EFFECTIVE_SETUP={
+    contractVersion:2,world:WORLD,preset:WORLD_PRESET,pace:PACE,tone:STORY_TONE,toneDetail:toneTag||'',informationMode:TONE_TRANS,
+    transmigration:trans.isTrans,frame:trans.frame||'',crossingRoute:trans.route||'',mechanism:trans.mechanism||'',trigger:trans.trigger||'',profession:prof||'',position:pos||'',relationship:rel||'',growth:growth||'',engine:engine||'',conflict:conflict||'',
+    opening:st.n,origin:(adv.origin||[]).slice(),form:(adv.form||[]).slice(),sourceframe:(adv.sourceframe||[]).slice(),worldConstraints:debugClone(worldLines),playerNote:PREFS.extra||'',
+    randomProfile:audit.randomProfile,randomFilled:audit.randomFilled,randomSources:audit.randomSources,derived:audit.derived,explicitFields:audit.explicitFields,coherenceRepairs:audit.coherenceRepairs,explicitTensions:audit.explicitTensions
+  };
+  var b='【本局最终有效设定——唯一叙事事实源】\n本块已经完成优先级合并。后台只从一套相容配置补全玩家未指定的空位；未出现在本块中的候选均未生效，禁止由历史摘要或模型自行改写类型。\n';
+  if(PREFS.extra)b+='【玩家硬性备注】'+PREFS.extra+'\n相关人物、目的与前提必须按字面兑现；不得改造成秘密机构、科技实验、阴谋替身或仅供参考的气氛。\n';
   b+='基调：'+STORY_TONE+(toneTag?('（细分风味：'+toneTag+'）'):'')+'——'+(TONE_DESC||'')+'\n';
   b+='信息牌面：'+(TONE_TRANS||'明牌')+'\n';
-  b+=transLine;
+  b+=trans.line;
+  if(adv.origin&&adv.origin.length)b+='来历细化：'+adv.origin.join('；')+'\n';
+  if(adv.form&&adv.form.length)b+='存在形态：'+adv.form.join('；')+'\n';
+  if(adv.sourceframe&&adv.sourceframe.length)b+='作品框架：'+adv.sourceframe.join('；')+'\n';
   if(prof)b+='身份参考：'+prof+(pos?(' · '+pos):'')+'（与世界观时代不符时转译为等价身份；开场必须生长在这个身份的具体日常里）\n';
-  if(rel)b+='关系底色：'+rel+'｜成长模式：'+growth+'\n';
+  else if(pos)b+='社会位置：'+pos+'\n';
+  if(rel)b+='关系底色：'+rel+'\n';
+  if(growth)b+='成长模式：'+growth+'\n';
   if(engine)b+='故事引擎：'+engine+'\n';
   if(conflict)b+='核心困难：'+conflict+'（呈现强度必须服从基调）\n';
-  if(anchors.length)b+='风味锚点：《'+anchors.join('》《')+'》——只借质感、节奏与题材组合，严禁复刻情节、人名与专有设定\n';
-  if(!suppressScene)b+='开局切入：'+st.n+'——'+st.d+'\n';
-  if(PREFS.era){ b+='时代设定：玩家指定为「'+PREFS.era+'」，世界观细节按此时代呈现（与世界观默认时代不符时以此为准，做合理转译）。\n'; }
-  var adv=PREFS.advanced||{},advLines=[];
-  ADV_GROUPS.forEach(function(g){
-    if(adv[g]&&adv[g].length)advLines.push((ADV_LABELS[g]||g)+'：'+adv[g].join('、'));
-  });
-  if(advLines.length){
-    b+='【高级世界自定义——高于后台随机蓝图】\n'+advLines.join('\n')+'\n若与上文随机抽取的身份、关系、成长、引擎、时代或框架冲突，以本块为准；这些是偏好与边界，不是必须立刻塞进开局的剧情清单。\n';
-  }
-  if(PREFS.extra){ b+='【玩家自由备注——高于随机蓝图】'+PREFS.extra+'\n'; }
-  b+='规模约束：故事默认留在当前生活圈与当前目标内纵深发展，只有玩家主动远行、晋升或完成阶段目标才扩大舞台；蓝图与玩家当前兴趣无关时就安静待在后台，不得硬塞。';
+  if(!suppressScene)b+='开局切入：'+st.n+'——'+openingDesc+'\n';
+  if(PREFS.era)b+=(trans.isTrans?'目标世界时代：':'时代设定：')+PREFS.era+'\n';
+  if(worldLines.length)b+=(trans.isTrans?'目标世界约束：\n':'世界约束：\n')+worldLines.join('\n')+'\n';
+  b+='规模约束：故事默认留在当前生活圈与当前目标内纵深发展，只有玩家主动远行、晋升或完成阶段目标才扩大舞台。后续不得再次随机改变基调、框架、成长模式或故事引擎。';
   STORY_DNA=b;
-  OPENING_TEXT=isTrans
+  OPENING_TEXT=trans.isTrans
     ?'【本局第一回合起点——仅第一回合执行】这是穿越者路线，第一回合完整发生在原本世界，以正在进行的工作或生活呈现主角处境；最多让一项当下即可回应的外部刺激抵达玩家面前，随后停下。不得替玩家点击、回复、关闭、准备或上线。不要设置需要现实世界等待数小时、数日才能发生的遥远倒计时。第一回合不完成穿越，但本局选定的穿越是故事前提，不是可被永久搁置的可选任务；之后由阶段状态机推进。'
     :'【本局开局起点】主角是本世界土著，从当下的一件具体生活或工作事务开始，不要先概括生平或直接抛出主线事件。';
   debugRecordBlueprint();
 }
 
-// ── STORY DNA: distilled narratology decks (Polti/Plotto/webnovel skeletons) ──
-var STORY_DNA='';
-var DNA_SKELETONS=[
-  ['安身立业线','先解决住处、收入和日常安排，再逐步建立稳定生活；进展来自实际行动，不来自秘密'],
-  ['职业成长线','通过工作、训练和一次次具体成果提升能力与地位，目标和门槛公开明确'],
-  ['建设经营线','从小摊、工坊、农场、据点或团队做起，处理客源、成本、人手和邻里关系'],
-  ['旅行见闻线','目的地与路线明确，重点是沿途的人、地方生活和玩家自己的选择'],
-  ['人际关系线','通过相处、合作、摩擦与兑现承诺建立关系；人物有个性但不靠藏秘密制造戏剧'],
-  ['学习修炼线','围绕一项技能或境界长期积累，阶段成果清楚，失败意味着调整方法而非卷入阴谋'],
-  ['公开委托线','任务目标、委托人和已知风险基本透明，乐趣来自如何完成和承担结果'],
-  ['社区生活线','围绕邻里、同事、同伴和地方事务展开，冲突来自资源、习惯和立场差异'],
-  ['竞技争锋线','对手、规则和晋级路线公开，胜负靠准备、能力与临场选择'],
-  ['探索发现线','探索未知地点或知识，但发现来自主动调查；没有所有人联合隐瞒的巨大黑幕'],
-  ['守护责任线','照顾一个人、地方或事业，对方有正常意愿和现实需求，不强制安排秘密身份'],
-  ['归乡重建线','回到熟悉之地，处理变化的人际和生活问题，重点是重新建立联系']
-];
-var DNA_CONFLICTS=['钱和时间不够用','能力暂时达不到目标','两个公开目标难以兼顾','工作方式与他人不同','承诺与个人安排冲突','规则限制但可以正常交涉','资源分配意见不一','竞争者也在努力争取','旅途中的现实阻碍','关系需要时间建立','计划因普通意外需要调整','想要安稳与想要成长之间的取舍','团队成员优先级不同','失败后如何重新开始','个人习惯与新环境不适应'];
-var DNA_ANTAGONISTS=[
-  ['无反派','没有幕后坏人，困难来自现实条件与不同人的合理选择'],
-  ['友好竞争者','目标相同但手段不同，可以竞争、合作或各走各路'],
-  ['制度与流程','规则造成麻烦，但规则公开，相关人员会正常解释和执行'],
-  ['环境本身','天气、距离、资源或地形带来明确困难，没有神秘意志'],
-  ['能力门槛','主角目前经验或实力不足，需要学习、准备或找人合作'],
-  ['利益不同者','对方公开追求自己的利益，可以谈判，不故意谜语'],
-  ['自身取舍','困难来自主角不能同时拥有所有选择，而不是隐藏真相'],
-  ['普通误会','信息传递或表达造成的小误会，沟通后可以逐步澄清']
-];
-var STORY_TONE='', TONE_DESC='', TONE_TRANS='';
-var DNA_TONES=(function(){
-  var defs=[
-    ['欢乐废萌','没有人苦大仇深，问题经常以滑稽的方式解决甚至自行消失，吐槽和笑点是日常的主要养分',2],
-    ['轻松爽快','主角优势明显，碾压与打脸是乐趣所在，不搞悬念不搞憋屈，赢要赢得畅快',2],
-    ['温馨治愈','重点是人与人之间的暖意和小确幸，冲突轻且总能化解',1],
-    ['热血王道','目标明确，正面硬刚，少算计多行动，输了就练级再来',2],
-    ['市井烟火','鸡毛蒜皮与人情世故，冲突来自生活本身：钱、面子、家长里短',2],
-    ['严肃正剧','认真但不阴暗，信息基本透明，冲突摆在明面上较量',1],
-    ['冷峻现实','问题可以严肃，困难可以真实，但原因与利益关系尽量摆在明面上',1],
-    ['黑色悬疑','真相需要主动调查，悬念必须有证据链；普通人仍按自己的有限认知生活',1],
-    ['荒诞喜剧','世界有点不对劲但没人当回事，一本正经地胡说八道',1]
-  ];
-  var pool=[];
-  defs.forEach(function(d){for(var i=0;i<d[2];i++)pool.push([d[0],d[1]]);});
-  return pool;
-})();
-function rollTone(){
-  var tpool=DNA_TONES;
-  var tpref=PREFS.tone&&PREF_MAPS.tone[PREFS.tone];
-  if(tpref){ tpool=DNA_TONES.filter(function(x){return tpref.indexOf(x[0])>=0;}); if(!tpool.length)tpool=DNA_TONES; }
-  var t=tpool[Math.floor(Math.random()*tpool.length)];
-  STORY_TONE=t[0]; TONE_DESC=t[1];
-  if(t[0]==='黑色悬疑'){ TONE_TRANS='暗牌——存在待揭开的真相，但线索必须有现实来源，未知不等于所有NPC都知情'; }
-  else if(Math.random()<0.6){ TONE_TRANS='明牌——主角与玩家都清楚处境和目标，看点是怎么做成而不是猜真相；不存在幕后阴谋网'; }
-  else{ TONE_TRANS='半明牌——目标清楚，部分背景随剧情自然了解即可，不存在处处针对主角的暗流'; }
+// ── STORY CONTRACT: one coherent profile, then player-priority merging ──
+var STORY_DNA='', STORY_TONE='', TONE_DESC='', TONE_TRANS='';
+var TONE_DEFS={
+  '欢乐废萌':'轻松活泼，笑点来自人物与处境；普通困难不会被升级成黑幕',
+  '轻松爽快':'目标清楚、反馈直接，优势与成果及时兑现，不用误解和隐瞒拖延',
+  '温馨治愈':'重点是人与人之间的暖意和具体生活，小冲突可以通过相处逐步化解',
+  '热血王道':'目标明确、正面行动、阶段挑战与成长清楚，对手与规则摆在明面上',
+  '市井烟火':'关注营生、人情、物价、行业和日常选择，矛盾来自生活本身',
+  '严肃正剧':'认真但不故意阴暗，原因、利益和风险尽量透明，冲突正面展开',
+  '冷峻现实':'困难可以真实且沉重，但因果和人物立场可理解，不靠万能阴谋维持压力',
+  '黑色悬疑':'真相需要主动调查，所有悬念必须有可追溯证据；普通人只知道自己能知道的事',
+  '荒诞喜剧':'世界运行方式带有荒诞感，但人物动机仍具体，荒诞不等于随机反转'
+};
+function rollTone(profile,audit){
+  profile=profile||RANDOM_PROFILES.adventure;audit=audit||{randomFilled:{},randomSources:{},derived:{}};
+  var adv=PREFS.advanced||{},styles=adv.style||[];
+  if(styles.length&&!PREFS.tone){
+    STORY_TONE=styles.join('／');TONE_DESC='玩家在高级设置中明确指定的叙事文风';audit.derived.tone='advanced-style';
+  }else{
+    var pool=(PREFS.tone&&PREF_MAPS.tone[PREFS.tone])||profile.tones||['严肃正剧'];
+    STORY_TONE=profileCandidate('tone',pool)||pool[0]||'严肃正剧';TONE_DESC=TONE_DEFS[STORY_TONE]||'服从玩家选定的叙事基调';
+    if(!PREFS.tone)recordRandomChoice(audit,'tone',STORY_TONE,'coherent-profile');
+    else if(pool.length>1)recordRandomChoice(audit,'toneVariant',STORY_TONE,'selected-tone-range');
+    else audit.derived.tone='player-tone';
+  }
+  if(/黑色悬疑|悬疑|恐怖|推理|谜/.test(STORY_TONE))TONE_TRANS='暗牌——只保留玩家主动选择的谜团；线索有证据链，NPC知识严格隔离';
+  else TONE_TRANS='明牌——目标、因果和人物动机尽量透明；不额外生成阴谋网、神秘观察者或隐藏身份线';
 }
-// (merged into rollBlueprint)
-
-function rollStoryDNA(){ rollBlueprint(); }
-
-// (merged into rollBlueprint)
-var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,director:true,stateSync:true,debug:false,fontSize:16,lineHeight:1.9};
+var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,director:true,stateSync:true,agencyGuard:true,debug:false,fontSize:16,lineHeight:1.9};
 try{var _st=localStorage.getItem('wuji_settings'); if(_st) SETTINGS=Object.assign(SETTINGS,JSON.parse(_st));}catch(e){}
 function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(SETTINGS));}catch(e){}}
 
@@ -2308,6 +2364,7 @@ function syncSettingsControls(){
   var am=document.getElementById('set-automem');if(am)am.checked=!!SETTINGS.autoMem;
   var dr=document.getElementById('set-director');if(dr)dr.checked=!!SETTINGS.director;
   var ss=document.getElementById('set-statesync');if(ss)ss.checked=SETTINGS.stateSync!==false;
+  var ag=document.getElementById('set-agencyguard');if(ag)ag.checked=SETTINGS.agencyGuard!==false;
   var dg=document.getElementById('set-debug');if(dg)dg.checked=!!SETTINGS.debug;
   updateDebugStatus();
   applyReadingPrefs();
@@ -2622,13 +2679,13 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,tone:STORY_TONE,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,effectiveSetup:EFFECTIVE_SETUP,tone:STORY_TONE,toneDesc:TONE_DESC,toneTrans:TONE_TRANS,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; STATE_ACTIVE=true; TURN_BACKUPS=Array.isArray(sv.turnBackups)?sv.turnBackups.slice(-30):[]; SHEET_INIT_ARMED=!!sv.sheetArmed; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; STORY_TONE=sv.tone||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; STATE_ACTIVE=true; TURN_BACKUPS=Array.isArray(sv.turnBackups)?sv.turnBackups.slice(-30):[]; SHEET_INIT_ARMED=!!sv.sheetArmed; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; EFFECTIVE_SETUP=sv.effectiveSetup&&typeof sv.effectiveSetup==='object'?sv.effectiveSetup:{}; STORY_TONE=sv.tone||EFFECTIVE_SETUP.tone||''; TONE_DESC=sv.toneDesc||''; TONE_TRANS=sv.toneTrans||EFFECTIVE_SETUP.informationMode||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
@@ -2638,9 +2695,8 @@ function applySnapshot(sv){
   GAME_STATE=migrateGameState(savedState);syncStateCollections();STATE_ACTIVE=sv.stateActive!==false;
   PLAYER_CANON=sv.playerCanon&&typeof sv.playerCanon==='object'?sv.playerCanon:parseCanonText(PREFS.canon||'');
   PREMISE_STATE=normalizePremiseState(sv.premise&&typeof sv.premise==='object'?sv.premise:null,sv);
-  // Migrate saves created by the old suspense-heavy DNA generator.
-  if(/预埋反转种子|舞台阶梯|悬疑真相线|身份秘密线|卧底潜伏线/.test(STORY_DNA||'')) rollStoryDNA();
-  if(STORY_TONE==='黑色悬疑') rollTone();
+  // A loaded save keeps one complete saved contract. Partial rerolls during
+  // load used to mix a new tone with an old engine, so they are forbidden.
   if(TURNS<20 && /世界已经不对|碎片自己拼凑|几乎察觉不到的异样|原因先不揭示/.test(OPENING_TEXT||'')){
     OPENING_PICK='普通一天';
     OPENING_TEXT='【本局开局变体：普通一天】主角从一件明确、正常、可处理的眼前事务开始。直接交代处境和可做之事，不新增异象、暗示、幕后观察者或隐藏危机。';
@@ -2666,10 +2722,10 @@ function idbPut(k,v){return idbOpen().then(function(db){return new Promise(funct
 function idbGet(k){return idbOpen().then(function(db){return new Promise(function(ok,bad){var rq=db.transaction('saves','readonly').objectStore('saves').get(k);rq.onsuccess=function(){ok(rq.result);};rq.onerror=function(){bad(rq.error);};});});}
 function idbDel(k){return idbOpen().then(function(db){return new Promise(function(ok,bad){var tx=db.transaction('saves','readwrite');tx.objectStore('saves').delete(k);tx.oncomplete=function(){ok();};tx.onerror=function(){bad(tx.error);};});});}
 
-// ── V20 STRUCTURED DEBUG TRACE ──
+// ── V23 STRUCTURED DEBUG TRACE ──
 // Stored outside normal saves so diagnostics never enlarge or contaminate a run.
 var DEBUG_TRACE=[], DEBUG_ACTIVE=null, DEBUG_RUN_BASE=null, DEBUG_LOADED=false, DEBUG_LOAD_PROMISE=null;
-var DEBUG_MAX_TURNS=16, DEBUG_STORE_KEY='debug_trace_v21';
+var DEBUG_MAX_TURNS=16, DEBUG_STORE_KEY='debug_trace_v23';
 function debugClone(value){
   try{
     var secret=String(APIKEY||'');
@@ -2715,7 +2771,7 @@ function debugConfigSnapshot(){
     preferences:PREFS,selectedResearchTags:tags,lockedWorldTags:w&&Array.isArray(w.lockedTags)?w.lockedTags.slice():[],
     tone:{name:STORY_TONE,description:TONE_DESC,informationMode:TONE_TRANS},
     opening:{pick:OPENING_PICK,text:OPENING_TEXT},premise:PREMISE_STATE,premiseStage:debugPremiseStage(),
-    storyDNA:STORY_DNA,storyDNAHash:debugHash(STORY_DNA),premiseDirective:premiseDirective(),
+    effectiveSetup:EFFECTIVE_SETUP,storyDNA:STORY_DNA,storyDNAHash:debugHash(STORY_DNA),premiseDirective:premiseDirective(),
     activeRulePacks:debugRulePackNames(),activeRulesHash:debugHash(activeNarrativeRules()),
     canon:PLAYER_CANON,names:NAMES,outlineHash:debugHash(OUTLINE),stateRevealed:!!(GAME_STATE&&GAME_STATE.revealed)
   });
@@ -2764,7 +2820,7 @@ function debugAnalyze(entry){
 }
 function persistDebugTrace(){
   function write(){
-    var payload={version:1,appVersion:APP_VERSION,updatedAt:new Date().toISOString(),runBase:DEBUG_RUN_BASE,logs:DEBUG_TRACE};
+    var payload={version:2,appVersion:APP_VERSION,updatedAt:new Date().toISOString(),runBase:DEBUG_RUN_BASE,logs:DEBUG_TRACE};
     return idbPut(DEBUG_STORE_KEY,debugClone(payload)).catch(function(){});
   }
   return DEBUG_LOADED?write():loadDebugTrace().then(write);
@@ -2807,13 +2863,28 @@ function setDebugMode(on){
 function exportDebugTrace(){
   var logs=DEBUG_TRACE.slice();
   if(!logs.length&&!DEBUG_RUN_BASE){alert('还没有调试记录。请先开启调试模式，再复现一次问题。');return;}
-  var payload=debugClone({format:'wuji-debug-trace',version:1,appVersion:APP_VERSION,exportedAt:new Date().toISOString(),backend:{kind:BK,model:MODEL||''},runBase:DEBUG_RUN_BASE,logs:logs});
+  var payload=debugClone({format:'wuji-debug-trace',version:2,appVersion:APP_VERSION,exportedAt:new Date().toISOString(),backend:{kind:BK,model:MODEL||''},runBase:DEBUG_RUN_BASE,logs:logs});
   var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a'),stamp=new Date().toISOString().replace(/[:.]/g,'-');
-  a.href=URL.createObjectURL(blob);a.download='myrpg_v21_debug_'+stamp+'.json';a.click();setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+  a.href=URL.createObjectURL(blob);a.download='myrpg_v23_debug_'+stamp+'.json';a.click();setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+}
+function openRandomAudit(){
+  if(!EFFECTIVE_SETUP||!EFFECTIVE_SETUP.randomProfile){alert('当前还没有开局后台补全记录。开始新游戏后即可查看。');return;}
+  var modal=document.getElementById('imodal'),name=document.getElementById('imod-name'),desc=document.getElementById('imod-desc'),acts=document.getElementById('imod-actions');
+  if(!modal||!name||!desc||!acts)return;modal.classList.add('on');name.textContent='本局后台补全 · v23';acts.innerHTML='';
+  var labels={tone:'基调',toneVariant:'基调分支',toneDetail:'细分风味',engine:'故事引擎',conflict:'核心困难',profession:'职业',position:'社会位置',relationship:'关系底色',growth:'成长方式',entry:'主角来历',crossingRoute:'穿越路线',mechanism:'穿越形式',trigger:'穿越触发',opening:'开局切入'};
+  var sourceLabels={'fully-random':'完全随机','main-direction':'主线方向','advanced-setting':'高级设定','tone-range':'基调范围','coherent-profile':'相容配置','profile-tone':'配置基调','profile-engine':'配置引擎','selected-main-direction':'已选主线范围','profile-conflict':'配置困难','profile-profession':'配置职业','profile-position':'配置位置','profile-relationship':'配置关系','profile-growth':'配置成长','profile-rate':'配置概率','profile-route':'配置穿越路线','crossing-route':'穿越路线内部','profile-opening':'配置开局','selected-opening-range':'已选开局范围','selected-tone-range':'已选基调范围'};
+  var random=EFFECTIVE_SETUP.randomFilled||{},randomSources=EFFECTIVE_SETUP.randomSources||{},derived=EFFECTIVE_SETUP.derived||{},rows=Object.keys(random).map(function(k){var src=sourceLabels[randomSources[k]]||randomSources[k]||'';return '<div class="detail-cell"><span>'+esc(labels[k]||k)+(src?' · '+esc(src):'')+'</span><b>'+esc(Array.isArray(random[k])?random[k].join('、'):String(random[k]))+'</b></div>';}).join('');
+  var sources=Object.keys(derived).map(function(k){return (labels[k]||k)+'='+derived[k];}).join('；');
+  var profile=EFFECTIVE_SETUP.randomProfile,html='<div class="detail-grid"><div class="detail-cell"><span>相容配置</span><b>'+esc(profile.label||profile.id)+'</b></div><div class="detail-cell"><span>选择依据</span><b>'+esc(sourceLabels[profile.source]||profile.source||'')+'</b></div></div>';
+  html+='<div style="margin:10px 0;color:var(--dm)">下面只列出程序替玩家补上的空位；玩家明确选择不会被列为随机结果。</div>'+(rows?('<div class="detail-grid">'+rows+'</div>'):'<div>本局没有需要随机补全的字段。</div>');
+  if(sources)html+='<div style="margin-top:10px"><b>由玩家选择直接推导：</b>'+esc(sources)+'</div>';
+  if((EFFECTIVE_SETUP.coherenceRepairs||[]).length)html+='<div style="margin-top:10px"><b>自动修正：</b>'+esc(EFFECTIVE_SETUP.coherenceRepairs.join('；'))+'</div>';
+  if((EFFECTIVE_SETUP.explicitTensions||[]).length)html+='<div style="margin-top:10px"><b>玩家主动混合：</b>'+esc(EFFECTIVE_SETUP.explicitTensions.join('；'))+'</div>';
+  desc.innerHTML=html;
 }
 function clearDebugTrace(){
   if(!DEBUG_TRACE.length&&!DEBUG_RUN_BASE){updateDebugStatus();return;}
-  if(!confirm('清空全部 v21 调试记录？不会影响游戏存档。'))return;
+  if(!confirm('清空全部 v23 调试记录？不会影响游戏存档。'))return;
   DEBUG_TRACE=[];DEBUG_ACTIVE=null;DEBUG_RUN_BASE=null;DEBUG_LOADED=true;idbDel(DEBUG_STORE_KEY).catch(function(){});updateDebugStatus();
 }
 async function migrateLegacySlots(){
@@ -3043,12 +3114,12 @@ async function maybeCompress(){
   SUMMING=true; addBlk('sys','▸ 正在压缩历史记忆...');
   var version=HIST.length;
   var toC=HIST.slice(0,cc), toK=HIST.slice(cc);
-  var prompt='以下是文字游戏的较早对话，请生成700字内的【叙事记忆摘要】，用于接续因果而不是充当数值数据库。按顺序保留：1)已经确认的身份与处境；2)关键事件时间线及其结果；3)玩家明确接受、拒绝、忽略或尚未决定的事项；4)重要NPC的公开身份、双方实际互动和当前关系；5)当前地点局势、公开信息、未完成承诺与生活目标。普通日常可以简短保留，不得改造成阴谋、伏笔或任务。人物、事件、物品名称相似也不得合并；不确定的内容明确写“未确认”，禁止补全。若历史中出现【大纲】只保留最新一份已经兑现的核心内容，不增加秘密。\n精确属性、资源、物品数量、技能熟练度和装备状态由程序账本维护，摘要不得重新计算或改写；只在某件物品具有剧情意义时提及名称。当前程序账本仅供冲突校验：'+stateSummary()+'。\n【不可改写的主角身份映射】'+(canonSummary()||'尚无')+'。现实姓名、游戏ID、角色名、公开化名与当前身份属于不同命名空间，不得互换；空字段保持未确认。\n\n'+toC.map(function(m){return m.role+': '+m.content;}).join('\n');
+  var prompt='以下是文字游戏的较早对话，请生成700字内的【叙事记忆摘要】，用于接续因果而不是充当数值数据库。摘要属于低优先级历史记录，永远不能修改下面的“本局最终有效设定”。若较早剧情与最终设定出现表面冲突，只客观记录玩家已经看见的事件，不得据此把世界类型、基调、穿越前提或玩家备注改写成另一套设定。\n【本局最终有效设定】\n'+(STORY_DNA||'尚未建立')+'\n\n按顺序保留：1)已经确认的身份与处境；2)关键事件时间线及其结果；3)玩家明确接受、拒绝、忽略或尚未决定的事项；4)重要NPC的公开身份、双方实际互动和当前关系；5)当前地点局势、公开信息、未完成承诺与生活目标。普通日常可以简短保留，不得改造成阴谋、伏笔或任务。人物、事件、物品名称相似也不得合并；不确定的内容明确写“未确认”，禁止补全。若历史中出现【大纲】只保留最新一份已经兑现的核心内容，不增加秘密。\n精确属性、资源、物品数量、技能熟练度和装备状态由程序账本维护，摘要不得重新计算或改写；只在某件物品具有剧情意义时提及名称。当前程序账本仅供冲突校验：'+stateSummary()+'。\n【不可改写的主角身份映射】'+(canonSummary()||'尚无')+'。现实姓名、游戏ID、角色名、公开化名与当前身份属于不同命名空间，不得互换；空字段保持未确认。\n\n'+toC.map(function(m){return m.role+': '+m.content;}).join('\n');
   try{
     var res=await doFetch([{role:'user',content:prompt}],900);
     var data=await res.json();
     if(HIST.length!==version){ return; } // history moved on during the request — never clobber it
-    if(!data.error){HIST=[{role:'system',content:'【历史摘要】\n'+chatContent(data)}].concat(toK);addBlk('sys','▸ 记忆压缩完成');}
+    if(!data.error){HIST=[{role:'system',content:'【较早剧情摘要｜低于本局最终有效设定】\n'+chatContent(data)}].concat(toK);addBlk('sys','▸ 记忆压缩完成');}
   }catch(e){}
   finally{ SUMMING=false; }
 }
@@ -3119,6 +3190,12 @@ function activeNarrativeRules(){
   if(worldKey)add('exp-'+worldKey,WORLD_EXPANSIONS[worldKey]);
   return packs.join('\n\n');
 }
+function effectivePresetNote(note){
+  var adv=PREFS.advanced||{},out=String(note||'');
+  if(adv.magic&&adv.magic.length)out=out.replace(/(?:低魔|高魔|无魔|魔法稀少|魔法普及)[、，]?/g,'');
+  if(adv.era&&adv.era.length)out=out.replace(/(?:古代|中世纪|近代|现代|近未来|远未来)[、，]?/g,'');
+  return out.replace(/^[、，；。\s]+|[、，；\s]+$/g,'').trim();
+}
 
 function buildSystemPrompt(recentText){
   var w=WORLDS[WORLD];
@@ -3136,7 +3213,7 @@ function buildSystemPrompt(recentText){
     var schema=STATE_SCHEMAS[WORLD]||STATE_SCHEMAS.__custom__;
     sp+='\n【未揭示角色卡——最高优先级】当前尚未建立数值。穿越前、游戏外或身份尚未由玩家说明时，按叙事常识表现普通人的能力，不显示异世界数值，不掷骰，不暗中预设职业、Build、技能或天赋。只有玩家明确主动查看状态/面板/自身能力，或玩家已经亲自完成使能力可被认识的操作时，才可在回复最末输出一次【SHEET_INIT】JSON【/SHEET_INIT】。仅抵达异世界、醒来、被召唤或看见提示不构成授权。初始化属性键必须且只能是：'+schema.attrs.join('、')+'；数值0-10，根据玩家此前明确描述分配，未得到支持的一律为1。资源键必须且只能是：'+Object.keys(schema.res).join('、')+'。格式：【SHEET_INIT】{"attrs":{},"res":{},"talents":[],"skills":[{"name":"名称","category":"类别","realm":"境界","coefficient":1,"proficiency":0,"attribute":"关联属性","description":"效果"}]}【/SHEET_INIT】。没有确凿技能就返回空数组，不得补造玩家未声明的经历或专长。';
   }
-  if(WORLD_PRESET&&w.presets){ var pp=w.presets.filter(function(x){return x.id===WORLD_PRESET;})[0]; if(pp&&pp.note){ sp+='\n【本局特色侧重】'+pp.note; } }
+  if(WORLD_PRESET&&w.presets){ var pp=w.presets.filter(function(x){return x.id===WORLD_PRESET;})[0],pn=pp&&effectivePresetNote(pp.note); if(pn){ sp+='\n【本局特色侧重——已移除与最终设定冲突的部分】'+pn; } }
   sp+='\n\n【篇幅】'+p.instruction;
   if(STORY_DNA){ sp+='\n\n'+STORY_DNA; }
   if(w.lockedTags&&w.lockedTags.length){ sp+='\n\n【定制锁定标签——最高优先级，蓝图任何随机元素与之冲突时一律以此为准】'+w.lockedTags.join('、'); }
@@ -3162,6 +3239,7 @@ function buildSystemPrompt(recentText){
   if(loreBlocks){ sp+='\n\n【相关背景资料——本回合参考】\n'+loreBlocks; }
   var activeRules=activeNarrativeRules();
   if(activeRules)sp+='\n\n【本局实际启用的叙事规则包——只包含当前路线相关内容】\n'+activeRules;
+  if(STORY_DNA)sp+='\n\n【最终一致性闸门｜设定哈希 '+debugHash(STORY_DNA)+'】输出前核对：世界类型、时代、基调、故事引擎、穿越形式和玩家硬性备注只能来自“本局最终有效设定”。较早剧情摘要只负责连续性，不能创建另一套世界前提。若历史与最终设定冲突，以最终设定为准，并在不替玩家行动的前提下让眼前场景自然回到有效设定。';
   return sp;
 }
 
@@ -3265,13 +3343,13 @@ function premiseDirective(){
   if(!PREMISE_STATE||PREMISE_STATE.kind!=='transmigration')return '';
   PREMISE_STATE=normalizePremiseState(PREMISE_STATE,null);
   var n=Number(PREMISE_STATE.phase)||0,held=Number(PREMISE_STATE.phaseTurns)||0;
-  var base='【穿越前提状态机——程序持久化事实，覆盖“无限停留现实世界”的倾向】本局已经选定游戏世界/异世界穿越为故事前提。不得替玩家作出点击、接受、上线或心理决定；但服务器停服、设备异常、断电、空间错位、身体失重等外部事件可以自行发生。玩家拒绝或忽略某个入口，只会改变穿越路径与当下反应，不会取消本局前提，也不得把同一入口换皮重发。每回合仍只推进一个阶段并在可反应处停下。';
-  if(n===0)return base+'当前阶段0：原世界日常。只建立生活与第一项眼前刺激，不完成穿越。'+(held>=2?'本阶段已经停留过久：本回合必须让第一项可回应的外部刺激抵达玩家面前，然后立刻停下。':'');
-  if(n===1)return base+'当前阶段1：回应与逼近。完整回应玩家刚才的行动；若玩家主动触发，可让转移征兆开始。若玩家忽略或拒绝入口，世界照常运转，但随后由与该选择无关的客观外部变化接管穿越路径，不能劝回同一按钮。'+(held>=2?'本阶段已经停留过久：本回合必须出现可感知且不可逆的外部阈限征兆，不能继续现实生活支线。':'');
-  if(n===2)return base+'当前阶段2：阈限事件。玩家此前的拒绝已经生效，原入口作废；本回合必须让另一条客观穿越过程开始，例如停服真正到来、连接被异常接管、空间或感官发生不可逆变化。这不是替玩家选择。重点描写过程，并在玩家仍能反应或观察的位置停下，不能继续写现实生活支线。';
-  if(n===3)return base+'当前阶段3：转移途中。完整描写时间、空间、身体、意识或数据层面的过渡，让玩家能够尝试观察、挣扎、呼喊或保持不动；本回合不得退回普通现实日常，结尾接近或刚触及落点。'+(held>=2?'本阶段已经停留过久：本回合必须抵达新世界的最初落点，但只写首次感知，不替玩家探索。':'');
-  if(n===4)return base+'当前阶段4：首次落地。本回合进入新世界并只呈现最初可感知环境与一个迫近的互动点；不得总结“已经适应数日”，不得一次讲完身份、系统和世界说明。';
-  return base+'当前阶段5：穿越已完成。故事重心留在新世界；身份、身体、游戏规则和能力只能由玩家逐项探索，不自动全知。不得又把主角送回原世界重演入口，除非玩家日后主动追求返乡。';
+  var base='【跨世界迁移状态——程序持久化事实；这里的英文状态名不是剧情内的阶段、协议或组织编号】本局已经选定游戏世界/异世界穿越为故事前提。固定迁移形式：'+String(PREMISE_STATE.mechanism||'未额外限定')+'。固定触发：'+String(PREMISE_STATE.trigger||'由场景自然形成')+'。'+(PREFS.extra?('玩家硬性备注：'+PREFS.extra+'。'):'')+'这些固定事实不得被相似的科技系统、秘密机构、梦境、实验或另一套阶段协议替代。不得替玩家作出点击、接受、上线或心理决定；但外部事件可以自行发生。玩家拒绝或忽略某个入口，只会改变穿越路径与当下反应，不会取消本局前提，也不得把同一入口换皮重发。每回合仍只推进一个迁移态并在可反应处停下。';
+  if(n===0)return base+'当前迁移态=ORIGIN_LIFE（原世界生活）。只建立生活与第一项眼前刺激，不完成穿越。'+(held>=2?'该迁移态已经停留过久：本回合必须让第一项可回应的外部刺激抵达玩家面前，然后立刻停下。':'');
+  if(n===1)return base+'当前迁移态=APPROACH（回应与逼近）。完整回应玩家刚才的行动；若玩家主动触发，可让转移征兆开始。若玩家忽略或拒绝入口，世界照常运转，但随后由与该选择无关的客观外部变化接管穿越路径，不能劝回同一按钮。'+(held>=2?'该迁移态已经停留过久：本回合必须出现可感知且不可逆的外部阈限征兆，不能继续现实生活支线。':'');
+  if(n===2)return base+'当前迁移态=THRESHOLD（阈限事件）。玩家此前的拒绝已经生效，原入口作废；本回合必须让另一条客观穿越过程开始。这不是替玩家选择。重点描写过程，并在玩家仍能反应或观察的位置停下，不能继续写现实生活支线。严禁把THRESHOLD解释成剧情中某个机构的“阶段2”。';
+  if(n===3)return base+'当前迁移态=IN_TRANSIT（转移途中）。完整描写时间、空间、身体、意识或数据层面的过渡，让玩家能够尝试观察、挣扎、呼喊或保持不动；本回合不得退回普通现实日常，结尾接近或刚触及落点。'+(held>=2?'该迁移态已经停留过久：本回合必须抵达新世界的最初落点，但只写首次感知，不替玩家探索。':'');
+  if(n===4)return base+'当前迁移态=FIRST_LANDING（首次落地）。本回合进入新世界并只呈现最初可感知环境与一个迫近的互动点；不得总结“已经适应数日”，不得一次讲完身份、系统和世界说明。';
+  return base+'当前迁移态=ARRIVED（穿越完成）。故事重心留在新世界；身份、身体、游戏规则和能力只能由玩家逐项探索，不自动全知。不得又把主角送回原世界重演入口，除非玩家日后主动追求返乡。';
 }
 function currentSaveDiagnosis(){
   var issues=[],selected=!!(PREFS&&/^(trans|game|book)$/.test(PREFS.entry||'')),p=normalizePremiseState(PREMISE_STATE,{history:HIST}),recent=premiseHistoryText(HIST),ev=premiseEvidence(recent);
@@ -3279,8 +3357,11 @@ function currentSaveDiagnosis(){
   if((selected||/穿越者/.test(STORY_DNA||''))&&p.kind!=='transmigration')issues.push({severity:'critical',code:'PREMISE_MISSING_IN_SAVE',message:'存档选择了穿越路线，但前提状态缺失。'});
   if(p.kind==='transmigration'&&p.phase<4&&Math.max(0,TURNS-(Number(p.startedAt)||0))>6)issues.push({severity:'critical',code:'LEGACY_PREMISE_TIMEOUT',message:'存档触发了旧版“超过六回合后穿越指令消失”的问题。'});
   if(p.kind==='transmigration'&&p.phase<4&&ev.refusal)issues.push({severity:'warning',code:'REFUSAL_STALLED_CROSSING',message:'历史中存在拒绝入口，且主角尚未落地新世界。'});
-  if(!STORY_DNA)issues.push({severity:'critical',code:'STORY_DNA_EMPTY',message:'本局蓝图为空；无法完整恢复最初随机结果。'});
+  if(!STORY_DNA)issues.push({severity:'critical',code:'STORY_DNA_EMPTY',message:'本局最终设定合约为空；无法可靠维持开局约束。'});
   if(!STORY_TONE)issues.push({severity:'warning',code:'TONE_EMPTY',message:'本局基调为空。'});
+  if(EFFECTIVE_SETUP&&Number(EFFECTIVE_SETUP.contractVersion)>=2&&!EFFECTIVE_SETUP.randomProfile)issues.push({severity:'warning',code:'RANDOM_AUDIT_MISSING',message:'本局缺少相容随机审计记录。'});
+  if(EFFECTIVE_SETUP&&Array.isArray(EFFECTIVE_SETUP.coherenceRepairs)&&EFFECTIVE_SETUP.coherenceRepairs.length)issues.push({severity:'info',code:'COHERENCE_REPAIRED',message:'开局合并时已自动修正：'+EFFECTIVE_SETUP.coherenceRepairs.join('；')});
+  if(EFFECTIVE_SETUP&&Array.isArray(EFFECTIVE_SETUP.explicitTensions)&&EFFECTIVE_SETUP.explicitTensions.length)issues.push({severity:'info',code:'EXPLICIT_MIX',message:'检测到玩家主动混合的设定：'+EFFECTIVE_SETUP.explicitTensions.join('；')});
   return {checkedAt:new Date().toISOString(),turn:TURNS,premise:p,evidence:ev,issues:issues,config:debugConfigSnapshot()};
 }
 function captureCurrentSaveDiagnostic(){
@@ -3290,7 +3371,7 @@ function captureCurrentSaveDiagnostic(){
 }
 function openSaveDoctor(){
   var d=captureCurrentSaveDiagnostic(),modal=document.getElementById('imodal'),name=document.getElementById('imod-name'),desc=document.getElementById('imod-desc'),acts=document.getElementById('imod-actions');
-  if(!modal||!name||!desc||!acts)return;modal.classList.add('on');name.textContent='存档体检 · v21';acts.innerHTML='';
+  if(!modal||!name||!desc||!acts)return;modal.classList.add('on');name.textContent='存档体检 · v23';acts.innerHTML='';
   var phaseNames=['原世界开场','回应与逼近','阈限事件','转移途中','首次落地','已在新世界'];
   var rows=['回合：'+TURNS,'基调：'+(STORY_TONE||PREFS.tone||'缺失'),'蓝图：'+(STORY_DNA?'已保存':'缺失'),'穿越阶段：'+(d.premise.kind==='transmigration'?(phaseNames[d.premise.phase]||d.premise.phase):'非穿越路线')];
   if(d.issues.length)rows.push('发现：'+d.issues.map(function(x){return x.message;}).join('；'));else rows.push('未发现结构性损坏；已生成一份当前存档诊断记录。');
@@ -3365,7 +3446,7 @@ function undoTurn(){
 
 function startGame(){
   HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0; OUTLINE=''; NAMES='';
-  GAME_STATE=freshGameState(); STATE_ACTIVE=true; TURN_BACKUPS=[]; SHEET_INIT_ARMED=false; PLAYER_CANON=parseCanonText(PREFS.canon||''); PREMISE_STATE={kind:'none'};
+  GAME_STATE=freshGameState(); STATE_ACTIVE=true; TURN_BACKUPS=[]; SHEET_INIT_ARMED=false; PLAYER_CANON=parseCanonText(PREFS.canon||''); PREMISE_STATE={kind:'none'}; EFFECTIVE_SETUP={};
   var hud=document.getElementById('charhud');if(hud)hud.classList.remove('collapsed','open');var resume=document.getElementById('resume-game-link');if(resume)resume.style.display='none';
   LOREBOOK=((WORLDS[WORLD]&&WORLDS[WORLD].lorebook)||[]).slice();
   document.getElementById('slog').innerHTML='';
@@ -3376,7 +3457,7 @@ function startGame(){
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
   addBlk('sys','▸ 本局开局变体：'+OPENING_PICK+'（不满意可点「完全重置」重抽）');
   var prefNote=[PREFS.tone,PREFS.skeleton,PREFS.opening].filter(Boolean).join('/');
-  addBlk('sys','▸ 本局基调：'+STORY_TONE+(prefNote?' · 口味约束：'+prefNote:'')+' · 故事骨架已随机抽取（对玩家保密）');
+  addBlk('sys','▸ 本局基调：'+STORY_TONE+(prefNote?' · 口味约束：'+prefNote:'')+' · 后台空位已按「'+((EFFECTIVE_SETUP.randomProfile&&EFFECTIVE_SETUP.randomProfile.label)||'协调配置')+'」相容补全');
   addBlk('sys','▸ 后端：'+MODEL);
   send('开始游戏',true);
 }
@@ -3515,6 +3596,8 @@ async function directorPass(playerInput){
   var attrs=ak.length?ak.map(function(k){return k+'='+GAME_STATE.attrs[k];}).join(','):'未知（可自定合理属性名）';
   var p='你是文字RPG的后台GM裁判。你不写剧情，只做冷静判定，玩家永远看不到你的输出。\n'
     +'本局基调:'+(STORY_TONE||'未定')+'——节拍判断与裁定的松紧要符合基调\n'
+    +'本局最终有效设定（高于历史摘要与旧大纲）:'+(STORY_DNA||'尚未建立')+'\n'
+    +'当前跨世界迁移状态:'+(premiseDirective()||'非穿越路线')+'\n'
     +'当前隐藏大纲:'+(OUTLINE||'无')+'\n'
     +'角色属性:'+attrs+'\n'
     +'角色技能:'+(GAME_STATE.skills.map(function(s){return s.name+'('+s.realm+',熟练'+s.proficiency+'%,系数'+s.coefficient+(s.active?',运转中':'')+')';}).join('、')||'无')+'\n'
@@ -3523,7 +3606,7 @@ async function directorPass(playerInput){
     +'人物关系与各自知情:'+(Object.keys(GAME_STATE.npcs||{}).slice(-10).map(function(n){var v=GAME_STATE.npcs[n],kn=Array.isArray(v.knows)?v.knows:[];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+',已知='+(kn.length?kn.join('／'):'无额外秘密')+')';}).join('；')||'无')+'\n'
     +'最近剧情:\n'+recent+'\n\n'
     +'玩家本回合输入:'+playerInput+'\n\n'
-    +'先划定行动授权边界：只把玩家明确说出的动作及完成该动作不可分割的连续过程视为已授权；任何新的购买、追问、移动、承诺、攻击、使用、关系决定或时间跨越都不在授权内。scene_note必须写明本回合在哪里停下。NPC不得使用其“已知”列表之外的主角秘密；陌生言行不能直接推导穿越身份。\n'
+    +'先划定行动授权边界：只把玩家明确说出的动作及完成该动作不可分割的连续过程视为已授权；任何新的购买、追问、移动、承诺、攻击、使用、关系决定或时间跨越都不在授权内。玩家只提问、评价、抱怨或表达疑惑时，不授权点击、发送消息、说话、调查或作出决定。scene_note必须写明本回合在哪里停下。NPC不得使用其“已知”列表之外的主角秘密；陌生言行不能直接推导穿越身份。\n'
     +'节拍参考：发育（纯日常，让玩家安心积累）/互动（完整回应对话或当前事务）/推进（只推进玩家主动追求的现有目标）/收获（结算实打实的结果）。不要自动循环，不要为了节奏强行制造冲突或钩子；连续日常完全正常。裁定只授权回应玩家明确做出的这一步，不授权叙事者代替玩家继续下一步；若即将出现选择、转场、承诺、点击、接受或拒绝，scene_note必须要求在该节点前停下。玩家忽略钩子或拒绝任务时，应尊重该方向并继续模拟世界，禁止设计换皮事件把玩家强拉回原路线。\n'
     +'检定门槛必须严格：角色卡未揭示时risky必须为false。角色卡已揭示后，只有同时满足①结果确实不确定；②存在正在抵抗的对手、危险环境或技术难题；③失败会立即产生与成功不同的实质后果，risky才为true。普通走路、观察可见物、正常交谈、查阅已掌握资料、吃饭休息、无压力的本职工作一律false。不要为了制造戏剧而检定。\n'
     +'若玩家输入是【时间跳跃】请求：risky填false，beat填发育，scene_note写"用蒙太奇概括跳过的时间并结算收获"。\n'
@@ -3539,8 +3622,31 @@ async function directorPass(playerInput){
   return parsed;
 }
 
+function agencyViolationCodes(input,reply){
+  input=String(input||'');reply=String(reply||'').replace(/【(?:STATE|大纲|SHEET_INIT|命名表)】[\s\S]*?(?:【\/(?:STATE|大纲|SHEET_INIT|命名表)】|$)/g,'');
+  var oi=reply.search(/(?:^|\n)\s*(?:选项[：:]|\d+[.、．]\s)/);if(oi>=0)reply=reply.slice(0,oi);
+  var rows=[
+    {code:'UNAUTHORIZED_COMMUNICATION',out:/你[^。！？\n]{0,30}(?:点击(?:了)?(?:发送|私信|回复)|发送(?:了)?(?:消息|私信|邮件|指令)|发出(?:了)?(?:请求|命令|询问)|回复(?:了)?(?:对方|消息)|开口(?:说道|询问)|对[^。！？\n]{0,12}说[：：“"])/,auth:/(点击|发送|私信|回复|告诉|询问|命令|要求|联系|说|问)/},
+    {code:'UNAUTHORIZED_CHOICE',out:/你[^。！？\n]{0,24}(?:答应|同意|接受|拒绝|承诺|决定(?:了|要)|选择(?:了)?)/,auth:/(答应|同意|接受|拒绝|承诺|决定|选择|我要|我不)/},
+    {code:'UNAUTHORIZED_INTERACTION',out:/你[^。！？\n]{0,24}(?:点击|按下|启动|关闭|打开|使用|购买|支付|签下|攻击|跟随|进入|离开|前往)[了着]?(?:按钮|界面|设备|物品|房间|建筑|地点|对方|目标)?/,auth:/(点击|按|启动|关闭|关掉|打开|使用|购买|支付|签|攻击|跟随|进入|离开|前往|去|走)/}
+  ],out=[];
+  rows.forEach(function(r){if(r.out.test(reply)&&!r.auth.test(input))out.push(r.code);});
+  return out;
+}
+async function rewriteUnauthorizedDraft(draft,msgs,playerInput,codes){
+  debugEvent('agency_guard_triggered',{codes:codes,draft:draft});
+  var guard='【玩家主权纠错——重写上一稿】上一稿出现以下越权：'+codes.join('、')+'。玩家本回合只授权了原输入明确表达的动作。请完整重写上一稿：保留世界对玩家输入的直接反馈与必要环境变化，删除所有玩家未明确做出的点击、发送、说话、接受、拒绝、决定、移动、使用或调查；在出现新选择之前停下。不得在正文提及纠错、上一稿或系统。仍需提供2-4个眼前行动参考和自由输入；隐藏状态块只保留真正发生的变化。';
+  try{
+    var retry=msgs.concat([{role:'assistant',content:String(draft||'')},{role:'system',content:guard}]),res=await doFetch(retry,4096),data=await res.json();
+    if(data.error)return draft;if(data.usage&&data.usage.total_tokens)TOKENS+=data.usage.total_tokens;
+    var fixed=chatContent(data);if(!fixed)return draft;
+    debugEvent('agency_guard_rewrite',{originalHash:debugHash(draft),rewriteHash:debugHash(fixed),remaining:agencyViolationCodes(playerInput,fixed)});
+    return fixed;
+  }catch(e){debugEvent('agency_guard_error',{message:String(e&&e.message||e)});return draft;}
+}
+
 function authorNote(){
-  var an='【本回合】只完成玩家明确行动及其直接反馈，在下一个决策边界前停下。心理活动未说出口；NPC只能使用其独立已知事实与眼前直接证据，不能读取蓝图、旁白或穿越身份。篇幅服从内容，允许自然细节，不新增无关事件。末尾给2-4个眼前行动参考并允许自由输入。';
+  var an='【本回合】只完成玩家明确行动及其直接反馈，在下一个决策边界前停下。若玩家只提问、评价、抱怨或表达疑惑，只回应其问题和情绪，不得替玩家点击、发送消息、开口询问、决定或展开新调查。心理活动未说出口；NPC只能使用其独立已知事实与眼前直接证据，不能读取蓝图、旁白或穿越身份。篇幅服从内容，允许自然细节，不新增无关事件。末尾给2-4个眼前行动参考并允许自由输入。';
   var ci=canonSummary();if(ci)an+='【本回合身份核对】'+ci+'。现实姓名、游戏ID、角色名和当前身份严格分栏，禁止互换。';
   return an;
 }
@@ -3562,13 +3668,11 @@ async function _runTurn(){
     debugBeginTurn(lastUser,t0,stateBefore);
     var recentText = lastUser + ' ' + HIST.slice(-6).map(function(m){return m.content;}).join(' ');
     var worldPulse = '';
-    if(WORLD_CLOCK >= EVENT_THRESHOLD){
-      var chance = Math.min(75, (WORLD_CLOCK - EVENT_THRESHOLD + 1) * 12);
-      if(Math.random()*100 < chance){
-        worldPulse = '\n\n【后台世界检查】可以在后台判断世界是否有普通变化，但只有该变化会立刻、直接影响玩家正在做的事时，正文才可用一句话提及；否则完全不要写入本回合，也不要用路人闲聊、远处动静或陌生人插话通知玩家。世界会运转，不等于玩家必须看见。';
-        WORLD_CLOCK = 0;
-        EVENT_THRESHOLD = 6 + Math.floor(Math.random()*5);
-      }
+    var crossingInProgress=PREMISE_STATE&&PREMISE_STATE.kind==='transmigration'&&Number(PREMISE_STATE.phase||0)<5;
+    if(WORLD_CLOCK >= EVENT_THRESHOLD&&!crossingInProgress){
+      worldPulse = '\n\n【相容世界脉冲】只检查已经建立的人物、工作、天气、交易、承诺与地点是否产生了一个自然变化；变化必须服从“本局最终有效设定”的基调、引擎和规模，且只能延续既有因果。禁止借此新增主线类型、陌生幕后组织、神秘观察者、第二套穿越入口、突然灾难或强制任务。只有变化会立刻、直接影响玩家正在做的事时，正文才可用一句话提及；否则完全不写。世界会运转，不等于玩家必须看见。';
+      WORLD_CLOCK = 0;
+      EVENT_THRESHOLD = PACE==='long'?12:(PACE==='medium'?10:8);
     }
     var SP=buildSystemPrompt(recentText) + worldPulse;
     if(DEBUG_ACTIVE){DEBUG_ACTIVE.systemPrompt=debugClone(SP);DEBUG_ACTIVE.systemPromptHash=debugHash(SP);DEBUG_ACTIVE.worldPulse=worldPulse;}
@@ -3616,7 +3720,11 @@ async function _runTurn(){
     } else {
       noteContent=authorNote();
     }
-    var msgs=[{role:'system',content:SP}].concat(HIST);
+    var requestHist=HIST.map(function(m){
+      if(m.role==='system'&&/^【(?:历史摘要|较早剧情摘要)/.test(String(m.content||'')))return {role:'assistant',content:'【较早剧情记忆——仅用于连续性，若与系统中的“本局最终有效设定”冲突，必须以后者为准】\n'+String(m.content||'').replace(/^【[^】]+】\s*/,'')};
+      return m;
+    });
+    var msgs=[{role:'system',content:SP}].concat(requestHist);
     msgs.splice(msgs.length-1,0,{role:'system',content:noteContent});
     if(DEBUG_ACTIVE){DEBUG_ACTIVE.directorRuling=debugClone(ruling);DEBUG_ACTIVE.authorNote=noteContent;DEBUG_ACTIVE.request=debugCompactMessages(msgs);}
     debugEvent('narrative_request_ready',{messageCount:msgs.length,authorNote:noteContent});
@@ -3641,8 +3749,10 @@ async function _runTurn(){
       reply=chatContent(data); usage=data.usage;
       typ.remove(); typ=null;
     }
-    if(DEBUG_ACTIVE){DEBUG_ACTIVE.reply=String(reply||'');DEBUG_ACTIVE.usage=debugClone(usage||null);}
-    debugEvent('narrative_response',{chars:String(reply||'').length,hash:debugHash(reply),usage:usage||null});
+    var rawModelReply=String(reply||''),agencyCodes=SETTINGS.agencyGuard!==false?agencyViolationCodes(lastUser,rawModelReply):[];
+    if(agencyCodes.length)reply=await rewriteUnauthorizedDraft(rawModelReply,msgs,lastUser,agencyCodes);
+    if(DEBUG_ACTIVE){DEBUG_ACTIVE.rawModelReply=rawModelReply;DEBUG_ACTIVE.reply=String(reply||'');DEBUG_ACTIVE.agencyViolations=agencyCodes;DEBUG_ACTIVE.usage=debugClone(usage||null);}
+    debugEvent('narrative_response',{chars:String(reply||'').length,hash:debugHash(reply),rawHash:debugHash(rawModelReply),agencyViolations:agencyCodes,usage:usage||null});
     if(checkLine && reply.indexOf('【检定】')<0){ reply=checkLine+'\n'+reply; }
     advancePremiseStateFromReply(reply,lastUser);
     HIST.push({role:'assistant',content:reply});
@@ -3888,28 +3998,31 @@ function openGenerator() {
   loadResearchDB();
 }
 
-// ── QUICK START: the world itself is drawn from the research DB ──
-var QUICK_ERAS=['远古神话时代','古代','近代工业期','现代','近未来','星际时代','架空混合时代'];
-var QUICK_SCALES=['一城一地','一国之内','大陆列国','全球尺度','跨星球'];
-var QUICK_MAGIC=['零超自然（完全写实）','低超自然（只存在于传闻）','中超自然（存在但稀少或受管制）','高超自然（是日常的一部分）'];
+// ── QUICK START: draw one compatible world package, never four unrelated tags ──
+var QUICK_WORLD_PROFILES=[
+  {id:'wuxia',label:'江湖市井',frames:['武侠江湖'],accents:['市井年代'],eras:['古代','近代工业期'],scales:['一城一地','一国之内','大陆列国'],magic:['零超自然（完全写实）','低超自然（只存在于传闻）']},
+  {id:'urban',label:'现代生活',frames:['现代都市','校园生活'],accents:['市井年代'],eras:['现代','近未来'],scales:['一城一地','一国之内'],magic:['零超自然（完全写实）','低超自然（只存在于传闻）','中超自然（存在但稀少或受管制）']},
+  {id:'fantasy',label:'奇幻旅途',frames:['低魔奇幻'],accents:['市井年代'],eras:['远古神话时代','古代','架空混合时代'],scales:['一城一地','一国之内','大陆列国'],magic:['低超自然（只存在于传闻）','中超自然（存在但稀少或受管制）','高超自然（是日常的一部分）']},
+  {id:'wasteland',label:'废土生存',frames:['末日废土'],accents:[],eras:['近未来','星际时代'],scales:['一城一地','一国之内','全球尺度'],magic:['零超自然（完全写实）','低超自然（只存在于传闻）','中超自然（存在但稀少或受管制）']},
+  {id:'period',label:'年代营生',frames:['市井年代'],accents:[],eras:['古代','近代工业期','现代'],scales:['一城一地','一国之内'],magic:['零超自然（完全写实）']},
+  {id:'space',label:'星际生活',frames:['星际殖民地'],accents:[],eras:['近未来','星际时代'],scales:['全球尺度','跨星球'],magic:['零超自然（完全写实）','中超自然（存在但稀少或受管制）']},
+  {id:'steam',label:'蒸汽工业',frames:['蒸汽工业'],accents:['市井年代'],eras:['近代工业期','架空混合时代'],scales:['一城一地','一国之内','大陆列国'],magic:['零超自然（完全写实）','低超自然（只存在于传闻）','中超自然（存在但稀少或受管制）']}
+];
 function buildQuickWorld(){
-  var wf=(TAG_FREQ&&CAT_TAGS)?weightedDraw('world_frame',null):'';
-  if(!wf){ var fb=['武侠江湖','现代都市','低魔奇幻','末日废土','市井年代','星际殖民地']; wf=fb[Math.floor(Math.random()*fb.length)]; }
-  var extra=(TAG_FREQ&&CAT_TAGS)?weightedDraw('world_frame',null):'';
-  if(extra===wf)extra='';
-  var era=QUICK_ERAS[Math.floor(Math.random()*QUICK_ERAS.length)];
-  var scale=QUICK_SCALES[Math.floor(Math.random()*QUICK_SCALES.length)];
-  var magic=QUICK_MAGIC[Math.floor(Math.random()*QUICK_MAGIC.length)];
+  var qp=pickOne(QUICK_WORLD_PROFILES)||QUICK_WORLD_PROFILES[0];
+  var wf=profileCandidate('world_frame',qp.frames)||qp.frames[0];
+  var extra=qp.accents&&qp.accents.length&&Math.random()<0.35?profileCandidate('world_frame',qp.accents):'';
+  var era=pickOne(qp.eras),scale=pickOne(qp.scales),magic=pickOne(qp.magic);
   var prompt='你是一个沉浸式中文文字RPG的叙事引擎。本局世界观由以下要素即时构成，请把它们融合成一个具体、自洽、有生活质感的世界：\n'
     +'【世界框架】'+wf+(extra?('，可融入少量'+extra+'元素'):'')+'\n'
-    +'【时代】'+era+'｜【尺度】'+scale+'｜【超自然浓度】'+magic+'（若与世界框架冲突，以世界框架为准微调）\n'
-    +'【要求】世界要有具体的地名、行业、货币和市井细节；文风与信息密度服从本局基调；不要在开场堆设定，让设定随剧情自然露出。\n'
+    +'【时代】'+era+'｜【尺度】'+scale+'｜【超自然浓度】'+magic+'（这些值来自同一相容世界包，不再二次随机改写）\n'
+    +'【要求】世界要有具体的地名、行业、货币和市井细节；文风与信息密度服从本局基调；不要在开场堆设定，让设定随剧情自然露出。若后续“本局最终有效设定”明确覆盖同名字段，以最终设定为准。\n'
     +'【状态栏】每次回复末尾附：[生命 X/X|精力 X/X|饱腹度 X|属性一X/属性二X/属性三X/属性四X|身份:XX|位置:XX|天气:XX|同伴:XX|货币名:XX|声望X/恶名X]\n开局时按世界质感自拟四个属性名和货币名，此后全程保持一致。状态栏后附（技能：技能1/技能2）格式的技能栏，没有技能写（技能：无）。\n'
     +'【任务】有变化时输出：【任务】主线:xxx｜支线:xxx，完成时输出【任务完成】支线:xxx';
   WORLDS['__custom__']={
     name:'快速·'+wf.substring(0,8), color:'#c8a96e', skillLabel:'技能',
     daily:['探索周边','与人交谈','处理手头的事','逛逛集市','歇口气','查看状态'],
-    prompt:prompt,
+    prompt:prompt, quickProfile:{id:qp.id,label:qp.label,frame:wf,accent:extra,era:era,scale:scale,magic:magic},
     lockedTags:[]
   };
 }
@@ -4061,11 +4174,22 @@ function renderTagWorks(){
 function suggestResearchTags(){
   if(!TAG_ONTO){loadResearchDB();return;}
   SELECTED_TAGS=[];
-  var pickFrom=['world_frame','story_engine','tone','growth_mode','relationship'];
-  pickFrom.forEach(function(cid){
-    var c=TAG_ONTO.categories.find(function(x){return x.id===cid;});
-    if(c&&c.tags&&c.tags.length)SELECTED_TAGS.push(c.tags[Math.floor(Math.random()*c.tags.length)]);
-  });
+  var adv={};['genre','style','storyengine','growth','rolepos'].forEach(function(g){adv[g]=Array.prototype.slice.call(document.querySelectorAll('#genscreen .chip[data-group="'+g+'"].on')).map(function(c){return c.dataset.val;});});
+  var pid=profileFromAdvanced(adv)||pickOne(['adventure','life','career','building','rivalry','relationship','drama']),np=RANDOM_PROFILES[pid]||RANDOM_PROFILES.adventure;
+  var genre=(adv.genre||[]).join(' '),qp=/奇幻/.test(genre)?QUICK_WORLD_PROFILES.find(function(x){return x.id==='fantasy';})
+    :/现代|都市|日常/.test(genre)?QUICK_WORLD_PROFILES.find(function(x){return x.id==='urban';})
+    :/科幻|赛博/.test(genre)?QUICK_WORLD_PROFILES.find(function(x){return x.id==='space';})
+    :/历史|古风/.test(genre)?QUICK_WORLD_PROFILES.find(function(x){return x.id==='period';})
+    :/后启示录/.test(genre)?QUICK_WORLD_PROFILES.find(function(x){return x.id==='wasteland';}):pickOne(QUICK_WORLD_PROFILES);
+  function addCompatible(cid,candidates){
+    var c=TAG_ONTO.categories.find(function(x){return x.id===cid;}),available=c?(c.tags||[]).filter(function(t){return (candidates||[]).indexOf(t)>=0;}):[];
+    var v=profileCandidate(cid,available);if(v&&SELECTED_TAGS.indexOf(v)<0)SELECTED_TAGS.push(v);
+  }
+  addCompatible('world_frame',(qp&&qp.frames)||[]);
+  addCompatible('story_engine',np.engines);
+  addCompatible('tone',np.toneDetails);
+  addCompatible('growth_mode',np.growth);
+  addCompatible('relationship',np.relationships);
   renderSelectedTags(); renderTagResults();
 }
 function clearResearchTags(){ SELECTED_TAGS=[]; renderSelectedTags(); renderTagResults(); }
@@ -4274,7 +4398,7 @@ setTimeout(function(){ try{loadResearchDB();}catch(e){} },600);
   if(inner){
     var note=document.createElement('div');
     note.className='gen-note';
-    note.textContent='ℹ 这一页只定义世界本身。主角来历、进入方式（穿越/土著/游戏化/穿书）、基调、故事引擎、人际与成长模式都由开局时现场抽取——想锁定方向，请在下一页使用口味约束。已选研究标签优先于下方手动选项，冲突时以标签为准。';
+    note.textContent='ℹ 这一页只定义世界本身。主角来历、进入方式（穿越/土著/游戏化/穿书）、基调、故事引擎、人际与成长模式会在下一页按同一套相容配置补全；想锁定方向，请使用口味约束。已选研究标签优先于下方手动选项，冲突时以标签为准。';
     var firstSec=inner.querySelector('.gen-section');
     if(firstSec)inner.insertBefore(note,firstSec);
   }
