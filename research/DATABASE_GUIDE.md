@@ -6,50 +6,36 @@
 
 ## 1. 当前快照
 
-2026-07-12 重新运行构建器后的结果：
+2026-07-16 重新运行构建器后的结果：
 
 | 项目 | 当前值 |
 |---|---:|
 | `schema_version` | `2.0.0` |
-| 覆盖期 | `2016-2026YTD` |
-| 原始作品记录 | 397 |
-| 跨年去重后的作品 | 392 |
-| 作品源文件 | 7 |
-| 标签 crosswalk 文件 | 3 |
-| 本体版本 | `1.2.0` |
+| 覆盖期 | `2010-2026YTD` |
+| 原始作品记录 | 578 |
+| 跨年去重后的作品 | 551 |
+| 本体版本 | `1.3.0` |
 | 本体维度 | 17 |
-| 本体标签（去重） | 683 |
-| 分类内标签条目 | 698 |
-| crosswalk 记录 | 2,556 |
-| 合并作品中的不同 raw tag | 2,390 |
-| 来源 URL 引用次数 | 528 |
+| 本体标签（去重） | 688 |
+| canonical 覆盖 | 551 / 551 |
+| 平均 canonical 标签 | 5.08 / 部 |
+| crosswalk 记录 | 3,122 |
 
-去重后按载体分布：
-
-| `medium` | 作品数 |
-|---|---:|
-| `web_novel` | 120 |
-| `light_or_web_novel` | 145 |
-| `manga` | 127 |
-
-原始记录实际由中国网文 125 条、日本 Web／轻小说 145 条、漫画 127 条组成。中国网文有 5 部作品跨年重复入选，合并后变成 120 部；日本侧合计 272 部。
-
-证据记录按原始入选记录计数，而非按 392 部去重作品计数：
+证据记录按原始入选记录计数，而非按 551 部去重作品计数：
 
 | `evidence_strength` | 记录数 |
 |---|---:|
-| A | 322 |
-| B | 73 |
+| A | 464 |
+| B | 112 |
 | C | 2 |
 
 crosswalk 动作分布：
 
 | `action` | 记录数 |
 |---|---:|
-| `existing` | 204 |
-| `alias` | 1,421 |
-| `new_candidate` | 0 |
-| `keep_raw` | 931 |
+| `existing` | 221 |
+| `alias` | 1,589 |
+| `keep_raw` | 1,312 |
 
 这些计数描述研究库内部，不代表市场份额、读者偏好或题材真实流行率。
 
@@ -57,11 +43,14 @@ crosswalk 动作分布：
 
 原始作品文件：
 
+- [china_works_2010_2015.json](./china_works_2010_2015.json)
 - [china_works_2016_2020.json](./china_works_2016_2020.json)
 - [china_works_2021_2024.json](./china_works_2021_2024.json)
 - [china_works_2025_2026.json](./china_works_2025_2026.json)
+- [japan_works_2010_2015.json](./japan_works_2010_2015.json)
 - [japan_works_2016_2020.json](./japan_works_2016_2020.json)
 - [japan_works_2021_2026.json](./japan_works_2021_2026.json)
+- [manga_works_2010_2015.json](./manga_works_2010_2015.json)
 - [manga_works_2016_2020.json](./manga_works_2016_2020.json)
 - [manga_works_2021_2026.json](./manga_works_2021_2026.json)
 
@@ -69,8 +58,11 @@ crosswalk 动作分布：
 
 - [tag_ontology.json](./tag_ontology.json)：正式本体。
 - [china_tag_crosswalk.json](./china_tag_crosswalk.json)
+- [china_tag_crosswalk_2010_2015.json](./china_tag_crosswalk_2010_2015.json)
 - [japan_tag_crosswalk.json](./japan_tag_crosswalk.json)
+- [japan_tag_crosswalk_2010_2015.json](./japan_tag_crosswalk_2010_2015.json)
 - [manga_tag_crosswalk.json](./manga_tag_crosswalk.json)
+- [manga_tag_crosswalk_2010_2015.json](./manga_tag_crosswalk_2010_2015.json)
 
 [build_research_db.mjs](../tools/build_research_db.mjs) 读取上述文件，完成标题归一、跨年合并、标签展开和聚合统计，最后覆盖生成 `research_db.json`。`research_db.json` 是衍生物，不应手工修补；需要改数据时应改原始文件、本体或 crosswalk，然后重建。
 
@@ -88,10 +80,13 @@ crosswalk 动作分布：
 
 各批次方法详见：
 
+- [中国网文 2010—2015 说明](./china_works_2010_2015_notes.md)
 - [中国网文 2016—2020 说明](./china_works_2016_2020_notes.md)
 - [中国网文 2025—2026 YTD 说明](./china_works_2025_2026_notes.md)
+- [日本小说 2010—2015 说明](./japan_works_2010_2015_notes.md)
 - [日本小说 2016—2020 说明](./japan_works_2016_2020_notes.md)
 - [日本小说 2021—2026 YTD 说明](./japan_works_2021_2026_notes.md)
+- [漫画 2010—2015 说明](./manga_works_2010_2015_notes.md)
 - [漫画 2016—2020 说明](./manga_2016_2020.md)
 - [漫画 2021—2026 YTD 说明](./manga_2021_2026.md)
 - [总体研究报告](./RESEARCH_REPORT.md)
@@ -104,6 +99,17 @@ crosswalk 动作分布：
 
 平台、奖项和媒体各自覆盖不同人群，因此“来源权威”不等于“市场代表性完整”。
 
+### 3.1 2010—2015 趋势概览
+
+- 2010：成熟升级、凡人流、历史科举、网游组织和女性家宅／都市情感并行。
+- 2011：电竞职业群像、信仰与文明冲突、历史制度选择及日常生活规则增强。
+- 2012：技术实践、基层职业、资源约束与有代价的反英雄成长受到重视。
+- 2013：科研共同体、非人日常、职业悬疑和反套路仙侠扩大“成长”的含义。
+- 2014：规则副本、群聊媒介、女性事业、财产制度和末日生存形成更细的机制组合。
+- 2015：史前部落、工业建设、文明制度、科幻修真和跨媒介 IP 集中显现，并衔接 2016 后的垂直化发展。
+
+早期资料须更谨慎使用：2010—2014 的同期结构化榜单和平台原始页保存不完整，部分作品只能由后来的中国作家网文学史、经典化讨论、奖项回溯或改编传播交叉确认。该时期的 `year` 是研究观察锚点，不是首发年，也不表示作品进入过统一口径的“官方年度前十”。
+
 ## 4. `year` 与 `recognition_years` 的语义
 
 原始记录中的 `year` 是“研究观察锚点”，可能表示：
@@ -115,7 +121,7 @@ crosswalk 动作分布：
 
 它不保证等于 Web 首发年、第一卷出版年、首次连载年或动画播出年。因此禁止用本库直接统计“每年新作数量”。2026 仅是年中快照，不能和完整年度进行等权的年度冠军或增速比较。
 
-主库中的 `recognition_years` 是同名作品所有原始 `year` 的去重、升序集合。年度聚合的作品数合计仍为 397，而 canonical 作品数是 392，因为 5 部作品保留了两个年度节点：
+主库中的 `recognition_years` 是同名作品所有原始 `year` 的去重、升序集合。当前年度聚合的原始记录数为 578，按载体与规范化标题合并后为 551 部 canonical 作品；具体跨年项目应以主库 `recognition_years` 为准。
 
 - 《开端》：2019、2022
 - 《砸锅卖铁去上学》：2019、2021
@@ -170,7 +176,7 @@ medium + NUL + NFKC(title).trim().toLowerCase()
 
 canonical tag 的目标是把同义词与复合词映射到 17 个可组合轴。一个 raw tag 可以映射到多个 canonical tag，例如把一个“末日科幻”式复合词拆成世界、冲突或节奏轴。
 
-当前快照中 392 部作品全部至少有一个 canonical tag，且所有 canonical tag 都能在当前本体中找到。生产使用时仍建议把 `works[].canonical_tags` 与 `ontology.categories[].tags` 取交集，防止未来导入未决 crosswalk 后污染运行时。
+当前快照中 551 部作品全部至少有一个 canonical tag，覆盖率为 551/551，平均每部约 5.08 个；所有 canonical tag 都能在当前 1.3.0 本体中找到。生产使用时仍建议把 `works[].canonical_tags` 与 `ontology.categories[].tags` 取交集，防止未来导入未决 crosswalk 后污染运行时。
 
 ```js
 const ontologyTags = new Set(
@@ -194,7 +200,7 @@ crosswalk 的 `frequency` 是该原始标签在对应研究样本中的出现次
 
 ### 7.4 当前候选状态
 
-当前三份正式 crosswalk 已将候选全部裁定为 `existing`、`alias` 或 `keep_raw`，没有待决 `new_candidate`。[ontology_candidate_review_cn_jp.json](./ontology_candidate_review_cn_jp.json) 与 [ontology_candidate_review_manga.json](./ontology_candidate_review_manga.json) 保留的是评审过程和决策依据，不是运行时标签池。
+当前纳入主库的正式 crosswalk 已将候选全部裁定为 `existing`、`alias` 或 `keep_raw`，没有待决 `new_candidate`。[ontology_candidate_review_cn_jp.json](./ontology_candidate_review_cn_jp.json) 与 [ontology_candidate_review_manga.json](./ontology_candidate_review_manga.json) 保留的是评审过程和决策依据，不是运行时标签池。
 
 ## 8. 字段字典
 
@@ -206,19 +212,19 @@ crosswalk 的 `frequency` 是该原始标签在对应研究样本中的出现次
 | `built_at` | ISO datetime | 构建器运行时间，不是资料冻结日 |
 | `coverage` | object | 覆盖期、原始／canonical 数量、输入文件清单 |
 | `ontology` | object | 正式标签本体及版本 |
-| `tag_crosswalk` | array | 三份 crosswalk 的并集，并添加 `source_file` |
+| `tag_crosswalk` | array | 所有已纳入 crosswalk 文件的并集，并添加 `source_file` |
 | `raw_tag_frequency` | object | 每个 raw tag 出现在多少部去重作品中；作品内只计一次 |
 | `yearly_raw_tag_frequency` | object | 按 `recognition_years` 展开的 raw tag 计数 |
 | `medium_raw_tag_frequency` | object | 每个载体内拥有某 raw tag 的去重作品数 |
-| `evidence_strength_frequency` | object | 原始 evidence 记录的等级计数，当前合计 397 |
+| `evidence_strength_frequency` | object | 原始 evidence 记录的等级计数，当前合计 578 |
 | `source_domain_frequency` | object | 来源 URL 引用次数，去掉域名前缀 `www.`；不是不同作品数或不同 URL 数 |
-| `works` | array | 392 条去重作品 |
+| `works` | array | 551 条去重作品 |
 
 ### 8.2 `coverage`
 
 | 字段 | 类型 | 语义 |
 |---|---|---|
-| `period` | string | 研究覆盖期，当前 `2016-2026YTD` |
+| `period` | string | 研究覆盖期，当前 `2010-2026YTD` |
 | `raw_records` | integer | 所有输入作品记录数，含跨年重复 |
 | `canonical_works` | integer | 按 medium 与规范化标题合并后的作品数 |
 | `work_files` | string[] | 实际纳入构建的作品文件 |
@@ -228,7 +234,7 @@ crosswalk 的 `frequency` 是该原始标签在对应研究样本中的出现次
 
 | 字段 | 类型 | 语义 |
 |---|---|---|
-| `version` | string | 本体版本，当前 `1.2.0` |
+| `version` | string | 本体版本，当前 `1.3.0` |
 | `scope` | string | 本体研究范围 |
 | `principles` | string[] | 正交组合、禁止自动推导等总原则 |
 | `categories` | array | 17 个标签轴 |
@@ -367,13 +373,13 @@ constraint_policy       保留默认自由度约束
 
 ### 11.1 crosswalk 还不是按来源作用域映射
 
-构建器目前以 `raw_tag` 作为全局键，并按文件名顺序加载三份 crosswalk；后加载的同名 raw tag 会覆盖前一份映射。当前有 144 个 raw tag 出现在多份 crosswalk，其中 28 个的动作或映射目标不一致。
+构建器目前以 `raw_tag` 作为全局键，并按文件名顺序加载 crosswalk；后加载的同名 raw tag 会覆盖前一份映射。要求精确地区语义时，应检查对应来源文件而不是假设同名 raw tag 在所有媒介中含义完全相同。
 
 因此，要求精确地区语义时应查询原始作品文件及对应 crosswalk。后续构建器应改为 `source_file/medium + raw_tag` 复合键；在修复前，主库 `canonical_tags` 只适合经过本体交集后的宽检索。
 
 ### 11.2 `canonical_tags` 未过滤未决候选
 
-构建器会直接接收 crosswalk 的 `canonical_tags`，不会在构建作品时再次按 action 求交。当前快照经过新版验证器检查后，本体外目标为 0，且 392 部作品全部有 canonical tag；生产端继续使用 `safeCanonicalTags`，可防止未来未审数据绕过流程。
+构建器会直接接收 crosswalk 的 `canonical_tags`，不会在构建作品时再次按 action 求交。当前快照经过新版验证器检查后，本体外目标为 0，且 551 部作品全部有 canonical tag；生产端继续使用 `safeCanonicalTags`，可防止未来未审数据绕过流程。
 
 ### 11.3 年度 raw tag 聚合会传播合并标签
 
@@ -434,7 +440,7 @@ node research/build_manga_tag_crosswalk.js
 
 1. 中日小说候选由 [build_ontology_candidate_review_cn_jp.js](./build_ontology_candidate_review_cn_jp.js) 汇总，人工决定 `add / merge / defer / reject`。
 2. 漫画候选单独查看 [ontology_candidate_review_manga.json](./ontology_candidate_review_manga.json)；当前应用工具不会处理它。
-3. 当前 `apply_ontology_candidates.mjs` 仍只读取中日小说评审，并把版本硬编码为 `1.1.0`；正式本体已是 `1.2.0`，因此在修正脚本的版本更新逻辑与漫画评审入口前，不得直接运行它。
+3. 当前 `apply_ontology_candidates.mjs` 的输入范围与版本更新逻辑可能落后于正式本体；正式本体已是 `1.3.0`，因此在确认脚本兼容当前评审入口和语义版本规则前，不得直接运行它。
 
 历史命令如下，仅供维护者定位工具，不是当前可安全重复执行的更新命令：
 

@@ -43,7 +43,7 @@ for (const name of files) {
 const seen = new Map();
 for (const row of all) {
   const key = `${row._medium}\u0000${row.title}`.toLocaleLowerCase();
-  if (seen.has(key)) warnings.push(`cross-file duplicate merged in master DB: ${row.title} (${seen.get(key)} / ${row._source_file})`);
+  if (seen.has(key)) warnings.push(`duplicate recognition record merged in master DB: ${row.title} (${seen.get(key)} / ${row._source_file})`);
   else seen.set(key, row._source_file);
 }
 
@@ -57,7 +57,7 @@ for (const row of all) {
 
 const ontology = JSON.parse(fs.readFileSync(path.join(researchDir, 'tag_ontology.json'), 'utf8'));
 const ontologyTags = new Set(ontology.categories.flatMap((category) => category.tags));
-const crosswalkFiles = fs.readdirSync(researchDir).filter((name) => /_tag_crosswalk\.json$/i.test(name)).sort();
+const crosswalkFiles = fs.readdirSync(researchDir).filter((name) => /_tag_crosswalk(?:_.*)?\.json$/i.test(name)).sort();
 for (const name of crosswalkFiles) {
   const rows = JSON.parse(fs.readFileSync(path.join(researchDir, name), 'utf8'));
   const rawSeen = new Set();

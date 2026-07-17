@@ -6,7 +6,7 @@ const root = path.resolve(import.meta.dirname, '..');
 const dir = path.join(root, 'research');
 const readJson = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 const workFiles = fs.readdirSync(dir).filter((name) => /^(china|japan|manga)_works_.*\.json$/i.test(name)).sort();
-const crosswalkFiles = fs.readdirSync(dir).filter((name) => /_tag_crosswalk\.json$/i.test(name)).sort();
+const crosswalkFiles = fs.readdirSync(dir).filter((name) => /_tag_crosswalk(?:_.*)?\.json$/i.test(name)).sort();
 const ontology = readJson(path.join(dir, 'tag_ontology.json'));
 
 const canonicalTags = new Set(ontology.categories.flatMap((category) => category.tags));
@@ -31,7 +31,10 @@ for (const name of crosswalkFiles) {
   for (const row of rows) {
     if (!row.raw_tag) continue;
     crosswalkEntries.push({ ...row, source_file: name });
-    crosswalk.set(row.raw_tag, Array.isArray(row.canonical_tags) ? row.canonical_tags : []);
+    // The same raw label can occur in more than one medium-specific crosswalk.
+    // Merge valid mappings so a later keep_raw row cannot erase a safe alias.
+    const mapped = Array.isArray(row.canonical_tags) ? row.canonical_tags : [];
+    crosswalk.set(row.raw_tag, [...new Set([...(crosswalk.get(row.raw_tag) || []), ...mapped])]);
   }
 }
 

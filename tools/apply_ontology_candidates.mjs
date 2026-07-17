@@ -31,7 +31,6 @@ for (const item of review) {
   });
 }
 
-ontology.version = '1.1.0';
 ontology.updated_at = new Date().toISOString();
 fs.writeFileSync(ontologyFile, `${JSON.stringify(ontology, null, 2)}\n`, 'utf8');
 fs.writeFileSync(path.join(dir, 'ontology_change_log_cn_jp.json'), `${JSON.stringify(changes, null, 2)}\n`, 'utf8');

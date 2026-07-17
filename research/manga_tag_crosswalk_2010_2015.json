@@ -1,0 +1,1536 @@
+[
+  {
+    "raw_tag": "身体",
+    "frequency": 4,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "战争",
+    "frequency": 4,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "竞技",
+    "frequency": 3,
+    "canonical_tags": [
+      "体育竞技"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "女性",
+    "frequency": 3,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "日常",
+    "frequency": 3,
+    "canonical_tags": [
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "不可靠叙事",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "登山",
+    "frequency": 2,
+    "canonical_tags": [
+      "体育竞技"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "第一人称",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "非人",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "科幻短篇",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "劳动",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "历史",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "能力规则",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "丧尸",
+    "frequency": 2,
+    "canonical_tags": [
+      "末日求生"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "身体变形",
+    "frequency": 2,
+    "canonical_tags": [
+      "可变形生命"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "时间穿越",
+    "frequency": 2,
+    "canonical_tags": [
+      "历史穿越"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "手工艺",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "团队",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "音乐",
+    "frequency": 2,
+    "canonical_tags": [
+      "音乐题材"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "游牧",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "欲望",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "中亚",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "自传",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "自然",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "霸凌",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "比较文明",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "编辑",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "便当",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "表演艺术",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "不死者",
+    "frequency": 1,
+    "canonical_tags": [
+      "不死族"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "超能力",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "超现实",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "成年人再出发",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "城市",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "出版业",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "传记",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "传统音乐",
+    "frequency": 1,
+    "canonical_tags": [
+      "音乐题材"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "创伤修复",
+    "frequency": 1,
+    "canonical_tags": [
+      "心理创伤",
+      "疗愈恢复"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "创意冲突",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "创作",
+    "frequency": 1,
+    "canonical_tags": [
+      "作家创作者"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "刺杀任务",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "单恋",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "地方谜团",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "地方衰退",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "地方文化",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "地方研究",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "都市",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "都市恋爱",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "都市漫游",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "都市奇幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "都市奇幻"
+    ],
+    "action": "existing",
+    "rationale": "与当前 tag_ontology.json 中的规范标签完全一致。"
+  },
+  {
+    "raw_tag": "都市再开发",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "独居",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "对话",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "多线关系",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "儿童案件",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "法国革命",
+    "frequency": 1,
+    "canonical_tags": [
+      "历史正剧"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "反应群像",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "非人婚约",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "风格化",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "复归",
+    "frequency": 1,
+    "canonical_tags": [
+      "疗愈恢复"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "工艺",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "共同制作",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "古代史",
+    "frequency": 1,
+    "canonical_tags": [
+      "历史正剧"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "古代ローマ",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "怪人",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "规则能力",
+    "frequency": 1,
+    "canonical_tags": [
+      "规则公开限制"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "刽子手",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "海洋",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "航天",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "航天学校",
+    "frequency": 1,
+    "canonical_tags": [
+      "科研学术",
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "荒诞",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "悔恨",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "火星",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "伙伴",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "极限运动",
+    "frequency": 1,
+    "canonical_tags": [
+      "体育竞技"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "记忆叙事",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "继承",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "寄居家庭",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "家族",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "家族调查",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "建筑幻想",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "剑客",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "江户",
+    "frequency": 1,
+    "canonical_tags": [
+      "历史正剧"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "将棋",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "教师",
+    "frequency": 1,
+    "canonical_tags": [
+      "教师"
+    ],
+    "action": "existing",
+    "rationale": "与当前 tag_ontology.json 中的规范标签完全一致。"
+  },
+  {
+    "raw_tag": "街机文化",
+    "frequency": 1,
+    "canonical_tags": [
+      "游戏世界"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "姐弟",
+    "frequency": 1,
+    "canonical_tags": [
+      "兄弟姐妹"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "姐妹",
+    "frequency": 1,
+    "canonical_tags": [
+      "兄弟姐妹"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "精神疾病",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "九十年代",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "救赎",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "巨人",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "爵士",
+    "frequency": 1,
+    "canonical_tags": [
+      "音乐题材"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "军事组织",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "军团",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "科幻",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "科学",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "历史改写",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "历史人物",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "恋爱",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "流行音乐",
+    "frequency": 1,
+    "canonical_tags": [
+      "音乐题材"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "漫画业界",
+    "frequency": 1,
+    "canonical_tags": [
+      "娱乐行业",
+      "作家创作者"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "美术教育",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "梦",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "秘密历史",
+    "frequency": 1,
+    "canonical_tags": [
+      "历史旧账"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "民族志",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "魔法学徒",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "能力成长",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "能力社会",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "拟制家庭",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "年龄差",
+    "frequency": 1,
+    "canonical_tags": [
+      "年龄差"
+    ],
+    "action": "existing",
+    "rationale": "与当前 tag_ontology.json 中的规范标签完全一致。"
+  },
+  {
+    "raw_tag": "农业学校",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春",
+      "乡村田园"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "女性共同体",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性群像"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "女装",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "欧洲漫画",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "平行世界",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "奇幻",
+    "frequency": 1,
+    "canonical_tags": [
+      "西式奇幻"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "骑士团",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "群像死亡",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "认知差异",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "任务",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "社会崩坏",
+    "frequency": 1,
+    "canonical_tags": [
+      "末日求生"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "社会排斥",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "社会疏离",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "社会寓言",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "社交舞",
+    "frequency": 1,
+    "canonical_tags": [
+      "体育竞技"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "社区",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "身份",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "身份表演",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "身份替代",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "身体极限",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "身体政治",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "生物改造",
+    "frequency": 1,
+    "canonical_tags": [
+      "生物朋克"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "声音表现",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "失败男性",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "失忆",
+    "frequency": 1,
+    "canonical_tags": [
+      "失忆叙事"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "师生",
+    "frequency": 1,
+    "canonical_tags": [
+      "师徒"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "时间停止",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "实验",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "食物伦理",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "视角反转",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "抒情",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "赎罪",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "暑假",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "水墨感",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "水族馆",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "替代历史",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "替代身份",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "甜点职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "美食餐饮",
+      "厨师调酒师"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "听障",
+    "frequency": 1,
+    "canonical_tags": [
+      "身体残障"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "统计",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "王国",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "网络漫画",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "围城",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "伪文献",
+    "frequency": 1,
+    "canonical_tags": [
+      "伪史料互文"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "文化祭",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "舞蹈",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "现场",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "销售",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "校园喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "校园青春",
+      "喜剧"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "邪教",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "写实",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "薪资",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "兄弟",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "悬疑",
+    "frequency": 1,
+    "canonical_tags": [
+      "谜题调查"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "寻找自我",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "巡回艺人",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "训练",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "压倒性力量",
+    "frequency": 1,
+    "canonical_tags": [
+      "开局无敌"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "医疗自传",
+    "frequency": 1,
+    "canonical_tags": [
+      "医疗行业"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "仪式",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "异形",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "饮食",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "英国民俗",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "英雄学校",
+    "frequency": 1,
+    "canonical_tags": [
+      "超级英雄社会",
+      "校园青春"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "英雄组织",
+    "frequency": 1,
+    "canonical_tags": [
+      "超级英雄社会"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "幽灵",
+    "frequency": 1,
+    "canonical_tags": [
+      "幽灵"
+    ],
+    "action": "existing",
+    "rationale": "与当前 tag_ontology.json 中的规范标签完全一致。"
+  },
+  {
+    "raw_tag": "幽默",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "游戏史",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "游戏制作",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "浴场文化",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "御宅族",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "战国",
+    "frequency": 1,
+    "canonical_tags": [
+      "历史正剧"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "昭和",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "阵营",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "职场制度",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "职业棒球",
+    "frequency": 1,
+    "canonical_tags": [
+      "体育竞技"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "职业混搭",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "职业竞技",
+    "frequency": 1,
+    "canonical_tags": [
+      "体育竞技"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "职业训练",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业专精",
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "职业制度",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "职业主角",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业技术人员"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "智谋",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "中国战国",
+    "frequency": 1,
+    "canonical_tags": [
+      "历史正剧"
+    ],
+    "action": "alias",
+    "rationale": "可在不引入额外情节假设的前提下归并到现有本体概念；原词仍保留更细粒度语义。"
+  },
+  {
+    "raw_tag": "中亚历史",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "主观视觉",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "住院",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "追捕",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "自嘲",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "自我欺骗",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  },
+  {
+    "raw_tag": "罪名身份",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "题材、地域、时代、媒介或表现手法过细，当前本体没有语义等价项；保留原词以避免过度推断。"
+  }
+]

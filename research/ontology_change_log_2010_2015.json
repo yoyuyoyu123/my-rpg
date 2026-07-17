@@ -1,0 +1,27 @@
+[
+  {
+    "raw": "史前幻想",
+    "canonical": "史前幻想",
+    "category": "world_frame"
+  },
+  {
+    "raw": "部落",
+    "canonical": "部落社会",
+    "category": "world_frame"
+  },
+  {
+    "raw": "图腾",
+    "canonical": "图腾信仰",
+    "category": "story_engine"
+  },
+  {
+    "raw": "迁徙",
+    "canonical": "族群迁徙",
+    "category": "story_engine"
+  },
+  {
+    "raw": "文明成长",
+    "canonical": "文明演进",
+    "category": "story_engine"
+  }
+]

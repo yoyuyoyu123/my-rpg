@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "scope": "Chinese web fiction, Japanese web/light novels, and manga, 2016-2026YTD",
   "principles": [
     "Tags on different axes are independently composable.",
@@ -89,7 +89,9 @@
         "封闭空间",
         "和风幻想",
         "异世界幻想",
-        "增强现实"
+        "增强现实",
+        "史前幻想",
+        "部落社会"
       ]
     },
     {
@@ -347,7 +349,10 @@
         "梦境穿行",
         "潜伏谍报",
         "原作开局前",
-        "桌游社交"
+        "桌游社交",
+        "图腾信仰",
+        "族群迁徙",
+        "文明演进"
       ]
     },
     {
@@ -826,5 +831,5 @@
       ]
     }
   ],
-  "updated_at": "2026-07-12T03:51:09.627Z"
+  "updated_at": "2026-07-16T04:49:54.591Z"
 }

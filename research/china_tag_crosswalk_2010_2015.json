@@ -1,0 +1,1301 @@
+[
+  {
+    "raw_tag": "复仇",
+    "frequency": 4,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "古代幻想",
+    "frequency": 3,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "官场",
+    "frequency": 3,
+    "canonical_tags": [
+      "朝堂官场"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "升级",
+    "frequency": 3,
+    "canonical_tags": [
+      "境界升级"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "单元故事",
+    "frequency": 2,
+    "canonical_tags": [
+      "单元剧"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "电竞",
+    "frequency": 2,
+    "canonical_tags": [
+      "体育竞技"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "都市仙侠",
+    "frequency": 2,
+    "canonical_tags": [
+      "现代修仙"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "都市现实",
+    "frequency": 2,
+    "canonical_tags": [
+      "现代都市"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "基层治理",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "江湖",
+    "frequency": 2,
+    "canonical_tags": [
+      "武侠江湖"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "抗战",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "领地经营",
+    "frequency": 2,
+    "canonical_tags": [
+      "领主经营"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "逆命",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "庶女",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "西方奇幻",
+    "frequency": 2,
+    "canonical_tags": [
+      "西式奇幻"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "仙侠喜剧",
+    "frequency": 2,
+    "canonical_tags": [
+      "古典仙侠",
+      "喜剧"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "因果",
+    "frequency": 2,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "悲剧成长",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "悲恋",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "部落",
+    "frequency": 1,
+    "canonical_tags": [
+      "部落社会"
+    ],
+    "action": "alias",
+    "rationale": "建议新增“部落社会”社会结构标签；“多种族社会”不能等价表达部落组织。 本轮审查通过，正式纳入 world_frame 维度。"
+  },
+  {
+    "raw_tag": "财产",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "草根",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "草根逆袭",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "朝局",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "传统文化",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "搭档",
+    "frequency": 1,
+    "canonical_tags": [
+      "搭档关系"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "大千世界",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "盗墓",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "盗贼",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "道心",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "谍战",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "动作",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "都市幻想",
+    "frequency": 1,
+    "canonical_tags": [
+      "都市奇幻"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "都市日常",
+    "frequency": 1,
+    "canonical_tags": [
+      "现代都市",
+      "日常占主导"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "都市异术",
+    "frequency": 1,
+    "canonical_tags": [
+      "都市异能"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "都市职业",
+    "frequency": 1,
+    "canonical_tags": [
+      "现实职业"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "多时空",
+    "frequency": 1,
+    "canonical_tags": [
+      "多时空并置"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "多世界",
+    "frequency": 1,
+    "canonical_tags": [
+      "多元宇宙"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "多世情缘",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "凡人流",
+    "frequency": 1,
+    "canonical_tags": [
+      "凡人流"
+    ],
+    "action": "existing",
+    "rationale": "与当前标签本体中的规范标签完全一致。"
+  },
+  {
+    "raw_tag": "反成长",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "反职业配置",
+    "frequency": 1,
+    "canonical_tags": [
+      "反套路流"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "犯罪心理",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "非线性谜团",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "改革",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "工业建设",
+    "frequency": 1,
+    "canonical_tags": [
+      "工业建设"
+    ],
+    "action": "existing",
+    "rationale": "与当前标签本体中的规范标签完全一致。"
+  },
+  {
+    "raw_tag": "公共健康",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "公会经营",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "关系修复",
+    "frequency": 1,
+    "canonical_tags": [
+      "关系成长"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "花木兰",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "荒野成长",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "皇帝成长",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "婚姻",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "伙伴",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "技术应用",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "家书",
+    "frequency": 1,
+    "canonical_tags": [
+      "书信日记"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "家庭",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "家宅",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "家宅经营",
+    "frequency": 1,
+    "canonical_tags": [
+      "内政治理"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "家族秘密",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "剑道",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "鉴宝",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "教会冲突",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "谨慎成长",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "锦衣卫",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "旧案平反",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "军旅",
+    "frequency": 1,
+    "canonical_tags": [
+      "佣兵军人"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "考古神秘",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "科幻",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "科幻玄幻",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "科举",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "科学史",
+    "frequency": 1,
+    "canonical_tags": [
+      "科研学术"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "跨文化",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "历史干预",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "历史见证",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "炼药",
+    "frequency": 1,
+    "canonical_tags": [
+      "药师炼丹"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "旅店",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "伦理困境",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "轮回任务",
+    "frequency": 1,
+    "canonical_tags": [
+      "无限流"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "猫",
+    "frequency": 1,
+    "canonical_tags": [
+      "动物"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "梦境",
+    "frequency": 1,
+    "canonical_tags": [
+      "梦境穿行"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "明初",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "明代",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "魔法研究",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "末日",
+    "frequency": 1,
+    "canonical_tags": [
+      "末日求生"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "谋士",
+    "frequency": 1,
+    "canonical_tags": [
+      "参谋军师"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "年代重生",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "女性户主",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性事业线"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "女性事业",
+    "frequency": 1,
+    "canonical_tags": [
+      "女性事业线"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "女性主角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "怕死主角",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "骗术识别",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "迁徙",
+    "frequency": 1,
+    "canonical_tags": [
+      "族群迁徙"
+    ],
+    "action": "alias",
+    "rationale": "建议新增“族群迁徙”剧情机制标签；公路旅行偏向旅行体验，无法安全替代生存性迁徙。 本轮审查通过，正式纳入 story_engine 维度。"
+  },
+  {
+    "raw_tag": "强冲突关系",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "青春",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "日常成长",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "日常喜剧",
+    "frequency": 1,
+    "canonical_tags": [
+      "日常占主导",
+      "喜剧"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "杀手组织",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "商业",
+    "frequency": 1,
+    "canonical_tags": [
+      "商业金融"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "上古神话",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "少年群像",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "社会观察",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "社会阶层",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "社会转型",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "社区群像",
+    "frequency": 1,
+    "canonical_tags": [
+      "社区居民",
+      "群像交叉线"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "身份",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "身份扮演",
+    "frequency": 1,
+    "canonical_tags": [
+      "马甲身份"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "身份错位",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "身份考据",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "身份秘密",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "神话",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "神魔世界",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "失忆",
+    "frequency": 1,
+    "canonical_tags": [
+      "失忆叙事"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "时间穿越",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "史前幻想",
+    "frequency": 1,
+    "canonical_tags": [
+      "史前幻想"
+    ],
+    "action": "existing",
+    "rationale": "建议新增“史前幻想”世界框架标签；当前本体中的历史、异世界、末日或公路旅行均会改变原义。 本轮审查通过，正式纳入 world_frame 维度。"
+  },
+  {
+    "raw_tag": "书生修仙",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "书院",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "探险悬疑",
+    "frequency": 1,
+    "canonical_tags": [
+      "谜题调查",
+      "冒险占主导"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "唐代",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "图腾",
+    "frequency": 1,
+    "canonical_tags": [
+      "图腾信仰"
+    ],
+    "action": "alias",
+    "rationale": "建议新增“图腾信仰”能力或文化体系标签；现有香火神道与传统文化能力体系均不完全等价。 本轮审查通过，正式纳入 story_engine 维度。"
+  },
+  {
+    "raw_tag": "退婚开局",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "退役重返",
+    "frequency": 1,
+    "canonical_tags": [
+      "退役后重新开始"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "亡国公主",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "网游",
+    "frequency": 1,
+    "canonical_tags": [
+      "游戏世界"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "位面战争",
+    "frequency": 1,
+    "canonical_tags": [
+      "跨世界诸天",
+      "战争局势"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "文明成长",
+    "frequency": 1,
+    "canonical_tags": [
+      "文明演进"
+    ],
+    "action": "alias",
+    "rationale": "建议新增“文明演进”成长机制标签；城市建设、工业建设或灾后新文明都比原义更窄。 本轮审查通过，正式纳入 story_engine 维度。"
+  },
+  {
+    "raw_tag": "文明冲突",
+    "frequency": 1,
+    "canonical_tags": [
+      "价值观冲突"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "文明遗迹",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "巫女",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "武侠仙侠",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "武者",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "误入社群",
+    "frequency": 1,
+    "canonical_tags": [
+      "聊天群"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "仙侠言情",
+    "frequency": 1,
+    "canonical_tags": [
+      "古典仙侠",
+      "恋爱要素"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "乡土",
+    "frequency": 1,
+    "canonical_tags": [
+      "乡村田园"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "相术",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "信息差",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "信仰冲突",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "星际文明",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "星空古路",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "行业经营",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "修行",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "虚拟网游",
+    "frequency": 1,
+    "canonical_tags": [
+      "MMO世界"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "悬疑调查",
+    "frequency": 1,
+    "canonical_tags": [
+      "谜题调查"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "悬疑关系",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "血脉",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "妖怪",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "英雄联盟",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "宇宙冒险",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "宇宙文明",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "灾变地球",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "战队",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "战争伦理",
+    "frequency": 1,
+    "canonical_tags": [
+      "战争局势",
+      "关系伦理灰度"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "政治寓言",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "政治制度",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "职业搭档",
+    "frequency": 1,
+    "canonical_tags": [
+      "职业搭档"
+    ],
+    "action": "existing",
+    "rationale": "与当前标签本体中的规范标签完全一致。"
+  },
+  {
+    "raw_tag": "职业战队",
+    "frequency": 1,
+    "canonical_tags": [
+      "竞技联赛",
+      "团队成长"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "制度变革",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "制度博弈",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "制度生存",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "制度治理",
+    "frequency": 1,
+    "canonical_tags": [
+      "内政治理"
+    ],
+    "action": "alias",
+    "rationale": "原标签语义可由现有本体标签直接、无额外推断地表达。"
+  },
+  {
+    "raw_tag": "智斗",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "中医",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "转生",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "赘婿",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "资源管理",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "宗室",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "宗族",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  },
+  {
+    "raw_tag": "族群",
+    "frequency": 1,
+    "canonical_tags": [],
+    "action": "keep_raw",
+    "rationale": "当前本体没有足够精确的等价标签；为避免扩大、缩窄或误改原义，保留原标签。"
+  }
+]

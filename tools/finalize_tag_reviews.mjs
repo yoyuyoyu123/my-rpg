@@ -46,7 +46,6 @@ for (const name of crosswalkFiles) {
   fs.writeFileSync(file, `${JSON.stringify(rows, null, 2)}\n`, 'utf8');
 }
 
-ontology.version = '1.2.0';
 ontology.updated_at = new Date().toISOString();
 fs.writeFileSync(ontologyFile, `${JSON.stringify(ontology, null, 2)}\n`, 'utf8');
 fs.writeFileSync(path.join(dir, 'ontology_change_log_final.json'), `${JSON.stringify(changeLog, null, 2)}\n`, 'utf8');
