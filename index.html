@@ -3194,12 +3194,11 @@ var WORLD_EXPANSIONS={
   zato:'【封闭城市身份扩展】主角身份、年龄、职业、家庭与对异常的敏感程度均开放；可以是学生、工人、教师、医护、行政人员、研究所外围、家属或普通居民。玩家可以专注最后几天的日常、人际和选择，不强迫主动调查城市真相。',
   redstrings:'【红弦式世界扩展】主角可为调酒师、黑客、机器人、公司职员、心理咨询者、记者、普通消费者或植入物维护人员；核心可围绕自由意志、劳动、亲密关系、技术伦理或日常职业，不固定复刻原作角色与一夜倒计时。',
   elona:'【伊尔瓦身份扩展】种族、职业、善恶、生活方式和目标完全开放。可为冒险者、农夫、商人、音乐家、厨师、工匠、宠物训练者、城镇经营者、怪物、神仆或普通居民；自由不等于必须犯罪或挑战古神，种田、建造、家庭和旅行同样是完整主线。',
-  gamerpunk:'【游戏世界身份扩展】主角不必是拥有隐藏BUG的玩家。可为NPC、系统管理员、游戏测试员、生活职业玩家、召唤物、Boss、路人、任务发布者、退役高玩、原作边缘角色或无法查看面板的本地人。游戏类型可为乙女、百合、Galgame、BL、MMO、策略、经营、卡牌、恐怖、竞技或TRPG；系统面板不是必选。',
-  isekai:'【异世界身份扩展】采用现代日轻母题库与作品/游戏世界变体；所有身份、关系、性别、种族、身体和职业均由玩家决定。'
+  gamerpunk:'【游戏世界身份扩展】主角不必是拥有隐藏BUG的玩家。可为NPC、系统管理员、游戏测试员、生活职业玩家、召唤物、Boss、路人、任务发布者、退役高玩、原作边缘角色或无法查看面板的本地人。游戏类型可为乙女、百合、Galgame、BL、MMO、策略、经营、卡牌、恐怖、竞技或TRPG；系统面板不是必选。'
 };
 
-var WORLD_EXPANSION_KEYS={wuxia:'wuxia',xianxia:'xianxia',cyber:'cyberpunk',space:'spaceopera',apocalypse:'apocalypse'};
-var PRESET_EXPANSION_KEYS={elona:'elona',undertale:'undertale',tianzai:'arknights',yineng:'esper',tishen:'jojo',zhentan:'discoelysium',dianbo:'zato',tiaojiu:'vallhalla',cthulhu:'cthulhu',scp:'scp'};
+var WORLD_EXPANSION_KEYS={wuxia:'wuxia',xianxia:'xianxia',cyber:'cyberpunk',space:'spaceopera',apocalypse:'apocalypse',occult:'esper',horror:'cthulhu'};
+var PRESET_EXPANSION_KEYS={elona:'elona',undertale:'undertale',tianzai:'arknights',yineng:'esper',tishen:'jojo',zhentan:'discoelysium',dianbo:'zato',tiaojiu:'vallhalla',airen:'redstrings',cthulhu:'cthulhu',scp:'scp'};
 function activeNarrativeRules(){
   var packs=[],seen={};
   function add(key,text){if(!text||seen[key])return;seen[key]=true;packs.push(text);}
