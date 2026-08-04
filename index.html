@@ -792,6 +792,40 @@ body::before{
   .archive-form-split,.detail-grid{grid-template-columns:1fr;}
   .imod-box{max-height:88vh;overflow-y:auto;}
 }
+/* ── v26 · MOBILE READING OPTIMIZATION ─────────────── */
+.scroll-bottom{
+  position:absolute;right:14px;bottom:16px;z-index:118;display:none;align-items:center;gap:5px;
+  padding:8px 13px;border:1px solid var(--g);border-radius:20px;background:rgba(12,32,36,.93);
+  color:var(--g);font:11px 'Share Tech Mono',monospace;letter-spacing:.5px;cursor:pointer;
+  box-shadow:0 5px 16px rgba(0,0,0,.4);backdrop-filter:blur(3px);
+}
+.scroll-bottom.on{display:flex;}
+.scroll-bottom:hover{background:var(--g);color:#0b2429;}
+#slog{scroll-behavior:smooth;}
+
+@media(max-width:900px){
+  /* reclaim width: narrower gutters mean ~30 chars per line instead of 22 */
+  #slog{width:calc(100% - 12px);margin:8px auto 4px;padding:18px 15px;border-radius:11px;}
+  .sb.nar{padding:13px 13px;}
+  /* immersive: header + dock slide away while reading, return on scroll-up/tap */
+  .hdr{transition:transform .24s ease,opacity .24s ease;}
+  body.immersive .hdr{transform:translateY(-100%);opacity:0;pointer-events:none;}
+  .game-dock{transition:transform .24s ease;}
+  body.immersive .game-dock{transform:translateY(100%);}
+  body.immersive .scroll-bottom{bottom:12px;}
+  /* dock: fit all 9 buttons without horizontal scrolling */
+  .game-dock{justify-content:space-between;padding-left:2px;padding-right:2px;}
+  .game-dock button{min-width:0;flex:1 1 0;padding:6px 2px 5px;font-size:8.5px;letter-spacing:0;}
+  .game-dock button span{font-size:14px;line-height:15px;}
+  /* option list breathes more, prose stays dominant */
+  .ob{font-size:14px;line-height:1.6;padding:11px 13px;}
+  .opts{margin-top:14px;gap:8px;}
+}
+@media(max-width:560px){
+  #slog{width:calc(100% - 8px);padding:14px 11px;}
+  .sb.nar{padding:12px 11px;}
+  .game-dock button{font-size:8px;}
+}
 </style>
 </head>
 <body>
@@ -1448,8 +1482,6 @@ body::before{
   <div class="gcol">
     <div id="slog"></div>
     <div class="deco"></div>
-    <div class="daily" id="daily-btns"></div>
-    <div class="daily" id="turn-tools"><button class="db" onclick="regenTurn()">↻ 重写本回合</button><button class="db" onclick="undoTurn()">↩ 撤销</button><button class="db" onclick="requestSkip()">⏩ 时间跳跃</button><span class="ofr" style="align-self:center">双击对话可编辑 · 数字键1-4选选项</span></div>
     <div class="inpa">
       <div class="iw">
         <span class="ipr">›</span>
@@ -1457,8 +1489,10 @@ body::before{
       </div>
     </div>
     <div class="hint" id="game-hint">无界·叙事引擎</div>
+    <button class="scroll-bottom" id="scroll-bottom" onclick="jumpToLatest()" aria-label="回到最新">↓ 最新</button>
     <nav class="game-dock" aria-label="游戏功能">
       <button data-panel="status" data-tone="teal" onclick="toggleCharacterHud()"><span>◈</span>状态</button>
+      <button data-panel="actions" data-tone="amber" onclick="openGamePanel('actions')"><span>⚡</span>行动</button>
       <button data-panel="inventory" data-tone="amber" onclick="openGamePanel('inventory')"><span>▣</span>背包</button>
       <button data-panel="skills" data-tone="blue" onclick="openGamePanel('skills')"><span>✦</span>技能</button>
       <button data-panel="quests" data-tone="green" onclick="openGamePanel('quests')"><span>◇</span>任务</button>
@@ -1471,6 +1505,13 @@ body::before{
   <div class="spnl" id="spnl" aria-hidden="true">
     <div class="drawer-head"><div><span class="drawer-kicker">GAME ARCHIVE</span><div id="drawer-title">功能面板</div></div><button onclick="closeGamePanel()">✕</button></div>
     <div class="drawer-body">
+    <div class="ss" data-panel="actions">
+      <div class="st panel-title-row"><span>⚡ 常用行动</span></div>
+      <div class="daily" id="daily-btns"></div>
+      <div class="st panel-title-row" style="margin-top:14px"><span>◈ 本回合操作</span></div>
+      <div class="daily" id="turn-tools"><button class="db" onclick="regenTurn()">↻ 重写本回合</button><button class="db" onclick="undoTurn()">↩ 撤销</button><button class="db" onclick="requestSkip()">⏩ 时间跳跃</button></div>
+      <div class="adv-pref-note" style="padding:10px 0 0">双击任意对话可编辑其内容 · 桌面端可用数字键 1-4 直接选择选项</div>
+    </div>
     <div class="ss" data-panel="inventory">
       <div class="st panel-title-row"><span>▸ 背包</span><button class="pin-add" onclick="openItemEditor()">+ 添加</button></div>
       <div class="archive-summary" id="inventory-summary">0 类物品</div>
@@ -2352,7 +2393,7 @@ function renderDailyBtns() {
   });
 }
 
-var PANEL_TITLES={inventory:'背包',skills:'技能',quests:'任务与目标',people:'人物与身份',memory:'记忆与世界书',saves:'存档',settings:'设置与指令'};
+var PANEL_TITLES={actions:'常用行动与回合操作',inventory:'背包',skills:'技能',quests:'任务与目标',people:'人物与身份',memory:'记忆与世界书',saves:'存档',settings:'设置与指令'};
 function syncSettingsControls(){
   var t=document.getElementById('set-temp');if(t)t.value=SETTINGS.temp;
   var tv=document.getElementById('set-temp-v');if(tv)tv.textContent=Number(SETTINGS.temp).toFixed(2);
@@ -2377,7 +2418,9 @@ function syncDockState(active){
     b.classList.toggle('active',!!on);
   });
 }
+function clearImmersive(){document.body.classList.remove('immersive');}
 function closePanel(){
+  clearImmersive();
   var p=document.getElementById('spnl'),hud=document.getElementById('charhud'),scrim=document.getElementById('drawer-scrim');
   if(p){p.classList.remove('open');p.removeAttribute('data-active');p.setAttribute('aria-hidden','true');}
   if(hud)hud.classList.remove('open');
@@ -2393,7 +2436,8 @@ function openGamePanel(name){
   var title=document.getElementById('drawer-title');if(title)title.textContent=PANEL_TITLES[name]||'功能面板';
   p.dataset.active=name;p.classList.add('open');p.setAttribute('aria-hidden','false');if(scrim)scrim.classList.add('on');
   syncDockState(name);
-  if(name==='inventory')renderInventory(INVENTORY);
+  if(name==='actions')renderDailyBtns();
+  else if(name==='inventory')renderInventory(INVENTORY);
   else if(name==='skills')renderSkills(SKILLS);
   else if(name==='quests')renderQuests();
   else if(name==='people'){renderNpcs();renderCanon();}
@@ -2629,7 +2673,48 @@ async function renderSlots() {
 
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function escAttr(s){return esc(s).replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-function scrollB(){var l=document.getElementById('slog');l.scrollTop=l.scrollHeight;}
+function scrollB(){var l=document.getElementById('slog');l.scrollTop=l.scrollHeight;syncScrollAffordance();}
+function jumpToLatest(){var l=document.getElementById('slog');if(!l)return;l.scrollTop=l.scrollHeight;document.body.classList.remove('immersive');syncScrollAffordance();}
+function syncScrollAffordance(){
+  var l=document.getElementById('slog'),b=document.getElementById('scroll-bottom');if(!l||!b)return;
+  var away=l.scrollHeight-l.scrollTop-l.clientHeight;
+  b.classList.toggle('on',away>220);
+}
+(function(){
+  var l=document.getElementById('slog');if(!l)return;
+  var lastY=0,ticking=false;
+  // Touch-driven immersion: a real finger swipe is the only reliable signal on
+  // mobile, and it works even where synthetic scrollTop writes emit no events.
+  var touchStartY=0;
+  l.addEventListener('touchstart',function(e){touchStartY=e.touches[0].clientY;},{passive:true});
+  l.addEventListener('touchmove',function(e){
+    if(!window.matchMedia('(max-width:900px)').matches)return;
+    var dy=touchStartY-e.touches[0].clientY;
+    if(dy>24&&l.scrollTop>90)document.body.classList.add('immersive');
+    else if(dy<-24)document.body.classList.remove('immersive');
+  },{passive:true});
+  function onScroll(){
+    if(ticking)return; ticking=true;
+    requestAnimationFrame(function(){
+      var y=l.scrollTop,dy=y-lastY;
+      if(window.matchMedia('(max-width:900px)').matches&&y>90){
+        if(dy>6)document.body.classList.add('immersive');
+        else if(dy<-6)document.body.classList.remove('immersive');
+      }else document.body.classList.remove('immersive');
+      lastY=y; ticking=false; syncScrollAffordance();
+    });
+  }
+  l.addEventListener('scroll',onScroll,{passive:true});
+  // Poll as a safety net: some engines throttle scroll events on inertial
+  // scrolling, and the affordance must never get stuck in the wrong state.
+  setInterval(function(){ if(document.getElementById('gscreen').style.display==='flex')syncScrollAffordance(); },700);
+  // tapping the prose area brings the chrome back
+  l.addEventListener('click',function(e){
+    if(e.target.closest('.ob'))return;
+    document.body.classList.remove('immersive');
+  });
+  document.getElementById('pinp').addEventListener('focus',function(){document.body.classList.remove('immersive');});
+})();
 function addBlk(cls,txt,hidx){var el=document.createElement('div');el.className='sb '+cls;el.textContent=txt;if(typeof hidx==='number')el.dataset.hidx=hidx;document.getElementById('slog').appendChild(el);scrollB();return el;}
 function addTyp(){var el=document.createElement('div');el.className='sb nar';el.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';document.getElementById('slog').appendChild(el);scrollB();return el;}
 function qcmd(c){if(!LOADING)send(c,false);}
