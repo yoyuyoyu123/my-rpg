@@ -3157,7 +3157,7 @@ function commitSheetPreview(){
   GAME_STATE=n;STATE_ACTIVE=true;SHEET_INIT_ARMED=false;PENDING_SHEET_SEED=null;syncStateCollections();addLedger('sheet','角色卡','建立角色卡');renderInventory();renderSkills();renderNpcs();renderCharacterSheet();autoSave();closeModal();addBlk('sys','▸ 角色卡已建立；后续数值、物品与技能由统一状态账本持续保存');
 }
 
-async // 限流(429)、网关错误(5xx)和瞬时网络故障都属于「等一下可能就好」的错误，
+// 限流(429)、网关错误(5xx)和瞬时网络故障都属于「等一下可能就好」的错误，
 // 与鉴权失败、模型不存在这类「重试多少次都一样」的错误要区分对待。
 function isRetryableError(e){
   var m=String(e&&e.message||e);
