@@ -1439,9 +1439,14 @@ body::before{
         <input type="password" id="zpkey" class="fld" placeholder="智谱 API Key">
         <select id="zpmod" class="fld" style="flex:0.75">
           <option value="glm-4.7-flash">GLM-4.7-Flash（免费·推荐）</option>
-          <option value="glm-4-flash">GLM-4-Flash（免费·稳定）</option>
+          <option value="glm-4.6-flash">GLM-4.6-Flash（免费）</option>
+          <option value="glm-4-flash-250414">GLM-4-Flash-250414（免费·稳定）</option>
+          <option value="glm-4-flash">GLM-4-Flash（旧版别名）</option>
           <option value="glm-4-plus">GLM-4-Plus（付费·更强）</option>
         </select>
+      </div>
+      <div class="prow" style="margin-top:6px">
+        <input type="text" id="zpman" class="fld" placeholder="或手动输入模型 ID（优先于上方下拉）">
       </div>
       <div class="prow">
         <button class="btn sm" onclick="qMod('zp')">查询模型</button>
@@ -2377,18 +2382,32 @@ async function qMod(t) {
     var items=t==='ol'?(data.models||[]).map(function(m){return{id:m.name};}):(data.data||[]);
     if(items.length){
       var sid=t==='ol'?'olmod':(t==='ds'?'dsmod':(t==='zp'?'zpmod':(t==='or'?'ormod':'sfmod')));
-      var modelSelect=document.getElementById(sid);modelSelect.innerHTML='';
-      items.forEach(function(m){var id=String(m&&m.id||'').trim();if(!id)return;var o=document.createElement('option');o.value=id;o.textContent=id;modelSelect.appendChild(o);});
-      st.textContent='▸ 发现 '+items.length+' 个模型'; st.style.color='var(--g)';
-    } else { st.textContent='▸ 未找到'; st.style.color='var(--r)'; }
-  } catch(e){ st.textContent='▸ 失败：'+(e&&e.name==='AbortError'?'查询超时':e.message); st.style.color='var(--r)'; }
+      var modelSelect=document.getElementById(sid);
+      // 保留原有预设项：有些平台的 /models 只返回已开通的模型，
+      // 直接清空会把手写的可用模型（如智谱免费 Flash）弄丢。
+      var existing={};
+      Array.prototype.forEach.call(modelSelect.options,function(o){existing[o.value]=true;});
+      var added=0;
+      items.forEach(function(m){
+        var id=String(m&&m.id||'').trim(); if(!id||existing[id])return;
+        var o=document.createElement('option'); o.value=id; o.textContent=id;
+        modelSelect.appendChild(o); existing[id]=true; added++;
+      });
+      st.textContent='▸ 接口返回 '+items.length+' 个模型，新增 '+added+' 项（原有预设已保留）';
+      st.style.color='var(--g)';
+    } else { st.textContent='▸ 接口没返回模型列表——直接用下拉里的预设或手动填写模型 ID 即可'; st.style.color='var(--dm)'; }
+  } catch(e){
+    var em=(e&&e.name==='AbortError')?'查询超时':(e&&e.message||String(e));
+    st.textContent='▸ 查询失败：'+em+'。不影响使用——下拉选或手动填模型 ID 后直接连接。';
+    st.style.color='var(--dm)';
+  }
 }
 
 function doConnect(t) {
   var st=document.getElementById('ast');
   CHATPATH = (t==='zp') ? '/api/paas/v4/chat/completions' : '/v1/chat/completions';
   if(t==='ds'){APIKEY=document.getElementById('dskey').value.trim();MODEL=document.getElementById('dsmod').value;BASEURL='https://api.deepseek.com';}
-  else if(t==='zp'){APIKEY=document.getElementById('zpkey').value.trim();MODEL=document.getElementById('zpmod').value;BASEURL='https://open.bigmodel.cn';CHATPATH='/api/paas/v4/chat/completions';}
+  else if(t==='zp'){APIKEY=document.getElementById('zpkey').value.trim();MODEL=document.getElementById('zpman').value.trim()||document.getElementById('zpmod').value;BASEURL='https://open.bigmodel.cn';CHATPATH='/api/paas/v4/chat/completions';}
   else if(t==='or'){APIKEY=document.getElementById('orkey').value.trim();MODEL=document.getElementById('ormod').value;BASEURL='https://openrouter.ai/api';}
   else if(t==='sf'){APIKEY=document.getElementById('sfkey').value.trim();MODEL=document.getElementById('sfmod').value;BASEURL='https://api.siliconflow.cn';}
   else{APIKEY='';BASEURL=document.getElementById('olhost').value.trim();MODEL=document.getElementById('olman').value.trim()||document.getElementById('olmod').value;}
