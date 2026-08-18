@@ -77,7 +77,7 @@ PERSON_ATTRS: dict[str, tuple[Stability, str]] = {
 }
 
 PLACE_ATTRS: dict[str, tuple[Stability, str]] = {
-    "类型": (Stability.STABLE, "城镇/village/店铺/山野/建筑等"),
+    "类型": (Stability.STABLE, "城镇/村落/店铺/山野/建筑等"),
     "位置": (Stability.STABLE, "在哪，与其它地点的相对关系"),
     "规模": (Stability.STABLE, "大小、人口量级"),
     "氛围": (Stability.STABLE, "给人的感觉、环境特征"),

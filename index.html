@@ -1563,6 +1563,7 @@ body::before{
     <div class="ss" data-panel="people"><div class="st">🪪 主角身份档案 <button class="pin-add" onclick="promptAddCanon()">+ 字段</button></div><div id="canon-list"><span class="no-quest">— 尚未锁定身份映射 —</span></div></div>
     <div class="ss" data-panel="memory"><div class="st">🔒 锁定设定 <button class="pin-add" onclick="promptAddPin()">+ 锁定</button></div><div id="pin-list"><span class="no-quest">— 未锁定任何设定 —</span></div></div>
     <div class="ss" data-panel="memory"><div class="st">📖 世界书 <button class="pin-add" onclick="promptAddLore()">+ 条目</button></div><div id="lore-list"><span class="no-quest">— 空 —</span></div></div>
+    <div class="ss" data-panel="memory"><div class="st">🗂️ 设定档案 <button class="pin-add" onclick="refreshLoreArchive()">刷新</button></div><div id="lore-archive"><span class="no-quest">— 需要后端；开局后自动记录 —</span></div></div>
     <div class="ss" data-panel="saves"><div class="st">▸ 存档</div><div id="svslots"></div></div>
     <div class="ss" data-panel="settings">
       <div class="st">⚙ 设置</div>
@@ -2858,13 +2859,16 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,effectiveSetup:EFFECTIVE_SETUP,tone:STORY_TONE,toneDesc:TONE_DESC,toneTrans:TONE_TRANS,names:NAMES,chatpath:CHATPATH,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,effectiveSetup:EFFECTIVE_SETUP,tone:STORY_TONE,toneDesc:TONE_DESC,toneTrans:TONE_TRANS,names:NAMES,chatpath:CHATPATH,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null,loreSid:LORE.sid||''};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
   WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; STATE_ACTIVE=true; TURN_BACKUPS=Array.isArray(sv.turnBackups)?sv.turnBackups.slice(-30):[]; SHEET_INIT_ARMED=!!sv.sheetArmed; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; EFFECTIVE_SETUP=sv.effectiveSetup&&typeof sv.effectiveSetup==='object'?sv.effectiveSetup:{}; STORY_TONE=sv.tone||EFFECTIVE_SETUP.tone||''; TONE_DESC=sv.toneDesc||''; TONE_TRANS=sv.toneTrans||EFFECTIVE_SETUP.informationMode||''; NAMES=sv.names||''; CHATPATH=sv.chatpath||'/v1/chat/completions'; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
+  // 读档要接回同一个事实库会话，否则这局记住的设定就断了
+  LORE={on:false,sid:sv.loreSid||'',ctx:'',names:[],conflicts:[],busy:false};
+  if(LORE.sid)loreResume();
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
@@ -2883,7 +2887,7 @@ function applySnapshot(sv){
   debugRecordBlueprint();
   document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString();
   rebuildLog();
-  renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins(); renderLore(); renderNpcs(); renderCanon(); renderCharacterSheet(); renderDailyBtns();
+  renderSlots(); renderQuests(); renderInventory(INVENTORY); renderSkills(SKILLS); renderPins(); renderLore(); renderNpcs(); renderCanon(); renderCharacterSheet(); renderDailyBtns(); refreshLoreArchive();
   LOADING=false;
   document.getElementById('pinp').focus();
 }
@@ -3229,10 +3233,18 @@ function retryNotice(attempt,total,e){
   try{addBlk('sys','▸ '+why+'，'+Math.round(retryWaitMs(attempt)/100)/10+'秒后自动重试（'+(attempt+1)+'/'+total+'）');}catch(_e){}
 }
 
-async function doFetch(messages,maxTok){
+// 叙事用玩家设的温度，但结构化任务（事实抽取、状态审计）需要低温才稳定，
+// 所以允许单次调用覆盖。不传就沿用设置里的值。
+function tempFor(temp){
+  var t=(temp===undefined||temp===null)?SETTINGS.temp:temp;
+  t=Number(t);
+  return isFinite(t)?t:1;
+}
+
+async function doFetch(messages,maxTok,temp){
   var maxAttempts=3, lastErr=null;
   for(var attempt=0;attempt<maxAttempts;attempt++){
-    try{ return await doFetchOnce(messages,maxTok); }
+    try{ return await doFetchOnce(messages,maxTok,temp); }
     catch(e){
       lastErr=e;
       if(!isRetryableError(e)||attempt===maxAttempts-1)throw e;
@@ -3243,7 +3255,7 @@ async function doFetch(messages,maxTok){
   throw lastErr;
 }
 
-async function doFetchOnce(messages,maxTok){
+async function doFetchOnce(messages,maxTok,temp){
   var url,hdrs,body;
   if(BK==='be'){
     // 走自己的后端：不带 Authorization，key 由服务端持有
@@ -3251,7 +3263,7 @@ async function doFetchOnce(messages,maxTok){
     hdrs={'Content-Type':'application/json'};
     body=JSON.stringify({
       messages:messages, provider:BACKEND_PROVIDER, model:MODEL,
-      temperature:Number(SETTINGS.temp), max_tokens:maxTok||4096
+      temperature:tempFor(temp), max_tokens:maxTok||4096
     });
     var bctrl=new AbortController(), btimer=setTimeout(function(){bctrl.abort();},apiTimeoutMs(maxTok));
     try{
@@ -3274,11 +3286,11 @@ async function doFetchOnce(messages,maxTok){
   }
   if(BK==='ol'){
     url=BASEURL+CHATPATH; hdrs={'Content-Type':'application/json'};
-    body=JSON.stringify({model:MODEL,messages:messages,stream:false,options:{num_ctx:32768,temperature:Number(SETTINGS.temp),top_p:0.9,num_predict:maxTok||-1}});
+    body=JSON.stringify({model:MODEL,messages:messages,stream:false,options:{num_ctx:32768,temperature:tempFor(temp),top_p:0.9,num_predict:maxTok||-1}});
   } else {
     url=BASEURL+CHATPATH; hdrs={'Content-Type':'application/json','Authorization':'Bearer '+APIKEY};
     if(BK==='or'){hdrs['HTTP-Referer']='https://localhost';hdrs['X-Title']='WuxiaRPG';}
-    body=JSON.stringify({model:MODEL,messages:messages,stream:false,temperature:Number(SETTINGS.temp),max_tokens:maxTok||4096});
+    body=JSON.stringify({model:MODEL,messages:messages,stream:false,temperature:tempFor(temp),max_tokens:maxTok||4096});
   }
   var ctrl=new AbortController(), timer=setTimeout(function(){ctrl.abort();},apiTimeoutMs(maxTok));
   try{
@@ -3515,6 +3527,8 @@ function buildSystemPrompt(recentText){
   if(canon)sp+='\n\n【主角身份档案——程序锁定的最高优先级事实】'+canon+'。每个字段属于独立命名空间：现实姓名不等于游戏ID，游戏ID不等于游戏角色名，旧世界身份不等于穿越后身份。只能在对应语境使用对应值；不得合并、互换、缩写、改写或用摘要覆盖。档案中没有的字段就是尚未确定，不得擅自补全。玩家以后明确修改时，以程序下一回合提供的新档案为准。';
   var ss=stateSummary();
   if(ss){ sp+='\n\n【权威角色状态——系统维护的唯一事实，叙事与状态栏不得与此矛盾；技能列表是全集】\n'+ss; }
+  // 事实库检索结果。历史被压缩后这些设定仍然在，这正是它存在的意义。
+  if(LORE.ctx){ sp+='\n\n'+LORE.ctx; }
   if(PINS.length){
     var pinLines=[],pinChars=0;
     // Preserve the newest facts first and enforce a character budget instead
@@ -3735,7 +3749,7 @@ function undoTurn(){
   addBlk('sys','▸ 已撤销上一回合');
 }
 
-function startGame(){
+async function startGame(){
   HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0; OUTLINE=''; NAMES='';
   GAME_STATE=freshGameState(); STATE_ACTIVE=true; TURN_BACKUPS=[]; SHEET_INIT_ARMED=false; PLAYER_CANON=parseCanonText(PREFS.canon||''); PREMISE_STATE={kind:'none'}; EFFECTIVE_SETUP={};
   var hud=document.getElementById('charhud');if(hud)hud.classList.remove('collapsed','open');var resume=document.getElementById('resume-game-link');if(resume)resume.style.display='none';
@@ -3743,13 +3757,16 @@ function startGame(){
   document.getElementById('slog').innerHTML='';
   var d=document.getElementById('sdsp'); d.textContent='— 尚未揭示 —'; d.style.color='var(--dm)';
   var ig=document.getElementById('inv-grid'); if(ig) ig.innerHTML='<span class="inv-empty">— 空 —</span>';
-  renderSlots(); renderQuests(); renderPins(); renderLore(); renderNpcs(); renderCanon(); renderInventory([]); renderSkills([]); renderCharacterSheet();
+  renderSlots(); renderQuests(); renderPins(); renderLore(); renderNpcs(); renderCanon(); renderInventory([]); renderSkills([]); renderCharacterSheet(); refreshLoreArchive();
   rollBlueprint();
   addBlk('sys','▸ 进入「'+WORLDS[WORLD].name+'」· '+PACE_CONFIG[PACE].label+'模式');
   addBlk('sys','▸ 本局开局变体：'+OPENING_PICK+'（不满意可点「完全重置」重抽）');
   var prefNote=[PREFS.tone,PREFS.skeleton,PREFS.opening].filter(Boolean).join('/');
   addBlk('sys','▸ 本局基调：'+STORY_TONE+(prefNote?' · 口味约束：'+prefNote:'')+' · 后台空位已按「'+((EFFECTIVE_SETUP.randomProfile&&EFFECTIVE_SETUP.randomProfile.label)||'协调配置')+'」相容补全');
   addBlk('sys','▸ 后端：'+MODEL);
+  // 事实库要在第一回合之前就位，否则开局确立的设定记不进去
+  await loreStart();
+  if(LORE.on)addBlk('sys','▸ 事实库已启用：设定会被程序记录，前后矛盾时自动拦截');
   send('开始游戏',true);
 }
 
@@ -3958,6 +3975,149 @@ function extractSheetInit(text){
   }catch(e){addBlk('err','角色卡初始化格式无效，本回合未采用任何数值');}
 }
 
+// ── 事实库客户端 ────────────────────────────────────────────────
+// 解决「上文说吴四娘是洗衣妇，下文变成茶馆老板娘」这类穿帮。
+// 关键在于事实不能只活在聊天记录里 —— 历史一压缩就永久丢失。
+// 接线：开局建会话 → 每回合先检索注入 → 叙事完成后把新设定抽出来存回去。
+// 后端不可用时全部静默降级，游戏必须能纯前端跑。
+var LORE={on:false,sid:'',ctx:'',names:[],conflicts:[],busy:false};
+
+async function loreApi(path,opt){
+  opt=opt||{};
+  if(opt.body)opt.headers={'Content-Type':'application/json'};
+  var r=await fetch('/api'+path,opt);
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return r.json();
+}
+
+async function loreStart(){
+  LORE={on:false,sid:'',ctx:'',names:[],conflicts:[],busy:false};
+  try{
+    var w=WORLDS[WORLD];
+    var s=await loreApi('/sessions',{method:'POST',body:JSON.stringify({
+      world_id:w?WORLD:'__custom__',
+      preset_id:WORLD_PRESET||'',
+      pace:PACE,
+      title:(w?w.name:'自定义世界')+'·'+new Date().toLocaleDateString('zh-CN')
+    })});
+    LORE.sid=s.id; LORE.on=true;
+    debugEvent('lore_session_started',{sid:s.id,world:WORLD});
+  }catch(e){
+    // 后端没开就纯前端玩，只是没有长期一致性保障
+    debugEvent('lore_unavailable',{message:String(e&&e.message||e)});
+  }
+}
+
+// 读档时确认后端还认得这个会话。存档可能来自另一台机器，或者后端换过数据库。
+async function loreResume(){
+  if(!LORE.sid)return;
+  try{
+    await loreApi('/sessions/'+LORE.sid);
+    LORE.on=true;
+    debugEvent('lore_session_resumed',{sid:LORE.sid});
+  }catch(e){
+    LORE.on=false; LORE.sid='';
+    debugEvent('lore_resume_failed',{message:String(e&&e.message||e)});
+  }
+}
+
+// 从名册里挑出本回合文本真的提到的名字，用于精准检索。
+// 名册由上一回合的 /context 顺带返回，所以这里不花任何网络往返。
+function loreMentioned(text){
+  var t=String(text||'');
+  return LORE.names.filter(function(n){return n&&t.indexOf(n)>=0;}).slice(0,20);
+}
+
+async function loreFetchContext(recentText){
+  if(!LORE.on)return;
+  try{
+    var m=loreMentioned(recentText);
+    var q=m.length?('?mentioned='+encodeURIComponent(m.join(','))):'';
+    var c=await loreApi('/sessions/'+LORE.sid+'/context'+q);
+    LORE.ctx=c.text||'';
+    LORE.names=Array.isArray(c.names)?c.names:[];
+  }catch(e){ LORE.ctx=''; }
+}
+
+// 抽取走「后端出题 → 这里跑模型 → 后端阅卷」三步。
+// 这样属性词表和清洗规则只有后端一份，直连模式和后端模式共用同一套。
+async function loreCommit(turn,narrative,playerInput){
+  if(!LORE.on||LORE.busy)return;
+  LORE.busy=true;
+  try{
+    var q=await loreApi('/sessions/'+LORE.sid+'/extract/prompt',{method:'POST',
+      body:JSON.stringify({turn:turn,narrative:narrative,player_input:playerInput||''})});
+    var res=await doFetch([{role:'user',content:q.prompt}],q.max_tokens,q.temperature);
+    var data=await res.json();
+    if(data.error)throw new Error('抽取模型返回错误');
+    var out=await loreApi('/sessions/'+LORE.sid+'/extract/result',{method:'POST',
+      body:JSON.stringify({turn:turn,raw:chatContent(data)})});
+    if(out.conflicts&&out.conflicts.length){
+      LORE.conflicts=out.conflicts.slice(0,4);
+      out.conflicts.forEach(function(c){
+        addBlk('sys','▸ 设定冲突已拦截：'+c.description+'（本回合未采纳新值，下回合会要求AI自圆其说）');
+      });
+    }
+    debugEvent('lore_committed',{written:out.facts_written,conflicts:(out.conflicts||[]).length});
+    if(out.facts_written)refreshLoreArchive();
+  }catch(e){
+    // 记不住东西不该让玩家的回合失败
+    debugEvent('lore_commit_failed',{message:String(e&&e.message||e)});
+  }
+  LORE.busy=false;
+}
+
+// ── 设定档案面板 ────────────────────────────────────────────────
+// 让玩家看得见程序到底记住了什么。AI 记错时最终解释权归玩家，所以要能删。
+var KIND_LABEL={person:'人物',place:'地点',faction:'组织',object:'器物',event:'事件',concept:'概念'};
+
+async function refreshLoreArchive(){
+  var c=document.getElementById('lore-archive'); if(!c)return;
+  if(!LORE.on){c.innerHTML='<span class="no-quest">— 需要后端；开局后自动记录 —</span>';return;}
+  var ents;
+  try{ ents=await loreApi('/sessions/'+LORE.sid+'/entities'); }
+  catch(e){ c.innerHTML='<span class="no-quest">— 读取失败 —</span>'; return; }
+  if(!ents.length){c.innerHTML='<span class="no-quest">— 尚未记录任何设定 —</span>';return;}
+
+  c.innerHTML='';
+  ents.forEach(function(e){
+    var d=document.createElement('div'); d.className='pin-item';
+    var cat=document.createElement('span'); cat.className='pin-cat';
+    cat.textContent=KIND_LABEL[e.kind]||e.kind;
+    var tx=document.createElement('span'); tx.className='pin-txt';
+    var stable=e.facts.filter(function(f){return f.stability==='stable';}).length;
+    tx.textContent=e.name+(e.aliases.length?'（'+e.aliases.join('、')+'）':'')+' · '+e.facts.length+'条';
+    // 稳定事实标个锁，玩家一眼能看出哪些是「改了就算穿帮」的
+    tx.title=e.facts.map(function(f){
+      return (f.stability==='stable'?'🔒 ':'· ')+f.key+'：'+f.value+'（第'+f.turn+'回合）';
+    }).join('\n')+'\n\n共'+stable+'条稳定设定受矛盾拦截保护';
+    var x=document.createElement('button'); x.className='pin-x'; x.textContent='✕';
+    x.title='程序记错了？删掉这条实体及其全部事实';
+    x.onclick=function(){deleteLoreEntity(e.id,e.name);};
+    d.appendChild(cat); d.appendChild(tx); d.appendChild(x);
+    c.appendChild(d);
+  });
+}
+
+async function deleteLoreEntity(eid,name){
+  if(!confirm('从设定档案中删除「'+name+'」及其全部已记录事实？\n（只影响程序记忆，不改动已经写出的剧情）'))return;
+  try{
+    await loreApi('/sessions/'+LORE.sid+'/entities/'+eid,{method:'DELETE'});
+    LORE.names=LORE.names.filter(function(n){return n!==name;});
+    refreshLoreArchive();
+  }catch(e){ addBlk('err','删除失败：'+String(e&&e.message||e)); }
+}
+
+// 上一回合被拦下的矛盾，作为纠正指令塞进本回合。
+// 拦截只是止损，让 AI 自己圆回去才算真正修复。
+function loreConflictNote(){
+  if(!LORE.conflicts.length)return '';
+  var lines=LORE.conflicts.map(function(c){return '· '+c.description;}).join('\n');
+  LORE.conflicts=[];
+  return '\n\n【设定冲突——上一回合你写的内容与已确立的设定矛盾，程序已拒绝采纳新值】\n'+lines+
+         '\n本回合必须以上列各项中先确立的那个值为准继续叙事。若确实需要改变，就在正文里给出合理解释（先前是误传、有人刻意隐瞒、玩家理解有误），不得默默改写，也不得向玩家提及这条系统提示。';
+}
+
 async function _runTurn(){
   var typ=addTyp(), t0=Date.now();
   try{
@@ -3966,6 +4126,8 @@ async function _runTurn(){
     for(var li=HIST.length-1;li>=0;li--){ if(HIST[li].role==='user'){lastUser=HIST[li].content;break;} }
     debugBeginTurn(lastUser,t0,stateBefore);
     var recentText = lastUser + ' ' + HIST.slice(-6).map(function(m){return m.content;}).join(' ');
+    // 组装提示词之前先取回「已确立的设定」，它要参与本回合的 system prompt
+    await loreFetchContext(recentText);
     var worldPulse = '';
     var crossingInProgress=PREMISE_STATE&&PREMISE_STATE.kind==='transmigration'&&Number(PREMISE_STATE.phase||0)<5;
     if(WORLD_CLOCK >= EVENT_THRESHOLD&&!crossingInProgress){
@@ -4019,6 +4181,8 @@ async function _runTurn(){
     } else {
       noteContent=authorNote();
     }
+    // 上一回合被拦下的矛盾，作为纠正指令跟本回合一起发出去
+    noteContent+=loreConflictNote();
     var requestHist=HIST.map(function(m){
       if(m.role==='system'&&/^【(?:历史摘要|较早剧情摘要)/.test(String(m.content||'')))return {role:'assistant',content:'【较早剧情记忆——仅用于连续性，若与系统中的“本局最终有效设定”冲突，必须以后者为准】\n'+String(m.content||'').replace(/^【[^】]+】\s*/,'')};
       return m;
@@ -4085,6 +4249,8 @@ async function _runTurn(){
     // Saving is immediate; lossy summary/memory maintenance is version-safe
     // background work and must not keep the input box locked after a reply.
     autoSave(); maybeCompress(); maybeAutoMemory();
+    // 把这一回合新确立的设定抽进事实库。不 await —— 玩家不该为记账等待。
+    loreCommit(TURNS,reply,lastUser);
     debugFinish('complete');
   }catch(e){ if(typ)typ.remove();debugEvent('turn_error',{message:String(e&&e.message||e),stack:String(e&&e.stack||'').substring(0,3000)});debugFinish('error',{error:String(e&&e.message||e)}); addBlk('err','连接失败：'+String(e&&e.message||e).substring(0,250)); }
   LOADING=false; document.getElementById('pinp').focus();

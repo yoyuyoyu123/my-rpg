@@ -10,6 +10,7 @@
     .venv/Scripts/python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000
     然后手机浏览器访问 http://<你电脑的局域网IP>:8000/
 """
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -18,12 +19,29 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
+from app.db.session import init_db
 from app.routers import chat as chat_router
+from app.routers import memory as memory_router
+from app.routers import worlds as worlds_router
 from app.schemas.chat import ErrorDetail  # noqa: F401  (让它出现在 OpenAPI 文档里)
 
 settings = get_settings()
 
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    """
+    生命周期钩子：yield 之前是启动，之后是关闭。
+
+    建表放这里——表已存在时是空操作，可以安全重复执行。
+    （旧写法 @app.on_event("startup") 已被 FastAPI 弃用。）
+    """
+    await init_db()
+    yield
+
+
 app = FastAPI(
+    lifespan=lifespan,
     title="无界·叙事引擎 API",
     description=(
         "AI 驱动的叙事 RPG 后端。\n\n"
@@ -46,6 +64,8 @@ app.add_middleware(
 )
 
 app.include_router(chat_router.router)
+app.include_router(worlds_router.router)
+app.include_router(memory_router.router)
 
 
 @app.get("/health", tags=["系统"], summary="健康检查")
