@@ -1396,6 +1396,7 @@ body::before{
     <div class="atabs">
       <button class="atab on" id="tds" onclick="setTab('ds')">DeepSeek</button>
       <button class="atab" id="tor" onclick="setTab('or')">OpenRouter</button>
+      <button class="atab" id="tzp" onclick="setTab('zp')">智谱·免费</button>
       <button class="atab" id="tsf" onclick="setTab('sf')">硅基流动</button>
       <button class="atab" id="tol" onclick="setTab('ol')">本地 Ollama</button>
     </div>
@@ -1430,6 +1431,21 @@ body::before{
       <div class="prow">
         <button class="btn sm" onclick="qMod('or')">查询模型</button>
         <button class="btn connect-btn" onclick="doConnect('or')">连接并选择世界</button>
+      </div>
+    </div>
+    <div class="apnl" id="pzp">
+      <div class="pdsc">智谱 GLM · <span style="color:var(--g)">bigmodel.cn</span> · Flash 系列永久免费，注册送额度</div>
+      <div class="prow">
+        <input type="password" id="zpkey" class="fld" placeholder="智谱 API Key">
+        <select id="zpmod" class="fld" style="flex:0.75">
+          <option value="glm-4.7-flash">GLM-4.7-Flash（免费·推荐）</option>
+          <option value="glm-4-flash">GLM-4-Flash（免费·稳定）</option>
+          <option value="glm-4-plus">GLM-4-Plus（付费·更强）</option>
+        </select>
+      </div>
+      <div class="prow">
+        <button class="btn sm" onclick="qMod('zp')">查询模型</button>
+        <button class="btn connect-btn" onclick="doConnect('zp')">连接并选择世界</button>
       </div>
     </div>
     <div class="apnl" id="psf">
@@ -1585,6 +1601,9 @@ body::before{
 <script>
 var APP_VERSION='25.0-full-ontology-combos';
 var BK='ds', APIKEY='', MODEL='', BASEURL='', WORLD='', PACE='';
+// 各家的对话补全路径不统一：多数是 /v1/chat/completions，
+// 智谱是 /api/paas/v4/chat/completions。连接时按后端写入。
+var CHATPATH='/v1/chat/completions';
 var HIST=[], TOKENS=0, LOADING=false, SUMMING=false;
 var QUESTS={main:[],side:[]}, INVENTORY=[], SKILLS=[];
 var PINS=[]; // locked facts: {id, text, category}
@@ -2336,7 +2355,7 @@ function goStep(n) {
 }
 
 function setTab(t) {
-  ['ds','or','sf','ol'].forEach(function(x){
+  ['ds','zp','or','sf','ol'].forEach(function(x){
     document.getElementById('p'+x).classList.toggle('on', x===t);
     document.getElementById('t'+x).classList.toggle('on', x===t);
   });
@@ -2347,6 +2366,7 @@ async function qMod(t) {
   try {
     var url,hdrs;
     if(t==='ds'){url='https://api.deepseek.com/v1/models';hdrs={'Authorization':'Bearer '+document.getElementById('dskey').value.trim()};}
+    else if(t==='zp'){url='https://open.bigmodel.cn/api/paas/v4/models';hdrs={'Authorization':'Bearer '+document.getElementById('zpkey').value.trim()};}
     else if(t==='or'){url='https://openrouter.ai/api/v1/models';hdrs={'Authorization':'Bearer '+document.getElementById('orkey').value.trim()};}
     else if(t==='sf'){url='https://api.siliconflow.cn/v1/models';hdrs={'Authorization':'Bearer '+document.getElementById('sfkey').value.trim()};}
     else{url=document.getElementById('olhost').value.trim()+'/api/tags';hdrs={};}
@@ -2356,7 +2376,7 @@ async function qMod(t) {
     var data=await res.json();
     var items=t==='ol'?(data.models||[]).map(function(m){return{id:m.name};}):(data.data||[]);
     if(items.length){
-      var sid=t==='ol'?'olmod':(t==='ds'?'dsmod':(t==='or'?'ormod':'sfmod'));
+      var sid=t==='ol'?'olmod':(t==='ds'?'dsmod':(t==='zp'?'zpmod':(t==='or'?'ormod':'sfmod')));
       var modelSelect=document.getElementById(sid);modelSelect.innerHTML='';
       items.forEach(function(m){var id=String(m&&m.id||'').trim();if(!id)return;var o=document.createElement('option');o.value=id;o.textContent=id;modelSelect.appendChild(o);});
       st.textContent='▸ 发现 '+items.length+' 个模型'; st.style.color='var(--g)';
@@ -2366,7 +2386,9 @@ async function qMod(t) {
 
 function doConnect(t) {
   var st=document.getElementById('ast');
+  CHATPATH = (t==='zp') ? '/api/paas/v4/chat/completions' : '/v1/chat/completions';
   if(t==='ds'){APIKEY=document.getElementById('dskey').value.trim();MODEL=document.getElementById('dsmod').value;BASEURL='https://api.deepseek.com';}
+  else if(t==='zp'){APIKEY=document.getElementById('zpkey').value.trim();MODEL=document.getElementById('zpmod').value;BASEURL='https://open.bigmodel.cn';CHATPATH='/api/paas/v4/chat/completions';}
   else if(t==='or'){APIKEY=document.getElementById('orkey').value.trim();MODEL=document.getElementById('ormod').value;BASEURL='https://openrouter.ai/api';}
   else if(t==='sf'){APIKEY=document.getElementById('sfkey').value.trim();MODEL=document.getElementById('sfmod').value;BASEURL='https://api.siliconflow.cn';}
   else{APIKEY='';BASEURL=document.getElementById('olhost').value.trim();MODEL=document.getElementById('olman').value.trim()||document.getElementById('olmod').value;}
@@ -2765,13 +2787,13 @@ function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,effectiveSetup:EFFECTIVE_SETUP,tone:STORY_TONE,toneDesc:TONE_DESC,toneTrans:TONE_TRANS,names:NAMES,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
+  return {history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,effectiveSetup:EFFECTIVE_SETUP,tone:STORY_TONE,toneDesc:TONE_DESC,toneTrans:TONE_TRANS,names:NAMES,chatpath:CHATPATH,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null};
 }
 function applySnapshot(sv){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; STATE_ACTIVE=true; TURN_BACKUPS=Array.isArray(sv.turnBackups)?sv.turnBackups.slice(-30):[]; SHEET_INIT_ARMED=!!sv.sheetArmed; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; EFFECTIVE_SETUP=sv.effectiveSetup&&typeof sv.effectiveSetup==='object'?sv.effectiveSetup:{}; STORY_TONE=sv.tone||EFFECTIVE_SETUP.tone||''; TONE_DESC=sv.toneDesc||''; TONE_TRANS=sv.toneTrans||EFFECTIVE_SETUP.informationMode||''; NAMES=sv.names||''; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; STATE_ACTIVE=true; TURN_BACKUPS=Array.isArray(sv.turnBackups)?sv.turnBackups.slice(-30):[]; SHEET_INIT_ARMED=!!sv.sheetArmed; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; EFFECTIVE_SETUP=sv.effectiveSetup&&typeof sv.effectiveSetup==='object'?sv.effectiveSetup:{}; STORY_TONE=sv.tone||EFFECTIVE_SETUP.tone||''; TONE_DESC=sv.toneDesc||''; TONE_TRANS=sv.toneTrans||EFFECTIVE_SETUP.informationMode||''; NAMES=sv.names||''; CHATPATH=sv.chatpath||'/v1/chat/completions'; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
@@ -3119,10 +3141,10 @@ function commitSheetPreview(){
 async function doFetch(messages,maxTok){
   var url,hdrs,body;
   if(BK==='ol'){
-    url=BASEURL+'/v1/chat/completions'; hdrs={'Content-Type':'application/json'};
+    url=BASEURL+CHATPATH; hdrs={'Content-Type':'application/json'};
     body=JSON.stringify({model:MODEL,messages:messages,stream:false,options:{num_ctx:32768,temperature:Number(SETTINGS.temp),top_p:0.9,num_predict:maxTok||-1}});
   } else {
-    url=BASEURL+'/v1/chat/completions'; hdrs={'Content-Type':'application/json','Authorization':'Bearer '+APIKEY};
+    url=BASEURL+CHATPATH; hdrs={'Content-Type':'application/json','Authorization':'Bearer '+APIKEY};
     if(BK==='or'){hdrs['HTTP-Referer']='https://localhost';hdrs['X-Title']='WuxiaRPG';}
     body=JSON.stringify({model:MODEL,messages:messages,stream:false,temperature:Number(SETTINGS.temp),max_tokens:maxTok||4096});
   }
@@ -3148,7 +3170,7 @@ function chatContent(data){
 }
 
 async function doFetchStream(messages,maxTok,onDelta){
-  var url=BASEURL+'/v1/chat/completions',hdrs,body;
+  var url=BASEURL+CHATPATH,hdrs,body;
   if(BK==='ol'){
     hdrs={'Content-Type':'application/json'};
     body={model:MODEL,messages:messages,stream:true,options:{num_ctx:32768,temperature:Number(SETTINGS.temp),top_p:0.9,num_predict:maxTok||-1}};
