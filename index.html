@@ -3312,9 +3312,10 @@ function buildSystemPrompt(recentText){
   var w=WORLDS[WORLD];
   var p=PACE_CONFIG[PACE];
   if(!w||!p) return '';
+  // 固定前缀区：这一段每回合完全相同，用于命中各家 API 的 context cache。
+  // 任何随回合变化的内容都必须放到下方动态区，否则整段缓存失效。
   var sp=CORE_RULES;
   var canon=canonSummary();
-  if(canon)sp+='\n\n【主角身份档案——程序锁定的最高优先级事实】'+canon+'。每个字段属于独立命名空间：现实姓名不等于游戏ID，游戏ID不等于游戏角色名，旧世界身份不等于穿越后身份。只能在对应语境使用对应值；不得合并、互换、缩写、改写或用摘要覆盖。档案中没有的字段就是尚未确定，不得擅自补全。玩家以后明确修改时，以程序下一回合提供的新档案为准。';
   sp+='\n\n'+OPTION_RULES;
   sp+='\n\n'+AGENCY_RULES;
   var worldPrompt=String(w.prompt||'').replace(/\n【状态栏】[\s\S]*?(?=\n【任务】|$)/,'').replace(/\n【任务】[^\n]*/g,'');
@@ -3334,6 +3335,7 @@ function buildSystemPrompt(recentText){
   var pd=premiseDirective();if(pd)sp+='\n\n'+pd;
   if(NAMES){ sp+='\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n'+NAMES; }
   if(OUTLINE){ sp+='\n\n【剧情备忘——保持目标与因果连续的编剧笔记，不是悬念清单】\n'+OUTLINE+'\n（剧情实质推进时才输出更新版【大纲】块）'; }
+  if(canon)sp+='\n\n【主角身份档案——程序锁定的最高优先级事实】'+canon+'。每个字段属于独立命名空间：现实姓名不等于游戏ID，游戏ID不等于游戏角色名，旧世界身份不等于穿越后身份。只能在对应语境使用对应值；不得合并、互换、缩写、改写或用摘要覆盖。档案中没有的字段就是尚未确定，不得擅自补全。玩家以后明确修改时，以程序下一回合提供的新档案为准。';
   var ss=stateSummary();
   if(ss){ sp+='\n\n【权威角色状态——系统维护的唯一事实，叙事与状态栏不得与此矛盾；技能列表是全集】\n'+ss; }
   if(PINS.length){
@@ -3687,7 +3689,7 @@ function compactStateForAudit(s){
   s=s||GAME_STATE;return {revealed:!!s.revealed,attrs:s.attrs||{},res:s.res||{},inv:normalizeInventory(s.inv).map(function(x){return {id:x.id,name:x.name,category:x.category,quantity:x.quantity,equipped:x.equipped};}),skills:normalizeSkills(s.skills).map(function(x){return {id:x.id,name:x.name,category:x.category,realm:x.realm,coefficient:x.coefficient,proficiency:x.proficiency,attribute:x.attribute,active:x.active};}),talents:s.talents||[],loc:s.loc||'',npcs:s.npcs||{}};
 }
 async function reconcileTurnState(before,input,reply,declared){
-  var visible=String(reply||'').replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'').substring(0,7000);
+  var visible=String(reply||'').replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'').substring(0,2500);
   var prompt='你是文字RPG的确定性状态结算器，不写剧情。根据“回合前权威状态、玩家行动、已经发生的可见结果、叙事模型申报”输出一份相对于回合前状态的完整且最小状态补丁。\n原则：只有可见结果明确完成的变化才结算；意图、准备、尝试、报价、查看、询问不算完成。普通对话、查看背包、整理记忆不消耗饱腹、体力或其他生理资源。不得创造结果里没有的物品、技能、金额或数量；同名物品必须使用原id或原名。进食/消耗用负数inv_delta；获得用正数，只有全新物品才用inv_upsert。技能训练仅在结果明确完成训练时增加熟练度，通常1-5；没有明确进展就不改。地点确实改变才写loc。NPC独立知识只能通过npc_set中的knows_add/knows_rm改变；只有玩家当面对该NPC说出口、该NPC直接观察并可靠确认、或剧情明确发生信息传递时才能knows_add。旁白、隐藏蓝图、玩家内心、异常猜测以及别的NPC知道的事均不得写入。叙事模型申报只是候选，若与可见结果冲突则忽略。\n只输出一个JSON对象，可用字段：attr_delta,res_delta,inv_delta:[{id或name,delta}],inv_upsert:[完整物品],equip_set:{id或name:true/false},skill_upsert:[完整技能],skill_progress:[{id或name,delta,realm可选}],active_skill,npc_set:{NPC名:{rel,att,note,knows_add:[],knows_rm:[]}},npc_rm,loc,talent_add,talent_rm。无变化输出{}。\n回合前：'+JSON.stringify(compactStateForAudit(before))+'\n玩家行动：'+String(input||'').substring(0,1600)+'\n可见结果：'+visible+'\n候选申报：'+JSON.stringify(declared||[]);
   debugEvent('state_audit_request',{prompt:prompt,declaredPatches:declared||[]});
   try{
@@ -3700,7 +3702,7 @@ async function reconcileTurnState(before,input,reply,declared){
 
 // two-pass: silent GM adjudication call (judge mode — no storytelling, no sycophancy)
 async function directorPass(playerInput){
-  var recent=HIST.slice(-8).map(function(m){
+  var recent=HIST.slice(-4).map(function(m){
     var c=String(m.content).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'');
     return (m.role==='user'?'玩家':'叙事')+': '+c.substring(0,400);
   }).join('\n');
