@@ -1394,13 +1394,25 @@ body::before{
     </div>
     <div class="aplbl">▸ 选择后端</div>
     <div class="atabs">
-      <button class="atab on" id="tds" onclick="setTab('ds')">DeepSeek</button>
+      <button class="atab on" id="tbe" onclick="setTab('be')">本地后端</button>
+      <button class="atab" id="tds" onclick="setTab('ds')">DeepSeek</button>
       <button class="atab" id="tor" onclick="setTab('or')">OpenRouter</button>
       <button class="atab" id="tzp" onclick="setTab('zp')">智谱·免费</button>
       <button class="atab" id="tsf" onclick="setTab('sf')">硅基流动</button>
       <button class="atab" id="tol" onclick="setTab('ol')">本地 Ollama</button>
     </div>
-    <div class="apnl on" id="pds">
+    <div class="apnl on" id="pbe">
+      <div class="pdsc">通过你自己的后端调用模型 · <span style="color:var(--g)">API Key 保存在服务端，不进浏览器</span></div>
+      <div id="be-status" style="font-size:11px;color:var(--dm);margin:8px 0;line-height:1.7">正在检测后端…</div>
+      <div class="prow">
+        <select id="bemod" class="fld"><option value="">— 先检测后端 —</option></select>
+      </div>
+      <div class="prow">
+        <button class="btn sm" onclick="probeBackend()">重新检测</button>
+        <button class="btn connect-btn" onclick="doConnect('be')">连接并选择世界</button>
+      </div>
+    </div>
+    <div class="apnl" id="pds">
       <div class="pdsc">DeepSeek 官方 API · <span style="color:var(--g)">platform.deepseek.com</span></div>
       <div class="prow">
         <input type="password" id="dskey" class="fld" placeholder="sk-xxxxxxxxxxxxxxxx">
@@ -1609,6 +1621,7 @@ var BK='ds', APIKEY='', MODEL='', BASEURL='', WORLD='', PACE='';
 // 各家的对话补全路径不统一：多数是 /v1/chat/completions，
 // 智谱是 /api/paas/v4/chat/completions。连接时按后端写入。
 var CHATPATH='/v1/chat/completions';
+var BACKEND_PROVIDER=''; // 后端模式下使用哪个上游后端（deepseek/zhipu/...）
 var HIST=[], TOKENS=0, LOADING=false, SUMMING=false;
 var QUESTS={main:[],side:[]}, INVENTORY=[], SKILLS=[];
 var PINS=[]; // locked facts: {id, text, category}
@@ -2360,10 +2373,43 @@ function goStep(n) {
 }
 
 function setTab(t) {
-  ['ds','zp','or','sf','ol'].forEach(function(x){
+  ['be','ds','zp','or','sf','ol'].forEach(function(x){
     document.getElementById('p'+x).classList.toggle('on', x===t);
     document.getElementById('t'+x).classList.toggle('on', x===t);
   });
+}
+
+// 后端模式：把「有哪些模型可用」这件事交给服务端回答。
+// 前端不再持有任何 key —— 这是这次前后端分离最直接的收益。
+var BACKEND_PROVIDERS=[];
+async function probeBackend(){
+  var st=document.getElementById('be-status'), sel=document.getElementById('bemod');
+  st.textContent='正在检测后端…'; st.style.color='var(--dm)';
+  try{
+    var r=await fetch('/api/providers');
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    BACKEND_PROVIDERS=await r.json();
+    var ready=BACKEND_PROVIDERS.filter(function(p){return p.configured;});
+    sel.innerHTML='';
+    if(!ready.length){
+      st.innerHTML='后端在线，但<b style="color:var(--r)">还没配置任何 API Key</b>。<br>请编辑 backend/.env 填入密钥后重启后端。';
+      st.style.color='var(--dm)';
+      sel.innerHTML='<option value="">— 服务端未配置密钥 —</option>';
+      return false;
+    }
+    ready.forEach(function(p){
+      var o=document.createElement('option');
+      o.value=p.id+'|'+p.default_model;
+      o.textContent=p.label+' · '+p.default_model;
+      sel.appendChild(o);
+    });
+    st.innerHTML='后端在线 ✓ 已配置 <b style="color:var(--g)">'+ready.length+'</b> 个后端，密钥保存在服务端。';
+    return true;
+  }catch(e){
+    st.innerHTML='未检测到后端。<br>请在 backend 目录运行：<code style="color:var(--g)">.venv/Scripts/python.exe -m uvicorn app.main:app</code><br>然后通过 <code style="color:var(--g)">http://127.0.0.1:8000/</code> 打开本页面。';
+    sel.innerHTML='<option value="">— 后端未启动 —</option>';
+    return false;
+  }
 }
 
 async function qMod(t) {
@@ -2406,7 +2452,13 @@ async function qMod(t) {
 function doConnect(t) {
   var st=document.getElementById('ast');
   CHATPATH = (t==='zp') ? '/api/paas/v4/chat/completions' : '/v1/chat/completions';
-  if(t==='ds'){APIKEY=document.getElementById('dskey').value.trim();MODEL=document.getElementById('dsmod').value;BASEURL='https://api.deepseek.com';}
+  if(t==='be'){
+    var v=(document.getElementById('bemod').value||'').split('|');
+    BACKEND_PROVIDER=v[0]||''; MODEL=v[1]||'';
+    APIKEY='backend'; BASEURL=''; CHATPATH='/api/chat';
+    if(!BACKEND_PROVIDER){st.textContent='▸ 请先检测后端并选择一个已配置的模型';st.style.color='var(--r)';return;}
+  }
+  else if(t==='ds'){APIKEY=document.getElementById('dskey').value.trim();MODEL=document.getElementById('dsmod').value;BASEURL='https://api.deepseek.com';}
   else if(t==='zp'){APIKEY=document.getElementById('zpkey').value.trim();MODEL=document.getElementById('zpman').value.trim()||document.getElementById('zpmod').value;BASEURL='https://open.bigmodel.cn';CHATPATH='/api/paas/v4/chat/completions';}
   else if(t==='or'){APIKEY=document.getElementById('orkey').value.trim();MODEL=document.getElementById('ormod').value;BASEURL='https://openrouter.ai/api';}
   else if(t==='sf'){APIKEY=document.getElementById('sfkey').value.trim();MODEL=document.getElementById('sfmod').value;BASEURL='https://api.siliconflow.cn';}
@@ -3193,6 +3245,33 @@ async function doFetch(messages,maxTok){
 
 async function doFetchOnce(messages,maxTok){
   var url,hdrs,body;
+  if(BK==='be'){
+    // 走自己的后端：不带 Authorization，key 由服务端持有
+    url='/api/chat';
+    hdrs={'Content-Type':'application/json'};
+    body=JSON.stringify({
+      messages:messages, provider:BACKEND_PROVIDER, model:MODEL,
+      temperature:Number(SETTINGS.temp), max_tokens:maxTok||4096
+    });
+    var bctrl=new AbortController(), btimer=setTimeout(function(){bctrl.abort();},apiTimeoutMs(maxTok));
+    try{
+      var bres=await fetch(url,{method:'POST',headers:hdrs,body:body,signal:bctrl.signal});
+      if(!bres.ok){
+        var bd=null; try{bd=await bres.json();}catch(_e){}
+        var det=(bd&&bd.detail)||{};
+        throw new Error('HTTP '+bres.status+'：'+(det.message||JSON.stringify(bd||'').slice(0,160)));
+      }
+      // 后端返回 {content, usage, ...}，转成前端期待的 OpenAI 结构
+      var bj=await bres.json();
+      return new Response(JSON.stringify({
+        choices:[{message:{content:bj.content}}],
+        usage:{total_tokens:(bj.usage&&bj.usage.total_tokens)||0}
+      }),{status:200,headers:{'Content-Type':'application/json'}});
+    }catch(e){
+      if(e&&e.name==='AbortError')throw new Error('请求超时，请检查后端或稍后重试');
+      throw e;
+    }finally{clearTimeout(btimer);}
+  }
   if(BK==='ol'){
     url=BASEURL+CHATPATH; hdrs={'Content-Type':'application/json'};
     body=JSON.stringify({model:MODEL,messages:messages,stream:false,options:{num_ctx:32768,temperature:Number(SETTINGS.temp),top_p:0.9,num_predict:maxTok||-1}});
@@ -3238,6 +3317,14 @@ async function doFetchStream(messages,maxTok,onDelta){
 }
 
 async function doFetchStreamOnce(messages,maxTok,onDelta){
+  if(BK==='be'){
+    // 后端流式转发还没做，先退回非流式，保证功能可用
+    var r=await doFetchOnce(messages,maxTok);
+    var j=await r.json();
+    var txt=(j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content)||'';
+    if(onDelta&&txt)onDelta(txt);
+    return {text:txt,usage:j.usage||null};
+  }
   var url=BASEURL+CHATPATH,hdrs,body;
   if(BK==='ol'){
     hdrs={'Content-Type':'application/json'};
@@ -4815,6 +4902,7 @@ document.getElementById('pinp').addEventListener('input',function(){
 });
 document.getElementById('imodal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 setTimeout(function(){ try{loadResearchDB();}catch(e){} },600);
+setTimeout(function(){ try{probeBackend();}catch(e){} },200);
 
 // generator jurisdiction: the world screen only defines the WORLD; run-axes live in the opening roll systems
 (function(){
