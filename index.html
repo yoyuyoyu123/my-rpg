@@ -3157,7 +3157,41 @@ function commitSheetPreview(){
   GAME_STATE=n;STATE_ACTIVE=true;SHEET_INIT_ARMED=false;PENDING_SHEET_SEED=null;syncStateCollections();addLedger('sheet','角色卡','建立角色卡');renderInventory();renderSkills();renderNpcs();renderCharacterSheet();autoSave();closeModal();addBlk('sys','▸ 角色卡已建立；后续数值、物品与技能由统一状态账本持续保存');
 }
 
+async // 限流(429)、网关错误(5xx)和瞬时网络故障都属于「等一下可能就好」的错误，
+// 与鉴权失败、模型不存在这类「重试多少次都一样」的错误要区分对待。
+function isRetryableError(e){
+  var m=String(e&&e.message||e);
+  if(/HTTP 429/.test(m))return true;                 // 限流
+  if(/HTTP 5\d\d/.test(m))return true;               // 网关/服务端错误
+  if(/Failed to fetch|NetworkError|网络/i.test(m))return true;
+  if(/请求超时/.test(m))return true;
+  return false;
+}
+function retryWaitMs(attempt){
+  // 指数退避 + 抖动：1.2s → 2.4s → 4.8s，抖动避免多个请求同时重试
+  return Math.round((1200*Math.pow(2,attempt))*(0.75+Math.random()*0.5));
+}
+function retryNotice(attempt,total,e){
+  var m=String(e&&e.message||e);
+  var why=/HTTP 429/.test(m)?'后端限流':(/HTTP 5/.test(m)?'后端故障':'网络波动');
+  try{addBlk('sys','▸ '+why+'，'+Math.round(retryWaitMs(attempt)/100)/10+'秒后自动重试（'+(attempt+1)+'/'+total+'）');}catch(_e){}
+}
+
 async function doFetch(messages,maxTok){
+  var maxAttempts=3, lastErr=null;
+  for(var attempt=0;attempt<maxAttempts;attempt++){
+    try{ return await doFetchOnce(messages,maxTok); }
+    catch(e){
+      lastErr=e;
+      if(!isRetryableError(e)||attempt===maxAttempts-1)throw e;
+      retryNotice(attempt,maxAttempts,e);
+      await new Promise(function(r){setTimeout(r,retryWaitMs(attempt));});
+    }
+  }
+  throw lastErr;
+}
+
+async function doFetchOnce(messages,maxTok){
   var url,hdrs,body;
   if(BK==='ol'){
     url=BASEURL+CHATPATH; hdrs={'Content-Type':'application/json'};
@@ -3189,6 +3223,21 @@ function chatContent(data){
 }
 
 async function doFetchStream(messages,maxTok,onDelta){
+  var maxAttempts=3, lastErr=null;
+  for(var attempt=0;attempt<maxAttempts;attempt++){
+    try{ return await doFetchStreamOnce(messages,maxTok,onDelta); }
+    catch(e){
+      lastErr=e;
+      // 已经吐出部分内容就不重试了，否则正文会重复
+      if(!isRetryableError(e)||attempt===maxAttempts-1||e.__partial)throw e;
+      retryNotice(attempt,maxAttempts,e);
+      await new Promise(function(r){setTimeout(r,retryWaitMs(attempt));});
+    }
+  }
+  throw lastErr;
+}
+
+async function doFetchStreamOnce(messages,maxTok,onDelta){
   var url=BASEURL+CHATPATH,hdrs,body;
   if(BK==='ol'){
     hdrs={'Content-Type':'application/json'};
