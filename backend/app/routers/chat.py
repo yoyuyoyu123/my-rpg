@@ -12,11 +12,12 @@
   想给业务逻辑写单元测试，也不需要启动 HTTP 服务。
 """
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 
 from app.config import Settings, get_settings
 from app.domain.providers import PROVIDERS, requires_key
 from app.schemas.chat import ChatRequest, ChatResponse, ProviderInfo, Usage
-from app.services.llm import LLMError, call_chat
+from app.services.llm import LLMError, call_chat, open_stream
 
 router = APIRouter(prefix="/api", tags=["对话"])
 
@@ -80,4 +81,43 @@ async def chat(req: ChatRequest, settings: Settings = Depends(get_settings)) -> 
             total_tokens=result.total_tokens,
         ),
         retries=result.retries,
+    )
+
+
+@router.post("/chat/stream", summary="流式调用 LLM 对话补全")
+async def chat_stream(
+    req: ChatRequest, settings: Settings = Depends(get_settings)
+) -> StreamingResponse:
+    """
+    流式版本。逐字往回吐，玩家不用盯着转圈等一整段叙事。
+
+    先 await 连接、再返回 StreamingResponse —— 顺序不能反：
+    连接失败要变成 4xx/5xx 让前端显示具体原因（比如密钥没配），
+    而一旦开始流式输出，状态码就已经发出去了，改不了。
+
+    连上之后原样转发上游的 SSE 字节，不做重组，前端沿用它已有的解析逻辑。
+    """
+    try:
+        session = await open_stream(
+            settings=settings,
+            provider_id=req.provider,
+            model=req.model,
+            messages=[m.model_dump() for m in req.messages],
+            temperature=req.temperature,
+            max_tokens=req.max_tokens,
+        )
+    except LLMError as exc:
+        raise HTTPException(
+            status_code=exc.status,
+            detail={"code": exc.code, "message": exc.message, "retryable": exc.retryable},
+        ) from exc
+
+    return StreamingResponse(
+        session.aiter_raw(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            # nginx 之类的反向代理默认会缓冲响应，缓冲了就不是流式了
+            "X-Accel-Buffering": "no",
+        },
     )

@@ -66,21 +66,24 @@ def _backoff_seconds(attempt: int) -> float:
 
 def _build_payload(req_model: str, messages: list[dict], temperature: float,
                    max_tokens: int, provider: Provider, stream: bool = False) -> dict:
-    """组装请求体。Ollama 的参数结构和别家不同，在这里抹平。"""
-    if provider.id == "ollama":
-        return {
-            "model": req_model,
-            "messages": messages,
-            "stream": stream,
-            "options": {"temperature": temperature, "num_predict": max_tokens},
-        }
-    return {
+    """
+    组装请求体。
+
+    注意这里对 Ollama 也用 OpenAI 的字段名：我们打的是它的 /v1/chat/completions
+    兼容端点（见 providers.py 里的 chat_path），那个端点只认 max_tokens，
+    原生 API 才认 options/num_predict。之前按原生结构发，输出长度上限被静默忽略。
+    """
+    payload = {
         "model": req_model,
         "messages": messages,
         "stream": stream,
         "temperature": temperature,
         "max_tokens": max_tokens,
     }
+    # 流式默认不回 token 用量，要显式索取；但不是每家都认这个字段
+    if stream and provider.stream_usage:
+        payload["stream_options"] = {"include_usage": True}
+    return payload
 
 
 def _build_headers(provider: Provider, api_key: str) -> dict[str, str]:
@@ -132,7 +135,18 @@ async def call_chat(
                 last_error = LLMError("network_error", f"网络错误：{exc}", retryable=True, status=502)
             else:
                 if resp.status_code == 200:
-                    return _parse_success(resp.json(), provider_id, use_model, attempt)
+                    try:
+                        data = resp.json()
+                    except ValueError:
+                        # 200 但正文不是 JSON：上游返回了 HTML 错误页、
+                        # 网关插了一段东西、或者配错端点收到了别的格式。
+                        # 不能让它冒成 500——那样前端只看到「服务器错误」，无从判断。
+                        raise LLMError(
+                            "malformed_response",
+                            f"后端返回了无法解析的内容：{resp.text[:200]}",
+                            status=502,
+                        ) from None
+                    return _parse_success(data, provider_id, use_model, attempt)
 
                 body = resp.text[:300]
                 retryable = _is_retryable_status(resp.status_code)
@@ -151,6 +165,118 @@ async def call_chat(
             # 走到这里说明这次失败且可重试
             if attempt < settings.max_retries - 1:
                 await asyncio.sleep(_backoff_seconds(attempt))
+
+    assert last_error is not None
+    raise last_error
+
+
+class StreamSession:
+    """
+    一条已经连上、正在往回吐字的上游流。
+
+    为什么要有这么个对象、而不是直接写成一个异步生成器：
+        连接失败要变成正常的 HTTP 错误码（前端才能显示「密钥没配」这类信息），
+        但响应一旦开始流式输出，状态码就定死了，改不了了。
+        所以必须把「连接」和「转发」拆成两步：
+        路由层先 await open()，失败就抛 LLMError；成功了再返回 StreamingResponse。
+    """
+
+    def __init__(self, client: httpx.AsyncClient, ctx, response: httpx.Response,
+                 provider_id: str, model: str):
+        self._client = client
+        self._ctx = ctx
+        self._response = response
+        self.provider_id = provider_id
+        self.model = model
+
+    async def aiter_raw(self):
+        """
+        原样转发上游字节。
+
+        不解析、不重组 —— SSE 的分帧规则很容易在重新拼装时出错，
+        而前端已经有一套完整的解析逻辑。这里做纯管道最不容易出事。
+        """
+        try:
+            async for chunk in self._response.aiter_bytes():
+                yield chunk
+        finally:
+            await self.aclose()
+
+    async def aclose(self) -> None:
+        try:
+            await self._ctx.__aexit__(None, None, None)
+        finally:
+            await self._client.aclose()
+
+
+async def open_stream(
+    *,
+    settings: Settings,
+    provider_id: str,
+    model: str,
+    messages: list[dict],
+    temperature: float = 0.85,
+    max_tokens: int = 4096,
+) -> StreamSession:
+    """
+    连上上游的流式接口。连接阶段的失败会重试；一旦开始出字就不再重试。
+
+    「出字之后不重试」是必须的：重试会让已经显示给玩家的半截正文重复一遍。
+    前端的 doFetchStream 里也是同一条规矩（e.__partial）。
+    """
+    provider = get_provider(provider_id)
+    if provider is None:
+        raise LLMError("unknown_provider", f"未知的后端：{provider_id}", status=400)
+
+    api_key = settings.key_for(provider_id)
+    if requires_key(provider_id) and not api_key:
+        raise LLMError(
+            "provider_not_configured",
+            f"服务端没有配置 {provider.label} 的 API Key，请在 .env 里填写",
+            status=503,
+        )
+
+    use_model = (model or "").strip() or provider.default_model
+    payload = _build_payload(use_model, messages, temperature, max_tokens, provider, stream=True)
+    headers = _build_headers(provider, api_key)
+
+    last_error: LLMError | None = None
+
+    for attempt in range(settings.max_retries):
+        # 每次尝试用一个新 client：失败的那个要连同连接一起丢掉
+        client = httpx.AsyncClient(timeout=settings.request_timeout_s)
+        ctx = client.stream("POST", provider.chat_url, json=payload, headers=headers)
+        try:
+            resp = await ctx.__aenter__()
+        except httpx.TimeoutException:
+            await client.aclose()
+            last_error = LLMError("timeout", "连接后端超时", retryable=True, status=504)
+        except httpx.HTTPError as exc:
+            await client.aclose()
+            last_error = LLMError("network_error", f"网络错误：{exc}", retryable=True, status=502)
+        else:
+            if resp.status_code == 200:
+                return StreamSession(client, ctx, resp, provider_id, use_model)
+
+            body = (await resp.aread())[:300].decode("utf-8", "replace")
+            await ctx.__aexit__(None, None, None)
+            await client.aclose()
+
+            retryable = _is_retryable_status(resp.status_code)
+            code = "rate_limited" if resp.status_code == 429 else (
+                "upstream_error" if retryable else "upstream_rejected"
+            )
+            last_error = LLMError(
+                code,
+                f"后端返回 HTTP {resp.status_code}：{body}",
+                retryable=retryable,
+                status=429 if resp.status_code == 429 else 502,
+            )
+            if not retryable:
+                raise last_error
+
+        if attempt < settings.max_retries - 1:
+            await asyncio.sleep(_backoff_seconds(attempt))
 
     assert last_error is not None
     raise last_error

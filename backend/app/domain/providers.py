@@ -25,6 +25,9 @@ class Provider:
     default_model: str = ""
     # 某些平台要求额外请求头（如 OpenRouter 要 Referer）
     extra_headers: dict[str, str] = field(default_factory=dict)
+    # 流式时能否用 stream_options 要回 token 用量。
+    # 不支持的平台如果照发，可能整个请求被拒，所以要逐家标注而不是一概而论。
+    stream_usage: bool = True
     note: str = ""
 
     @property
@@ -53,6 +56,7 @@ PROVIDERS: dict[str, Provider] = {
         chat_path="/api/paas/v4/chat/completions",
         models_path="/api/paas/v4/models",
         default_model="glm-4.7-flash",
+        stream_usage=False,
         note="Flash 系列免费，但免费池限流较重",
     ),
     "siliconflow": Provider(
@@ -76,6 +80,7 @@ PROVIDERS: dict[str, Provider] = {
         base_url="http://127.0.0.1:11434",
         models_path="/api/tags",
         default_model="qwen2.5:14b",
+        stream_usage=False,
         note="本地模型，不需要 key",
     ),
 }

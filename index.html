@@ -3326,10 +3326,10 @@ function chatContent(data){
   return c;
 }
 
-async function doFetchStream(messages,maxTok,onDelta){
+async function doFetchStream(messages,maxTok,onDelta,temp){
   var maxAttempts=3, lastErr=null;
   for(var attempt=0;attempt<maxAttempts;attempt++){
-    try{ return await doFetchStreamOnce(messages,maxTok,onDelta); }
+    try{ return await doFetchStreamOnce(messages,maxTok,onDelta,temp); }
     catch(e){
       lastErr=e;
       // 已经吐出部分内容就不重试了，否则正文会重复
@@ -3341,23 +3341,21 @@ async function doFetchStream(messages,maxTok,onDelta){
   throw lastErr;
 }
 
-async function doFetchStreamOnce(messages,maxTok,onDelta){
-  if(BK==='be'){
-    // 后端流式转发还没做，先退回非流式，保证功能可用
-    var r=await doFetchOnce(messages,maxTok);
-    var j=await r.json();
-    var txt=(j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content)||'';
-    if(onDelta&&txt)onDelta(txt);
-    return {text:txt,usage:j.usage||null};
-  }
+async function doFetchStreamOnce(messages,maxTok,onDelta,temp){
   var url=BASEURL+CHATPATH,hdrs,body;
-  if(BK==='ol'){
+  if(BK==='be'){
+    // 走自己的后端：不带 Authorization，key 由服务端持有。
+    // 后端原样转发上游的 SSE，所以下面的解析逻辑完全复用。
+    url='/api/chat/stream';
     hdrs={'Content-Type':'application/json'};
-    body={model:MODEL,messages:messages,stream:true,options:{num_ctx:32768,temperature:Number(SETTINGS.temp),top_p:0.9,num_predict:maxTok||-1}};
+    body={model:MODEL,messages:messages,provider:BACKEND_PROVIDER,stream:true,temperature:tempFor(temp),max_tokens:maxTok||4096};
+  } else if(BK==='ol'){
+    hdrs={'Content-Type':'application/json'};
+    body={model:MODEL,messages:messages,stream:true,options:{num_ctx:32768,temperature:tempFor(temp),top_p:0.9,num_predict:maxTok||-1}};
   } else {
     hdrs={'Content-Type':'application/json','Authorization':'Bearer '+APIKEY};
     if(BK==='or'){hdrs['HTTP-Referer']='https://localhost';hdrs['X-Title']='WuxiaRPG';}
-    body={model:MODEL,messages:messages,stream:true,temperature:Number(SETTINGS.temp),max_tokens:maxTok||4096};
+    body={model:MODEL,messages:messages,stream:true,temperature:tempFor(temp),max_tokens:maxTok||4096};
   }
   var ctrl=new AbortController();
   var connectTimer=setTimeout(function(){ctrl.abort();},60000);
@@ -3365,7 +3363,13 @@ async function doFetchStreamOnce(messages,maxTok,onDelta){
   try{res=await fetch(url,{method:'POST',headers:hdrs,body:JSON.stringify(body),signal:ctrl.signal});}
   catch(e){clearTimeout(connectTimer);if(e&&e.name==='AbortError')throw new Error('连接后端超时');throw e;}
   clearTimeout(connectTimer);
-  if(!res.ok||!res.body){var et='';try{et=await res.text();}catch(e){}throw new Error('HTTP '+res.status+' '+et.substring(0,200));}
+  if(!res.ok||!res.body){
+    var et='';try{et=await res.text();}catch(e){}
+    // 自己的后端会回结构化错误，把人话那部分挑出来显示，而不是甩一坨 JSON
+    var msg=et.substring(0,200);
+    try{var ej=JSON.parse(et);if(ej&&ej.detail&&ej.detail.message)msg=ej.detail.message;}catch(_e){}
+    throw new Error('HTTP '+res.status+' '+msg);
+  }
   var reader=res.body.getReader(),dec=new TextDecoder(),buf='',full='',usage=null,sawDone=false,finishReason='';
   var idleTimer=null;
   function armIdle(){clearTimeout(idleTimer);idleTimer=setTimeout(function(){ctrl.abort();},90000);}
