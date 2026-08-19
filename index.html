@@ -2754,11 +2754,11 @@ async function renderSlots() {
   var c=document.getElementById('svslots'); if(!c)return;
   for(var mi=0;mi<3;mi++){
     var raw=localStorage.getItem('wuji_sv_'+mi);
-    if(raw){ try{ await idbPut('sv_'+mi,JSON.parse(raw)); localStorage.removeItem('wuji_sv_'+mi);}catch(e){} }
+    if(raw){ try{ await savePut('sv_'+mi,JSON.parse(raw)); localStorage.removeItem('wuji_sv_'+mi);}catch(e){} }
   }
   c.innerHTML='';
   for(var i=0;i<3;i++){
-    var sv=null; try{ sv=await idbGet('sv_'+i);}catch(e){}
+    var sv=null; try{ sv=await saveGet('sv_'+i);}catch(e){}
     var d=document.createElement('div');
     if(sv){
       d.className='svs';
@@ -2769,7 +2769,7 @@ async function renderSlots() {
     }
     c.appendChild(d);
   }
-  var av=null; try{ av=await idbGet('auto'); }catch(e){}
+  var av=null; try{ av=await saveGet('auto'); }catch(e){}
   if(av){
     var d2=document.createElement('div'); d2.className='svs';
     d2.innerHTML='<div class="sn">⟳ 自动存档</div><div class="si">'+esc(av.desc||'')+'</div><div class="si" style="opacity:0.5">'+esc(av.time||'')+'</div><div class="sb2"><button onclick="loadSvAuto()">读取</button></div>';
@@ -2917,6 +2917,111 @@ function idbOpen(){return new Promise(function(ok,bad){ if(IDB)return ok(IDB); v
 function idbPut(k,v){return idbOpen().then(function(db){return new Promise(function(ok,bad){var tx=db.transaction('saves','readwrite');tx.objectStore('saves').put(v,k);tx.oncomplete=function(){ok();};tx.onerror=function(){bad(tx.error);};});});}
 function idbGet(k){return idbOpen().then(function(db){return new Promise(function(ok,bad){var rq=db.transaction('saves','readonly').objectStore('saves').get(k);rq.onsuccess=function(){ok(rq.result);};rq.onerror=function(){bad(rq.error);};});});}
 function idbDel(k){return idbOpen().then(function(db){return new Promise(function(ok,bad){var tx=db.transaction('saves','readwrite');tx.objectStore('saves').delete(k);tx.oncomplete=function(){ok();};tx.onerror=function(){bad(tx.error);};});});}
+
+// ── 存档存储层 ──────────────────────────────────────────────────
+// IndexedDB 跟设备绑死：电脑上玩到一半，手机打开是一片空白。
+// 存到服务端之后，同一个后端下所有设备看到的是同一批进度。
+//
+// 这一层只做一件事：决定这次读写落到哪里。
+//   后端可用 → 服务端为准，同时在本地留一份镜像（后端挂了还能玩）
+//   后端不可用 → 退回 IndexedDB，跟以前完全一样
+// 调试追踪不走这里（它是设备本地的诊断数据，也不该占服务端空间）。
+var SAVE_BACKEND=null;   // null=还没探测过；true/false=探测结果
+
+async function saveBackendReady(){
+  if(SAVE_BACKEND!==null)return SAVE_BACKEND;
+  try{
+    var r=await fetch('/api/saves',{method:'GET'});
+    SAVE_BACKEND=r.ok;
+  }catch(e){ SAVE_BACKEND=false; }
+  return SAVE_BACKEND;
+}
+
+// 摘要字段让服务端不必解析几 MB 的正文就能渲染存档列表
+function saveMeta(v){
+  var w=WORLDS[v&&v.world]||null;
+  return {
+    desc:String((v&&v.desc)||'').substring(0,200),
+    world_id:String((v&&v.world)||'').substring(0,40),
+    world_name:String((w&&w.name)||'').substring(0,60),
+    turns:Math.max(0,Number((v&&v.turns)||0)||0),
+    client_time:String((v&&v.time)||'').substring(0,40)
+  };
+}
+
+async function savePut(k,v){
+  if(await saveBackendReady()){
+    var body=saveMeta(v); body.payload=v;
+    // 先写本机，再传服务端。顺序不能反：
+    // 后端半路挂掉时 fetch 会直接抛出，写在它后面的本地镜像根本执行不到，
+    // 自动存档就会静默失败——进度悄悄丢掉是最不能接受的一种坏法。
+    await idbPut(k,v).catch(function(){});
+
+    var msg='';
+    try{
+      var r=await fetch('/api/saves/'+encodeURIComponent(k),{
+        method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(!r.ok){
+        msg='HTTP '+r.status;
+        try{var j=await r.json();if(j&&j.detail&&j.detail.message)msg=j.detail.message;}catch(_e){}
+      }
+    }catch(e){ msg=String(e&&e.message||e); }
+
+    if(msg){
+      // 抛出去，让「保存到存档N」这类明确操作如实报错；
+      // 自动存档那边是静默 catch 的，不会打扰玩家
+      throw new Error(msg+'（已存到本机，但没同步到服务端）');
+    }
+    return;
+  }
+  return idbPut(k,v);
+}
+
+async function saveGet(k){
+  if(await saveBackendReady()){
+    try{
+      var r=await fetch('/api/saves/'+encodeURIComponent(k));
+      if(r.status===404)return undefined;        // 空槽位，不是错误
+      if(r.ok){ var j=await r.json(); return j.payload; }
+    }catch(e){ /* 落到下面读本地镜像 */ }
+  }
+  return idbGet(k);
+}
+
+async function saveDel(k){
+  if(await saveBackendReady()){
+    try{ await fetch('/api/saves/'+encodeURIComponent(k),{method:'DELETE'}); }catch(e){}
+  }
+  return idbDel(k).catch(function(){});
+}
+
+// 首次连上后端时，把本地已有的存档推上去。
+// 不这么做的话，之前在电脑上攒的进度手机永远看不到——
+// 而「换个地方接着玩」正是这次搬家的全部意义。
+var SAVE_MIGRATED=false;
+async function migrateSavesToBackend(){
+  if(SAVE_MIGRATED||!(await saveBackendReady()))return;
+  SAVE_MIGRATED=true;
+  var remote={};
+  try{
+    (await (await fetch('/api/saves')).json()).forEach(function(s){remote[s.slot]=true;});
+  }catch(e){ return; }
+
+  var keys=['auto','sv_0','sv_1','sv_2'],moved=0;
+  for(var i=0;i<keys.length;i++){
+    var k=keys[i];
+    if(remote[k])continue;                       // 服务端已有，不覆盖
+    var local=null; try{ local=await idbGet(k); }catch(e){}
+    if(!local||!Array.isArray(local.history))continue;
+    try{
+      var body=saveMeta(local); body.payload=local;
+      var r=await fetch('/api/saves/'+k,{method:'PUT',
+        headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(r.ok)moved++;
+    }catch(e){}
+  }
+  if(moved)addBlk('sys','▸ 已把 '+moved+' 个本地存档同步到服务端，现在手机上也能接着玩');
+}
 
 // ── V23 STRUCTURED DEBUG TRACE ──
 // Stored outside normal saves so diagnostics never enlarge or contaminate a run.
@@ -3086,16 +3191,18 @@ function clearDebugTrace(){
 async function migrateLegacySlots(){
   for(var i=0;i<3;i++){
     var raw=localStorage.getItem('wuji_sv_'+i);if(!raw)continue;
-    try{await idbPut('sv_'+i,JSON.parse(raw));localStorage.removeItem('wuji_sv_'+i);}catch(e){}
+    try{await savePut('sv_'+i,JSON.parse(raw));localStorage.removeItem('wuji_sv_'+i);}catch(e){}
   }
 }
 async function renderStartupSlots(){
   var c=document.getElementById('startup-slots');if(!c)return;
   try{await migrateLegacySlots();}catch(e){}
+  // 先把本地存档推上服务端，再渲染列表——否则会先闪一下「无存档」
+  try{await migrateSavesToBackend();}catch(e){}
   c.innerHTML='';var found=0;
   var defs=[{key:'sv_0',name:'存档 1'},{key:'sv_1',name:'存档 2'},{key:'sv_2',name:'存档 3'},{key:'auto',name:'⟳ 自动存档'}];
   for(var i=0;i<defs.length;i++){
-    var def=defs[i],sv=null;try{sv=await idbGet(def.key);}catch(e){}
+    var def=defs[i],sv=null;try{sv=await saveGet(def.key);}catch(e){}
     var d=document.createElement('div');d.className='svs'+(PENDING_STARTUP_LOAD===def.key?' chosen':'')+(sv?'':' emp');
     if(sv){
       found++;d.innerHTML='<div class="sn">'+esc(def.name)+'</div><div class="si">'+esc(sv.desc||('第 '+(sv.turns||0)+' 回合'))+'</div><div class="si" style="opacity:.5">'+esc(sv.time||'')+'</div><div class="sb2"><button>选择并继续</button></div>';
@@ -3122,7 +3229,7 @@ function updateConnectButtons(){
 async function resumeStartupSave(key){
   var st=document.getElementById('startup-load-status');if(st)st.textContent='正在载入存档…';
   try{
-    var sv=await idbGet(key);if(!sv)throw new Error('所选存档不存在');if(!Array.isArray(sv.history))throw new Error('存档格式无效或版本过旧');
+    var sv=await saveGet(key);if(!sv)throw new Error('所选存档不存在');if(!Array.isArray(sv.history))throw new Error('存档格式无效或版本过旧');
     document.querySelectorAll('.screen').forEach(function(s){s.classList.add('hidden');});
     document.getElementById('gscreen').classList.remove('hidden');document.getElementById('gscreen').style.display='flex';closePanel();
     applySnapshot(sv);PENDING_STARTUP_LOAD=null;
@@ -3131,15 +3238,15 @@ async function resumeStartupSave(key){
     addBlk('sys','▸ 已从启动页读取'+(key==='auto'?'自动存档':('存档 '+(Number(key.slice(3))+1))));
   }catch(e){PENDING_STARTUP_LOAD=null;if(st){st.style.color='var(--r)';st.textContent='读取失败：'+String(e&&e.message||e);}renderStartupSlots();}
 }
-function autoSave(){ if(HIST.length){ idbPut('auto',snapshot()).catch(function(){}); } }
+function autoSave(){ if(HIST.length){ savePut('auto',snapshot()).catch(function(){}); } }
 function saveSv(i){
   if(!HIST.length)return;
-  idbPut('sv_'+i,snapshot()).then(function(){renderSlots();addBlk('sys','▸ 已保存至存档 '+(i+1));}).catch(function(e){addBlk('err','保存失败：'+e);});
+  savePut('sv_'+i,snapshot()).then(function(){renderSlots();addBlk('sys','▸ 已保存至存档 '+(i+1));}).catch(function(e){addBlk('err','保存失败：'+String(e&&e.message||e));});
 }
 function confirmSaveSv(i){if(confirm('确定覆盖存档 '+(i+1)+'？原进度将被替换。'))saveSv(i);}
 
 function loadSv(i){
-  idbGet(i==='auto'?'auto':'sv_'+i).then(function(sv){
+  saveGet(i==='auto'?'auto':'sv_'+i).then(function(sv){
     if(!sv){addBlk('sys','▸ 存档为空');return;}
     applySnapshot(sv);
     addBlk('sys','▸ 已读取'+(i==='auto'?'自动存档':('存档 '+(i+1))));
@@ -3147,7 +3254,7 @@ function loadSv(i){
 }
 function loadSvAuto(){loadSv('auto');}
 
-function delSv(i){if(!confirm('确定永久删除存档 '+(i+1)+'？此操作无法撤销。'))return;idbDel('sv_'+i).then(function(){renderSlots();renderStartupSlots();});}
+function delSv(i){if(!confirm('确定永久删除存档 '+(i+1)+'？此操作无法撤销。'))return;saveDel('sv_'+i).then(function(){renderSlots();renderStartupSlots();});}
 
 function apiTimeoutMs(maxTok){
   // Short utility calls should fail reasonably quickly; long generations and

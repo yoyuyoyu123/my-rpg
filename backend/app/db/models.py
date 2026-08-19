@@ -115,6 +115,39 @@ class EntityAlias(Base):
     entity: Mapped[Entity] = relationship(back_populates="aliases")
 
 
+class Save(Base):
+    """
+    一个存档槽。
+
+    原本存在浏览器的 IndexedDB 里——那意味着存档跟设备绑死：
+    电脑上玩到一半，手机打开就是一片空白。搬到服务端后，
+    同一个后端下所有设备看到的是同一批存档。
+
+    payload 是整个运行时快照（历史、状态、事实库会话 id……），
+    它永远是「一整坨一起读写」的，所以不拆表。
+    但摘要字段单独存了一份：渲染存档列表时只需要这几个字段，
+    没必要为了显示一行字把几 MB 的正文全捞出来解析。
+    """
+
+    __tablename__ = "saves"
+
+    # 槽位名就是主键：'auto'、'sv_0'、'sv_1'……存档天然是覆盖语义
+    slot: Mapped[str] = mapped_column(String(20), primary_key=True)
+
+    desc: Mapped[str] = mapped_column(String(200), default="")
+    world_id: Mapped[str] = mapped_column(String(40), default="")
+    world_name: Mapped[str] = mapped_column(String(60), default="")
+    turns: Mapped[int] = mapped_column(Integer, default=0)
+    # 客户端本地时间的展示字符串。服务端时间见 updated_at，两者用途不同
+    client_time: Mapped[str] = mapped_column(String(40), default="")
+
+    payload_json: Mapped[str] = mapped_column(Text, default="{}")
+    size_bytes: Mapped[int] = mapped_column(Integer, default=0)
+
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(default=utcnow, onupdate=utcnow)
+
+
 class Fact(Base):
     """
     一条已确立的事实。
