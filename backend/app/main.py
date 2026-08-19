@@ -23,6 +23,7 @@ from app.db.session import init_db
 from app.routers import chat as chat_router
 from app.routers import memory as memory_router
 from app.routers import saves as saves_router
+from app.routers import state as state_router
 from app.routers import turn as turn_router
 from app.routers import worlds as worlds_router
 from app.schemas.chat import ErrorDetail  # noqa: F401  (让它出现在 OpenAPI 文档里)
@@ -69,6 +70,7 @@ app.include_router(chat_router.router)
 app.include_router(worlds_router.router)
 app.include_router(memory_router.router)
 app.include_router(saves_router.router)
+app.include_router(state_router.router)
 app.include_router(turn_router.router)
 
 

@@ -2680,7 +2680,15 @@ async function enrichArchiveEntry(kind,id){
     var prompt='你是文字RPG档案整理器，不写剧情，不新增能力、用途或历史。根据世界、现有条目和包含该名称的历史证据补齐稳定档案；证据不足时使用保守描述并明确限制，不把名称里的夸张词自动当成实际威力。只输出JSON '+shape+'。\n世界：'+((WORLDS[WORLD]&&WORLDS[WORLD].name)||WORLD)+'\n现有条目：'+JSON.stringify(entry)+'\n证据：'+(evidence||'无额外证据');
     var res=await doFetch([{role:'user',content:prompt}],500),data=await res.json();if(data.error)throw new Error('整理失败');if(data.usage&&data.usage.total_tokens)TOKENS+=data.usage.total_tokens;
     var m=chatContent(data).match(/\{[\s\S]*\}/);if(!m)throw new Error('档案格式无效');var patch=JSON.parse(m[0]);
-    if(kind==='skill'){patch.id=entry.id;patch.name=entry.name;patch.proficiency=entry.proficiency;patch.active=entry.active;upsertSkill(patch);syncStateCollections();renderSkills();openSkillModal(entry.id);}else{patch.id=entry.id;patch.name=entry.name;patch.quantity=entry.quantity;patch.equipped=entry.equipped;upsertInventoryItem(patch);syncStateCollections();renderInventory();openItemModal(entry.id);}autoSave();
+    // 整理档案本质就是一次 upsert 补丁，跟回合结算走同一条路
+    if(kind==='skill'){
+      patch.id=entry.id;patch.name=entry.name;patch.proficiency=entry.proficiency;patch.active=entry.active;
+      await applyStatePatch({skill_upsert:[patch]});openSkillModal(entry.id);
+    }else{
+      patch.id=entry.id;patch.name=entry.name;patch.quantity=entry.quantity;patch.equipped=entry.equipped;
+      await applyStatePatch({inv_upsert:[patch]});openItemModal(entry.id);
+    }
+    autoSave();
   }catch(e){openArchiveModal('整理失败','<span style="color:#d99">'+esc(String(e&&e.message||e).substring(0,160))+'</span>');}
   ARCHIVE_ENRICHING=false;
 }
@@ -3780,75 +3788,26 @@ function stateSummary(){
   return parts.join('｜');
 }
 function findInventoryTarget(ref){ref=String(ref||'').trim();return GAME_STATE.inv.find(function(x){return x.id===ref||x.name===ref;});}
-function applyItemDelta(raw,defaultDelta){
-  var spec=typeof raw==='string'?normalizeItem(raw):Object.assign({},raw||{}),ref=spec.id||spec.name,cur=findInventoryTarget(ref),delta=Number(spec.delta);
-  if(!isFinite(delta))delta=defaultDelta===undefined?Number(spec.quantity||spec.qty||1):defaultDelta;
-  if(!cur&&delta>0){spec.quantity=delta;cur=normalizeItem(spec);GAME_STATE.inv.push(cur);addLedger('item',cur.name,'获得',delta);return;}
-  if(!cur)return;
-  cur.quantity=Math.max(0,Number(cur.quantity||0)+delta);
-  if(spec.category)cur.category=String(spec.category).substring(0,20);if(spec.description||spec.desc)cur.description=String(spec.description||spec.desc).substring(0,500);if(spec.equipped!==undefined)cur.equipped=!!spec.equipped;
-  addLedger('item',cur.name,delta>=0?'增加':'减少',delta);if(cur.quantity<=0)GAME_STATE.inv=GAME_STATE.inv.filter(function(x){return x.id!==cur.id;});
-}
-function upsertInventoryItem(raw){
-  if(!raw)return;var spec=normalizeItem(raw),cur=findInventoryTarget(spec.id)||findInventoryTarget(spec.name);
-  if(!cur){GAME_STATE.inv.push(spec);addLedger('item',spec.name,'新增档案',spec.quantity);return;}
-  ['name','category','description','equipped','consumable','tags'].forEach(function(k){if(raw[k]!==undefined||raw[k==='description'?'desc':k]!==undefined)cur[k]=spec[k];});
-  if(raw.quantity!==undefined||raw.qty!==undefined)cur.quantity=spec.quantity;addLedger('item',cur.name,'更新档案');
-}
-function upsertSkill(raw){
-  if(!raw)return;var spec=normalizeSkill(raw),cur=GAME_STATE.skills.find(function(x){return x.id===spec.id||x.name===spec.name;});
-  if(!cur){GAME_STATE.skills.push(spec);cur=spec;addLedger('skill',cur.name,'学会技能');}
-  else{['name','category','realm','coefficient','proficiency','attribute','description'].forEach(function(k){if(raw[k]!==undefined||raw[k==='realm'?'rank':k]!==undefined||raw[k==='description'?'desc':k]!==undefined)cur[k]=spec[k];});addLedger('skill',cur.name,'更新技能');}
-  if(raw.active===true)GAME_STATE.loadout.activeCoreId=cur.id;
-}
-function applyStatePatch(p){
+// ── 状态结算（后端） ────────────────────────────────────────────
+// 「模型申报的变化」变成「权威状态」这一步归服务端：
+// 属性单回合最多 ±1、资源不越上限、NPC 态度一次只挪一格、
+// 天赋要角色卡揭示后才能加 —— 这些是程序说了算的部分，不该跟界面混在一起。
+//
+// 顺带修掉一个老毛病：原实现遇到 inv_add:[null] 这类垃圾会抛异常，
+// 而它是在补丁应用到一半时抛的，状态会停在一个不完整的样子。
+async function applyStatePatch(p){
   if(!p||typeof p!=='object')return;
-  STATE_ACTIVE=true;syncStateCollections();
-  // Core attribute names are schema-locked. A normal patch may change an
-  // existing attribute by at most one point, preventing context drift.
-  if(p.attr_set&&GAME_STATE.revealed)Object.keys(p.attr_set).forEach(function(k){var v=Number(p.attr_set[k]);if(!(k in GAME_STATE.attrs)||!isFinite(v))return;var old=Number(GAME_STATE.attrs[k])||0;GAME_STATE.attrs[k]=Math.max(0,Math.min(20,Math.max(old-1,Math.min(old+1,Math.round(v)))));});
-  if(p.attr_delta&&GAME_STATE.revealed)Object.keys(p.attr_delta).forEach(function(k){var d=Number(p.attr_delta[k]);if(!(k in GAME_STATE.attrs)||!isFinite(d))return;GAME_STATE.attrs[k]=Math.max(0,Math.min(20,(Number(GAME_STATE.attrs[k])||0)+Math.max(-1,Math.min(1,Math.round(d)))));});
-  if(p.res_delta)Object.keys(p.res_delta).forEach(function(k){var d=Number(p.res_delta[k]);if(!(k in GAME_STATE.res)||!isFinite(d))return;var nv=Math.max(0,(Number(GAME_STATE.res[k])||0)+d),cap=GAME_STATE.caps&&GAME_STATE.caps[k];GAME_STATE.res[k]=cap?Math.min(cap,nv):nv;});
-  if(p.res_set)Object.keys(p.res_set).forEach(function(k){var v=Number(p.res_set[k]);if(!(k in GAME_STATE.res)||!isFinite(v))return;var nv=Math.max(0,v),cap=GAME_STATE.caps&&GAME_STATE.caps[k];GAME_STATE.res[k]=cap?Math.min(cap,nv):nv;});
-  (Array.isArray(p.inv_add)?p.inv_add:[]).forEach(function(it){var q=typeof it==='object'?Number(it.quantity||it.qty||it.delta||1):normalizeItem(it).quantity;applyItemDelta(it,isFinite(q)?q:1);});
-  (Array.isArray(p.inv_rm)?p.inv_rm:[]).forEach(function(it){var q=typeof it==='object'?Number(it.quantity||it.qty||1):normalizeItem(it).quantity;applyItemDelta(it,-Math.abs(isFinite(q)?q:1));});
-  (Array.isArray(p.inv_upsert)?p.inv_upsert:[]).forEach(upsertInventoryItem);
-  if(Array.isArray(p.inv_delta))p.inv_delta.forEach(function(x){applyItemDelta(x,Number(x&&x.delta)||0);});
-  else if(p.inv_delta&&typeof p.inv_delta==='object')Object.keys(p.inv_delta).forEach(function(k){applyItemDelta({name:k,delta:Number(p.inv_delta[k])},Number(p.inv_delta[k]));});
-  if(p.inv_set&&typeof p.inv_set==='object')Object.keys(p.inv_set).forEach(function(k){var cur=findInventoryTarget(k),v=Math.max(0,Number(p.inv_set[k])||0);if(cur){cur.quantity=v;addLedger('item',cur.name,'校准数量',v);}else if(v>0)upsertInventoryItem({name:k,quantity:v});});
-  if(p.equip_set&&typeof p.equip_set==='object')Object.keys(p.equip_set).forEach(function(k){var it=findInventoryTarget(k);if(it){it.equipped=!!p.equip_set[k];addLedger('equip',it.name,it.equipped?'装备':'卸下');}});
-  (Array.isArray(p.skill_add)?p.skill_add:[]).forEach(upsertSkill);
-  (Array.isArray(p.skill_upsert)?p.skill_upsert:[]).forEach(upsertSkill);
-  (Array.isArray(p.skill_rm)?p.skill_rm:[]).forEach(function(ref){ref=typeof ref==='object'?(ref.id||ref.name):ref;var sk=skillById(String(ref));if(sk){GAME_STATE.skills=GAME_STATE.skills.filter(function(x){return x.id!==sk.id;});if(GAME_STATE.loadout.activeCoreId===sk.id)GAME_STATE.loadout.activeCoreId=null;addLedger('skill',sk.name,'失去技能');}});
-  if(p.skill_progress&&typeof p.skill_progress==='object'){
-    var rows=Array.isArray(p.skill_progress)?p.skill_progress:Object.keys(p.skill_progress).map(function(k){return {name:k,delta:p.skill_progress[k]};});
-    rows.forEach(function(x){var sk=skillById(String(x.id||x.name||''));if(!sk)return;var d=Number(x.delta);if(isFinite(d)){sk.proficiency=clampNum(sk.proficiency+d,0,100,sk.proficiency);addLedger('skill_progress',sk.name,'熟练度变化',d);}if(x.realm)sk.realm=String(x.realm).substring(0,20);if(x.coefficient!==undefined)sk.coefficient=clampNum(x.coefficient,0,5,sk.coefficient);});
+  STATE_ACTIVE=true; syncStateCollections();
+  try{
+    var r=await fetch('/api/state/apply',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({state:GAME_STATE,patch:p,world_id:WORLD,turn:TURNS})});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    GAME_STATE=(await r.json()).state;
+  }catch(e){
+    addBlk('err','状态结算失败（'+String(e&&e.message||e)+'），本回合数值未写入；可在角色卡中手动校准');
+    return;
   }
-  if(p.active_skill!==undefined){var ask=p.active_skill===null?null:skillById(String(p.active_skill));GAME_STATE.loadout.activeCoreId=ask?ask.id:null;addLedger('loadout',ask?ask.name:'无',ask?'切换当前运转':'停止当前运转');}
-  if(!GAME_STATE.talents)GAME_STATE.talents=[];
-  (GAME_STATE.revealed&&Array.isArray(p.talent_add)?p.talent_add:[]).forEach(function(x){x=String(x).trim().substring(0,30);if(x&&GAME_STATE.talents.indexOf(x)<0)GAME_STATE.talents.push(x);});
-  (Array.isArray(p.talent_rm)?p.talent_rm:[]).forEach(function(x){x=String(x).trim();GAME_STATE.talents=GAME_STATE.talents.filter(function(v){return v!==x;});});
-  if(p.loc)GAME_STATE.loc=String(p.loc);
-  if(!GAME_STATE.npcs)GAME_STATE.npcs={};
-  if(p.npc_set&&typeof p.npc_set==='object')Object.keys(p.npc_set).forEach(function(n){
-    n=String(n).trim(); if(!n)return;
-    var v=p.npc_set[n]||{};
-    var cur=GAME_STATE.npcs[n]||{rel:'',att:0,note:'',knows:[]};
-    if(!Array.isArray(cur.knows))cur.knows=[];
-    if(v.rel)cur.rel=String(v.rel).substring(0,12);
-    if(v.att!==undefined&&isFinite(Number(v.att))){
-      var target=Math.max(-5,Math.min(5,Math.round(Number(v.att))));
-      var prev=Number(cur.att)||0;
-      if(target>prev+1)target=prev+1;
-      if(target<prev-1)target=prev-1;
-      cur.att=target;
-    }
-    if(v.note)cur.note=String(v.note).substring(0,40);
-    (Array.isArray(v.knows_add)?v.knows_add:[]).forEach(function(f){f=String(f).trim().substring(0,80);if(f&&cur.knows.indexOf(f)<0&&cur.knows.length<30)cur.knows.push(f);});
-    (Array.isArray(v.knows_rm)?v.knows_rm:[]).forEach(function(f){f=String(f).trim();cur.knows=cur.knows.filter(function(x){return x!==f;});});
-    GAME_STATE.npcs[n]=cur;
-  });
-  (Array.isArray(p.npc_rm)?p.npc_rm:[]).forEach(function(n){delete GAME_STATE.npcs[String(n).trim()];});
   syncStateCollections();
   renderInventory();
   renderSkills();
@@ -4309,11 +4268,11 @@ async function _runTurn(){
     if(stateAuditAttempted)auditedPatch=await reconcileTurnState(stateBefore,lastUser,reply,declaredPatches);
     var appliedPatchSource='none';
     if(stateAuditAttempted){
-      if(auditedPatch!==null&&Object.keys(auditedPatch).length){applyStatePatch(auditedPatch);appliedPatchSource='audited';}
+      if(auditedPatch!==null&&Object.keys(auditedPatch).length){await applyStatePatch(auditedPatch);appliedPatchSource='audited';}
       else if(auditedPatch!==null){appliedPatchSource='audited-empty';}
       else{appliedPatchSource='audit-failed-closed';addBlk('sys','▸ 状态审计未完成，本回合未写入数值变化；可在角色卡中手动校准');}
     }else if(SETTINGS.stateSync===false&&declaredPatches.length){
-      declaredPatches.forEach(applyStatePatch);appliedPatchSource='declared-unsynced';
+      for(var dpi=0;dpi<declaredPatches.length;dpi++)await applyStatePatch(declaredPatches[dpi]);appliedPatchSource='declared-unsynced';
     }
     if(DEBUG_ACTIVE){DEBUG_ACTIVE.declaredPatches=debugClone(declaredPatches);DEBUG_ACTIVE.auditedPatch=debugClone(auditedPatch);DEBUG_ACTIVE.appliedPatchSource=appliedPatchSource;DEBUG_ACTIVE.stateAfter=debugClone(compactStateForAudit(GAME_STATE));}
     debugEvent('state_patch_applied',{source:appliedPatchSource,declared:declaredPatches,audited:auditedPatch});
