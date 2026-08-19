@@ -1,0 +1,392 @@
+"""
+服务层 · 提示词编译
+===================
+把「一回合的运行时状态」编译成发给模型的 system prompt。
+
+为什么这件事该在后端：
+    组装逻辑要读世界包正文、规则常量、状态协议——这些是核心资产。
+    只要组装还在前端，资产就必须随 index.html 一起发出去，
+    /api/worlds 不下发 prompt 的设计就是空的。
+
+移植原则：**输出必须与前端旧实现逐字节一致**。
+    提示词里任何一个字的差异都会改变模型行为，而这种变化没有报错、
+    只会表现为「玩起来好像有点不对」——最难查的那一类问题。
+    所以这里刻意不做「顺手优化」，连拼接顺序和换行都照抄。
+"""
+from app.domain.decks import PACE_CONFIG, STATE_SCHEMAS
+from app.domain.rules import (
+    AGENCY_RULES, ANTI_MYSTERY, CORE_RULES, FIRST_CHAPTER, GAMEWORLD_VARIANTS,
+    IDENTITY_FREEDOM, ISEKAI_MODERN, NPC_KNOWLEDGE_RULES, OPTION_RULES,
+    PRESET_EXPANSION_KEYS, WORLD_EXPANSION_KEYS, WORLD_EXPANSIONS,
+)
+from app.domain.worlds import WORLDS
+from app.schemas.turn import TurnContext
+
+import re
+
+# 这两段原本内联在前端的 buildSystemPrompt 里，跟着世界包一起走
+STATE_PROTOCOL = (
+    '【角色卡与状态协议——覆盖世界包旧状态栏要求】前端已经显示唯一权威角色卡，正文不要输出另一套方括号状态栏，'
+    '也不要自行重建属性表。核心属性名固定，只有长期训练、升级或重大伤病确实发生时才能用attr_delta，单回合最多±1；'
+    '资源只能修改已经存在的键。物品、技能与重要人物是有ID或稳定名称的结构化记录，不得只在正文里声称变化。\n'
+    '真实变化必须在末尾申报：【STATE】{"attr_delta":{"已有属性名":1},"res_delta":{"已有资源名":-1},'
+    '"inv_delta":[{"name":"物品原名","delta":-1}],"inv_upsert":[{"name":"新物品","category":"分类","quantity":1,'
+    '"description":"稳定说明","equipped":false}],"equip_set":{"物品原名":true},"skill_upsert":[{"name":"技能原名",'
+    '"category":"类别","realm":"境界","coefficient":1.0,"proficiency":0,"attribute":"关联属性",'
+    '"description":"稳定效果说明"}],"skill_progress":[{"name":"技能原名","delta":2,"realm":"可选的新境界"}],'
+    '"active_skill":"技能原名或null","talent_add":[],"talent_rm":[],"npc_set":{"NPC原名":{"rel":"与玩家的已确认关系",'
+    '"att":0,"note":"一句话当前事实","knows_add":["该NPC新确认的具体事实"],"knows_rm":["该NPC已明确推翻的旧事实"]}},'
+    '"npc_rm":[],"loc":""}【/STATE】。只写实际发生的字段；同名物品增加或消耗用inv_delta，不得重复造新名称；'
+    '修炼必须更新skill_progress，学会技能必须提供完整档案；只有值得长期记住的具名人物初次建立关系或其关系、态度、'
+    '现状、独立知情事实确实改变时才写npc_set，普通路人不登记。knows_add只能记录玩家当面对其说出口、'
+    '该NPC直接观察并可靠确认、或剧情明确发生信息传递的事实；猜测、旁白知识和隐藏蓝图禁止写入。'
+    'npc_rm只用于关系明确终结且不再需要追踪的人物。没有真实变化就不输出。普通对话、查看面板和整理记忆不消耗生理资源。'
+    '任务仅在玩家明确接受、承诺或主动设定目标后登记。'
+)
+
+
+def debug_hash(text: str) -> str:
+    """
+    FNV-1a 32 位。必须和前端 debugHash 完全一致——
+    它的值会写进提示词（设定哈希），对不上就等于提示词变了。
+    """
+    h = 2166136261
+    for ch in str(text or ""):
+        h ^= ord(ch)
+        # JS 的 Math.imul 是 32 位有符号乘法，Python 整数无限精度，要手动截断
+        h = (h * 16777619) & 0xFFFFFFFF
+    return f"{h:08x}"[-8:]
+
+
+def _canon_summary(canon: dict[str, str]) -> str:
+    if not canon:
+        return ""
+    return "；".join(f"字段「{k}」=「{v}」" for k, v in canon.items())
+
+
+def _effective_preset_note(note: str, advanced: dict) -> str:
+    """玩家在高级选项里定死了魔法/时代时，把预设里与之冲突的措辞摘掉。"""
+    out = str(note or "")
+    if advanced.get("magic"):
+        out = re.sub(r"(?:低魔|高魔|无魔|魔法稀少|魔法普及)[、，]?", "", out)
+    if advanced.get("era"):
+        out = re.sub(r"(?:古代|中世纪|近代|现代|近未来|远未来)[、，]?", "", out)
+    return re.sub(r"^[、，；。\s]+|[、，；\s]+$", "", out).strip()
+
+
+def _state_summary(gs: dict) -> str:
+    """
+    权威角色状态摘要。
+
+    这是「程序说了算」的那份事实——叙事不得与它矛盾。
+    未揭示角色卡时输出的是另一套内容，不能混。
+    """
+    npcs = gs.get("npcs") or {}
+    nk = list(npcs.keys())
+    npc_text = ""
+    if nk:
+        parts = []
+        for n in nk[-12:]:
+            v = npcs.get(n) or {}
+            kn = v.get("knows") if isinstance(v.get("knows"), list) else []
+            note = f",{v['note']}" if v.get("note") else ""
+            parts.append(
+                f"{n}({v.get('rel') or '?'},态度{int(v.get('att') or 0)}{note},"
+                f"已知={'／'.join(kn) if kn else '无额外秘密'})"
+            )
+        npc_text = "人物认知(各自独立，不得共享):" + "；".join(parts)
+
+    if not gs.get("revealed"):
+        hidden = ["角色卡尚未揭示：不得假定属性值、职业Build或异世界面板，不得进行数值检定。"]
+        inv = gs.get("inv") or []
+        if inv:
+            hidden.append("已确认背包:" + "、".join(f"{x['name']}×{x['quantity']}" for x in inv))
+        skills = gs.get("skills") or []
+        if skills:
+            hidden.append("已由剧情明确获得但尚未建卡的能力:" + "、".join(s["name"] for s in skills))
+        if gs.get("loc"):
+            hidden.append("位置:" + gs["loc"])
+        if npc_text:
+            hidden.append(npc_text)
+        return "｜".join(hidden)
+
+    parts: list[str] = []
+    attrs = gs.get("attrs") or {}
+    if attrs:
+        parts.append("属性:" + "/".join(f"{k}{v}" for k, v in attrs.items()))
+    skills = gs.get("skills") or []
+    if skills:
+        parts.append("技能索引:" + "、".join(
+            f"{s['name']}{{{s.get('category','')},{s.get('realm','')},系数{s.get('coefficient','')},"
+            f"熟练{s.get('proficiency','')}%"
+            f"{',' + s['attribute'] if s.get('attribute') else ''}"
+            f"{',当前运转' if s.get('active') else ''}}}"
+            for s in skills
+        ))
+    talents = gs.get("talents") or []
+    if talents:
+        parts.append("天赋(完整列表):" + "、".join(talents))
+    inv = gs.get("inv") or []
+    if inv:
+        parts.append("背包索引:" + "、".join(
+            f"{x['name']}×{x['quantity']}{{{x.get('category','')}"
+            f"{',已装备' if x.get('equipped') else ''}}}"
+            for x in inv
+        ))
+    res = gs.get("res") or {}
+    if res:
+        parts.append("资源:" + "/".join(f"{k}{v}" for k, v in res.items()))
+    if gs.get("loc"):
+        parts.append("位置:" + gs["loc"])
+    if npc_text:
+        parts.append(npc_text)
+    return "｜".join(parts)
+
+
+def _premise_directive(ps: dict, prefs: dict) -> str:
+    """
+    跨世界迁移的阶段指令。
+
+    分阶段推进是为了不让「穿越」被一段摘要一口气写完——
+    每个可反应的节点都要交还玩家。
+    """
+    if not ps or ps.get("kind") != "transmigration":
+        return ""
+
+    n = int(ps.get("phase") or 0)
+    held = int(ps.get("phaseTurns") or 0)
+    extra = f"玩家硬性备注：{prefs['extra']}。" if prefs.get("extra") else ""
+
+    base = (
+        "【跨世界迁移状态——程序持久化事实；这里的英文状态名不是剧情内的阶段、协议或组织编号】"
+        "本局已经选定游戏世界/异世界穿越为故事前提。固定迁移形式："
+        f"{ps.get('mechanism') or '未额外限定'}。固定触发："
+        f"{ps.get('trigger') or '由场景自然形成'}。{extra}"
+        "这些固定事实不得被相似的科技系统、秘密机构、梦境、实验或另一套阶段协议替代。"
+        "不得替玩家作出点击、接受、上线或心理决定；但外部事件可以自行发生。"
+        "玩家拒绝或忽略某个入口，只会改变穿越路径与当下反应，不会取消本局前提，也不得把同一入口换皮重发。"
+        "每回合仍只推进一个迁移态并在可反应处停下。"
+    )
+
+    if n == 0:
+        return base + "当前迁移态=ORIGIN_LIFE（原世界生活）。只建立生活与第一项眼前刺激，不完成穿越。" + (
+            "该迁移态已经停留过久：本回合必须让第一项可回应的外部刺激抵达玩家面前，然后立刻停下。"
+            if held >= 2 else ""
+        )
+    if n == 1:
+        return base + (
+            "当前迁移态=APPROACH（回应与逼近）。完整回应玩家刚才的行动；若玩家主动触发，可让转移征兆开始。"
+            "若玩家忽略或拒绝入口，世界照常运转，但随后由与该选择无关的客观外部变化接管穿越路径，"
+            "不能劝回同一按钮。"
+        ) + (
+            "该迁移态已经停留过久：本回合必须出现可感知且不可逆的外部阈限征兆，不能继续现实生活支线。"
+            if held >= 2 else ""
+        )
+    if n == 2:
+        return base + (
+            "当前迁移态=THRESHOLD（阈限事件）。玩家此前的拒绝已经生效，原入口作废；"
+            "本回合必须让另一条客观穿越过程开始。这不是替玩家选择。重点描写过程，"
+            "并在玩家仍能反应或观察的位置停下，不能继续写现实生活支线。"
+            "严禁把THRESHOLD解释成剧情中某个机构的“阶段2”。"
+        )
+    if n == 3:
+        return base + (
+            "当前迁移态=IN_TRANSIT（转移途中）。完整描写时间、空间、身体、意识或数据层面的过渡，"
+            "让玩家能够尝试观察、挣扎、呼喊或保持不动；本回合不得退回普通现实日常，结尾接近或刚触及落点。"
+        ) + (
+            "该迁移态已经停留过久：本回合必须抵达新世界的最初落点，但只写首次感知，不替玩家探索。"
+            if held >= 2 else ""
+        )
+    if n == 4:
+        return base + (
+            "当前迁移态=FIRST_LANDING（首次落地）。本回合进入新世界并只呈现最初可感知环境与一个迫近的互动点；"
+            "不得总结“已经适应数日”，不得一次讲完身份、系统和世界说明。"
+        )
+    return base + (
+        "当前迁移态=ARRIVED（穿越完成）。故事重心留在新世界；身份、身体、游戏规则和能力只能由玩家逐项探索，"
+        "不自动全知。不得又把主角送回原世界重演入口，除非玩家日后主动追求返乡。"
+    )
+
+
+def active_rule_packs(ctx: TurnContext) -> list[tuple[str, str, str]]:
+    """
+    挑出当前路线用得上的规则包，返回 (内部键, 展示名, 正文)。
+
+    全部塞进去会稀释注意力，也白烧 token——
+    比如没有穿越的局，异世界规则包就是纯噪音。
+
+    展示名一并返回，是为了前端的调试追踪能显示「这一回合挂了哪几个包」
+    而不必在前端再抄一份映射表——抄了就会漂移。
+    """
+    packs: list[tuple[str, str, str]] = []
+    seen: set[str] = set()
+
+    def add(key: str, label: str, text: str) -> None:
+        if not text or key in seen:
+            return
+        seen.add(key)
+        packs.append((key, label, text))
+
+    add("ordinary", "ordinary-world", ANTI_MYSTERY)
+    add("knowledge", "npc-knowledge", NPC_KNOWLEDGE_RULES)
+    add("identity", "identity-freedom", IDENTITY_FREEDOM)
+
+    ps = ctx.premise_state or {}
+    trans = ps.get("kind") == "transmigration"
+    frame = str(ps.get("frame") or "") if trans else ""
+    if trans:
+        add("isekai", "isekai-modern", ISEKAI_MODERN)
+    if re.search(r"游戏|穿书|原作", frame):
+        add("gameworld", "gameworld-variants", GAMEWORLD_VARIANTS)
+    if "游戏" in frame:
+        add("exp-gamerpunk", "world:gamerpunk", WORLD_EXPANSIONS.get("gamerpunk", ""))
+
+    preset_key = PRESET_EXPANSION_KEYS.get(ctx.preset_id)
+    if preset_key:
+        add("exp-" + preset_key, "preset:" + preset_key, WORLD_EXPANSIONS.get(preset_key, ""))
+    world_key = WORLD_EXPANSION_KEYS.get(ctx.world_id)
+    if world_key:
+        add("exp-" + world_key, "world:" + world_key, WORLD_EXPANSIONS.get(world_key, ""))
+
+    return packs
+
+
+def _active_narrative_rules(ctx: TurnContext) -> str:
+    return "\n\n".join(text for _, _, text in active_rule_packs(ctx))
+
+
+def _relevant_lore(recent_text: str, lorebook: list[dict]) -> str:
+    """世界书检索：只带回本回合文本命中关键词的条目。"""
+    if not lorebook:
+        return ""
+    hay = (recent_text or "").lower()
+    picked = []
+    for chunk in lorebook:
+        if chunk.get("always"):
+            picked.append(chunk)
+            continue
+        kws = chunk.get("keywords") or []
+        if any(str(kw).lower() in hay for kw in kws):
+            picked.append(chunk)
+    picked = picked[:6]
+    return "\n\n".join(f"[{c.get('name','')}] {c.get('text','')}" for c in picked)
+
+
+def build_system_prompt(ctx: TurnContext) -> str:
+    """
+    编译一回合的 system prompt。
+
+    结构分两区，顺序不能动：
+      固定前缀区（规则 + 世界包 + 状态协议）—— 每回合完全相同，用来命中各家的
+                                              context cache
+      动态区（本局设定 + 角色状态 + 事实库 + 检索结果）—— 随回合变化
+    任何随回合变化的内容一旦挪进前缀区，整段缓存就失效了。
+    """
+    world = WORLDS.get(ctx.world_id)
+    pace = PACE_CONFIG.get(ctx.pace)
+    world_prompt_src = ctx.custom_world_prompt if world is None else world.prompt
+    if (world is None and not ctx.custom_world_prompt) or not pace:
+        return ""
+
+    sp = CORE_RULES
+    canon = _canon_summary(ctx.player_canon)
+    sp += "\n\n" + OPTION_RULES
+    sp += "\n\n" + AGENCY_RULES
+
+    # 世界包里的旧状态栏/任务段落要摘掉——它们已经被下面的状态协议取代
+    world_prompt = re.sub(r"\n【状态栏】[\s\S]*?(?=\n【任务】|$)", "", str(world_prompt_src or ""), count=1)
+    world_prompt = re.sub(r"\n【任务】[^\n]*", "", world_prompt)
+    sp += "\n\n【世界包】\n" + world_prompt
+    sp += "\n" + STATE_PROTOCOL
+
+    if not ctx.game_state.get("revealed"):
+        schema = STATE_SCHEMAS.get(ctx.world_id) or STATE_SCHEMAS["__custom__"]
+        sp += (
+            "\n【未揭示角色卡——最高优先级】当前尚未建立数值。穿越前、游戏外或身份尚未由玩家说明时，"
+            "按叙事常识表现普通人的能力，不显示异世界数值，不掷骰，不暗中预设职业、Build、技能或天赋。"
+            "只有玩家明确主动查看状态/面板/自身能力，或玩家已经亲自完成使能力可被认识的操作时，"
+            "才可在回复最末输出一次【SHEET_INIT】JSON【/SHEET_INIT】。仅抵达异世界、醒来、被召唤或看见提示不构成授权。"
+            "初始化属性键必须且只能是：" + "、".join(schema["attrs"]) + "；数值0-10，根据玩家此前明确描述分配，"
+            "未得到支持的一律为1。资源键必须且只能是：" + "、".join(schema["res"].keys()) + "。格式："
+            '【SHEET_INIT】{"attrs":{},"res":{},"talents":[],"skills":[{"name":"名称","category":"类别",'
+            '"realm":"境界","coefficient":1,"proficiency":0,"attribute":"关联属性","description":"效果"}]}'
+            "【/SHEET_INIT】。没有确凿技能就返回空数组，不得补造玩家未声明的经历或专长。"
+        )
+
+    if ctx.preset_id and world and world.presets:
+        pp = next((x for x in world.presets if x.id == ctx.preset_id), None)
+        pn = _effective_preset_note(pp.note, ctx.prefs.get("advanced") or {}) if pp else ""
+        if pn:
+            sp += "\n【本局特色侧重——已移除与最终设定冲突的部分】" + pn
+
+    sp += "\n\n【篇幅】" + pace["instruction"]
+    if ctx.story_dna:
+        sp += "\n\n" + ctx.story_dna
+    if ctx.locked_tags:
+        sp += ("\n\n【玩家指定核心标签】" + "、".join(ctx.locked_tags)
+               + "。落实其类型特征；若表达宽泛，以玩家更具体的身份、世界和额外要求为准。")
+    if ctx.inspiration_tags:
+        sp += ("\n\n【研究库灵感候选】" + "、".join(ctx.inspiration_tags)
+               + "。只采用与已确认设定自然相容的部分；不必逐项出现，"
+                 "不得为凑标签新增无关角色、事件、阴谋或机制。")
+    if ctx.turns == 0:
+        sp += "\n\n" + FIRST_CHAPTER
+    if ctx.turns == 0 and ctx.opening_text:
+        sp += "\n\n" + ctx.opening_text
+
+    pd = _premise_directive(ctx.premise_state, ctx.prefs)
+    if pd:
+        sp += "\n\n" + pd
+
+    if ctx.names:
+        sp += "\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n" + ctx.names
+    if ctx.outline:
+        sp += ("\n\n【剧情备忘——保持目标与因果连续的编剧笔记，不是悬念清单】\n" + ctx.outline
+               + "\n（剧情实质推进时才输出更新版【大纲】块）")
+    if canon:
+        sp += (
+            "\n\n【主角身份档案——程序锁定的最高优先级事实】" + canon
+            + "。每个字段属于独立命名空间：现实姓名不等于游戏ID，游戏ID不等于游戏角色名，"
+              "旧世界身份不等于穿越后身份。只能在对应语境使用对应值；不得合并、互换、缩写、改写或用摘要覆盖。"
+              "档案中没有的字段就是尚未确定，不得擅自补全。玩家以后明确修改时，以程序下一回合提供的新档案为准。"
+        )
+
+    ss = _state_summary(ctx.game_state)
+    if ss:
+        sp += ("\n\n【权威角色状态——系统维护的唯一事实，叙事与状态栏不得与此矛盾；技能列表是全集】\n" + ss)
+
+    # 事实库检索结果。历史被压缩后这些设定仍然在，这正是它存在的意义。
+    if ctx.lore_context:
+        sp += "\n\n" + ctx.lore_context
+
+    if ctx.pins:
+        # 新的锁定设定优先保留，用字符预算而不是条数上限——
+        # 条数上限会因为几条特别长的记录把整体挤爆
+        pin_lines: list[str] = []
+        pin_chars = 0
+        for pin in reversed(ctx.pins):
+            pl = "- " + str(pin.get("text") or "").strip()
+            if pl == "- " or pin_chars + len(pl) > 6000:
+                continue
+            pin_lines.insert(0, pl)
+            pin_chars += len(pl)
+        sp += ("\n\n【不可更改的锁定设定——除程序身份档案与权威角色卡外的最高优先级】\n"
+               + "\n".join(pin_lines) + "\n若其中某条旧记录与主角身份档案冲突，忽略该旧记录。")
+
+    lore_blocks = _relevant_lore(ctx.recent_text, ctx.lorebook)
+    if lore_blocks:
+        sp += "\n\n【相关背景资料——本回合参考】\n" + lore_blocks
+
+    active_rules = _active_narrative_rules(ctx)
+    if active_rules:
+        sp += "\n\n【本局实际启用的叙事规则包——只包含当前路线相关内容】\n" + active_rules
+
+    if ctx.story_dna:
+        sp += (
+            "\n\n【最终一致性闸门｜设定哈希 " + debug_hash(ctx.story_dna)
+            + "】输出前核对：世界类型、时代、基调、故事引擎、穿越形式和玩家硬性备注只能来自“本局最终有效设定”。"
+              "较早剧情摘要只负责连续性，不能创建另一套世界前提。若历史与最终设定冲突，以最终设定为准，"
+              "并在不替玩家行动的前提下让眼前场景自然回到有效设定。"
+        )
+
+    return sp

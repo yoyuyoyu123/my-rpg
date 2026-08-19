@@ -2043,16 +2043,13 @@ function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(
 
 var PACE_CONFIG = {
   short: {
-    label:'短篇', icon:'📖',
-    instruction:'短篇：约30-60回合的聚焦故事，舞台和目标较集中，但推进仍由玩家行动触发。不得因为是短篇就替玩家跳过过程或强推高潮；玩家主动追求结局时再逐步收束。'
+    label:'短篇', icon:'📖'
   },
   medium: {
-    label:'中篇', icon:'📚',
-    instruction:'中篇：约80-160回合。主线只作为可选择的方向存在，实质推进主要来自玩家主动调查、承诺和行动；日常、关系、职业与探索可以长期展开，不要求每回合积累主线。'
+    label:'中篇', icon:'📚'
   },
   long: {
-    label:'长篇', icon:'🌍',
-    instruction:'长篇：开放沙盒，没有固定终点。日常、经营、关系和细致过程是重心；世界会在后台正常运转，但大事件与舞台扩大主要由玩家行为引发，绝不替玩家决定方向。'
+    label:'长篇', icon:'🌍'
   }
 };
 
@@ -2067,8 +2064,7 @@ var WORLDS = {
       {id:'chao',name:'朝堂权谋',note:'侧重庙堂与江湖的纠缠：官府、党争、密探、漕运，武力只是棋局里的一子。'},
       {id:'zoubiao',name:'国术走镖',note:'侧重镖局、走商、押运的市井武行日常，一拳一脚都要换饭吃，江湖是生计不是传奇。'},
       {id:'daxia',name:'大侠日常',note:'侧重侠客的慢生活：收徒、开馆、管闲事、儿女情长，快意恩仇退为背景。'}
-    ],
-    prompt:'武侠世界，风格仿金庸古龙。架空古代江湖，门派林立，官府与江湖势力纠缠，武功分内外功。文风短句留白，打斗有招式名，人物带江湖腔。\n【状态栏】末尾附：[气血 X/X|内力 X/X|饱腹度 X|膂力X/悟性X/福缘X/魅力X|门派:XX|地区:XX|天气:XX|同伴:XX|银两:XX两|侠义X/恶名X/威名X/隐逸X]（持有：物品）\n初始：气血20/20,内力10/10,饱腹度100,各属性1,银两100两。\n【技能栏】状态栏后附（技能：名1/名2）用/分隔不写描述，无则（技能：无）。\n【任务】有变化时输出【任务】主线:xxx｜支线:xxx，完成时【任务完成】支线:xxx'
+    ]
   },
   xianxia: {
     name:'仙侠修真', skillLabel:'功法', color:'#a0c4ff', family:'东方',
@@ -2078,8 +2074,7 @@ var WORLDS = {
       {id:'fanren',name:'凡人流',note:'侧重资质平平的散修如何步步为营、谨慎求存，修炼极缓，一颗丹药一件法器都来之不易。'},
       {id:'shanhai',name:'山海志怪',note:'侧重上古神话、妖魔精怪、民俗信仰的东方志怪色彩，仙气里透着幽森。'},
       {id:'xiandai',name:'现代修真',note:'灵气复苏的当代都市，修真者混迹于写字楼与地铁之间，法术与手机并存。'}
-    ],
-    prompt:'仙侠修真世界。境界：炼气→筑基→金丹→元婴→化神→渡劫→飞升。门派、散修、妖族、魔道并立。修炼漫长，突破需长期积累，多写打坐采药炼丹。文风古典有仙气，境界突破有天地异象，禁现代词汇。\n【状态栏】末尾附：[气血 X/X|灵力 X/X|饱腹度 X|根骨X/悟性X/福缘X/魅力X|境界:XX|地区:XX|天气:XX|同伴:XX|灵石:XX枚|道心X/魔念X/威望X/隐匿X]（持有：物品）\n初始：气血20/20,灵力10/10,饱腹度100,各属性1,灵石100枚。\n【技能栏】状态栏后附（技能：名1/名2）用/分隔不写描述，无则（技能：无）。\n【任务】有变化时输出【任务】主线:xxx｜支线:xxx，完成时【任务完成】支线:xxx'
+    ]
   },
   history: {
     name:'古代人间', skillLabel:'技艺', color:'#d4a86a', family:'东方',
@@ -2089,8 +2084,7 @@ var WORLDS = {
       {id:'zhongtian',name:'种田经营',note:'侧重从一间铺子或一片田产做起，慢慢经营壮大，账目、货源、人手都要操心。'},
       {id:'chaotang',name:'朝堂权谋',note:'侧重官场与庙堂：科举、党争、外放、密奏，一步走错满盘皆输。'},
       {id:'niandai',name:'年代生活',note:'近代或民国年代感，时代洪流下的小人物生活，家国动荡里的柴米油盐。'}
-    ],
-    prompt:'古代/近代人间世界，无超自然，纯写实。架空王朝或年代背景，重心是市井生活、行业营生、人情世故与时代变迁。文风有烟火气，细节真实（物价、时令、行规）。\n【状态栏】末尾附：[精神 X/X|体力 X/X|饱腹度 X|机敏X/学识X/人情X/魅力X|身份:XX|地区:XX|天气:XX|同伴:XX|铜钱:XX文|声望X/风评X/家业X/人脉X]（持有：物品）\n初始：精神20/20,体力10/10,饱腹度100,各属性1,铜钱500文。\n【技能栏】状态栏后附（技能：名1/名2）用/分隔不写描述，无则（技能：无）。\n【任务】有变化时输出【任务】主线:xxx｜支线:xxx，完成时【任务完成】支线:xxx'
+    ]
   },
   fantasy: {
     name:'剑与魔法', skillLabel:'技能', color:'#98e89a', family:'幻想',
@@ -2102,8 +2096,7 @@ var WORLDS = {
       {id:'elona',name:'沙盒生活流',note:'参考Elona/Elin的极度自由与黑色幽默：种田、酿酒、经营、养宠、下地城皆可，任何NPC都可招惹但后果自负，死亡真实，世界边角充满奇异细节与荒诞感。'},
       {id:'undertale',name:'怪物与路线',note:'参考传说之下：怪物有血有肉各有故事，遭遇可战斗也可用交谈化解；杀戮与宽恕会累积成不同世界走向；温馨中带忧郁。'},
       {id:'tianzai',name:'天灾感染',note:'参考明日方舟泰拉：移动城市躲避天灾，某种矿物既是资源也是让人患病遭歧视的病源，感染者的困境与各势力政治博弈是底色，语气沉稳克制。'}
-    ],
-    prompt:'西式奇幻世界。冒险者公会、魔法、怪物、多种族。重心是日常生活与冒险的交织。文风明快，异种族与魔法元素自然融入。\n【状态栏】末尾附：[HP X/X|MP X/X|饱腹度 X|力量X/敏捷X/智力X/魅力X|职业:XX|地区:XX|天气:XX|同伴:XX|金币:XX枚|声望X/恶名X/冒险等级X/好感度X]（持有：物品）\n初始：HP20/20,MP10/10,饱腹度100,各属性1,金币100枚。\n【技能栏】状态栏后附（技能：名1/名2）用/分隔不写描述，无则（技能：无）。\n【任务】有变化时输出【任务】主线:xxx｜支线:xxx，完成时【任务完成】支线:xxx'
+    ]
   },
   modernlife: {
     name:'都市人间', skillLabel:'特长', color:'#ffd580', family:'现代',
@@ -2114,8 +2107,7 @@ var WORLDS = {
       {id:'zhichang',name:'职场行业',note:'聚焦某一具体行业（医疗/法律/科研/传媒/金融等，开局确定）的专业日常与职场博弈，行业细节要真实。'},
       {id:'meishi',name:'美食料理',note:'以做菜、开店、觅食为核心，一道菜承载一个故事，烟火气十足。'},
       {id:'wutai',name:'音乐舞台',note:'乐队、偶像、演出行业，为一场演出、一首歌、一次登台而拼。'}
-    ],
-    prompt:'现代都市写实世界，无超自然。重心是职业、生活、人际与情感，节奏贴近真实生活。文风细腻温暖，对话自然。信息透明，冲突来自生活本身而非阴谋。\n【状态栏】末尾附：[精力 X/X|心情 X/X|饱腹度 X|体魄X/才智X/情商X/魅力X|身份:XX|地点:XX|天气:XX|同伴:XX|存款:XX元|口碑X/人脉X/事业X/心结X]（持有：物品）\n初始：精力20/20,心情10/10,饱腹度100,各属性1,存款2000元。\n【技能栏】状态栏后附（技能：名1/名2）用/分隔不写描述，无则（技能：无）。\n【任务】有变化时输出【任务】主线:xxx｜支线:xxx，完成时【任务完成】支线:xxx'
+    ]
   },
   occult: {
     name:'现代异闻', skillLabel:'异能', color:'#c890e8', family:'现代',
@@ -2127,8 +2119,7 @@ var WORLDS = {
       {id:'zhentan',name:'意识形态侦探',note:'参考极乐迪斯科：破败城市里的失忆侦探办案，内心多个人格化的"技能"会插话争论（格式：[技能名——成功/失败] 独白）；悲凉而荒诞，失败的检定往往更有趣。'},
       {id:'dianbo',name:'电波系存在主义',note:'参考Z.A.T.O.：一座即将从世界消失的封闭小城，有人能感知世界底层的"编码"却因此精神退化。叙述随主角的异常感知悄悄扭曲——细节停留过久、逻辑跳跃不解释、人称游移，禁止点破，让叙述本身变得不对劲。'},
       {id:'guaitan',name:'现代怪谈',note:'规则怪谈与都市传说：遵守看不见的规则才能活命，恐惧来自日常的细微失序。'}
-    ],
-    prompt:'现代都市异闻世界。表面是当代生活，暗处有超自然、异能或异常。普通日常占多数，异闻事件偶发。文风现代真实，普通生活写得温暖，超常部分克制不滥用。\n【状态栏】末尾附：[HP X/X|异能值 X/X|精力度 X|力量X/智力X/控制X/魅力X|身份:XX|地点:XX|天气:XX|同伴:XX|钱:XX元|正义X/威胁X/名声X/隐秘X]（持有：物品）\n初始：HP20/20,异能值10/10,精力度100,各属性1,钱500元。\n【技能栏】状态栏后附（技能：名1/名2）用/分隔不写描述，无则（技能：无）。\n【任务】有变化时输出【任务】主线:xxx｜支线:xxx，完成时【任务完成】支线:xxx'
+    ]
   },
   cyber: {
     name:'赛博近未来', skillLabel:'义体程序', color:'#00ffe7', family:'未来',
@@ -2138,8 +2129,7 @@ var WORLDS = {
       {id:'heike',name:'黑客潜入',note:'侧重网络入侵、数据窃取、电子战，主战场在网络与信息，物理世界是掩护。'},
       {id:'tiaojiu',name:'调酒倾听',note:'参考VA-11 HALL-A与红弦俱乐部：主角是赛博酒吧的调酒师，核心互动是为形形色色的客人调一杯合适的酒、倾听他们的故事——调对了酒话匣子就开。温柔治愈带忧郁，不拯救世界，只把今夜过好；哲思藏在闲谈里。'},
       {id:'airen',name:'AI与人性',note:'聚焦人工智能、义体化、意识上传带来的身份与人性拷问，冷峻思辨。'}
-    ],
-    prompt:'近未来赛博世界。企业财阀统治，义体改造普及，贫富极端分化，霓虹与雨。文风赛博氛围感、短句、夹少量英文术语。\n【状态栏】末尾附：[血量 X/X|神经值 X/X|饥饿度 X|膂力X/智力X/反应X/魅力X|身份:XX|地区:XX|天气:XX|同伴:XX|电子货币:XX|声望X/黑档X/威名X/隐匿X]（持有：物品）\n初始：血量20/20,神经值10/10,饥饿度100,各属性1,电子货币100。\n【技能栏】状态栏后附（技能：名1/名2）用/分隔不写描述，无则（技能：无）。\n【任务】有变化时输出【任务】主线:xxx｜支线:xxx，完成时【任务完成】支线:xxx'
+    ]
   },
   space: {
     name:'星海征途', skillLabel:'技能', color:'#80c8ff', family:'未来',
@@ -2149,8 +2139,7 @@ var WORLDS = {
       {id:'shangjin',name:'赏金猎人',note:'参考星际牛仔：慵懒随性带点忧郁的赏金猎人生活，搭档间的损友感，太空有荒凉的美。'},
       {id:'jiandui',name:'舰队权谋',note:'星系政治、舰队会战、势力博弈，宏大的星海战争史诗。'},
       {id:'zhimin',name:'殖民开拓',note:'在蛮荒星球建立殖民地，资源、生态、内政与未知威胁，从零建设一个据点。'}
-    ],
-    prompt:'星际科幻世界。人类殖民多个星系，企业财团、星系联盟、海盗集团分治。文风参考星际牛仔，太空描写有荒凉美感，搭档情谊重要。\n【状态栏】末尾附：[生命 X/X|精力 X/X|饥饿度 X|力量X/敏捷X/智力X/魅力X|身份:XX|位置:XX|天气:XX|搭档:XX|积分:XX|声誉X/通缉X/威名X/隐匿X]（持有：武器,装备）飞船：XXXX\n初始：生命20/20,精力10/10,饥饿度100,各属性1,积分100。\n【技能栏】状态栏后附（技能：名1/名2）用/分隔不写描述，无则（技能：无）。\n【任务】有变化时输出【任务】主线:xxx｜支线:xxx，完成时【任务完成】支线:xxx'
+    ]
   },
   apocalypse: {
     name:'末日废土', skillLabel:'特长', color:'#e8a060', family:'末日恐怖',
@@ -2160,8 +2149,7 @@ var WORLDS = {
       {id:'sangshi',name:'丧尸围城',note:'尸潮环伺的经典末日，弹药与食物就是命，据点防御与搜刮是日常。'},
       {id:'jingying',name:'末日经营',note:'侧重据点/避难所的建设经营：招人、种粮、防御、内部矛盾，从废墟建起秩序。'},
       {id:'guize',name:'规则求生',note:'灾变带着诡异规则（丧尸有异常行为、区域有禁忌），摸清规则才能活。'}
-    ],
-    prompt:'末日求生世界。文明崩塌后的废土，物资匮乏，幸存者聚居据点。文风真实压迫，细节要实（保质期、弹药数）。物资管理细致，人情冷暖并存。\n【状态栏】末尾附：[生命 X/X|体力 X/X|饥饿度 X|力量X/敏捷X/医疗X/领导X|职业:XX|地点:XX|天气:XX|同伴:XX|物资积分:XX|声望X/威胁X/士气X/隐蔽X]（持有：物品）\n初始：生命20/20,体力10/10,饥饿度100,各属性1,物资积分100。\n【技能栏】状态栏后附（技能：名1/名2）用/分隔不写描述，无则（技能：无）。\n【任务】有变化时输出【任务】主线:xxx｜支线:xxx，完成时【任务完成】支线:xxx'
+    ]
   },
   horror: {
     name:'诡秘怪谈', skillLabel:'能力', color:'#6b8e6b', family:'末日恐怖',
@@ -2171,8 +2159,7 @@ var WORLDS = {
       {id:'cthulhu',name:'理智调查',note:'参考洛夫克拉夫特克苏鲁：宇宙冷漠，远古存在超越人类理解。恐惧缓慢渗透（先是异常小细节，再是不安规律，最后才是本体），有理智值(SAN)从10起，接触异常与禁忌知识会消耗，归零则疯狂；文风华丽压抑，对不可描述之物保持模糊。'},
       {id:'scp',name:'异常收容',note:'参考SCP基金会：秘密组织收容全球异常存在。文风仿档案体裁，冷静官僚却透着压抑，可插入[已编辑][数据删除]等格式；有理智值，接触异常降SAN；有D级实验等道德灰暗地带；信息碎片化，永不知全貌。'},
       {id:'minsu',name:'民俗恐怖',note:'乡野、古村、旧俗背景的东方恐怖，禁忌、香火、家族秘密里长出的诡异。'}
-    ],
-    prompt:'诡秘恐怖世界。表面正常的世界里潜藏超自然异常与不可名状之物。普通调查占多数，恐惧逐渐积累而非突然爆发，不过早展示怪物本体。文风压抑，大量感官细节，对未知保持模糊。\n【状态栏】末尾附：[生命 X/X|SAN X/20|疲劳度 X|学识X/感知X/意志X/魅力X|身份:XX|地点:XX|天气:XX|同伴:XX|资金:XX|理智X/恐惧X/线索X/禁忌X]（持有：物品）\n初始：生命20/20,SAN20/20,疲劳度100,各属性1,资金100。\n【技能栏】状态栏后附（技能：名1/名2）用/分隔不写描述，无则（技能：无）。\n【任务】有变化时输出【任务】主线:xxx｜支线:xxx，完成时【任务完成】支线:xxx'
+    ]
   }
 };
 
@@ -3042,16 +3029,6 @@ function debugHash(text){
   for(var i=0;i<text.length;i++){h^=text.charCodeAt(i);h=Math.imul(h,16777619);}
   return ('00000000'+(h>>>0).toString(16)).slice(-8);
 }
-function debugRulePackNames(){
-  var out=['ordinary-world','npc-knowledge','identity-freedom'];
-  var trans=PREMISE_STATE&&PREMISE_STATE.kind==='transmigration',frame=trans?String(PREMISE_STATE.frame||''):'';
-  if(trans)out.push('isekai-modern');
-  if(/游戏|穿书|原作/.test(frame))out.push('gameworld-variants');
-  if(/游戏/.test(frame))out.push('world:gamerpunk');
-  if(PRESET_EXPANSION_KEYS&&PRESET_EXPANSION_KEYS[WORLD_PRESET])out.push('preset:'+PRESET_EXPANSION_KEYS[WORLD_PRESET]);
-  if(WORLD_EXPANSION_KEYS&&WORLD_EXPANSION_KEYS[WORLD])out.push('world:'+WORLD_EXPANSION_KEYS[WORLD]);
-  return out;
-}
 function debugPremiseStage(){
   if(!PREMISE_STATE||PREMISE_STATE.kind!=='transmigration')return {kind:'none',stage:null,offset:null};
   var offset=Math.max(0,TURNS-(Number(PREMISE_STATE.startedAt)||0));
@@ -3073,7 +3050,7 @@ function debugConfigSnapshot(){
     tone:{name:STORY_TONE,description:TONE_DESC,informationMode:TONE_TRANS},
     opening:{pick:OPENING_PICK,text:OPENING_TEXT},premise:PREMISE_STATE,premiseStage:debugPremiseStage(),
     effectiveSetup:EFFECTIVE_SETUP,storyDNA:STORY_DNA,storyDNAHash:debugHash(STORY_DNA),premiseDirective:premiseDirective(),
-    activeRulePacks:debugRulePackNames(),activeRulesHash:debugHash(activeNarrativeRules()),
+    activeRulePacks:LAST_RULE_PACKS.slice(),activeRulesHash:LAST_RULES_HASH,
     canon:PLAYER_CANON,names:NAMES,outlineHash:debugHash(OUTLINE),stateRevealed:!!(GAME_STATE&&GAME_STATE.revealed)
   });
 }
@@ -3561,132 +3538,16 @@ function launchGame() {
   startGame();
 }
 
-var CORE_RULES='【文字RPG叙事契约】\n职责：玩家决定主角；AI只负责世界、NPC与玩家行动的直接结果；程序负责检定、数值、物品、技能和长期状态。后台裁定与权威角色卡是不可改判的事实。\n一、玩家主权与授权边界\n1. 玩家输入是意图，不自动等于成功；但只授权其中明确表达的动作及不可分割的直接过程。完成这一步后，在新的选择、风险、承诺、交易、转场或需要表态处停下。\n2. 查看不等于取得，询问不等于购买，靠近不等于接触，听见不等于回应，拥有选项不等于已经选择。不得替玩家点击、答应、拒绝、说话、接受任务、决定去向、使用物品或总结心理结论。\n3. 心理活动和未说出口的话NPC永远听不见；拿不准时默认没有说出口。玩家明确忽略或拒绝某条线索后，不得让同一钩子跟随、换皮或借其他人物强拉回来。\n二、节奏与时间\n4. 时间默认连续，日常、职业、观察、对话、赶路和适应都可以成为完整回合。只有玩家明确要求快进，或当前动作本身明确包含长时间，才使用蒙太奇；必须说明经过时间并结算真实变化。\n5. 穿越、召唤、觉醒、入职、加入组织等重大转折分阶段游玩，每个可反应、可选择的节点都交还玩家，不得用摘要一口气写完。\n三、世界与NPC\n6. NPC拥有自己的生活、立场与有限视角；不知道就说不知道。绝大多数人没有秘密，问路就给方向，买卖就报价，寒暄可以只是寒暄。不要用神秘停顿、欲言又止、幕后观察者或凭空阴谋制造戏剧，也不要让世界围着主角运转。\n7. 失败、拒绝、平淡与无事发生都是合法结果。危险和代价必须有情境依据；普通无风险行动不检定，不用刚好赶到、突然放水或强制任务维持剧情。\n四、文风、命名与章节\n8. 一回合一个重点，篇幅服从内容；允许感官、职业和生活细节，但不重复玩家输入，不为写长而新增事件，不把每个细节都写成伏笔。\n9. 新地名、势力名和人名使用真实语言中的地理、姓氏、行业、方言与历史构词法，例如陈家渡、三里坡、广盛号、下瓦窑、槐树巷。除非玩家或原作已经明确使用，禁止自动生成青石镇、黑风寨、悦来客栈等模板名，以及暗影兄弟会、血色黎明等中二直译名。气氛来自事件，不靠夸张名字。\n10. 只有进入真正的新阶段、首次落地新世界、章节目标转换或发生较大时间跳跃时，正文第一行输出一次【章：四到十字标题】；普通回合不得重复章节标题。\n五、输出与状态协议\n11. 每回合末尾提供2-4个眼前可做的行动参考，数量服从场景，保留“或输入任何你想做的事”。选项不暗示最优解，不替玩家规划后续人生。\n12. 正文不打印另一套状态栏。数值、资源、物品、技能、装备、地点或重要关系确实变化时，必须输出隐藏【STATE】块；允许字段为attr_delta、res_delta、inv_delta、inv_upsert、equip_set、skill_upsert、skill_progress、active_skill、talent_add、talent_rm、loc、npc_set、npc_rm，具体JSON结构服从紧随其后的“角色卡与状态协议”。没有真实变化就不输出。普通对话、查看面板和整理记忆不消耗生理资源。\n13. 任务只有在玩家明确接受、承诺或主动设定目标后才登记。剧情实质推进时才更新隐藏【大纲】块；普通路人无需进入长期人物记录。';
-var OPTION_RULES='【行动选项格式】回复末尾必须先单独写“选项：”，再提供2-4项；每项必须是“数字+空格+完整行动描述”，例如“1 检查弹窗来自哪个程序”。不得只输出序号、单个数字或空选项。选项只是平等的参考，不存在作者预设的正确路线；必须允许忽略线索、拒绝任务、继续原本生活或什么也不做，且这些选择不会被惩罚性地强行拉回同一剧情。最后写“或输入任何你想做的事”。正文结束处不得用“该……了”“看来只能……”“你决定……”等句子替玩家形成目标或催促行动。';
-var AGENCY_RULES='【全回合行动授权协议——始终生效】每一回合先区分“玩家明确做了什么”和“叙事者觉得玩家接下来大概会做什么”。只能叙述前者及其连续、直接的结果，后者一律停下等待输入。玩家说“去商店”可写完整路程和抵达；但抵达后购买、交谈、接受推荐或离开都需要新授权。玩家说“问价格”只授权提问和听到回答，不授权购买。玩家说“攻击”不授权追杀、搜尸或继续前进。玩家说一句台词不授权叙事者补写后续台词、态度、承诺或内心结论。\n没有玩家授权时，主角可以有非自主的感官、疼痛、反射和外界可观察的生理反应，但不得主动点击、查看、回复、拿取、使用、移动、答应、拒绝、接受任务、建立关系、选择目标、睡觉、醒来、快进时间或总结“已经接受现实”。NPC和世界可以主动行动，但其行动只能创造局面，不能替主角完成回应。重大转折可以由外部事件客观发生，但不得依赖玩家按下唯一按钮或完成唯一任务。\n任何场景、任务和关系都不存在作者预设的正确路线。玩家可以忽略、拒绝、离开、绕行、失败或继续原本生活；必须认真模拟这些选择的自然后续，禁止用换皮事件、NPC反复劝说、倒计时突袭或无关巧合把玩家强拉回原路线。正文不得用“该行动了”“看来只能”“你决定”“你下意识地”之类句子偷渡玩家行为。此协议适用于序章以及之后所有对话、探索、战斗、交易、调查、恋爱、任务和日常回合。';
 
-var ANTI_MYSTERY='【生活感与相关性】普通NPC说人话：问路给方向、买卖报价、闲聊就聊眼前话题。信息不完整只能来自不知道/记错/只听说过。禁用：你不该知道、现在还不是时候、别问、我只能告诉你这么多、这座城市不简单，以及无缘无故的停顿、眼神闪烁、神秘微笑。玩家没有询问的背景故事不要主动倾倒；与当前行动无关的世界变化不进入正文。';
 
-var NPC_KNOWLEDGE_RULES='【NPC信息权限——高于蓝图与类型惯例】系统提示、隐藏蓝图、玩家内心、前世记忆、现实姓名、游戏ID、角色面板和“主角是穿越者”均不自动成为世界公开事实。叙事者知道，不等于NPC知道。每名重要NPC只能使用其人物记录knows中已有的事实、玩家当面对其说出口的内容，以及本回合亲眼可见的直接证据；一名NPC知道的事不会自动同步给其他人。陌生言行最多让普通人判断主角是外地人、记忆混乱、缺乏常识或举止奇怪，绝不能直接推出“穿越者、异界灵魂、天命之人、不属于这里”。识魂、预言、读心等能力必须在相遇前已由世界设定或记录明确成立，而且只能得到能力实际能观察到的信息，不能凭能力名称读取完整来历。只有玩家明确告知、可靠证据完成验证或NPC之间确实发生了信息传递，才可用npc_set.knows_add记录新知；猜测不算知道。';
 
-var IDENTITY_FREEDOM='【身份开放规则——覆盖各世界观中的固定列表】世界观提示里出现的职业、种族、出身、阵营、性别、身体形态和社会身份都只是例子，不是可选范围。玩家可以声明任何符合该世界基本规律的身份，也可以要求打破常规；玩家的明确声明优先于预设。主角不默认是人类、勇者、救世主、指挥官、天选者或故事中心。若玩家已经给出某项身份，不得重复询问或擅自改回预设。若需要提问，每次提供4-6个跨度明显的例子，并明确允许玩家自由输入。非人形态必须认真落实身体结构、感官、移动、交流、社会待遇和日常需求，不能只把外观换皮后仍按普通人类书写。';
 
-var ISEKAI_MODERN='【现代日轻母题库——覆盖旧式“死亡→神明→外挂→勇者”固定流程】\n1. 转移/转生只是来历之一：也可以是本地人觉醒前世记忆、群体召唤中的非勇者、原作边缘人物、第二人生、主动移居、被世界误召或根本没有穿越。神明面谈和卡车死亡都不是必经环节。\n2. 存在形态开放：人类、亚人、魔族、魔物、动物、植物、菌群、史莱姆、龙、亡灵、迷宫核心、武器、盔甲、建筑、载具、魔导具、人工生命、幽灵、契约意识等都可成立；异种只是一个方向，不应默认比人类更新潮或更有趣。\n3. 叙事位置开放：可以是勇者本人，也可以是勇者的挚友、青梅竹马、同学、兄弟姐妹、老师、后勤、参谋、治疗者、商人、工匠、公会职员、领民、房东、邻居、竞争者、魔王军基层、退队成员、主动退休者或与主线无关的普通职业人。\n4. 可使用但不得强制的日轻母题：退队后转职或慢生活；勇者挚友拥有独立人生；被低估职业的专业成长；恶役/路人/配角视角；领地、店铺、工坊、迷宫或公会经营；师徒与养成；带娃或家庭生活；队伍后勤；群像伙伴；公开身份下的误解喜剧；完成大冒险后的第二职业。\n5. 退队流不默认“原队全员恶毒且离开后立刻衰败”。退队原因可以是发展方向、合同结束、能力错配、健康、家庭、价值观或主动转职；旧队友可以是普通人，关系可以复杂但不强行打脸。\n6. 挚友流中，勇者不是主角的上级或剧情太阳。双方各有职业、关系和生活圈；挚友可以互相帮助，也可以长期各忙各的。\n7. 不套潮流公式：先确定玩家真正想体验的身份和生活，再选择合适母题；没有选择的母题不出现。';
 
-var GAMEWORLD_VARIANTS='【作品/游戏世界变体】如果玩家选择穿进既有作品或游戏，先确认作品规则和主角所在位置，不默认乙女游戏恶役千金。可以是乙女游戏、百合游戏、Galgame、BL游戏、女性向RPG、男性向RPG、策略经营、卡牌、MMO、恐怖游戏、模拟经营、TRPG模组、漫画或网文。身份可以是主角、攻略对象、恶役、败犬、隐藏角色、路人、店员、教师、家属、魔物、系统NPC、玩家角色的召唤物，或原作中根本没有的人。\n乙女游戏不默认必须攻略男性角色；可以远离攻略线、专注事业、与女主成为朋友、改变配角结局或只经营生活。百合游戏不默认主角必须插入原有关系，也不把女性角色当作争夺奖品；可以作为朋友、家人、同事、对手、旁观者或发展玩家自己选择的关系。玩家可自由指定性别、性取向与是否需要恋爱线；未指定时不要擅自锁定。知道原作不等于全知：只记得玩家合理记得的部分，但不要靠强制失忆制造悬疑。';
 
-var WORLD_EXPANSIONS={
-  wuxia:'【武侠身份扩展】主角不只限于门派侠客。可为镖师、捕快、仵作、郎中、药农、铁匠、厨师、说书人、戏班成员、商旅、船工、驿卒、账房、门派后勤、武馆教习、江湖记者、退隐前辈、家眷、普通百姓、异族来客或不会武功的人。故事可走市井职业、武馆经营、镖局公路片、地方治理、家族生活、技艺成长、门派重建、群像旅行；不强制卷入武林阴谋。武功体系、官府秩序、市井经济与地方风俗可以自由组合。',
-  xianxia:'【仙侠身份扩展】主角不只限于拜宗升级的标准修士。可为凡人、散修、宗门杂役或管事、灵农、炼丹师、炼器师、阵师、符师、御兽师、医修、厨修、商会人员、宗门教师、长老、掌门、家族成员、香火神、山精、妖兽、灵植、器灵、鬼修、分身或转世者。可采用苟道长生、种田经营、技艺专精、宗门建设、模拟器、聊天群、群穿、民俗志怪、香火神道、师徒养成、凡俗王朝生活等机制；没有选择的机制不得自动出现。境界是世界规则之一，不是唯一剧情轴。',
-  cyberpunk:'【赛博身份扩展】主角不只限于黑客、佣兵和企业特工。可为义体维修师、外卖员、平台劳动者、医生、护士、律师、记者、主播、偶像、教师、社区组织者、工会成员、公司文员、审计、物流、数据清洁工、仿生人、克隆体、上传意识、城市AI、无人机群或拒绝改造的普通人。可写街区生活、职业伦理、劳动关系、身份认同、维修经营、媒体调查、社区互助、公司日常或后赛博希望；霓虹、雨和阴谋都不是强制装饰。',
-  spaceopera:'【星际身份扩展】主角可为飞船船员、殖民者、空间站职员、打捞者、快递员、商人、外交官、科研人员、生态工程师、厨师、移民家庭、异星种族、船载AI、仿生体、群体意识或一艘船本身。故事可围绕航运、贸易、殖民地建设、星际考古、科研、移民生活、船员群像、家庭、公路旅行或局部战争；不默认拯救银河。',
-  apocalypse:'【末日身份扩展】主角可处于灾前预警、灾中求生、灾后重建或多年后的新社会；可为社区居民、农民、医生、司机、维修工、教师、老人、儿童监护者、变异者、感染者、避难所管理者、商队成员或非人生命。重点可以是基地经营、迁徙、农业、社区规则、职业协作、家庭和新文明，而不只是杀怪搜物资。',
-  esper:'【异能都市身份扩展】主角可以有强、弱、怪异、生活化或无法战斗的能力，也可以完全没有能力；可为学生、上班族、家属、研究人员、媒体人、能力管理机构基层、民间互助者、反能力者或能力造成的非人存在。可写职业、校园、家庭、社群、竞技、公开化社会或能力经济，不强制隐藏身份。',
-  jojo:'【能力战身份扩展】替身/特殊能力可以用于工作、表演、调查、照护、经营和旅行，不只用于连续战斗。主角可为能力者的朋友、家人、医生、普通目击者、敌方成员或不会战斗的能力者。能力规则要具体，但不要求每个新人物都是敌人。',
-  scp:'【异常世界身份扩展】主角不只限于基金会特工或研究员。可为站点后勤、伦理委员会、文书、维修、医疗、家属、地方警察、普通目击者、蛇之手成员、其他组织基层、被收容者、合作型异常或异常地点本身。可写行政日常、收容照护、跨组织协商、异常社会学、职业伦理或普通人与异常共处；只有玩家选择时才走持续收容失效。',
-  cthulhu:'【神话世界身份扩展】可为调查员，也可为普通居民、医生、记者、学者家属、艺术家、工人、教会人员、边缘神话种族或已经知道部分真相的人。可写地方生活、知识伦理、家族关系、旅行、历史考据或与异常保持距离的生存；不要求每局必然疯狂、死亡或揭开宇宙真相。',
-  arknights:'【泰拉身份扩展】主角不只限于博士。可为干员、感染者平民、医生、工程人员、后勤、商人、信使、移动城市居民、地方官员、佣兵、学生、整合运动普通成员或原创势力成员。玩家可以远离罗德岛主线，经营自己的职业、人际和地方生活；原作角色不是必须登场。',
-  discoelysium:'【都市侦探身份扩展】可以保留技能对话机制，但主角不必是失忆警探。可为记者、工会成员、旅馆员工、律师、医生、艺术家、码头工人、普通居民或案件外围人物；也可以完全没有案件，写政治、职业和个人生活。内心技能只评论与当前选择相关的内容。',
-  undertale:'【地下世界身份扩展】主角可为坠落人类、本地怪物、守卫、商人、教师、家庭成员或新搬来的居民；可以发生在和平线后、普通历史阶段或完全原创区域。宽恕与战斗都是选择，不强制复刻原作路线或角色。',
-  vallhalla:'【酒吧日常身份扩展】主角可为调酒师、客人、厨师、老板、供货商、驻唱、记者、附近居民、机器人或其他服务业者。可经营不同店铺或社区空间；倾听不是自动套取秘密，客人可以只聊普通生活。',
-  zato:'【封闭城市身份扩展】主角身份、年龄、职业、家庭与对异常的敏感程度均开放；可以是学生、工人、教师、医护、行政人员、研究所外围、家属或普通居民。玩家可以专注最后几天的日常、人际和选择，不强迫主动调查城市真相。',
-  redstrings:'【红弦式世界扩展】主角可为调酒师、黑客、机器人、公司职员、心理咨询者、记者、普通消费者或植入物维护人员；核心可围绕自由意志、劳动、亲密关系、技术伦理或日常职业，不固定复刻原作角色与一夜倒计时。',
-  elona:'【伊尔瓦身份扩展】种族、职业、善恶、生活方式和目标完全开放。可为冒险者、农夫、商人、音乐家、厨师、工匠、宠物训练者、城镇经营者、怪物、神仆或普通居民；自由不等于必须犯罪或挑战古神，种田、建造、家庭和旅行同样是完整主线。',
-  gamerpunk:'【游戏世界身份扩展】主角不必是拥有隐藏BUG的玩家。可为NPC、系统管理员、游戏测试员、生活职业玩家、召唤物、Boss、路人、任务发布者、退役高玩、原作边缘角色或无法查看面板的本地人。游戏类型可为乙女、百合、Galgame、BL、MMO、策略、经营、卡牌、恐怖、竞技或TRPG；系统面板不是必选。'
-};
 
-var WORLD_EXPANSION_KEYS={wuxia:'wuxia',xianxia:'xianxia',cyber:'cyberpunk',space:'spaceopera',apocalypse:'apocalypse',occult:'esper',horror:'cthulhu'};
-var PRESET_EXPANSION_KEYS={elona:'elona',undertale:'undertale',tianzai:'arknights',yineng:'esper',tishen:'jojo',zhentan:'discoelysium',dianbo:'zato',tiaojiu:'vallhalla',airen:'redstrings',cthulhu:'cthulhu',scp:'scp'};
-function activeNarrativeRules(){
-  var packs=[],seen={};
-  function add(key,text){if(!text||seen[key])return;seen[key]=true;packs.push(text);}
-  add('ordinary',ANTI_MYSTERY);
-  add('knowledge',NPC_KNOWLEDGE_RULES);
-  add('identity',IDENTITY_FREEDOM);
-  var trans=PREMISE_STATE&&PREMISE_STATE.kind==='transmigration';
-  var frame=trans?String(PREMISE_STATE.frame||''):'';
-  if(trans)add('isekai',ISEKAI_MODERN);
-  if(/游戏|穿书|原作/.test(frame))add('gameworld',GAMEWORLD_VARIANTS);
-  if(/游戏/.test(frame))add('exp-gamerpunk',WORLD_EXPANSIONS.gamerpunk);
-  var presetKey=PRESET_EXPANSION_KEYS[WORLD_PRESET];
-  if(presetKey)add('exp-'+presetKey,WORLD_EXPANSIONS[presetKey]);
-  var worldKey=WORLD_EXPANSION_KEYS[WORLD];
-  if(worldKey)add('exp-'+worldKey,WORLD_EXPANSIONS[worldKey]);
-  return packs.join('\n\n');
-}
-function effectivePresetNote(note){
-  var adv=PREFS.advanced||{},out=String(note||'');
-  if(adv.magic&&adv.magic.length)out=out.replace(/(?:低魔|高魔|无魔|魔法稀少|魔法普及)[、，]?/g,'');
-  if(adv.era&&adv.era.length)out=out.replace(/(?:古代|中世纪|近代|现代|近未来|远未来)[、，]?/g,'');
-  return out.replace(/^[、，；。\s]+|[、，；\s]+$/g,'').trim();
-}
 
-function buildSystemPrompt(recentText){
-  var w=WORLDS[WORLD];
-  var p=PACE_CONFIG[PACE];
-  if(!w||!p) return '';
-  // 固定前缀区：这一段每回合完全相同，用于命中各家 API 的 context cache。
-  // 任何随回合变化的内容都必须放到下方动态区，否则整段缓存失效。
-  var sp=CORE_RULES;
-  var canon=canonSummary();
-  sp+='\n\n'+OPTION_RULES;
-  sp+='\n\n'+AGENCY_RULES;
-  var worldPrompt=String(w.prompt||'').replace(/\n【状态栏】[\s\S]*?(?=\n【任务】|$)/,'').replace(/\n【任务】[^\n]*/g,'');
-  sp+='\n\n【世界包】\n'+worldPrompt;
-  sp+='\n【角色卡与状态协议——覆盖世界包旧状态栏要求】前端已经显示唯一权威角色卡，正文不要输出另一套方括号状态栏，也不要自行重建属性表。核心属性名固定，只有长期训练、升级或重大伤病确实发生时才能用attr_delta，单回合最多±1；资源只能修改已经存在的键。物品、技能与重要人物是有ID或稳定名称的结构化记录，不得只在正文里声称变化。\n真实变化必须在末尾申报：【STATE】{"attr_delta":{"已有属性名":1},"res_delta":{"已有资源名":-1},"inv_delta":[{"name":"物品原名","delta":-1}],"inv_upsert":[{"name":"新物品","category":"分类","quantity":1,"description":"稳定说明","equipped":false}],"equip_set":{"物品原名":true},"skill_upsert":[{"name":"技能原名","category":"类别","realm":"境界","coefficient":1.0,"proficiency":0,"attribute":"关联属性","description":"稳定效果说明"}],"skill_progress":[{"name":"技能原名","delta":2,"realm":"可选的新境界"}],"active_skill":"技能原名或null","talent_add":[],"talent_rm":[],"npc_set":{"NPC原名":{"rel":"与玩家的已确认关系","att":0,"note":"一句话当前事实","knows_add":["该NPC新确认的具体事实"],"knows_rm":["该NPC已明确推翻的旧事实"]}},"npc_rm":[],"loc":""}【/STATE】。只写实际发生的字段；同名物品增加或消耗用inv_delta，不得重复造新名称；修炼必须更新skill_progress，学会技能必须提供完整档案；只有值得长期记住的具名人物初次建立关系或其关系、态度、现状、独立知情事实确实改变时才写npc_set，普通路人不登记。knows_add只能记录玩家当面对其说出口、该NPC直接观察并可靠确认、或剧情明确发生信息传递的事实；猜测、旁白知识和隐藏蓝图禁止写入。npc_rm只用于关系明确终结且不再需要追踪的人物。没有真实变化就不输出。普通对话、查看面板和整理记忆不消耗生理资源。任务仅在玩家明确接受、承诺或主动设定目标后登记。';
-  if(!GAME_STATE.revealed){
-    var schema=STATE_SCHEMAS[WORLD]||STATE_SCHEMAS.__custom__;
-    sp+='\n【未揭示角色卡——最高优先级】当前尚未建立数值。穿越前、游戏外或身份尚未由玩家说明时，按叙事常识表现普通人的能力，不显示异世界数值，不掷骰，不暗中预设职业、Build、技能或天赋。只有玩家明确主动查看状态/面板/自身能力，或玩家已经亲自完成使能力可被认识的操作时，才可在回复最末输出一次【SHEET_INIT】JSON【/SHEET_INIT】。仅抵达异世界、醒来、被召唤或看见提示不构成授权。初始化属性键必须且只能是：'+schema.attrs.join('、')+'；数值0-10，根据玩家此前明确描述分配，未得到支持的一律为1。资源键必须且只能是：'+Object.keys(schema.res).join('、')+'。格式：【SHEET_INIT】{"attrs":{},"res":{},"talents":[],"skills":[{"name":"名称","category":"类别","realm":"境界","coefficient":1,"proficiency":0,"attribute":"关联属性","description":"效果"}]}【/SHEET_INIT】。没有确凿技能就返回空数组，不得补造玩家未声明的经历或专长。';
-  }
-  if(WORLD_PRESET&&w.presets){ var pp=w.presets.filter(function(x){return x.id===WORLD_PRESET;})[0],pn=pp&&effectivePresetNote(pp.note); if(pn){ sp+='\n【本局特色侧重——已移除与最终设定冲突的部分】'+pn; } }
-  sp+='\n\n【篇幅】'+p.instruction;
-  if(STORY_DNA){ sp+='\n\n'+STORY_DNA; }
-  if(w.lockedTags&&w.lockedTags.length){ sp+='\n\n【玩家指定核心标签】'+w.lockedTags.join('、')+'。落实其类型特征；若表达宽泛，以玩家更具体的身份、世界和额外要求为准。'; }
-  if(w.inspirationTags&&w.inspirationTags.length){ sp+='\n\n【研究库灵感候选】'+w.inspirationTags.join('、')+'。只采用与已确认设定自然相容的部分；不必逐项出现，不得为凑标签新增无关角色、事件、阴谋或机制。'; }
-  if(TURNS===0){ sp+='\n\n'+FIRST_CHAPTER; }
-  if(TURNS===0&&OPENING_TEXT){ sp+='\n\n'+OPENING_TEXT; }
-  var pd=premiseDirective();if(pd)sp+='\n\n'+pd;
-  if(NAMES){ sp+='\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n'+NAMES; }
-  if(OUTLINE){ sp+='\n\n【剧情备忘——保持目标与因果连续的编剧笔记，不是悬念清单】\n'+OUTLINE+'\n（剧情实质推进时才输出更新版【大纲】块）'; }
-  if(canon)sp+='\n\n【主角身份档案——程序锁定的最高优先级事实】'+canon+'。每个字段属于独立命名空间：现实姓名不等于游戏ID，游戏ID不等于游戏角色名，旧世界身份不等于穿越后身份。只能在对应语境使用对应值；不得合并、互换、缩写、改写或用摘要覆盖。档案中没有的字段就是尚未确定，不得擅自补全。玩家以后明确修改时，以程序下一回合提供的新档案为准。';
-  var ss=stateSummary();
-  if(ss){ sp+='\n\n【权威角色状态——系统维护的唯一事实，叙事与状态栏不得与此矛盾；技能列表是全集】\n'+ss; }
-  // 事实库检索结果。历史被压缩后这些设定仍然在，这正是它存在的意义。
-  if(LORE.ctx){ sp+='\n\n'+LORE.ctx; }
-  if(PINS.length){
-    var pinLines=[],pinChars=0;
-    // Preserve the newest facts first and enforce a character budget instead
-    // of an arbitrary item-count limit.
-    for(var pi=PINS.length-1;pi>=0;pi--){
-      var pl='- '+String(PINS[pi].text||'').trim();
-      if(!pl||pinChars+pl.length>6000)continue;
-      pinLines.unshift(pl); pinChars+=pl.length;
-    }
-    sp+='\n\n【不可更改的锁定设定——除程序身份档案与权威角色卡外的最高优先级】\n'+pinLines.join('\n')+'\n若其中某条旧记录与主角身份档案冲突，忽略该旧记录。';
-  }
-  var loreBlocks=getRelevantLore(recentText||'');
-  if(loreBlocks){ sp+='\n\n【相关背景资料——本回合参考】\n'+loreBlocks; }
-  var activeRules=activeNarrativeRules();
-  if(activeRules)sp+='\n\n【本局实际启用的叙事规则包——只包含当前路线相关内容】\n'+activeRules;
-  if(STORY_DNA)sp+='\n\n【最终一致性闸门｜设定哈希 '+debugHash(STORY_DNA)+'】输出前核对：世界类型、时代、基调、故事引擎、穿越形式和玩家硬性备注只能来自“本局最终有效设定”。较早剧情摘要只负责连续性，不能创建另一套世界前提。若历史与最终设定冲突，以最终设定为准，并在不替玩家行动的前提下让眼前场景自然回到有效设定。';
-  return sp;
-}
 
 // ── LORE CHUNK SYSTEM: world can define .lore = [{name, keywords:[], text, always}] ──
-function getRelevantLore(recentText){
-  var w = WORLDS[WORLD];
-  var pool = ((w&&w.lore)||[]).concat(LOREBOOK);
-  if(!pool.length) return '';
-  var hay = (recentText||'').toLowerCase();
-  var picked = [];
-  pool.forEach(function(chunk){
-    if(chunk.always){ picked.push(chunk); return; }
-    var hit = (chunk.keywords||[]).some(function(kw){ return hay.indexOf(kw.toLowerCase())>=0; });
-    if(hit){ picked.push(chunk); }
-  });
-  if(picked.length>6) picked = picked.slice(0,6);
-  return picked.map(function(c){ return '['+c.name+'] '+c.text; }).join('\n\n');
-}
 
 // ── PIN (LOCK) SYSTEM ──
 function addPin(text, category){
@@ -3794,7 +3655,7 @@ function currentSaveDiagnosis(){
   return {checkedAt:new Date().toISOString(),turn:TURNS,premise:p,evidence:ev,issues:issues,config:debugConfigSnapshot()};
 }
 function captureCurrentSaveDiagnostic(){
-  var d=currentSaveDiagnosis(),recent=HIST.slice(-6).map(function(m){return String(m&&m.content||'');}).join(' '),sp=buildSystemPrompt(recent),last=HIST.length?HIST[HIST.length-1]:null;
+  var d=currentSaveDiagnosis(),recent=HIST.slice(-6).map(function(m){return String(m&&m.content||'');}).join(' '),sp=LAST_SYSTEM_PROMPT,last=HIST.length?HIST[HIST.length-1]:null;
   var e={id:'dbg_save_'+Date.now(),startedAt:new Date().toISOString(),startedMs:Date.now(),turn:TURNS,status:'save-diagnostic',input:'[当前存档体检]',signals:{},before:debugConfigSnapshot(),after:debugConfigSnapshot(),stateBefore:debugClone(compactStateForAudit(GAME_STATE)),stateAfter:debugClone(compactStateForAudit(GAME_STATE)),systemPrompt:sp,systemPromptHash:debugHash(sp),reply:last&&last.role==='assistant'?String(last.content||''):'',request:{total:HIST.length,omitted:Math.max(0,HIST.length-24),messages:debugCompactMessages(HIST).messages},diagnosis:d,warnings:d.issues.slice()};
   e.warnings=e.warnings.concat(debugAnalyze(e));DEBUG_TRACE.push(e);if(DEBUG_TRACE.length>DEBUG_MAX_TURNS)DEBUG_TRACE=DEBUG_TRACE.slice(-DEBUG_MAX_TURNS);DEBUG_RUN_BASE=debugConfigSnapshot();persistDebugTrace();updateDebugStatus();return d;
 }
@@ -4288,6 +4149,49 @@ function loreConflictNote(){
          '\n本回合必须以上列各项中先确立的那个值为准继续叙事。若确实需要改变，就在正文里给出合理解释（先前是误传、有人刻意隐瞒、玩家理解有误），不得默默改写，也不得向玩家提及这条系统提示。';
 }
 
+// ── 提示词编译（后端） ──────────────────────────────────────────
+// 规则常量、世界包正文、状态协议都是核心资产，已经全部移到服务端。
+// 前端只负责把「本回合的运行时状态」打包上去，换回组装好的 system prompt。
+// 这也意味着从这一版起后端是必需的——资产不在浏览器里了，离线拼不出提示词。
+var LAST_SYSTEM_PROMPT='', LAST_RULE_PACKS=[], LAST_RULES_HASH='';
+
+function buildTurnContext(recentText){
+  var w=WORLDS[WORLD]||{};
+  return {
+    world_id:WORLD, preset_id:WORLD_PRESET||'', pace:PACE, turns:TURNS,
+    // 自定义世界的设定正文是玩家自己写的，只存在于存档里，只能随请求带上
+    custom_world_prompt:(WORLD==='__custom__')?String(w.prompt||''):'',
+    locked_tags:w.lockedTags||[], inspiration_tags:w.inspirationTags||[],
+    story_dna:STORY_DNA||'', opening_text:OPENING_TEXT||'',
+    game_state:GAME_STATE, player_canon:PLAYER_CANON||{},
+    premise_state:PREMISE_STATE||{}, prefs:PREFS||{},
+    outline:OUTLINE||'', names:NAMES||'',
+    pins:PINS||[], lorebook:LOREBOOK||[],
+    lore_context:LORE.ctx||'', recent_text:recentText||''
+  };
+}
+
+async function compileSystemPrompt(recentText){
+  syncStateCollections();   // 组装前先把背包/技能整理好，摘要才是准的
+  var r,msg='';
+  try{
+    r=await fetch('/api/turn/prompt',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(buildTurnContext(recentText))});
+    if(!r.ok){
+      msg='HTTP '+r.status;
+      try{var j=await r.json();if(j&&j.detail&&j.detail.message)msg=j.detail.message;}catch(_e){}
+    }
+  }catch(e){ msg=String(e&&e.message||e); }
+  // 后端连不上是这里最常见的失败，报错必须让人一眼看出是后端的问题，
+  // 而不是跟模型 API 挂掉混成同一句「连接失败」
+  if(msg)throw new Error('提示词编译失败（'+msg+'）。世界包与规则已迁到服务端，请确认后端正在运行。');
+  var d=await r.json();
+  LAST_SYSTEM_PROMPT=d.system_prompt||'';
+  LAST_RULE_PACKS=d.rule_packs||[]; LAST_RULES_HASH=d.rules_hash||'';
+  return LAST_SYSTEM_PROMPT;
+}
+
 async function _runTurn(){
   var typ=addTyp(), t0=Date.now();
   try{
@@ -4305,7 +4209,7 @@ async function _runTurn(){
       WORLD_CLOCK = 0;
       EVENT_THRESHOLD = PACE==='long'?12:(PACE==='medium'?10:8);
     }
-    var SP=buildSystemPrompt(recentText) + worldPulse;
+    var SP=(await compileSystemPrompt(recentText)) + worldPulse;
     if(DEBUG_ACTIVE){DEBUG_ACTIVE.systemPrompt=debugClone(SP);DEBUG_ACTIVE.systemPromptHash=debugHash(SP);DEBUG_ACTIVE.worldPulse=worldPulse;}
     debugEvent('system_prompt_ready',{hash:debugHash(SP),chars:SP.length,premiseDirective:premiseDirective(),storyDNAHash:debugHash(STORY_DNA),worldPulse:worldPulse});
     var dice = null;
@@ -4447,7 +4351,6 @@ function regenTurn(){
 
 
 var NAMES='';
-var FIRST_CHAPTER='【互动式序章】\n开局用一个具体的当下场景自然呈现主角的生活、身份与可互动细节，不要罗列设定，也不要急着抵达事件中心。首回合停在第一个真正需要玩家反应的位置。若有穿越或其他重大转折，按“原本生活—触发—转移—落地—探索适应”分阶段游玩，未经玩家行动不得跨段。经典问答每回合最多问一个必要问题。第一次正式叙事末尾输出一次隐藏【命名表】地名:甲,乙,丙｜势力:甲,乙｜人物:甲,乙,丙,丁【/命名表】，预铺名字不代表必须登场。';
 function extractNames(text){
   var m=String(text).match(/【命名表】([\s\S]*?)【\/命名表】/);
   if(m&&m[1].trim()) NAMES=m[1].trim();
