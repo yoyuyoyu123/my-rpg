@@ -65,7 +65,8 @@ def _backoff_seconds(attempt: int) -> float:
 
 
 def _build_payload(req_model: str, messages: list[dict], temperature: float,
-                   max_tokens: int, provider: Provider, stream: bool = False) -> dict:
+                   max_tokens: int, provider: Provider, stream: bool = False,
+                   thinking: str = "disabled") -> dict:
     """
     组装请求体。
 
@@ -83,6 +84,10 @@ def _build_payload(req_model: str, messages: list[dict], temperature: float,
     # 流式默认不回 token 用量，要显式索取；但不是每家都认这个字段
     if stream and provider.stream_usage:
         payload["stream_options"] = {"include_usage": True}
+    # thinking 是 DeepSeek V4 的专用字段。其它兼容 OpenAI 的后端可能会
+    # 因为收到未知字段而拒绝请求，所以只在 DeepSeek 上发送。
+    if provider.id == "deepseek" and thinking in {"enabled", "disabled"}:
+        payload["thinking"] = {"type": thinking}
     return payload
 
 
@@ -101,6 +106,7 @@ async def call_chat(
     messages: list[dict],
     temperature: float = 0.85,
     max_tokens: int = 4096,
+    thinking: str = "disabled",
 ) -> LLMResult:
     """
     调用一次对话补全，自动处理限流与瞬时故障。
@@ -120,7 +126,9 @@ async def call_chat(
         )
 
     use_model = (model or "").strip() or provider.default_model
-    payload = _build_payload(use_model, messages, temperature, max_tokens, provider)
+    payload = _build_payload(
+        use_model, messages, temperature, max_tokens, provider, thinking=thinking
+    )
     headers = _build_headers(provider, api_key)
 
     last_error: LLMError | None = None
@@ -217,6 +225,7 @@ async def open_stream(
     messages: list[dict],
     temperature: float = 0.85,
     max_tokens: int = 4096,
+    thinking: str = "disabled",
 ) -> StreamSession:
     """
     连上上游的流式接口。连接阶段的失败会重试；一旦开始出字就不再重试。
@@ -237,7 +246,10 @@ async def open_stream(
         )
 
     use_model = (model or "").strip() or provider.default_model
-    payload = _build_payload(use_model, messages, temperature, max_tokens, provider, stream=True)
+    payload = _build_payload(
+        use_model, messages, temperature, max_tokens, provider,
+        stream=True, thinking=thinking,
+    )
     headers = _build_headers(provider, api_key)
 
     last_error: LLMError | None = None

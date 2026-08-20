@@ -22,8 +22,21 @@ def test_core_rules_present() -> None:
     assert len(rules.CORE_RULES) > 1000, "核心叙事契约不应为空或过短"
     # 几条关键纪律必须在
     assert "不得替玩家" in rules.CORE_RULES, "行动授权协议丢失"
-    assert "青石镇" in rules.CORE_RULES, "命名规范丢失"
+    assert "服从当前世界包" in rules.CORE_RULES, "世界相容命名规范丢失"
+    assert "不得复用其中的名称" in rules.CORE_RULES, "规则示例隔离规范丢失"
     assert "【STATE】" in rules.CORE_RULES, "状态申报协议丢失"
+
+
+def test_global_rules_do_not_seed_setting_specific_names() -> None:
+    """跨世界共享规则不能暗中给模型投喂某一种题材的专名或场景。"""
+    shared = rules.CORE_RULES + rules.OPTION_RULES + rules.AGENCY_RULES
+    leaked_samples = [
+        "陈家渡", "三里坡", "广盛号", "下瓦窑", "槐树巷",
+        "青石镇", "黑风寨", "悦来客栈", "暗影兄弟会", "血色黎明",
+        "检查弹窗来自哪个程序",
+    ]
+    found = [sample for sample in leaked_samples if sample in shared]
+    assert not found, f"全局提示词仍含可能污染世界观的示例：{found}"
 
 
 def test_all_rule_constants_nonempty() -> None:

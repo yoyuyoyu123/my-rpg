@@ -13,7 +13,7 @@ from fastapi.testclient import TestClient
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from app.config import Settings  # noqa: E402
+from app.config import Settings, get_settings  # noqa: E402
 from app.domain.providers import PROVIDERS  # noqa: E402
 from app.main import app  # noqa: E402
 from app.services.llm import LLMError, _build_payload, call_chat  # noqa: E402
@@ -44,6 +44,22 @@ def test_stream_options_only_where_supported() -> None:
     zp = _build_payload("m", [], 0.8, 512, PROVIDERS["zhipu"], stream=True)
     assert "stream_options" not in zp
 
+    ds_disabled = _build_payload(
+        "m", [], 0.8, 512, PROVIDERS["deepseek"], stream=True,
+        thinking="disabled",
+    )
+    assert ds_disabled["thinking"] == {"type": "disabled"}
+
+    ds_enabled = _build_payload(
+        "m", [], 0.8, 512, PROVIDERS["deepseek"], stream=True,
+        thinking="enabled",
+    )
+    assert ds_enabled["thinking"] == {"type": "enabled"}
+    assert "thinking" not in _build_payload(
+        "m", [], 0.8, 512, PROVIDERS["zhipu"], stream=True,
+        thinking="enabled",
+    )
+
 
 def test_stream_options_absent_when_not_streaming() -> None:
     assert "stream_options" not in _build_payload(
@@ -63,10 +79,14 @@ def test_stream_unknown_provider_is_400(client: TestClient) -> None:
 
 
 def test_stream_missing_key_is_503(client: TestClient) -> None:
-    r = client.post("/api/chat/stream", json={
-        "messages": [{"role": "user", "content": "hi"}], "provider": "deepseek"})
-    assert r.status_code == 503
-    assert r.json()["detail"]["code"] == "provider_not_configured"
+    app.dependency_overrides[get_settings] = lambda: Settings(deepseek_api_key="")
+    try:
+        r = client.post("/api/chat/stream", json={
+            "messages": [{"role": "user", "content": "hi"}], "provider": "deepseek"})
+        assert r.status_code == 503
+        assert r.json()["detail"]["code"] == "provider_not_configured"
+    finally:
+        app.dependency_overrides.clear()
 
 
 def test_stream_validates_body_like_non_stream(client: TestClient) -> None:

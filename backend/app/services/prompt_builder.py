@@ -44,6 +44,20 @@ STATE_PROTOCOL = (
     '任务仅在玩家明确接受、承诺或主动设定目标后登记。'
 )
 
+# 有结构化场景卡时，叙事模型不再兼任编剧。短规则比把全部类型库和
+# 反例库反复塞进上下文更可靠，也给长正文留下更多注意力预算。
+AGENT_WRITER_RULES = (
+    "【场景写手契约】你是互动小说的场景写手，不是剧情规划器。程序已经给出当前场景卡。\n"
+    "1. 先完整回应玩家刚才的具体行动，只写该行动的直接过程、环境反馈与在场人物反应；玩家输入是尝试，不是既成结果。\n"
+    "2. 只能沿场景卡的因果桥、人物眼前意图与允许发展推进。不得新开剧情线、突然制造阴谋、天命、追杀、秘密组织、第二套穿越机制或无关奇观。\n"
+    "3. 不替玩家说话、选择、答应、相信、恐惧、感动或总结其内心；在玩家需要作出下一项决定的位置停下。\n"
+    "4. NPC只依据其亲历、被告知或职业常识行动。能直接说的信息正常说；不知道就是不知道，不用欲言又止和神秘暗示代替信息。\n"
+    "5. 描写必须服务于眼前行动、空间判断、人物关系或可用信息。一个回合只保留一个主要焦点，删除与本回合无因果关系的景物、路人和背景事件。\n"
+    "6. 已确立事实和权威状态优先。不得凭空修改身份、身体、种族、职业、物品、能力、地点、关系与历史。\n"
+    "7. 结尾给 2-4 个真正不同且立刻可做的行动参考，并明确允许自由输入；这些不是剧情唯一入口。\n"
+    "8. 正文自然完整，篇幅服从场景而不是凑字数。状态确有改变时才使用指定协议块；不要解释规则、规划器或场景卡。"
+)
+
 
 def debug_hash(text: str) -> str:
     """
@@ -208,6 +222,67 @@ def _premise_directive(ps: dict, prefs: dict) -> str:
     )
 
 
+def _agent_mode(ctx: TurnContext) -> bool:
+    runtime = ctx.story_runtime or {}
+    return isinstance(runtime.get("current_scene"), dict) and bool(runtime["current_scene"].get("id"))
+
+
+def _agent_premise_directive(ps: dict) -> str:
+    """规划模式下不再用停留回合数硬推事件，节拍由场景卡决定。"""
+    if not ps or ps.get("kind") != "transmigration":
+        return ""
+    phase = max(0, min(5, int(ps.get("phase") or 0)))
+    labels = ["原世界生活", "入口逼近", "阈限事件", "转移途中", "首次落地", "已经抵达"]
+    return (
+        "【迁移进度事实】当前=" + labels[phase]
+        + "。迁移形式=" + str(ps.get("mechanism") or "未限定")
+        + "；触发=" + str(ps.get("trigger") or "自然形成")
+        + "。只按当前场景卡推进，不为赶阶段重复入口或突然跳步；玩家拒绝过的入口继续视为无效。"
+    )
+
+
+def _story_scene_summary(runtime: dict) -> str:
+    """只把公开、可执行的场景信息交给写手，幕后原因留在规划器。"""
+    scene = runtime.get("current_scene") if isinstance(runtime, dict) else None
+    if not isinstance(scene, dict):
+        return ""
+    lines = [
+        "【当前场景卡——只写这一幕，不自行规划后续】",
+        "场景:" + str(scene.get("title") or scene.get("id") or "未命名"),
+        "眼前处境:" + str(scene.get("situation") or ""),
+        "本场作用:" + str(scene.get("purpose") or ""),
+        "可见因果桥:" + str(scene.get("causal_bridge") or ""),
+    ]
+    intents = scene.get("participant_intents") or {}
+    if isinstance(intents, dict) and intents:
+        lines.append("在场人物眼前意图:" + "；".join(f"{k}={v}" for k, v in list(intents.items())[:8]))
+    for key, label in (
+        ("available_information", "当前可公开信息"),
+        ("allowed_developments", "允许的自然发展"),
+        ("stop_points", "必须停下的交互点"),
+    ):
+        values = scene.get(key) or []
+        if isinstance(values, list) and values:
+            lines.append(label + ":" + "；".join(str(x) for x in values[:10]))
+
+    active = set(scene.get("active_thread_ids") or [])
+    public_threads = []
+    for thread in runtime.get("threads") or []:
+        if not isinstance(thread, dict) or thread.get("id") not in active:
+            continue
+        bit = str(thread.get("title") or thread.get("id") or "")
+        if thread.get("public_goal"):
+            bit += "：" + str(thread["public_goal"])
+        clues = thread.get("established_clues") or []
+        if clues:
+            bit += "（已公开=" + "／".join(str(x) for x in clues[:5]) + "）"
+        public_threads.append(bit)
+    if public_threads:
+        lines.append("当前公开目标:" + "；".join(public_threads))
+    lines.append("private_cause、未公开答案和未满足前置条件均未提供给你；禁止猜测补完。")
+    return "\n".join(lines)
+
+
 def active_rule_packs(ctx: TurnContext) -> list[tuple[str, str, str]]:
     """
     挑出当前路线用得上的规则包，返回 (内部键, 展示名, 正文)。
@@ -218,6 +293,9 @@ def active_rule_packs(ctx: TurnContext) -> list[tuple[str, str, str]]:
     展示名一并返回，是为了前端的调试追踪能显示「这一回合挂了哪几个包」
     而不必在前端再抄一份映射表——抄了就会漂移。
     """
+    if _agent_mode(ctx):
+        return [("agent-writer", "agent-writer", AGENT_WRITER_RULES)]
+
     packs: list[tuple[str, str, str]] = []
     seen: set[str] = set()
 
@@ -288,10 +366,12 @@ def build_system_prompt(ctx: TurnContext) -> str:
     if (world is None and not ctx.custom_world_prompt) or not pace:
         return ""
 
-    sp = CORE_RULES
+    agent_mode = _agent_mode(ctx)
+    sp = AGENT_WRITER_RULES if agent_mode else CORE_RULES
     canon = _canon_summary(ctx.player_canon)
-    sp += "\n\n" + OPTION_RULES
-    sp += "\n\n" + AGENCY_RULES
+    if not agent_mode:
+        sp += "\n\n" + OPTION_RULES
+        sp += "\n\n" + AGENCY_RULES
 
     # 世界包里的旧状态栏/任务段落要摘掉——它们已经被下面的状态协议取代
     world_prompt = re.sub(r"\n【状态栏】[\s\S]*?(?=\n【任务】|$)", "", str(world_prompt_src or ""), count=1)
@@ -322,25 +402,30 @@ def build_system_prompt(ctx: TurnContext) -> str:
     sp += "\n\n【篇幅】" + pace["instruction"]
     if ctx.story_dna:
         sp += "\n\n" + ctx.story_dna
-    if ctx.locked_tags:
+    if ctx.locked_tags and not agent_mode:
         sp += ("\n\n【玩家指定核心标签】" + "、".join(ctx.locked_tags)
                + "。落实其类型特征；若表达宽泛，以玩家更具体的身份、世界和额外要求为准。")
-    if ctx.inspiration_tags:
+    if ctx.inspiration_tags and not agent_mode:
         sp += ("\n\n【研究库灵感候选】" + "、".join(ctx.inspiration_tags)
                + "。只采用与已确认设定自然相容的部分；不必逐项出现，"
                  "不得为凑标签新增无关角色、事件、阴谋或机制。")
-    if ctx.turns == 0:
+    if ctx.turns == 0 and not agent_mode:
         sp += "\n\n" + FIRST_CHAPTER
     if ctx.turns == 0 and ctx.opening_text:
         sp += "\n\n" + ctx.opening_text
 
-    pd = _premise_directive(ctx.premise_state, ctx.prefs)
+    pd = _agent_premise_directive(ctx.premise_state) if agent_mode else _premise_directive(ctx.premise_state, ctx.prefs)
     if pd:
         sp += "\n\n" + pd
 
+    if agent_mode:
+        scene_summary = _story_scene_summary(ctx.story_runtime)
+        if scene_summary:
+            sp += "\n\n" + scene_summary
+
     if ctx.names:
         sp += "\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n" + ctx.names
-    if ctx.outline:
+    if ctx.outline and not agent_mode:
         sp += ("\n\n【剧情备忘——保持目标与因果连续的编剧笔记，不是悬念清单】\n" + ctx.outline
                + "\n（剧情实质推进时才输出更新版【大纲】块）")
     if canon:
@@ -378,15 +463,21 @@ def build_system_prompt(ctx: TurnContext) -> str:
         sp += "\n\n【相关背景资料——本回合参考】\n" + lore_blocks
 
     active_rules = _active_narrative_rules(ctx)
-    if active_rules:
+    if active_rules and not agent_mode:
         sp += "\n\n【本局实际启用的叙事规则包——只包含当前路线相关内容】\n" + active_rules
 
-    if ctx.story_dna:
+    if ctx.story_dna and not agent_mode:
         sp += (
             "\n\n【最终一致性闸门｜设定哈希 " + debug_hash(ctx.story_dna)
             + "】输出前核对：世界类型、时代、基调、故事引擎、穿越形式和玩家硬性备注只能来自“本局最终有效设定”。"
               "较早剧情摘要只负责连续性，不能创建另一套世界前提。若历史与最终设定冲突，以最终设定为准，"
               "并在不替玩家行动的前提下让眼前场景自然回到有效设定。"
+        )
+
+    if agent_mode and ctx.story_dna:
+        sp += (
+            "\n\n【写手终检｜设定哈希 " + debug_hash(ctx.story_dna)
+            + "】回应玩家；服从权威状态与场景卡；不新增因果；在下一个玩家决定前停下。"
         )
 
     return sp

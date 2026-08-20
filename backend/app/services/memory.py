@@ -13,12 +13,15 @@
     3. 组装提示词时按相关性检索注入，而不是全量堆砌
 """
 from dataclasses import dataclass
+import re
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Entity, EntityAlias, Fact
-from app.domain.ontology import EntityKind, Stability, stability_of
+from app.domain.ontology import (
+    EntityKind, Stability, conflict_guarded, stability_of,
+)
 
 
 @dataclass
@@ -149,11 +152,28 @@ async def record_fact(
     stability = stability_of(entity.kind, key)
     existing = await active_facts(db, entity.id, key)
 
+    def normalized(v: str) -> str:
+        return re.sub(r"[\s，。；：、,.!?！？'\"“”‘’（）()【】\[\]·—-]+", "", v).casefold()
+
+    def compatible(a: str, b: str) -> bool:
+        """字面相同或一方只是更详细时，不把它误报成矛盾。"""
+        na, nb = normalized(a), normalized(b)
+        if not na or not nb:
+            return False
+        if na == nb:
+            return True
+        neg = ("不", "非", "无", "没有", "不是", "并非")
+        if any(x in na for x in neg) != any(x in nb for x in neg):
+            return False
+        return min(len(na), len(nb)) >= 2 and (na in nb or nb in na)
+
     for old in existing:
-        if old.value.strip() == value:
+        if compatible(old.value, value):
             return None, None  # 完全一样，不重复记
 
-        if stability is Stability.STABLE and old.source != "system":
+        if (stability is Stability.STABLE
+                and conflict_guarded(entity.kind, key)
+                and old.source != "system"):
             # 玩家亲口说的可以覆盖 AI 之前编的；AI 改 AI 自己的稳定设定则拦截
             if source == "player":
                 break

@@ -36,6 +36,7 @@ class TurnContext(BaseModel):
     game_state: dict[str, Any] = Field(default_factory=dict, description="权威角色卡")
     player_canon: dict[str, str] = Field(default_factory=dict, description="主角身份档案")
     premise_state: dict[str, Any] = Field(default_factory=dict, description="跨世界迁移阶段")
+    story_runtime: dict[str, Any] = Field(default_factory=dict, description="规划 Agent 的结构化剧情与当前场景")
     prefs: dict[str, Any] = Field(default_factory=dict, description="玩家口味与硬性备注")
 
     outline: str = Field("", description="隐藏大纲")

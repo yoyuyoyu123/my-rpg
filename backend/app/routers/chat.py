@@ -62,6 +62,7 @@ async def chat(req: ChatRequest, settings: Settings = Depends(get_settings)) -> 
             messages=[m.model_dump() for m in req.messages],
             temperature=req.temperature,
             max_tokens=req.max_tokens,
+            thinking=req.thinking,
         )
     except LLMError as exc:
         # 把业务异常翻译成 HTTP 响应。
@@ -105,6 +106,7 @@ async def chat_stream(
             messages=[m.model_dump() for m in req.messages],
             temperature=req.temperature,
             max_tokens=req.max_tokens,
+            thinking=req.thinking,
         )
     except LLMError as exc:
         raise HTTPException(

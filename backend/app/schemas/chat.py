@@ -39,6 +39,11 @@ class ChatRequest(BaseModel):
     temperature: float = Field(0.85, ge=0.0, le=2.0, description="随机性")
     max_tokens: int = Field(4096, ge=1, le=32000, description="最大输出长度")
     stream: bool = Field(False, description="是否流式返回")
+    # DeepSeek V4 默认可能进入思考模式。叙事请求默认关闭，避免思考内容吃完
+    # 输出预算后只剩 reasoning_content、没有可显示的正文。
+    thinking: Literal["enabled", "disabled"] = Field(
+        "disabled", description="DeepSeek 思考模式；仅 DeepSeek 后端使用"
+    )
 
 
 class Usage(BaseModel):

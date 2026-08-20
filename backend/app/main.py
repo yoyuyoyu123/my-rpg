@@ -21,9 +21,11 @@ from fastapi.staticfiles import StaticFiles
 from app.config import get_settings
 from app.db.session import init_db
 from app.routers import chat as chat_router
+from app.routers import config as config_router
 from app.routers import memory as memory_router
 from app.routers import saves as saves_router
 from app.routers import state as state_router
+from app.routers import story as story_router
 from app.routers import turn as turn_router
 from app.routers import worlds as worlds_router
 from app.schemas.chat import ErrorDetail  # noqa: F401  (让它出现在 OpenAPI 文档里)
@@ -48,8 +50,7 @@ app = FastAPI(
     title="无界·叙事引擎 API",
     description=(
         "AI 驱动的叙事 RPG 后端。\n\n"
-        "**当前阶段**：对话代理（API key 收归服务端）。\n"
-        "后续会陆续接管提示词组装、状态结算与存档持久化。"
+        "**当前阶段**：对话代理、提示词组装、状态结算、存档与本机配置。"
     ),
     version="0.1.0",
 )
@@ -67,10 +68,12 @@ app.add_middleware(
 )
 
 app.include_router(chat_router.router)
+app.include_router(config_router.router)
 app.include_router(worlds_router.router)
 app.include_router(memory_router.router)
 app.include_router(saves_router.router)
 app.include_router(state_router.router)
+app.include_router(story_router.router)
 app.include_router(turn_router.router)
 
 

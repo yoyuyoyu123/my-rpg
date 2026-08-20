@@ -102,6 +102,29 @@ async def test_stable_change_blocked(db: AsyncSession) -> None:
 
 
 @pytest.mark.asyncio
+async def test_descriptive_expansion_is_not_a_blocking_conflict(db: AsyncSession) -> None:
+    """外貌等描述会自然补充，不能因为措辞变化就打断游戏。"""
+    e = await upsert_entity(db, SID, name="莉亚", kind="person", turn=1)
+    await record_fact(db, SID, e, key="外貌", value="短发褐眸", turn=1)
+    fact, conflict = await record_fact(
+        db, SID, e, key="外貌", value="褐色眼睛，留着齐肩短发", turn=4,
+    )
+    assert conflict is None
+    assert fact is not None
+
+
+@pytest.mark.asyncio
+async def test_compatible_hard_fact_wording_is_a_noop(db: AsyncSession) -> None:
+    """硬事实只是补充限定词时也不应误报。"""
+    e = await upsert_entity(db, SID, name="莉亚", kind="person", turn=1)
+    await record_fact(db, SID, e, key="出身", value="北境", turn=1)
+    fact, conflict = await record_fact(
+        db, SID, e, key="出身", value="北境边陲地区", turn=4,
+    )
+    assert fact is None and conflict is None
+
+
+@pytest.mark.asyncio
 async def test_player_declaration_overrides(db: AsyncSession) -> None:
     """玩家亲口说的，优先于 AI 之前编的。"""
     e = await upsert_entity(db, SID, name="吴四娘", kind="person", turn=1)

@@ -160,11 +160,12 @@ async def extract_and_store(
     抽取失败返回空结果，不报错——记不住东西不该让玩家的回合失败。
     """
     await _get_session(db, sid)
-    known = await _known_names(db, sid)
+    known, known_facts = await _known_memory(db, sid)
 
     entities = await extract_facts(
         settings=settings, provider_id=req.provider, model=req.model,
-        narrative=req.narrative, player_input=req.player_input, known_names=known,
+        narrative=req.narrative, player_input=req.player_input,
+        known_names=known, known_facts=known_facts,
     )
     return await _store_extracted(sid, req.turn, entities, db)
 
@@ -181,9 +182,11 @@ async def extract_prompt(
     词表和清洗规则始终只有后端这一份，前端只是个传话的。
     """
     await _get_session(db, sid)
-    known = await _known_names(db, sid)
+    known, known_facts = await _known_memory(db, sid)
     return ExtractPromptOut(
-        prompt=build_prompt(req.narrative, req.player_input, known),
+        prompt=build_prompt(
+            req.narrative, req.player_input, known, known_facts=known_facts,
+        ),
         temperature=0.2,
         max_tokens=EXTRACT_MAX_TOKENS,
     )
@@ -208,6 +211,15 @@ async def _known_names(db: AsyncSession, sid: str) -> list[str]:
             .limit(40)
         )).scalars()
     )
+
+
+async def _known_memory(db: AsyncSession, sid: str) -> tuple[list[str], str]:
+    """把名字和当前事实一起交给抽取器，避免它每回合重抄旧设定。"""
+    names = await _known_names(db, sid)
+    facts = await retrieve_context(
+        db, sid, mentioned=names, max_entities=40, max_facts_each=12,
+    )
+    return names, facts
 
 
 async def _store_extracted(

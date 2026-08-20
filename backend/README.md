@@ -1,6 +1,6 @@
 # 无界·叙事引擎 · 后端
 
-FastAPI 后端。当前阶段：**对话代理**（把 API key 从浏览器收归服务端）。
+FastAPI 后端：剧情规划、提示词编译、状态结算、存档、事实记忆与流式对话代理。
 
 ## 快速开始
 
@@ -9,6 +9,39 @@ cd backend
 cp .env.example .env        # 然后编辑 .env 填入你的 API key
 .venv/Scripts/python.exe -m uvicorn app.main:app --reload
 ```
+
+Windows PowerShell：
+
+```powershell
+cd D:\claudecode\my-rpg\backend
+py -3.11 -m venv .venv             # 只需首次执行；若系统没有 3.11 可换成已安装版本
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+Copy-Item .env.example .env
+notepad .env
+# 至少填写一项，例如：DEEPSEEK_API_KEY=sk-你的密钥
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
+```
+
+`.env` 只放在 `backend/` 目录，不要提交到 Git。修改密钥后必须重启后端；
+打开 `http://127.0.0.1:8000/api/providers`，看到对应后端的 `configured: true`
+才表示配置生效。叙事默认关闭 DeepSeek V4 思考模式，避免思考内容耗尽输出预算；
+需要时可在游戏设置中手动打开。
+
+`.env` 中的 provider 配置如下（不需要的可以留空）：
+
+```dotenv
+DEEPSEEK_API_KEY=sk-xxxxxxxx
+ZHIPU_API_KEY=xxxxxxxx
+SILICONFLOW_API_KEY=sk-xxxxxxxx
+OPENROUTER_API_KEY=sk-or-xxxxxxxx
+DEFAULT_PROVIDER=deepseek
+```
+
+保存后重新启动 `dev.ps1`。如果 `/api/providers` 中某项仍是
+`configured: false`，通常是 key 为空、变量名拼错，或后端进程没有重启。
+
+也可以直接在游戏的“本地后端”面板中填写并保存 API Key。后端会把它写入
+`backend/.env`，只允许本机浏览器访问配置接口；已有 key 只显示脱敏提示，留空不会覆盖。
 
 打开 http://127.0.0.1:8000/docs 看接口文档。
 
@@ -42,8 +75,10 @@ cp .env.example .env        # 然后编辑 .env 填入你的 API key
 ## 当前进度
 
 - [x] 对话代理（`POST /api/chat`）— key 不再下发前端
+- [x] 流式 SSE 转发（`POST /api/chat/stream`）— 保留上游分帧
 - [x] 后端目录（`GET /api/providers`）
 - [x] 重试与错误分类
-- [ ] 提示词组装搬后端
-- [ ] 状态结算搬后端
-- [ ] 存档持久化
+- [x] 提示词编译（`POST /api/turn/prompt`）
+- [x] 剧情规划 Agent（`POST /api/story/plan/prompt` + `/api/story/plan/result`）— 维护部分有序剧情线和短期场景卡，叙事模型不读取幕后原因
+- [x] 状态结算（`POST /api/state/apply`）
+- [x] 存档持久化（`/api/saves`）

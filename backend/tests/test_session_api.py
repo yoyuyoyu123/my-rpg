@@ -193,6 +193,22 @@ def test_extract_prompt_carries_vocabulary(client: TestClient) -> None:
     assert r.json()["max_tokens"] > 0
 
 
+def test_extract_prompt_carries_known_facts_for_deduplication(client: TestClient) -> None:
+    """抽取器必须看到旧事实，否则同一描述换个说法就会反复报警。"""
+    sid = _new_session(client)
+    client.post(f"/api/sessions/{sid}/memory", json={
+        "turn": 1,
+        "entities": [{"name": "莉亚", "kind": "person",
+                      "facts": [{"key": "出身", "value": "北境"}]}],
+    })
+    r = client.post(f"/api/sessions/{sid}/extract/prompt", json={
+        "turn": 2, "narrative": "莉亚谈起故乡。", "player_input": "听她说",
+    })
+    prompt = r.json()["prompt"]
+    assert "已记录事实（不要重复抽取）" in prompt
+    assert "莉亚" in prompt and "出身=北境" in prompt
+
+
 def test_extract_result_parses_and_stores(client: TestClient) -> None:
     """前端把模型原文交回来，后端负责挖 JSON、清洗、入库。"""
     sid = _new_session(client)

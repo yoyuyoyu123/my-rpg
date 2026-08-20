@@ -66,6 +66,17 @@ def test_every_world_compiles(world_id: str) -> None:
     assert "【角色卡与状态协议" in sp
 
 
+def test_fantasy_prompt_has_no_global_wuxia_name_seeds() -> None:
+    """剑与魔法开局不能再从共享规则里抄出武侠/中式地名。"""
+    sp = build_system_prompt(ctx(world_id="fantasy", turns=0))
+    forbidden = [
+        "陈家渡", "三里坡", "广盛号", "下瓦窑", "槐树巷",
+        "青石镇", "黑风寨", "悦来客栈", "暗影兄弟会", "血色黎明",
+    ]
+    assert not [name for name in forbidden if name in sp]
+    assert "西式奇幻世界" in sp
+
+
 def test_unknown_world_returns_empty() -> None:
     """世界不存在时返回空串，由调用方决定怎么处理，不在这里抛异常。"""
     assert build_system_prompt(ctx(world_id="根本没有这个世界")) == ""
@@ -101,8 +112,8 @@ def test_cache_prefix_is_stable_across_turns() -> None:
     assert "【篇幅】" in shared
 
     # 反过来，随回合变化的内容一个都不许落进共享前缀。
-    # 挑断言词要小心：核心规则里就拿「陈家渡」当好名字的范例，
-    # 拿它做检查会误报，所以只用确实唯一属于动态区的标记。
+    # 全局规则也不得用具体地点作格式范例，否则别的世界会照抄它。
+    assert "陈家渡" not in shared                 # 具体地名只能来自本局动态区
     assert "主角要重开铁匠铺" not in shared      # 大纲
     assert "【命名表" not in shared               # 命名表
     assert "吴四娘" not in shared                 # 事实库注入

@@ -15,9 +15,15 @@
   不会进版本库——这就是「密钥不入库」。
 """
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+# 用绝对路径而不是依赖当前工作目录；这样从 dev.ps1、IDE 或服务管理器启动时
+# 都能读到同一份 backend/.env。
+ENV_FILE = Path(__file__).resolve().parents[1] / ".env"
 
 
 class Settings(BaseSettings):
@@ -34,7 +40,7 @@ class Settings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=str(ENV_FILE),
         env_file_encoding="utf-8",
         extra="ignore",  # .env 里有多余的键就忽略，不报错
     )

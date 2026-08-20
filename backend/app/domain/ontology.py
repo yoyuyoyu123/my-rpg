@@ -129,6 +129,24 @@ ATTRS_BY_KIND: dict[EntityKind, dict[str, tuple[Stability, str]]] = {
     EntityKind.CONCEPT: CONCEPT_ATTRS,
 }
 
+# 只有这些“单值身份锚点”需要在字符串变化时硬拦截。其它标为 stable 的
+# 描述仍会优先进入上下文，但外貌、性格、氛围、效用等允许随着观察变得
+# 更具体；把所有 stable 字段都按字面不等拦截，会把正常补充误报成穿帮。
+CONFLICT_GUARDED_ATTRS: dict[EntityKind, set[str]] = {
+    EntityKind.PERSON: {"性别", "出身"},
+    EntityKind.PLACE: {"类型", "位置"},
+    EntityKind.FACTION: {"类型"},
+    EntityKind.OBJECT: {"类型", "来历"},
+    EntityKind.EVENT: {"时间", "地点"},
+    EntityKind.CONCEPT: {"类型", "来源"},
+}
+
+
+def conflict_guarded(kind: EntityKind | str, key: str) -> bool:
+    """某字段是否值得打断叙事并要求模型纠错。"""
+    k = EntityKind(kind) if isinstance(kind, str) else kind
+    return key in CONFLICT_GUARDED_ATTRS.get(k, set())
+
 
 def stability_of(kind: EntityKind | str, key: str) -> Stability:
     """

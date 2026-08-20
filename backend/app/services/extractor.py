@@ -22,7 +22,12 @@ from app.services.llm import LLMError, call_chat
 EXTRACT_MAX_TOKENS = 900
 
 
-def build_prompt(narrative: str, player_input: str, known_names: list[str]) -> str:
+def build_prompt(
+    narrative: str,
+    player_input: str,
+    known_names: list[str],
+    known_facts: str = "",
+) -> str:
     """
     组装抽取提示词。
 
@@ -33,6 +38,7 @@ def build_prompt(narrative: str, player_input: str, known_names: list[str]) -> s
         f"  {kind.value}：{attr_menu(kind)}" for kind in ATTRS_BY_KIND
     )
     known = "、".join(known_names[:40]) if known_names else "（暂无）"
+    facts = known_facts.strip() or "（暂无已记录事实）"
 
     return (
         "你是文字游戏的设定记录员。从下面这一回合的内容里，"
@@ -42,10 +48,13 @@ def build_prompt(narrative: str, player_input: str, known_names: list[str]) -> s
         "2. 泛泛的路人（没有名字、只出现一次、无关剧情）不要记录。\n"
         "3. 主角自己不要作为实体记录（主角状态由其它系统管理）。\n"
         "4. 每条事实必须简短具体，一句话说清。\n"
-        "5. 如果这一回合没有任何值得长期记住的新设定，返回空数组。\n\n"
+        "5. 如果这一回合没有任何值得长期记住的新设定，返回空数组。\n"
+        "6. 已记录事实只用于去重和核对：同一事实再次出现、换一种说法、增加不改变原意的修饰时，不要重复输出。\n"
+        "7. 只有文本明确推翻旧值时才输出同一属性的新值；外貌、性格、氛围等普通补充不是矛盾，也不必每回合重记。\n\n"
         f"实体类型：{KIND_MENU}\n\n"
         f"各类型可用的属性名（必须从中选择，不要自造）：\n{menus}\n\n"
         f"已知实体（如果提到的是这些，请使用完全相同的名字）：{known}\n\n"
+        f"已记录事实（不要重复抽取）：\n{facts}\n\n"
         "只输出一个 JSON 对象，不要任何解释文字：\n"
         '{"entities":[{"name":"规范名","kind":"person","aliases":["别名"],'
         '"importance":1,"facts":[{"key":"职业","value":"洗衣妇"}]}]}\n\n'
@@ -144,6 +153,7 @@ async def extract_facts(
     narrative: str,
     player_input: str = "",
     known_names: list[str] | None = None,
+    known_facts: str = "",
 ) -> list[dict]:
     """
     抽取一回合的事实。
@@ -154,7 +164,9 @@ async def extract_facts(
     if not narrative.strip():
         return []
 
-    prompt = build_prompt(narrative, player_input, known_names or [])
+    prompt = build_prompt(
+        narrative, player_input, known_names or [], known_facts=known_facts,
+    )
 
     try:
         result = await call_chat(
