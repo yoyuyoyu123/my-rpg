@@ -1587,6 +1587,14 @@ body::before{
         </select>
       </div>
       <div class="set-hint" id="set-loreextract-hint"></div>
+      <div class="set-row">单回合输出上限
+        <select id="set-maxtokens" onchange="SETTINGS.maxTokens=Number(this.value);saveSettings()">
+          <option value="4096">4096 · 省心</option>
+          <option value="8192">8192 · 推荐</option>
+          <option value="16384">16384 · 长叙事</option>
+        </select>
+      </div>
+      <div class="set-hint">按实际生成量计费，调高不会多花钱；调低了撞上限会白烧掉整段回复。</div>
       <div class="setting-divider">问题诊断 · v25</div>
       <label class="set-chk"><input type="checkbox" id="set-debug" onchange="setDebugMode(this.checked)"> 调试追踪（复现问题前开启）</label>
       <div class="debug-card" id="debug-card">
@@ -2037,7 +2045,7 @@ function rollTone(profile,audit){
   if(/黑色悬疑|悬疑|恐怖|推理|谜/.test(STORY_TONE))TONE_TRANS='暗牌——只保留玩家主动选择的谜团；线索有证据链，NPC知识严格隔离';
   else TONE_TRANS='明牌——目标、因果和人物动机尽量透明；不额外生成阴谋网、神秘观察者或隐藏身份线';
 }
-var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,loreExtract:'balanced',director:true,stateSync:true,agencyGuard:true,debug:false,fontSize:16,lineHeight:1.9};
+var SETTINGS={temp:0.85,stream:true,dice:true,autoMem:true,loreExtract:'balanced',maxTokens:8192,director:true,stateSync:true,agencyGuard:true,debug:false,fontSize:16,lineHeight:1.9};
 try{var _st=localStorage.getItem('wuji_settings'); if(_st) SETTINGS=Object.assign(SETTINGS,JSON.parse(_st));}catch(e){}
 function saveSettings(){try{localStorage.setItem('wuji_settings',JSON.stringify(SETTINGS));}catch(e){}}
 
@@ -2497,6 +2505,7 @@ function syncSettingsControls(){
   var am=document.getElementById('set-automem');if(am)am.checked=!!SETTINGS.autoMem;
   var lx=document.getElementById('set-loreextract');if(lx)lx.value=SETTINGS.loreExtract||'balanced';
   syncLoreExtractHint();
+  var mt=document.getElementById('set-maxtokens');if(mt)mt.value=String(narrativeMaxTokens());
   var dr=document.getElementById('set-director');if(dr)dr.checked=!!SETTINGS.director;
   var ss=document.getElementById('set-statesync');if(ss)ss.checked=SETTINGS.stateSync!==false;
   var ag=document.getElementById('set-agencyguard');if(ag)ag.checked=SETTINGS.agencyGuard!==false;
@@ -3456,6 +3465,20 @@ async function doFetchStream(messages,maxTok,onDelta,temp){
   throw lastErr;
 }
 
+// 从被截断的回复里抢救出可用的正文。
+// 只有闭合完整的协议块才留下——断了一半的【STATE】里是半个 JSON，
+// 解析出来的东西会污染权威状态，宁可整块不要。
+function salvageTruncated(text){
+  var t=String(text||'');
+  var TAGS=['STATE','SHEET_INIT','大纲','命名表','裁定','检定'];
+  for(var i=0;i<TAGS.length;i++){
+    var open=t.lastIndexOf('【'+TAGS[i]+'】');
+    if(open<0)continue;
+    if(t.indexOf('【/'+TAGS[i]+'】',open)<0) t=t.slice(0,open);   // 未闭合，砍掉
+  }
+  return t.replace(/\s+$/,'');
+}
+
 async function doFetchStreamOnce(messages,maxTok,onDelta,temp){
   var url=BASEURL+CHATPATH,hdrs,body;
   if(BK==='be'){
@@ -3535,7 +3558,12 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp){
       }
     }
   }}catch(e){if(e&&e.name==='AbortError')throw new Error('流式输出长时间没有返回内容');throw e;}finally{clearTimeout(idleTimer);}
-  if(finishReason==='length')throw new Error('模型达到输出长度上限，本次回复可能不完整，未写入历史；请缩短单回合要求或提高输出上限');
+  // 撞上输出上限时不再整段丢弃。
+  // 输出 token 现在很贵，扔掉一段 4000 token 的正文是实打实的钱，
+  // 而且玩家还得把这一回合重来一遍。
+  // 但截断的尾巴不可信：可能断在【STATE】中间，半个 JSON 会污染状态。
+  // 所以保正文、砍掉未闭合的协议块、并告诉调用方本回合别结算。
+  if(finishReason==='length')return {text:salvageTruncated(full),usage:usage,truncated:true};
   if(finishReason==='error'||finishReason==='content_filter')throw new Error('模型未正常完成输出（'+finishReason+'），本次回复未写入历史');
   if(!sawDone&&finishReason!=='stop'&&finishReason!=='tool_calls')throw new Error('流式连接在完成标记前结束，本次半截回复未写入历史');
   return {text:full,usage:usage};
@@ -4137,6 +4165,13 @@ function loreConflictNote(){
 // 这也意味着从这一版起后端是必需的——资产不在浏览器里了，离线拼不出提示词。
 var LAST_SYSTEM_PROMPT='', LAST_RULE_PACKS=[], LAST_RULES_HASH='';
 
+// 单回合输出上限。调高不会多花钱——按实际生成量计费，不是按上限；
+// 但调低了撞上限就是白烧掉一整段，所以默认给足。
+function narrativeMaxTokens(){
+  var n=Number(SETTINGS.maxTokens);
+  return (isFinite(n)&&n>=1024&&n<=16384)?Math.round(n):8192;
+}
+
 function buildTurnContext(recentText){
   var w=WORLDS[WORLD]||{};
   return {
@@ -4247,25 +4282,28 @@ async function _runTurn(){
     msgs.splice(msgs.length-1,0,{role:'system',content:noteContent});
     if(DEBUG_ACTIVE){DEBUG_ACTIVE.directorRuling=debugClone(ruling);DEBUG_ACTIVE.authorNote=noteContent;DEBUG_ACTIVE.request=debugCompactMessages(msgs);}
     debugEvent('narrative_request_ready',{messageCount:msgs.length,authorNote:noteContent});
-    var reply, usage=null;
+    var reply, usage=null, truncated=false;
+    var narrTok=narrativeMaxTokens();
     if(SETTINGS.stream){
       var live=document.createElement('div'); live.className='sb nar';
       typ.remove(); typ=null;
       document.getElementById('slog').appendChild(live);
       try{
-        var r=await doFetchStream(msgs,4096,function(full){
+        var r=await doFetchStream(msgs,narrTok,function(full){
           var vis=full.replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*?(【\/STATE】|$)/g,'').replace(/【SHEET_INIT】[\s\S]*?(【\/SHEET_INIT】|$)/g,'').replace(/【命名表】[\s\S]*?(【\/命名表】|$)/g,'').replace(/【裁定】[\s\S]*?(【\/裁定】|$)/g,'');
           live.innerHTML=vis.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');
           scrollB();
         });
-        reply=r.text; usage=r.usage;
+        reply=r.text; usage=r.usage; truncated=!!r.truncated;
       } finally { live.remove(); }
       if(!reply) throw new Error('空回复（可尝试在设置中关闭流式输出）');
     } else {
-      var res=await doFetch(msgs,4096);
+      var res=await doFetch(msgs,narrTok);
       var data=await res.json();
+      var fr=data.choices&&data.choices[0]&&data.choices[0].finish_reason;
+      if(fr==='length'){truncated=true;}
       if(data.error){if(typ)typ.remove();debugEvent('narrative_error',{apiError:data.error});debugFinish('api-error',{apiError:data.error});addBlk('err','错误：'+JSON.stringify(data.error));LOADING=false;return;}
-      reply=chatContent(data); usage=data.usage;
+      reply=chatContent(data); if(truncated)reply=salvageTruncated(reply); usage=data.usage;
       typ.remove(); typ=null;
     }
     var rawModelReply=String(reply||''),agencyCodes=SETTINGS.agencyGuard!==false?agencyViolationCodes(lastUser,rawModelReply):[];
@@ -4273,6 +4311,10 @@ async function _runTurn(){
     if(DEBUG_ACTIVE){DEBUG_ACTIVE.rawModelReply=rawModelReply;DEBUG_ACTIVE.reply=String(reply||'');DEBUG_ACTIVE.agencyViolations=agencyCodes;DEBUG_ACTIVE.usage=debugClone(usage||null);}
     debugEvent('narrative_response',{chars:String(reply||'').length,hash:debugHash(reply),rawHash:debugHash(rawModelReply),agencyViolations:agencyCodes,usage:usage||null});
     if(checkLine && reply.indexOf('【检定】')<0){ reply=checkLine+'\n'+reply; }
+    if(truncated){
+      addBlk('sys','▸ 本回合写到输出上限被截断，正文已保留但可能不完整；本回合不结算数值。可在设置里调高「单回合输出上限」，或让 AI 写短一些。');
+      debugEvent('narrative_truncated',{chars:String(reply||'').length,limit:narrTok});
+    }
     advancePremiseStateFromReply(reply,lastUser);
     HIST.push({role:'assistant',content:reply});
     if(pendingCheck){GAME_STATE.lastCheck=pendingCheck;renderCharacterSheet();}
@@ -4287,14 +4329,14 @@ async function _runTurn(){
     // sufficient reason to audit.  `null` means the audit failed; `{}` means
     // the audit explicitly confirmed that no state change occurred.  Neither
     // case may silently fall back to the untrusted narrative-model patch.
-    var stateAuditAttempted=SETTINGS.stateSync!==false&&(declaredPatches.length>0||stateChangeLikely(lastUser,reply));
+    var stateAuditAttempted=!truncated&&SETTINGS.stateSync!==false&&(declaredPatches.length>0||stateChangeLikely(lastUser,reply));
     if(stateAuditAttempted)auditedPatch=await reconcileTurnState(stateBefore,lastUser,reply,declaredPatches);
     var appliedPatchSource='none';
     if(stateAuditAttempted){
       if(auditedPatch!==null&&Object.keys(auditedPatch).length){await applyStatePatch(auditedPatch);appliedPatchSource='audited';}
       else if(auditedPatch!==null){appliedPatchSource='audited-empty';}
       else{appliedPatchSource='audit-failed-closed';addBlk('sys','▸ 状态审计未完成，本回合未写入数值变化；可在角色卡中手动校准');}
-    }else if(SETTINGS.stateSync===false&&declaredPatches.length){
+    }else if(!truncated&&SETTINGS.stateSync===false&&declaredPatches.length){
       for(var dpi=0;dpi<declaredPatches.length;dpi++)await applyStatePatch(declaredPatches[dpi]);appliedPatchSource='declared-unsynced';
     }
     if(DEBUG_ACTIVE){DEBUG_ACTIVE.declaredPatches=debugClone(declaredPatches);DEBUG_ACTIVE.auditedPatch=debugClone(auditedPatch);DEBUG_ACTIVE.appliedPatchSource=appliedPatchSource;DEBUG_ACTIVE.stateAfter=debugClone(compactStateForAudit(GAME_STATE));}
