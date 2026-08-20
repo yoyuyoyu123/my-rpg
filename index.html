@@ -2752,8 +2752,9 @@ async function renderSlots() {
     if(raw){ try{ await savePut('sv_'+mi,JSON.parse(raw)); localStorage.removeItem('wuji_sv_'+mi);}catch(e){} }
   }
   c.innerHTML='';
+  var metas=await saveSummaries();
   for(var i=0;i<3;i++){
-    var sv=null; try{ sv=await saveGet('sv_'+i);}catch(e){}
+    var sv=metas['sv_'+i];
     var d=document.createElement('div');
     if(sv){
       d.className='svs';
@@ -2764,7 +2765,7 @@ async function renderSlots() {
     }
     c.appendChild(d);
   }
-  var av=null; try{ av=await saveGet('auto'); }catch(e){}
+  var av=metas['auto'];
   if(av){
     var d2=document.createElement('div'); d2.className='svs';
     d2.innerHTML='<div class="sn">⟳ 自动存档</div><div class="si">'+esc(av.desc||'')+'</div><div class="si" style="opacity:0.5">'+esc(av.time||'')+'</div><div class="sb2"><button onclick="loadSvAuto()">读取</button></div>';
@@ -2970,6 +2971,27 @@ async function savePut(k,v){
     return;
   }
   return idbPut(k,v);
+}
+
+// 渲染存档列表只需要「叫什么、第几回合、什么时候存的」。
+// 逐个 saveGet 会把每份存档的完整正文都拉下来——几十回合的历史有好几 MB，
+// 而且空槽位还会各报一个 404。服务端专门有个只回摘要的列表接口，用它。
+async function saveSummaries(){
+  var out={};
+  if(await saveBackendReady()){
+    try{
+      (await (await fetch('/api/saves')).json()).forEach(function(s){
+        out[s.slot]={desc:s.desc,time:s.client_time,turns:s.turns};
+      });
+      return out;
+    }catch(e){ /* 落到下面读本地 */ }
+  }
+  var keys=['auto','sv_0','sv_1','sv_2'];
+  for(var i=0;i<keys.length;i++){
+    var v=null; try{ v=await idbGet(keys[i]); }catch(e){}
+    if(v)out[keys[i]]={desc:v.desc,time:v.time,turns:v.turns};
+  }
+  return out;
 }
 
 async function saveGet(k){
@@ -3186,8 +3208,9 @@ async function renderStartupSlots(){
   try{await migrateSavesToBackend();}catch(e){}
   c.innerHTML='';var found=0;
   var defs=[{key:'sv_0',name:'存档 1'},{key:'sv_1',name:'存档 2'},{key:'sv_2',name:'存档 3'},{key:'auto',name:'⟳ 自动存档'}];
+  var metas=await saveSummaries();
   for(var i=0;i<defs.length;i++){
-    var def=defs[i],sv=null;try{sv=await saveGet(def.key);}catch(e){}
+    var def=defs[i],sv=metas[def.key];
     var d=document.createElement('div');d.className='svs'+(PENDING_STARTUP_LOAD===def.key?' chosen':'')+(sv?'':' emp');
     if(sv){
       found++;d.innerHTML='<div class="sn">'+esc(def.name)+'</div><div class="si">'+esc(sv.desc||('第 '+(sv.turns||0)+' 回合'))+'</div><div class="si" style="opacity:.5">'+esc(sv.time||'')+'</div><div class="sb2"><button>选择并继续</button></div>';
