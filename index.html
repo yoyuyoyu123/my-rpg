@@ -4312,8 +4312,16 @@ async function _runTurn(){
     debugEvent('narrative_response',{chars:String(reply||'').length,hash:debugHash(reply),rawHash:debugHash(rawModelReply),agencyViolations:agencyCodes,usage:usage||null});
     if(checkLine && reply.indexOf('【检定】')<0){ reply=checkLine+'\n'+reply; }
     if(truncated){
-      addBlk('sys','▸ 本回合写到输出上限被截断，正文已保留但可能不完整；本回合不结算数值。可在设置里调高「单回合输出上限」，或让 AI 写短一些。');
-      debugEvent('narrative_truncated',{chars:String(reply||'').length,limit:narrTok});
+      // 报错要自带诊断：撞上限可能是模型啰嗦、也可能是上限被谁调小了，
+      // 光说「达到上限」没法判断，把实际数字和当前后端一并写出来
+      var outTok=(usage&&(usage.completion_tokens||usage.total_tokens))||0;
+      addBlk('sys','▸ 本回合写到输出上限被截断（上限 '+narrTok+' token'+
+        (outTok?('，实际生成约 '+outTok):'')+'，正文 '+String(reply||'').length+' 字）｜后端 '+
+        (BK==='be'?('本地后端·'+BACKEND_PROVIDER):BK)+' · 模型 '+MODEL+
+        '。正文已保留，本回合不结算数值。若反复出现，把这行连同调试记录发给我。');
+      debugEvent('narrative_truncated',{chars:String(reply||'').length,limit:narrTok,
+        outputTokens:outTok,backend:BK,provider:BACKEND_PROVIDER,model:MODEL,
+        tail:String(reply||'').slice(-300)});
     }
     advancePremiseStateFromReply(reply,lastUser);
     HIST.push({role:'assistant',content:reply});
