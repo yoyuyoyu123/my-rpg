@@ -3509,6 +3509,8 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp){
     throw new Error('HTTP '+res.status+' '+msg);
   }
   var reader=res.body.getReader(),dec=new TextDecoder(),buf='',full='',usage=null,sawDone=false,finishReason='';
+  // 诊断用：收不到正文时要能说清「到底收到了什么」，而不是干巴巴一句「空回复」
+  var frames=0,reasoning='',firstShape='';
   var idleTimer=null;
   function armIdle(){clearTimeout(idleTimer);idleTimer=setTimeout(function(){ctrl.abort();},90000);}
   armIdle();
@@ -3527,7 +3529,13 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp){
           var em=typeof j.error==='string'?j.error:(j.error.message||JSON.stringify(j.error));
           throw new Error('流式后端错误：'+em);
         }
-        var d=j.choices&&j.choices[0]&&j.choices[0].delta&&j.choices[0].delta.content;
+        frames++;
+        var dl=j.choices&&j.choices[0]&&j.choices[0].delta;
+        if(!firstShape&&dl)firstShape=Object.keys(dl).join(',');
+        // 推理型模型把思考过程放在 reasoning_content，正文才在 content。
+        // 单独收着：正文为空时要能指出预算是不是被推理吃掉了。
+        if(dl&&dl.reasoning_content)reasoning+=String(dl.reasoning_content);
+        var d=dl&&dl.content;
         if(d){full+=d;if(onDelta)onDelta(full);}
         if(j.choices&&j.choices[0]&&j.choices[0].finish_reason)finishReason=j.choices[0].finish_reason;
         if(j.usage)usage=j.usage;
@@ -3548,7 +3556,10 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp){
       try{
         var tj=JSON.parse(tp);
         if(tj&&tj.error){var tem=typeof tj.error==='string'?tj.error:(tj.error.message||JSON.stringify(tj.error));throw new Error('流式后端错误：'+tem);}
-        var td=tj.choices&&tj.choices[0]&&tj.choices[0].delta&&tj.choices[0].delta.content;
+        frames++;
+        var tdl=tj.choices&&tj.choices[0]&&tj.choices[0].delta;
+        if(tdl&&tdl.reasoning_content)reasoning+=String(tdl.reasoning_content);
+        var td=tdl&&tdl.content;
         if(td){full+=td;if(onDelta)onDelta(full);}
         if(tj.choices&&tj.choices[0]&&tj.choices[0].finish_reason)finishReason=tj.choices[0].finish_reason;
         if(tj.usage)usage=tj.usage;
@@ -3563,6 +3574,19 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp){
   // 而且玩家还得把这一回合重来一遍。
   // 但截断的尾巴不可信：可能断在【STATE】中间，半个 JSON 会污染状态。
   // 所以保正文、砍掉未闭合的协议块、并告诉调用方本回合别结算。
+  // 一个字正文都没收到：这时候必须说清收到了什么，否则「空回复」三个字
+  // 既可能是模型没输出、也可能是解析没认出字段、还可能是预算被推理吃光
+  if(!full){
+    var why='流式没有收到任何正文';
+    if(reasoning)why+='：模型只产出了推理内容（'+reasoning.length+' 字），正文预算被耗尽。'
+      +'把「单回合输出上限」调高，或换一个不带思考模式的模型';
+    else if(!frames)why+='：一帧数据都没收到，可能是网络或后端问题';
+    else why+='：收到 '+frames+' 帧，但都没有正文字段'+(firstShape?('（首帧字段：'+firstShape+'）'):'');
+    why+='｜finish_reason='+(finishReason||'无')+'，模型 '+MODEL;
+    debugEvent('stream_empty',{frames:frames,reasoningChars:reasoning.length,
+      firstShape:firstShape,finishReason:finishReason,model:MODEL,backend:BK});
+    throw new Error(why);
+  }
   if(finishReason==='length')return {text:salvageTruncated(full),usage:usage,truncated:true};
   if(finishReason==='error'||finishReason==='content_filter')throw new Error('模型未正常完成输出（'+finishReason+'），本次回复未写入历史');
   if(!sawDone&&finishReason!=='stop'&&finishReason!=='tool_calls')throw new Error('流式连接在完成标记前结束，本次半截回复未写入历史');
