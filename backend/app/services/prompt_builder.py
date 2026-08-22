@@ -55,7 +55,27 @@ AGENT_WRITER_RULES = (
     "5. 描写必须服务于眼前行动、空间判断、人物关系或可用信息。一个回合只保留一个主要焦点，删除与本回合无因果关系的景物、路人和背景事件。\n"
     "6. 已确立事实和权威状态优先。不得凭空修改身份、身体、种族、职业、物品、能力、地点、关系与历史。\n"
     "7. 结尾给 2-4 个真正不同且立刻可做的行动参考，并明确允许自由输入；这些不是剧情唯一入口。\n"
-    "8. 正文自然完整，篇幅服从场景而不是凑字数。状态确有改变时才使用指定协议块；不要解释规则、规划器或场景卡。"
+    "8. 正文自然完整，篇幅服从场景而不是凑字数。状态确有改变时才使用指定协议块；不要解释规则、规划器或场景卡。\n"
+    "9. 场景卡会标明本幕**详写还是略写**，这是硬要求，不是建议。\n"
+    "   详写：逐步展开，停在玩家要反应的地方。\n"
+    "   略写：用一到两段把**整段过程**概括完，直接抵达场景卡给出的终点，"
+    "然后停在那里等玩家。不要逐步描写过程中的每一步、每一种感官、每一个细微变化——"
+    "略写的段落里，过程本身只值一两句话，笔墨留给它的**结果**。\n"
+    "   判断标准是「这一幕出岔子会怎样」：不会怎样的事，写长了就是水。"
+)
+
+# 略写模式下额外追加的一段。写成独立常量，是因为它要压过写手的默认倾向：
+# 模型天然喜欢把每个瞬间都展开，而「赶路、等待、传送」这类过程一旦逐步描写，
+# 一段几百字的传送能占掉十几个回合。实测过：一次穿越的传送过程写了 11 个回合
+# 约 4500 字，每回合只是换个感官细节重复同一件事。
+SUMMARY_MODE_RULES = (
+    "【本幕略写——最高优先级，压过上面第 1 条的「完整回应」】\n"
+    "这一幕是纯过程，结果已经确定，不值得逐步展开。请用一到两段写完整段过程并抵达终点：\n"
+    "· 过程本身最多两三句，只保留对后续真正有影响的细节；\n"
+    "· 不要逐一描写沿途所见、身体感受的每一层变化、时间的每一段推移；\n"
+    "· 不要为了「有画面感」把同一件事换角度再写一遍；\n"
+    "· 玩家的行动仍然要被如实回应，但回应可以浓缩成结果，不必还原每一步；\n"
+    "· 抵达终点后停下，把回合交还给玩家。"
 )
 
 
@@ -324,7 +344,12 @@ def _story_scene_summary(runtime: dict) -> str:
         "强度预算:压力=" + str(scene.get("pressure_budget", 1))
         + "/4，悬疑=" + str(scene.get("mystery_budget", 0))
         + "/4。预算是上限而非配额，不必花完；禁止用力过猛的辞藻虚抬强度。",
+        # 详写/略写要和场景标题、处境挨在一起，别让写手读到一半才知道该压缩
+        "叙事密度:" + ("略写——一到两段带过整段过程"
+                       if scene.get("narration") == "summary" else "详写——逐步展开"),
     ]
+    if scene.get("narration") == "summary" and scene.get("summary_target"):
+        lines.append("本幕要跨过并抵达:" + str(scene["summary_target"]))
     intents = scene.get("participant_intents") or {}
     if isinstance(intents, dict) and intents:
         lines.append("在场人物眼前意图:" + "；".join(f"{k}={v}" for k, v in list(intents.items())[:8]))
@@ -374,7 +399,12 @@ def active_rule_packs(ctx: TurnContext) -> list[tuple[str, str, str]]:
     而不必在前端再抄一份映射表——抄了就会漂移。
     """
     if _agent_mode(ctx):
-        return [("agent-writer", "agent-writer", AGENT_WRITER_RULES)]
+        out = [("agent-writer", "agent-writer", AGENT_WRITER_RULES)]
+        scene = (ctx.story_runtime or {}).get("current_scene") or {}
+        if scene.get("narration") == "summary":
+            # 只在略写时挂。详写场景挂上它是纯噪音，还会诱导模型压缩不该压缩的戏。
+            out.append(("summary-mode", "summary-mode", SUMMARY_MODE_RULES))
+        return out
 
     packs: list[tuple[str, str, str]] = []
     seen: set[str] = set()
@@ -505,6 +535,11 @@ def build_system_prompt(ctx: TurnContext) -> str:
         scene_summary = _story_scene_summary(ctx.story_runtime)
         if scene_summary:
             sp += "\n\n" + scene_summary
+        # 略写指令紧跟场景卡：它要用到卡上的 summary_target，隔远了就断了。
+        # 注意 agent 模式下规则包整体不追加（写手契约已经是提示词开头），
+        # 所以这里必须直接拼，不能指望 active_rule_packs。
+        if (ctx.story_runtime.get("current_scene") or {}).get("narration") == "summary":
+            sp += "\n\n" + SUMMARY_MODE_RULES
 
     if ctx.names:
         sp += "\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n" + ctx.names

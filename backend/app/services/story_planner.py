@@ -149,6 +149,15 @@ def parse_story_runtime(
             scene[key] = max(0, min(4, int(scene.get(key, default))))
         except (TypeError, ValueError):
             scene[key] = default
+    narration = str(scene.get("narration") or "").strip().lower()
+    scene["narration"] = narration if narration in ("scene", "summary") else "scene"
+    scene["summary_target"] = str(scene.get("summary_target") or "").strip()[:300]
+    if scene["narration"] == "summary" and not scene["summary_target"]:
+        # 略写却没说要跨过什么，写手无从下手，只能又开始逐步描写。
+        # 退回详写比给一个空目标安全。
+        warnings.append("略写场景缺少 summary_target，已按详写处理")
+        scene["narration"] = "scene"
+
     scene["stop_points"] = _clean_list(scene.get("stop_points"), 6)
     requested_horizon = int(scene.get("refresh_after_turn") or turn + 3)
     scene["refresh_after_turn"] = max(turn + 2, min(turn + 6, requested_horizon))
@@ -329,11 +338,17 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
 6. 身份、身体种族、职业、阵营、关系与穿越落点保持开放；没有玩家设定或已确立事实时不要替玩家锁死。
 7. 非穿越场景的 premise_phase 必须为 null。穿越场景请**根据最近叙事判断故事实际处在哪个阶段**并如实填写 0-5：0原生活、1逼近、2阈限、3转移途中、4首次落地、5已抵达。【迁移状态】里的程序阶段仅供参考——若它与叙事明显不符（例如程序说已抵达新世界，而叙事仍在原世界的公寓里），以叙事为准如实下调，程序会采纳你的判断。若叙事确实推进了，就如实上调一级——同一个征兆连着几个回合只是被反复加深细化（越描越细但没进入下一步），那本身就说明卡住了，应当在本场景让当前阶段结束并把 premise_phase 上调一级。但一次最多上调一级，不得为了赶进度直接跳到已抵达。
 8. pressure_budget 与 mystery_budget 各为 0-4。普通生活/社交默认 pressure 0-1、mystery 0；只有已发生事件和玩家主动选择支持时才能提高。预算不是必须花完，禁止用辞藻假装强度。
+8b. **narration 决定这一幕详写还是略写，按小说的常规分寸来判断**：
+  narration="scene"（详写）——本幕存在真正的冲突、需要玩家做出的选择、或影响后续的新信息。逐步展开，停在玩家要反应的地方。
+  narration="summary"（略写）——纯过程且结果已定：赶路、等待、传送、搬运、排队、例行公事、单纯的时间流逝。这类内容用一两段概括**整段过程**并直接抵达它的终点，不要逐步描写。同时填写 summary_target，写明这一幕要跨过什么、最终停在哪里。
+  判断依据只有一条：**如果这一幕出了岔子会怎样？**答案是「不会怎样」，就略写。
+  尤其注意：穿越/传送/转移的过程本身默认略写。只有当过程中真的发生冲突（有人阻拦、出了故障、玩家必须做选择）时才详写——那种情况很少见。
+  略写不是敷衍，是把回合让给真正有选择的时刻。连续几个回合都在描写同一个过程的不同侧面，说明这里本来就该略写。
 9. causal_event_ids 与 soft_commitment_ids 只能引用【已检索事实】里真实出现的 evt_/com_ id；没有就留空。forbidden 至少包含当前场景最容易犯的一项错误。
 10. 输出纯 JSON，不要 Markdown，不要解释。
 
 输出结构：
-{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"stop_points":[],"refresh_after_turn":{ctx.turn + 3},"premise_phase":null,"status":"active"}}}}
+{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary","summary_target":"略写时写明本幕要跨过什么、停在哪里；详写留空","stop_points":[],"refresh_after_turn":{ctx.turn + 3},"premise_phase":null,"status":"active"}}}}
 
 {stall_note}【规划原因】{ctx.reason}；当前玩家回合={ctx.turn}；篇幅={ctx.pace}；预设={ctx.preset_id or '无'}
 【世界设定】\n{str(world_text)[:9000]}
