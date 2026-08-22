@@ -273,7 +273,11 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
     previous = json.dumps(ctx.story_runtime or {}, ensure_ascii=False, separators=(",", ":"))
     # 停滞加压：场景卡永远不会自己决定穿越，所以停久了必须由程序提醒规划器
     stall = premise_stall_note(ctx.premise_state or {})
-    stall_note = ("\n" + stall) if stall else ""
+    # 加压要放在紧挨规则区的位置。之前它挂在数据区最底部的【迁移状态】后面，
+    # 隔着世界设定、状态、事实、上一版规划、最近对话一大段——一行字对抗
+    # 顶部四条结构性的「不要强推」规则，必然输。实测规划器连着四次收到
+    # 「严重停滞」仍然规划夜班公交站、回家路上这类纯日常场景。
+    stall_note = (stall + "\n\n") if stall else ""
     state = state_digest(ctx.game_state or {})
     canon = json.dumps(ctx.player_canon or {}, ensure_ascii=False, separators=(",", ":"))
     premise = json.dumps(ctx.premise_state or {}, ensure_ascii=False, separators=(",", ":"))
@@ -307,6 +311,7 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
     return f"""你是互动小说的剧情规划 Agent，不写小说正文。你要把长期方向整理成可执行的部分有序剧情节点，并只为接下来的 2-6 个玩家回合制作一张场景卡。
 
 硬规则：
+0. **玩家在开局选定的前提必须兑现**。跨世界迁移不是可选钩子，是玩家点单的东西。下面第 2/3/4/8 条约束的是「不要凭空塞入玩家没有选择的事件」，它们**不适用于前提本身**。玩家可以自由选择如何应对迁移，但不能选择迁移是否发生；他一直过日常，不代表他放弃了这个前提。收到【迁移已停滞】或【迁移严重停滞】时，本场景**必须**实质推进迁移，并把 pressure_budget 提到足以支撑该阶段事件的程度——这是第 8 条明确允许的例外。把迁移当成普通日常线来「尊重玩家节奏」，结果就是玩家选了穿越却几十回合停在原世界，那是明确的失败。
 1. 玩家可做任何行动；剧情节点只能声明前置条件和激活条件，不能预定玩家会接受任务、相信某人、前往某地或作出某种情绪反应。
 2. 任何新事件都必须有具体的 causal_bridge：它从哪项已知事实、人物需求或玩家行动自然产生，以及为什么是现在。没有铺垫就不要发生。
 3. 保留旧 runtime 中仍成立的线程 id、人物动机与因果。玩家拒绝、忽略或绕开某个钩子后，更新该线为 paused/abandoned；禁止把同一钩子换皮再次强塞。
@@ -321,7 +326,7 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
 输出结构：
 {{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"stop_points":[],"refresh_after_turn":{ctx.turn + 3},"premise_phase":null,"status":"active"}}}}
 
-【规划原因】{ctx.reason}；当前玩家回合={ctx.turn}；篇幅={ctx.pace}；预设={ctx.preset_id or '无'}
+{stall_note}【规划原因】{ctx.reason}；当前玩家回合={ctx.turn}；篇幅={ctx.pace}；预设={ctx.preset_id or '无'}
 【世界设定】\n{str(world_text)[:9000]}
 【本局最终设定】\n{ctx.story_dna[:6000]}
 【特色预设】{preset_note[:1800]}
@@ -330,7 +335,7 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
 【兼容灵感候选——只在自然相容时选用】{'、'.join(ctx.inspiration_tags[:24])}
 【权威状态】{state[:4000]}
 【主角身份】{canon[:1600]}
-【迁移状态】{premise[:1200]}{stall_note}
+【迁移状态】{premise[:1200]}
 {migration_note}
 【已检索事实】\n{ctx.lore_context[:5000]}
 【上一版结构化规划】{previous[:9000]}

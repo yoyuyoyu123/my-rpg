@@ -179,3 +179,52 @@ def test_planner_cannot_leap_several_steps() -> None:
         _runtime(5), {}, turn=9, reason="horizon", premise_state=ps(0, 9))
     assert runtime.current_scene.premise_phase == 1     # 被限制成只前进一级
     assert any("限制为只前进一级" in w for w in warnings)
+
+
+# ── 规划器规则里必须给「玩家选定的前提」开口子 ──────────────────
+
+def _planner_prompt(**kw):
+    from app.schemas.story import StoryPlanContext
+    from app.services.story_planner import build_story_plan_prompt
+    args = dict(world_id="modernlife", pace="long", turn=16, reason="horizon",
+                story_dna="x", game_state={"revealed": False},
+                premise_state=ps(0, 16), recent_messages=[])
+    args.update(kw)
+    return build_story_plan_prompt(StoryPlanContext(**args))
+
+
+def test_premise_is_exempt_from_the_anti_forcing_rules() -> None:
+    """
+    这条是三轮修复之后才找到的真正原因。
+
+    规划器的硬规则是一堵「反强推」的墙（不许没铺垫就发生、不许换皮重塞、
+    日常本身就能是主线、普通生活 pressure 锁 0-1），它是为了解决
+    「AI 强行推进剧情」而建的，本身没错。但规划器把**玩家开局选定的穿越前提**
+    也当成了不该强推的可选钩子——实测连着四次收到「严重停滞」仍然规划
+    夜班公交站、回家路上这类纯日常场景，十六个回合没动。
+
+    两个正当需求在打架：不要强推玩家没选的东西 vs 必须兑现玩家选了的东西。
+    规则里必须把这两者分开。
+    """
+    p = _planner_prompt()
+    assert "玩家在开局选定的前提必须兑现" in p
+    assert "不适用于前提本身" in p
+    assert "不能选择迁移是否发生" in p
+    # 压力预算的例外要说明白，否则规则 8 会把迁移事件压回 0-1
+    assert "pressure_budget" in p and "第 8 条明确允许的例外" in p
+
+
+def test_stall_note_sits_before_the_data_section() -> None:
+    """
+    加压的位置决定它有没有分量。之前它挂在数据区最底部的【迁移状态】后面，
+    隔着世界设定、状态、事实、上一版规划、最近对话一大段——
+    一行字对抗顶部四条结构性规则，必然输。
+    """
+    p = _planner_prompt()
+    assert p.index("【迁移严重停滞】", 500) < p.index("【规划原因】")
+    assert p.index("【迁移严重停滞】", 500) < p.index("【世界设定】")
+
+
+def test_no_stall_note_when_not_stalled() -> None:
+    p = _planner_prompt(premise_state=ps(0, 0))
+    assert "迁移已停滞" not in p.split("硬规则")[-1].split("1. 玩家可做任何行动")[-1]
