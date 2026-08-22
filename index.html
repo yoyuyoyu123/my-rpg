@@ -4157,14 +4157,12 @@ function advancePremiseStateFromReply(reply,input){
   else if(ev.transit)phase=Math.max(3,old);
   else if(ev.threshold)phase=Math.max(3,old);
   else if(ev.trigger&&old===0)phase=1;
-  // 快速迁移保留可反应节点，但不允许模型把入口拖成数十回合的生活线。
-  // 每个阶段最多占一回合；玩家拒绝也只改变路径，不会让迁移前提失效。
-  if(fast&&phase===old){
-    if(old===0)phase=1;
-    else if(old===1)phase=2;
-    else if(old===2||old===3)phase=4;
-    else if(old===4)phase=5;
-  }
+  // 这里曾经有一段「fast 模式下没有证据也每回合往前跳一格」的代码。
+  // 意图是对的（不让入口拖成数十回合的生活线），但做法是推进账本而不是推进剧情：
+  // 实测四个回合就把阶段刷到「已抵达」，而玩家全程在阳台上撸猫。更糟的是
+  // 阶段一到 5，所有推进压力都停摆——系统以为事情办完了，于是
+  // 「选了穿越却永远不穿越」稳定复现。
+  // 压力改为加在提示词上（后端 premise_stall_note），阶段只跟着真实叙事走。
   if(phase!==old){PREMISE_STATE.phase=phase;PREMISE_STATE.phaseTurns=0;PREMISE_STATE.lastAdvancedAt=TURNS;}
   else PREMISE_STATE.phaseTurns=(Number(PREMISE_STATE.phaseTurns)||0)+1;
   debugEvent('premise_phase_update',{before:old,after:PREMISE_STATE.phase,phaseTurns:PREMISE_STATE.phaseTurns,evidence:ev,inputSignals:debugSignals(input)});
@@ -4863,13 +4861,19 @@ function applyStoryPremisePhase(runtime){
   if(!PREMISE_STATE||PREMISE_STATE.kind!=='transmigration'||phase===null||phase===undefined)return;
   phase=Math.max(0,Math.min(5,Math.round(Number(phase))));
   var old=Math.max(0,Math.min(5,Math.round(Number(PREMISE_STATE.phase)||0)));
-  // The reply-driven state machine is the only authority that advances a
-  // crossing.  Keep the card aligned with that state, but do not let a
-  // planner prediction jump directly to arrival.
-  if(isFinite(phase)&&phase!==old){
+  if(!isFinite(phase)||phase===old)return;
+  if(phase>old){
+    // 上跳仍然拒绝：规划器不能凭猜测宣布「已经穿越」，那得由真实叙事带来
     debugEvent('story_plan_phase_ignored',{planned:phase,program:old});
     if(runtime&&runtime.current_scene)runtime.current_scene.premise_phase=old;
+    return;
   }
+  // 往回调要采纳：规划器读的是真实叙事，而程序阶段可能因为历史上的计时器
+  // 空转而虚高（实测四回合刷到「已抵达」，玩家全程还在原世界）。
+  // 只允许往前，错误的阶段就永远修不回来，而阶段一旦到 5 所有推进压力都停摆。
+  debugEvent('story_plan_phase_rolled_back',{planned:phase,program:old});
+  PREMISE_STATE.phase=phase;PREMISE_STATE.phaseTurns=0;PREMISE_STATE.lastAdvancedAt=TURNS;
+  addBlk('sys','▸ 剧情规划判定故事仍处于更早的迁移阶段（'+phase+'←'+old+'），已按叙事回退');
 }
 async function requestStoryPlan(reason){
   if(!storyAgentEnabled()||STORY_AGENT.busy)return false;

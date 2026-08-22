@@ -169,6 +169,7 @@ def _premise_directive(ps: dict, prefs: dict) -> str:
 
     n = int(ps.get("phase") or 0)
     held = int(ps.get("phaseTurns") or 0)
+    fast = ps.get("fast") is True
     extra = f"玩家硬性备注：{prefs['extra']}。" if prefs.get("extra") else ""
 
     base = (
@@ -181,6 +182,8 @@ def _premise_directive(ps: dict, prefs: dict) -> str:
         "玩家拒绝或忽略某个入口，只会改变穿越路径与当下反应，不会取消本局前提，也不得把同一入口换皮重发。"
         "每回合仍只推进一个迁移态并在可反应处停下。"
     )
+    if fast:
+        base += "这是快速迁移路线：原世界只保留一个可感知起点，不扩写职业生活；已有触发或玩家回应后，按阶段直接推进到阈限、转移和首次落地。"
 
     if n == 0:
         return base + "当前迁移态=ORIGIN_LIFE（原世界生活）。只建立生活与第一项眼前刺激，不完成穿越。" + (
@@ -227,17 +230,57 @@ def _agent_mode(ctx: TurnContext) -> bool:
     return isinstance(runtime.get("current_scene"), dict) and bool(runtime["current_scene"].get("id"))
 
 
+PREMISE_LABELS = ["原世界生活", "入口逼近", "阈限事件", "转移途中", "首次落地", "已经抵达"]
+
+# 同一阶段停留多少回合之后开始加压。
+# 之前这个压力阀被拆掉了（注释写着「节拍由场景卡决定」），但场景卡永远不会
+# 自己决定穿越——规划器被要求「不要为了赶进度虚报」。结果是玩家选了穿越
+# 却几十回合停在原世界。压力要加回来，但要加在提示词上，不能靠偷偷推进计数器。
+PREMISE_STALL_TURNS = 3
+
+
+def premise_stall_note(ps: dict) -> str:
+    """在同一迁移阶段停留过久时给出的加压文字。空串表示不需要加压。"""
+    if not ps or ps.get("kind") != "transmigration":
+        return ""
+    try:
+        phase = max(0, min(5, int(ps.get("phase") or 0)))
+        held = int(ps.get("phaseTurns") or 0)
+    except (TypeError, ValueError):
+        return ""
+    if phase >= 5 or held < PREMISE_STALL_TURNS:
+        return ""
+    nudge = {
+        0: "本场景必须让第一项可回应的迁移征兆真正抵达玩家面前，然后在玩家能反应处停下。",
+        1: "本场景必须出现可感知且不可逆的外部阈限征兆，不能再写现实生活支线。",
+        2: "本场景必须让客观的穿越过程开始，重点写过程本身。",
+        3: "本场景必须抵达新世界的最初落点。",
+        4: "本场景必须呈现新世界的最初可感知环境。",
+    }[phase]
+    return (
+        f"【迁移已停滞】已在「{PREMISE_LABELS[phase]}」停留 {held} 回合，"
+        f"玩家选择的是穿越前提，不能一直停在这里。{nudge}"
+        "这不是替玩家做决定——外部事件可以客观发生，玩家仍然自由选择如何应对。"
+    )
+
+
 def _agent_premise_directive(ps: dict) -> str:
-    """规划模式下不再用停留回合数硬推事件，节拍由场景卡决定。"""
+    """
+    规划模式下的迁移状态。节拍主要由场景卡决定，但停滞过久时要加压——
+    没有这个阀门，「选了穿越却永远不穿越」会稳定复现。
+    """
     if not ps or ps.get("kind") != "transmigration":
         return ""
     phase = max(0, min(5, int(ps.get("phase") or 0)))
-    labels = ["原世界生活", "入口逼近", "阈限事件", "转移途中", "首次落地", "已经抵达"]
+    fast = ps.get("fast") is True
+    stall = premise_stall_note(ps)
     return (
-        "【迁移进度事实】当前=" + labels[phase]
+        "【迁移进度事实】当前=" + PREMISE_LABELS[phase]
         + "。迁移形式=" + str(ps.get("mechanism") or "未限定")
         + "；触发=" + str(ps.get("trigger") or "自然形成")
+        + ("；这是快速迁移路线，不扩写原世界职业生活，已有触发后直接安排下一阶段" if fast else "")
         + "。只按当前场景卡推进，不为赶阶段重复入口或突然跳步；玩家拒绝过的入口继续视为无效。"
+        + (("\n" + stall) if stall else "")
     )
 
 
@@ -252,18 +295,29 @@ def _story_scene_summary(runtime: dict) -> str:
         "眼前处境:" + str(scene.get("situation") or ""),
         "本场作用:" + str(scene.get("purpose") or ""),
         "可见因果桥:" + str(scene.get("causal_bridge") or ""),
+        "强度预算:压力=" + str(scene.get("pressure_budget", 1))
+        + "/4，悬疑=" + str(scene.get("mystery_budget", 0))
+        + "/4。预算是上限而非配额，不必花完；禁止用力过猛的辞藻虚抬强度。",
     ]
     intents = scene.get("participant_intents") or {}
     if isinstance(intents, dict) and intents:
         lines.append("在场人物眼前意图:" + "；".join(f"{k}={v}" for k, v in list(intents.items())[:8]))
     for key, label in (
         ("available_information", "当前可公开信息"),
+        ("affordances", "本幕可用行动空间"),
         ("allowed_developments", "允许的自然发展"),
+        ("forbidden", "本幕明确禁止"),
         ("stop_points", "必须停下的交互点"),
     ):
         values = scene.get(key) or []
         if isinstance(values, list) and values:
             lines.append(label + ":" + "；".join(str(x) for x in values[:10]))
+    causal_ids = scene.get("causal_event_ids") or []
+    commitment_ids = scene.get("soft_commitment_ids") or []
+    if causal_ids:
+        lines.append("本幕因果依据:" + "、".join(str(x) for x in causal_ids[:8]))
+    if commitment_ids:
+        lines.append("需尊重的承诺/拒绝:" + "、".join(str(x) for x in commitment_ids[:8]))
 
     active = set(scene.get("active_thread_ids") or [])
     public_threads = []
@@ -369,8 +423,11 @@ def build_system_prompt(ctx: TurnContext) -> str:
     agent_mode = _agent_mode(ctx)
     sp = AGENT_WRITER_RULES if agent_mode else CORE_RULES
     canon = _canon_summary(ctx.player_canon)
+    # 无论是否启用剧情规划 Agent，前端都依赖同一份选项协议把文本变成按钮。
+    # 之前 agent_mode 只保留了“给 2-4 个参考”的语义要求，却漏掉精确格式，
+    # 导致模型常写成 Markdown/【行动选项】而前端无法识别。
+    sp += "\n\n" + OPTION_RULES
     if not agent_mode:
-        sp += "\n\n" + OPTION_RULES
         sp += "\n\n" + AGENCY_RULES
 
     # 世界包里的旧状态栏/任务段落要摘掉——它们已经被下面的状态协议取代
