@@ -75,14 +75,21 @@ def test_transmigration_plan_is_bound_to_program_phase() -> None:
 
 
 def test_parser_clamps_planner_migration_jump() -> None:
+    """
+    规划器一次最多推进一级。1→5 是在赶进度，会被压回 2。
+
+    （规则从「完全禁止上调」放宽到「最多一级」，是因为正则证据只认得
+    「游戏弹窗」那一类路线的措辞：召唤路线第 0 回合就出现了明确征兆却
+    一个都匹配不上，阶段在 0 停了九回合。详见 test_premise_stall.py。）
+    """
     raw = sample_runtime()
     raw["current_scene"]["premise_phase"] = 5
     runtime, warnings = parse_story_runtime(
         json.dumps(raw, ensure_ascii=False), {}, 2, "premise",
         {"kind": "transmigration", "phase": 1},
     )
-    assert runtime.current_scene.premise_phase == 1
-    assert warnings
+    assert runtime.current_scene.premise_phase == 2
+    assert any("限制为只前进一级" in w for w in warnings)
 
 
 def test_parser_accepts_fenced_json_and_clamps_growth() -> None:

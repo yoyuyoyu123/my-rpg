@@ -144,19 +144,17 @@ def parse_story_runtime(
     requested_horizon = int(scene.get("refresh_after_turn") or turn + 3)
     scene["refresh_after_turn"] = max(turn + 2, min(turn + 6, requested_horizon))
 
-    # 迁移阶段：只许规划器往回调，不许往前跳。
+    # 迁移阶段：规划器可以自由下调，但一次最多上调一级。
     #
-    # 两个方向的风险不对称：
-    #   往前跳 —— 规划器凭猜测宣布「已经穿越」，玩家还在原世界就被当成到了。
-    #   往回调 —— 规划器读到叙事还在原世界，而程序阶段却写着已抵达。
+    # 为什么把规划器当主要判据：正则证据检测（premiseEvidence）只认得
+    # 「游戏弹窗/停服/VR」那一类路线的措辞。实测一局召唤路线，第 0 回合就
+    # 出现了淡蓝色光点这个明确征兆，正则一个都匹配不上，阶段在 0 停了九回合。
+    # 规划器读的是真实叙事，对召唤、神明、重生这些路线它是唯一识别得了的。
     #
-    # 实测遇到的正是后者：程序的快速迁移计时器在毫无叙事依据的情况下
-    # 四个回合把阶段推到「已抵达」，玩家全程在阳台上撸猫。规划器如实报了 0，
-    # 却被这里覆盖回 5。而阶段一旦到 5，所有推进压力都停摆——
-    # 于是「选了穿越却永远不穿越」稳定复现。
-    #
-    # 规划器读的是真实叙事，在「故事到底走到哪了」这件事上它信息最全，
-    # 所以下调采纳；上跳仍然拒绝，那得由真实证据或玩家行动带来。
+    # 两个方向的风险不对称，所以规则也不对称：
+    #   下调 —— 发现程序阶段虚高（曾被空转的计时器冲坏），采纳。
+    #   上调一级 —— 观察到真实推进，采纳。
+    #   跳好几级 —— 基本是模型在赶进度，玩家还在原世界就被宣布已抵达，限制。
     ps = premise_state if isinstance(premise_state, dict) else {}
     if ps.get("kind") == "transmigration":
         try:
@@ -171,9 +169,19 @@ def parse_story_runtime(
 
         if proposed_phase is None:
             scene["premise_phase"] = current_phase
+        elif proposed_phase > current_phase + 1:
+            # 一次跳好几级基本是模型在赶进度，玩家还在原世界就被宣布已抵达
+            warnings.append(
+                f"规划器想从阶段 {current_phase} 直接跳到 {proposed_phase}，"
+                "已限制为只前进一级"
+            )
+            scene["premise_phase"] = current_phase + 1
         elif proposed_phase > current_phase:
-            warnings.append("规划器想跳过迁移阶段，已按程序当前阶段执行")
-            scene["premise_phase"] = current_phase
+            # 允许前进一级：正则证据只认得「游戏弹窗」那一类路线，
+            # 召唤、神明、重生等路线的征兆它一个都匹配不上。规划器读的是
+            # 真实叙事，是这些路线唯一能识别推进的东西。
+            warnings.append(f"规划器判定叙事已推进到阶段 {proposed_phase}")
+            scene["premise_phase"] = proposed_phase
         elif proposed_phase < current_phase:
             warnings.append(
                 f"规划器判定叙事仍处于阶段 {proposed_phase}，"
@@ -305,7 +313,7 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
 4. 同时最多 3 条剧情线，每条 2-4 个节点；生活、职业、关系、经营、旅行本身都能成为完整主线，不必加入阴谋、幕后组织或世界危机。
 5. current_scene 是严格的 SceneContract：写明参与者各自想做什么、现在能公开的信息、玩家可用 affordances、禁止事项、以及必须在哪些玩家可反应处停下。不得要求写手透露 private_cause。
 6. 身份、身体种族、职业、阵营、关系与穿越落点保持开放；没有玩家设定或已确立事实时不要替玩家锁死。
-7. 非穿越场景的 premise_phase 必须为 null。穿越场景请**根据最近叙事判断故事实际处在哪个阶段**并如实填写 0-5：0原生活、1逼近、2阈限、3转移途中、4首次落地、5已抵达。【迁移状态】里的程序阶段仅供参考——若它与叙事明显不符（例如程序说已抵达新世界，而叙事仍在原世界的公寓里），以叙事为准如实下调，程序会采纳你的判断。但不要为了赶进度虚报没有发生的进展。
+7. 非穿越场景的 premise_phase 必须为 null。穿越场景请**根据最近叙事判断故事实际处在哪个阶段**并如实填写 0-5：0原生活、1逼近、2阈限、3转移途中、4首次落地、5已抵达。【迁移状态】里的程序阶段仅供参考——若它与叙事明显不符（例如程序说已抵达新世界，而叙事仍在原世界的公寓里），以叙事为准如实下调，程序会采纳你的判断。若叙事确实推进了，就如实上调一级——同一个征兆连着几个回合只是被反复加深细化（越描越细但没进入下一步），那本身就说明卡住了，应当在本场景让当前阶段结束并把 premise_phase 上调一级。但一次最多上调一级，不得为了赶进度直接跳到已抵达。
 8. pressure_budget 与 mystery_budget 各为 0-4。普通生活/社交默认 pressure 0-1、mystery 0；只有已发生事件和玩家主动选择支持时才能提高。预算不是必须花完，禁止用辞藻假装强度。
 9. causal_event_ids 与 soft_commitment_ids 只能引用【已检索事实】里真实出现的 evt_/com_ id；没有就留空。forbidden 至少包含当前场景最容易犯的一项错误。
 10. 输出纯 JSON，不要 Markdown，不要解释。

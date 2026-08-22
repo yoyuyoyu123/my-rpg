@@ -76,10 +76,12 @@ def test_non_transmigration_is_never_pressured() -> None:
 def test_directive_carries_the_pressure() -> None:
     """加压要真的出现在写手看到的指令里，不能只存在于函数返回值。"""
     calm = _agent_premise_directive(ps(0, 0))
-    stuck = _agent_premise_directive(ps(0, 9))
-    assert "迁移已停滞" not in calm
+    stuck = _agent_premise_directive(ps(0, PREMISE_STALL_TURNS))
+    hard = _agent_premise_directive(ps(0, PREMISE_STALL_TURNS * 2))
+    assert "停滞" not in calm
     assert "迁移已停滞" in stuck
-    assert "原世界生活" in stuck          # 原有信息不能丢
+    assert "严重停滞" in hard
+    assert "原世界生活" in stuck and "原世界生活" in hard   # 原有信息不能丢
 
 
 # ── 规划器的阶段修正 ────────────────────────────────────────────
@@ -106,15 +108,16 @@ def test_planner_may_roll_the_phase_back() -> None:
     assert any("按叙事回退" in w for w in warnings)
 
 
-def test_planner_may_not_jump_the_phase_forward() -> None:
+def test_planner_advance_is_capped_at_one_step() -> None:
     """
-    反方向仍然拒绝：规划器不能凭猜测宣布「已经穿越」，
-    玩家还在原世界就被当成到了。这得由真实叙事或玩家行动带来。
+    上调不再一概拒绝，但一次只许一级——「凭猜测宣布已经穿越」和
+    「观察到真实推进」要区别对待，而区别在于跨度。
+    （完全禁止上调曾经导致召唤路线卡死九回合，见下面的路线覆盖测试。）
     """
     runtime, warnings = parse_story_runtime(
         _runtime(5), {}, turn=6, reason="horizon", premise_state=ps(0, 1))
-    assert runtime.current_scene.premise_phase == 0
-    assert any("想跳过迁移阶段" in w for w in warnings)
+    assert runtime.current_scene.premise_phase == 1
+    assert any("限制为只前进一级" in w for w in warnings)
 
 
 def test_missing_phase_falls_back_to_program_state() -> None:
@@ -128,3 +131,51 @@ def test_non_transmigration_keeps_planner_value() -> None:
     runtime, _ = parse_story_runtime(
         _runtime(None), {}, turn=6, reason="horizon", premise_state={"kind": "none"})
     assert runtime.current_scene.premise_phase is None
+
+
+# ── 停久了必须换一句话说 ────────────────────────────────────────
+
+def test_long_stall_escalates_the_wording() -> None:
+    """
+    实测踩过的坑：征兆第 0 回合就出现了，但阶段判定没认出来，于是往后每回合
+    都在重复「让第一项征兆抵达」。模型照做——把同一团光越描越细，
+    连着八回合「戳它、碰它、捧着它」。指令已经被满足却还在重复，
+    模型唯一能做的就是把它做得更彻底。
+    """
+    mild = premise_stall_note(ps(0, PREMISE_STALL_TURNS))
+    hard = premise_stall_note(ps(0, PREMISE_STALL_TURNS * 2))
+    assert "迁移已停滞" in mild and "严重停滞" not in mild
+    assert "严重停滞" in hard
+    assert "不要再把同一个对象或同一种感受反复加深" in hard
+    # 升级档不能再重复轻档那句：那件事早就做过了，重复它正是模型
+    # 把同一团光越描越细的原因
+    assert "让第一项可回应的迁移征兆真正抵达" not in hard
+    assert "推向阈限" in hard
+
+
+def test_escalated_wording_still_leaves_the_player_free() -> None:
+    """加压升级不等于替玩家做决定。"""
+    hard = premise_stall_note(ps(1, 12))
+    assert "玩家仍然自由选择如何应对" in hard
+
+
+# ── 规划器可以推进一级 ──────────────────────────────────────────
+
+def test_planner_may_advance_one_step() -> None:
+    """
+    正则证据只认得「游戏弹窗」那一类路线的措辞。召唤路线里第 0 回合就出现的
+    「淡蓝色光点」它一个都匹配不上，阶段在 0 停了九回合。
+    规划器读真实叙事，是这些路线唯一识别得了推进的东西，必须让它能推。
+    """
+    runtime, warnings = parse_story_runtime(
+        _runtime(1), {}, turn=9, reason="horizon", premise_state=ps(0, 9))
+    assert runtime.current_scene.premise_phase == 1
+    assert any("已推进到阶段 1" in w for w in warnings)
+
+
+def test_planner_cannot_leap_several_steps() -> None:
+    """一次跳好几级基本是赶进度，玩家还在原世界就被宣布已抵达。"""
+    runtime, warnings = parse_story_runtime(
+        _runtime(5), {}, turn=9, reason="horizon", premise_state=ps(0, 9))
+    assert runtime.current_scene.premise_phase == 1     # 被限制成只前进一级
+    assert any("限制为只前进一级" in w for w in warnings)
