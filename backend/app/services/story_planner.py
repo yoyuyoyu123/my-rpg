@@ -18,6 +18,58 @@ from app.schemas.story import StoryPlanContext, StoryRuntime
 from app.services.prompt_builder import premise_stall_note
 
 
+# 两段 purpose 的字符二元组重合度超过这个比例就算「实质相同」。
+#
+# 阈值照 2026-08-22 那局的真实卡片标定：
+#   原样重写的两幕      1.000
+#   换皮但同目标的两幕  0.567   ← 必须抓到，是最常见的形态
+#   真正换了目标        0.139 / 0.011
+# 阳性最低 0.567、阴性最高 0.139，中间是空的。取 0.45 让两侧都有余量——
+# 贴着 0.55 设只剩 0.017 的间隙，换个说法就漏了。
+#
+# 局限：这是词面重合，抓不到「为穿越逼近留下因果桥」和「将迁移推进到逼近」
+# 这种换了说法的同一目标（实测只有 0.139）。语义重复靠提示词里回显上一幕
+# 目标原文来兜——那条是无条件生效的，不依赖这个检测器。
+PURPOSE_REPEAT_RATIO = 0.45
+# 连续几次目标重复就升级措辞。
+PURPOSE_REPEAT_ESCALATE = 2
+
+
+def _bigrams(text: str) -> set[str]:
+    # 中文没有空格分词，按字符二元组比对足够稳，也不必引入分词依赖。
+    s = re.sub(r"[\s，。、；：,.;:「」【】()（）]", "", str(text or ""))
+    return {s[i:i + 2] for i in range(len(s) - 1)}
+
+
+def _text_overlap(a: str, b: str) -> float:
+    """两段文字的 Jaccard 重合度，0-1。"""
+    ga, gb = _bigrams(a), _bigrams(b)
+    if not ga or not gb:
+        return 0.0
+    return len(ga & gb) / len(ga | gb)
+
+
+def scene_repeat_note(count: int) -> str:
+    """把「场景原地打转」回灌进下一次规划提示词。
+
+    和迁移停滞一样，光在规则里写「不要重复」是不够的——模型看不到自己
+    上一幕做了什么判断。必须把观测到的事实摆到它面前。
+    """
+    if count <= 0:
+        return ""
+    if count >= PURPOSE_REPEAT_ESCALATE:
+        return (
+            f"【场景原地打转·严重】最近 {count} 幕的 purpose 实质相同，故事没有前进。"
+            "这不是节奏慢，是同一件事被反复重写。本幕**必须**把那个目标当作**已经完成的既成事实**"
+            "写进 situation 与 causal_bridge，purpose 换成它之后的下一件事，"
+            "并把停止点放在新目标兑现之后。禁止再用「让玩家对X做出反应」当作本幕的作用。\n\n"
+        )
+    return (
+        "【场景原地打转】本幕 purpose 与上一幕实质相同，说明上一幕的停止点设在了目标兑现之前。"
+        "这一幕请让那个目标真正落地，或者直接把它当既成事实、换成下一个目标。\n\n"
+    )
+
+
 def _json_object(raw: str) -> dict[str, Any]:
     text = str(raw or "").strip()
     fenced = re.search(r"```(?:json)?\s*([\s\S]*?)```", text, re.I)
@@ -159,8 +211,29 @@ def parse_story_runtime(
         scene["narration"] = "scene"
 
     scene["stop_points"] = _clean_list(scene.get("stop_points"), 6)
-    requested_horizon = int(scene.get("refresh_after_turn") or turn + 3)
-    scene["refresh_after_turn"] = max(turn + 2, min(turn + 6, requested_horizon))
+
+    # 目标重复检测：新 purpose 与上一幕实质相同，说明上一幕没落地。
+    prev_scene = (previous or {}).get("current_scene")
+    prev_purpose = str((prev_scene or {}).get("purpose") or "") if isinstance(prev_scene, dict) else ""
+    if prev_purpose and _text_overlap(scene["purpose"], prev_purpose) >= PURPOSE_REPEAT_RATIO:
+        data["scene_repeat_count"] = int((previous or {}).get("scene_repeat_count") or 0) + 1
+        warnings.append(
+            f"本幕 purpose 与上一幕实质相同（已连续 {data['scene_repeat_count']} 次），"
+            "多半是上一幕的停止点设在了 purpose 兑现之前"
+        )
+    else:
+        data["scene_repeat_count"] = 0
+
+    # 视野下限从 turn+2 提到 turn+4。
+    #
+    # 实测一局 17 回合触发了 8 次规划（间隔 3,2,2,2,3,2,2），其中回合 3 和
+    # 回合 5 产出的 purpose、causal_bridge 一字不差——模型不管模板给什么，
+    # 都倾向于回填一个很小的 refresh_after_turn，于是每两回合重规划一次。
+    # 这不只是浪费：每次重规划都在把「上一幕没兑现的 purpose」重新固化一遍。
+    # 一幕至少要给到 4 回合才谈得上落地；场景真的提前结束时，前端的
+    # scene_boundary / premise 触发路径仍会立刻重规划，不受这里影响。
+    requested_horizon = int(scene.get("refresh_after_turn") or turn + 4)
+    scene["refresh_after_turn"] = max(turn + 4, min(turn + 8, requested_horizon))
 
     # 迁移阶段：规划器可以自由下调，但一次最多上调一级。
     #
@@ -296,6 +369,20 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
     # 顶部四条结构性的「不要强推」规则，必然输。实测规划器连着四次收到
     # 「严重停滞」仍然规划夜班公交站、回家路上这类纯日常场景。
     stall_note = (stall + "\n\n") if stall else ""
+
+    # 原地打转加压，和停滞加压同理：放在规则区旁边，且必须回显上一幕的
+    # purpose 原文——模型看不到自己上次写了什么，只讲抽象规则约束不住它。
+    runtime = ctx.story_runtime or {}
+    prev_scene = runtime.get("current_scene")
+    prev_purpose = str((prev_scene or {}).get("purpose") or "").strip() if isinstance(prev_scene, dict) else ""
+    repeat_note = scene_repeat_note(int(runtime.get("scene_repeat_count") or 0))
+    if prev_purpose:
+        repeat_note += (
+            f"【上一幕的目标】{prev_purpose[:300]}\n"
+            "它兑现了吗？兑现了就换新目标；没兑现说明上一幕停止点设早了，"
+            "把它当既成事实写进 situation，purpose 换成下一件事。两种情况都不许原样重写。\n\n"
+        )
+
     state = state_digest(ctx.game_state or {})
     canon = json.dumps(ctx.player_canon or {}, ensure_ascii=False, separators=(",", ":"))
     premise = json.dumps(ctx.premise_state or {}, ensure_ascii=False, separators=(",", ":"))
@@ -334,7 +421,12 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
 2. 任何新事件都必须有具体的 causal_bridge：它从哪项已知事实、人物需求或玩家行动自然产生，以及为什么是现在。没有铺垫就不要发生。
 3. 保留旧 runtime 中仍成立的线程 id、人物动机与因果。玩家拒绝、忽略或绕开某个钩子后，更新该线为 paused/abandoned；禁止把同一钩子换皮再次强塞。
 4. 同时最多 3 条剧情线，每条 2-4 个节点；生活、职业、关系、经营、旅行本身都能成为完整主线，不必加入阴谋、幕后组织或世界危机。
-5. current_scene 是严格的 SceneContract：写明参与者各自想做什么、现在能公开的信息、玩家可用 affordances、禁止事项、以及必须在哪些玩家可反应处停下。不得要求写手透露 private_cause。
+5. current_scene 是严格的 SceneContract：写明参与者各自想做什么、现在能公开的信息、玩家可用 affordances、禁止事项、以及停止点。不得要求写手透露 private_cause。
+5a. **停止点必须落在 purpose 兑现之后，不能落在它兑现之前**。stop_points 回答的是「这一幕该做的事做完了，接下来轮到玩家决定」，不是「刚发生了点什么、玩家可以有反应了」。
+  错误示范：purpose=「让异常产生实际后果，把阶段推进到逼近」，stop_points=「玩家对异常做出反应后」——玩家一反应就收场，后果根本没发生，这一幕等于没写。
+  正确写法：停止点描述 purpose 已经落地后的那个新局面，例如「地面塌出开口、冷光透出之后」。
+  一句话自检：**照着你写的停止点收场，purpose 兑现了吗？**没有就把停止点往后挪。
+5b. **不要重复上一幕没兑现的 purpose**。如果你发现本幕的 purpose 和上一幕实质相同，那说明上一幕的停止点设早了，不是说明这件事需要再来一次。此时应当：把那件事当作**已经发生的既成事实**写进 situation 和 causal_bridge，purpose 换成**下一件**事。同一个目标连写两幕，玩家看到的就是原地打转。
 6. 身份、身体种族、职业、阵营、关系与穿越落点保持开放；没有玩家设定或已确立事实时不要替玩家锁死。
 7. 非穿越场景的 premise_phase 必须为 null。穿越场景请**根据最近叙事判断故事实际处在哪个阶段**并如实填写 0-5：0原生活、1逼近、2阈限、3转移途中、4首次落地、5已抵达。【迁移状态】里的程序阶段仅供参考——若它与叙事明显不符（例如程序说已抵达新世界，而叙事仍在原世界的公寓里），以叙事为准如实下调，程序会采纳你的判断。若叙事确实推进了，就如实上调一级——同一个征兆连着几个回合只是被反复加深细化（越描越细但没进入下一步），那本身就说明卡住了，应当在本场景让当前阶段结束并把 premise_phase 上调一级。但一次最多上调一级，不得为了赶进度直接跳到已抵达。
 8. pressure_budget 与 mystery_budget 各为 0-4。普通生活/社交默认 pressure 0-1、mystery 0；只有已发生事件和玩家主动选择支持时才能提高。预算不是必须花完，禁止用辞藻假装强度。
@@ -348,9 +440,9 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
 10. 输出纯 JSON，不要 Markdown，不要解释。
 
 输出结构：
-{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary","summary_target":"略写时写明本幕要跨过什么、停在哪里；详写留空","stop_points":[],"refresh_after_turn":{ctx.turn + 3},"premise_phase":null,"status":"active"}}}}
+{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用；必须与上一幕不同","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary","summary_target":"略写时写明本幕要跨过什么、停在哪里；详写留空","stop_points":["purpose 兑现之后、轮到玩家决定下一步的那一刻"],"refresh_after_turn":{ctx.turn + 4},"premise_phase":null,"status":"active"}}}}
 
-{stall_note}【规划原因】{ctx.reason}；当前玩家回合={ctx.turn}；篇幅={ctx.pace}；预设={ctx.preset_id or '无'}
+{stall_note}{repeat_note}【规划原因】{ctx.reason}；当前玩家回合={ctx.turn}；篇幅={ctx.pace}；预设={ctx.preset_id or '无'}
 【世界设定】\n{str(world_text)[:9000]}
 【本局最终设定】\n{ctx.story_dna[:6000]}
 【特色预设】{preset_note[:1800]}

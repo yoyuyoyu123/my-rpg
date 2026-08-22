@@ -77,6 +77,13 @@ class StoryRuntime(BaseModel):
     current_scene: SceneCard | None = None
     last_planned_turn: int = 0
     plan_reason: str = "opening"
+    # 连续多少幕的 purpose 与上一幕实质相同。
+    #
+    # 目标重复说明上一幕的停止点设早了：该发生的事没发生，规划器只好把
+    # 同一句 purpose 再写一遍。实测一局 17 回合里「推进到逼近」写了 4 幕、
+    # 「推进到阈限」写了 3 幕，迁移阶段只从 0 走到 2。
+    # 这个计数会回灌进下一次规划提示词，逐级施压。
+    scene_repeat_count: int = 0
 
 
 class StoryPlanContext(BaseModel):

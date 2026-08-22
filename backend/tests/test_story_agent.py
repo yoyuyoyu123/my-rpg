@@ -102,7 +102,9 @@ def test_parser_accepts_fenced_json_and_clamps_growth() -> None:
         {"revision": 8}, 10, "horizon",
     )
     assert runtime.revision == 9
-    assert runtime.current_scene.refresh_after_turn == 16
+    # 视野上限 turn+8（回合 10 → 18）。上限连同下限一起从 +6/+2 放宽到
+    # +8/+4：实测模型总是回填很小的值，导致每两回合重规划一次。
+    assert runtime.current_scene.refresh_after_turn == 18
     assert runtime.current_scene.available_information == ["同一条"]
     assert runtime.current_scene.pressure_budget == 1
     assert runtime.current_scene.mystery_budget == 0
