@@ -4386,18 +4386,42 @@ function stateChangeLikely(input,reply){
   var s=String(input||'')+' '+String(reply||'').replace(/【(?:STATE|大纲|SHEET_INIT)】[\s\S]*?【\/(?:STATE|大纲|SHEET_INIT)】/g,'');
   return /(获得|得到|拿到|捡到|拾取|收到|领取|买下|购买|买了|付钱|付款|支付|花费|出售|卖出|吃下|吃完|喝下|喝完|服用|使用|消耗|丢弃|交给|归还|装备|卸下|穿上|脱下|学会|领悟|掌握|修炼|训练|熟练|升级|受伤|恢复|治疗|抵达|来到|进入|离开|前往|搬到|住进|加入|离队|死亡)/.test(s);
 }
+// 审计用的精简状态现在由后端算（services/state_audit.py 的 compact_state）。
+// 这里保留一份只给调试追踪的状态快照用——两处用途不同，不要再合并回去。
 function compactStateForAudit(s){
   s=s||GAME_STATE;return {revealed:!!s.revealed,attrs:s.attrs||{},res:s.res||{},inv:normalizeInventory(s.inv).map(function(x){return {id:x.id,name:x.name,category:x.category,quantity:x.quantity,equipped:x.equipped};}),skills:normalizeSkills(s.skills).map(function(x){return {id:x.id,name:x.name,category:x.category,realm:x.realm,coefficient:x.coefficient,proficiency:x.proficiency,attribute:x.attribute,active:x.active};}),talents:s.talents||[],loc:s.loc||'',npcs:s.npcs||{}};
 }
 async function reconcileTurnState(before,input,reply,declared){
-  var visible=String(reply||'').replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'').substring(0,2500);
-  var prompt='你是文字RPG的确定性状态结算器，不写剧情。根据“回合前权威状态、玩家行动、已经发生的可见结果、叙事模型申报”输出一份相对于回合前状态的完整且最小状态补丁。\n原则：只有可见结果明确完成的变化才结算；意图、准备、尝试、报价、查看、询问不算完成。普通对话、查看背包、整理记忆不消耗饱腹、体力或其他生理资源。不得创造结果里没有的物品、技能、金额或数量；同名物品必须使用原id或原名。进食/消耗用负数inv_delta；获得用正数，只有全新物品才用inv_upsert。技能训练仅在结果明确完成训练时增加熟练度，通常1-5；没有明确进展就不改。地点确实改变才写loc。NPC独立知识只能通过npc_set中的knows_add/knows_rm改变；只有玩家当面对该NPC说出口、该NPC直接观察并可靠确认、或剧情明确发生信息传递时才能knows_add。旁白、隐藏蓝图、玩家内心、异常猜测以及别的NPC知道的事均不得写入。叙事模型申报只是候选，若与可见结果冲突则忽略。\n只输出一个JSON对象，可用字段：attr_delta,res_delta,inv_delta:[{id或name,delta}],inv_upsert:[完整物品],equip_set:{id或name:true/false},skill_upsert:[完整技能],skill_progress:[{id或name,delta,realm可选}],active_skill,npc_set:{NPC名:{rel,att,note,knows_add:[],knows_rm:[]}},npc_rm,loc,talent_add,talent_rm。无变化输出{}。\n回合前：'+JSON.stringify(compactStateForAudit(before))+'\n玩家行动：'+String(input||'').substring(0,1600)+'\n可见结果：'+visible+'\n候选申报：'+JSON.stringify(declared||[]);
-  debugEvent('state_audit_request',{prompt:prompt,declaredPatches:declared||[]});
+  // 三步走：后端出题 → 这里跑模型 → 后端阅卷。
+  // 审计的提示词和 apply_patch 的结算规则描述的是同一套约束，
+  // 分居两地就会漂移——改了一边忘了另一边，表现为模型照旧申报、
+  // 程序照旧拦下，而谁也不知道为什么每回合一半的申报被丢掉。
   try{
-    var res=await doFetch([{role:'user',content:prompt}],400,null,null,{agent:'state',title:'审计本回合状态变化',input:prompt,meta:{declaredPatches:declared||[]}}),data=await res.json();
-    if(data.error){debugEvent('state_audit_error',{apiError:data.error});return null;}if(data.usage&&data.usage.total_tokens)TOKENS+=data.usage.total_tokens;
-    var raw=chatContent(data),m=raw.match(/\{[\s\S]*\}/);if(!m){debugEvent('state_audit_response',{raw:raw,parsed:null,reason:'no JSON object'});return null;}
-    var p=JSON.parse(m[0]);debugEvent('state_audit_response',{raw:raw,parsed:p,usage:data.usage||null});return p&&typeof p==='object'?p:null;
+    var qr=await fetch('/api/state/audit/prompt',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({before:before||{},player_input:String(input||''),
+                           reply:String(reply||''),declared:declared||[]})});
+    if(!qr.ok)throw new Error('HTTP '+qr.status);
+    var spec=await qr.json();
+    debugEvent('state_audit_request',{prompt:spec.prompt,declaredPatches:declared||[]});
+
+    var res=await doFetch([{role:'user',content:spec.prompt}],
+      Number(spec.max_tokens)||400,Number(spec.temperature),null,
+      {agent:'state',title:'审计本回合状态变化',input:spec.prompt,
+       meta:{declaredPatches:declared||[]}});
+    var data=await res.json();
+    if(data.error){debugEvent('state_audit_error',{apiError:data.error});return null;}
+    if(data.usage&&data.usage.total_tokens)TOKENS+=Number(data.usage.total_tokens)||0;
+
+    var raw=chatContent(data);
+    var vr=await fetch('/api/state/audit/result',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({raw:raw})});
+    if(!vr.ok)throw new Error('HTTP '+vr.status);
+    var out=await vr.json();
+    debugEvent('state_audit_response',{raw:raw,parsed:out.patch,usage:data.usage||null});
+    // patch 为 null 表示审计没能完成，调用方据此不结算；
+    // {} 表示审计确认这一回合没有变化，是有效结论。两者含义不同。
+    return out.ok?out.patch:null;
   }catch(e){debugEvent('state_audit_error',{message:String(e&&e.message||e)});return null;}
 }
 

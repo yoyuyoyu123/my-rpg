@@ -12,8 +12,14 @@
 """
 from fastapi import APIRouter
 
-from app.schemas.state import StateApplyIn, StateApplyOut
+from app.schemas.state import (
+    AuditPromptIn, AuditPromptOut, AuditResultIn, AuditResultOut,
+    StateApplyIn, StateApplyOut,
+)
 from app.services.game_state import apply_patch
+from app.services.state_audit import (
+    AUDIT_MAX_TOKENS, AUDIT_TEMPERATURE, build_audit_prompt, parse_audit_result,
+)
 
 router = APIRouter(prefix="/api", tags=["状态"])
 
@@ -26,3 +32,28 @@ def apply_state(req: StateApplyIn) -> StateApplyOut:
         state=new_state,
         ledger_added=(new_state.get("ledger") or [])[before:],
     )
+
+
+@router.post("/state/audit/prompt", response_model=AuditPromptOut,
+             summary="出一道状态审计题")
+def audit_prompt(req: AuditPromptIn) -> AuditPromptOut:
+    """
+    直连模式下 API key 在浏览器手里，后端调不动模型。
+    所以拆成三步：后端出题 → 前端跑模型 → 后端阅卷（/state/audit/result）。
+    提示词和清洗规则始终只有后端这一份。
+    """
+    return AuditPromptOut(
+        prompt=build_audit_prompt(
+            before=req.before, player_input=req.player_input,
+            reply=req.reply, declared=req.declared,
+        ),
+        temperature=AUDIT_TEMPERATURE,
+        max_tokens=AUDIT_MAX_TOKENS,
+    )
+
+
+@router.post("/state/audit/result", response_model=AuditResultOut,
+             summary="交卷：解析审计结果")
+def audit_result(req: AuditResultIn) -> AuditResultOut:
+    patch = parse_audit_result(req.raw)
+    return AuditResultOut(patch=patch, ok=patch is not None)
