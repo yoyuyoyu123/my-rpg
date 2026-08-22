@@ -214,3 +214,26 @@ def test_unrevealed_sheet_tells_planner_not_to_use_numbers() -> None:
     assert "尚未揭示" in digest
     assert "力量5" not in digest
     assert "村口" in digest          # 位置任何时候都要给
+
+
+def test_missing_scene_falls_back_to_previous_card() -> None:
+    """
+    模型偶尔只回 threads 而漏掉 current_scene。整份丢弃的代价太大——
+    这一回合会退回兼容模式，场景卡停在上一版，线程更新也白跑了。
+    实测线上出现过：「规划校验 HTTP 422：剧情规划缺少 current_scene」。
+    """
+    prev = {"current_scene": {"id": "old-scene", "title": "上一幕",
+                              "situation": "s", "purpose": "p", "causal_bridge": "c"}}
+    runtime, warnings = parse_story_runtime(
+        json.dumps({"premise": "x", "threads": []}, ensure_ascii=False),
+        prev, 5, "horizon")
+    assert runtime.current_scene.id == "old-scene"
+    assert any("沿用上一版场景卡" in w for w in warnings)
+
+
+def test_missing_scene_with_no_history_still_errors() -> None:
+    """第一次规划就漏 current_scene 是没法救的，必须如实报错。"""
+    with pytest.raises(ValueError, match="缺少 current_scene"):
+        parse_story_runtime(
+            json.dumps({"premise": "x", "threads": []}, ensure_ascii=False),
+            {}, 0, "opening")

@@ -112,7 +112,16 @@ def parse_story_runtime(
 
     scene = data.get("current_scene")
     if not isinstance(scene, dict):
-        raise ValueError("剧情规划缺少 current_scene")
+        # 模型偶尔只回 threads 而漏掉 current_scene。整份丢弃的代价太大：
+        # 这一回合会退回兼容模式，场景卡停在上一版，而线程更新也白跑了。
+        # 能捡回来就捡：优先复用上一版场景卡（剧情至少不会跳），
+        # 实在没有再报错。
+        prev_scene = (previous or {}).get("current_scene")
+        if isinstance(prev_scene, dict) and prev_scene.get("id"):
+            scene = dict(prev_scene)
+            warnings.append("规划器没有返回 current_scene，已沿用上一版场景卡")
+        else:
+            raise ValueError("剧情规划缺少 current_scene")
     scene = dict(scene)
     for key in ("id", "title", "situation", "purpose", "causal_bridge"):
         scene[key] = str(scene.get(key) or "").strip()[:500]
