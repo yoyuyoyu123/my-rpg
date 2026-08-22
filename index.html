@@ -3355,7 +3355,7 @@ function debugConfigSnapshot(){
     preferences:PREFS,selectedResearchTags:tags,lockedWorldTags:w&&Array.isArray(w.lockedTags)?w.lockedTags.slice():[],
     tone:{name:STORY_TONE,description:TONE_DESC,informationMode:TONE_TRANS},
     opening:{pick:OPENING_PICK,text:OPENING_TEXT},premise:PREMISE_STATE,premiseStage:debugPremiseStage(),
-    effectiveSetup:EFFECTIVE_SETUP,storyDNA:STORY_DNA,storyDNAHash:debugHash(STORY_DNA),premiseDirective:premiseDirective(),
+    effectiveSetup:EFFECTIVE_SETUP,storyDNA:STORY_DNA,storyDNAHash:debugHash(STORY_DNA),premiseState:debugClone(PREMISE_STATE||{}),
     activeRulePacks:LAST_RULE_PACKS.slice(),activeRulesHash:LAST_RULES_HASH,
     storyAgent:{enabled:SETTINGS.storyAgents!==false,plannerModel:SETTINGS.plannerModel||MODEL||'',revision:Number(STORY_RUNTIME.revision)||0,lastPlannedTurn:Number(STORY_RUNTIME.last_planned_turn)||0,currentScene:STORY_RUNTIME.current_scene&&STORY_RUNTIME.current_scene.id||'',error:STORY_AGENT.lastError||''},
     canon:PLAYER_CANON,names:NAMES,outlineHash:debugHash(OUTLINE),stateRevealed:!!(GAME_STATE&&GAME_STATE.revealed)
@@ -4169,18 +4169,6 @@ function advancePremiseStateFromReply(reply,input){
   else PREMISE_STATE.phaseTurns=(Number(PREMISE_STATE.phaseTurns)||0)+1;
   debugEvent('premise_phase_update',{before:old,after:PREMISE_STATE.phase,phaseTurns:PREMISE_STATE.phaseTurns,evidence:ev,inputSignals:debugSignals(input)});
 }
-function premiseDirective(){
-  if(!PREMISE_STATE||PREMISE_STATE.kind!=='transmigration')return '';
-  PREMISE_STATE=normalizePremiseState(PREMISE_STATE,null);
-  var n=Number(PREMISE_STATE.phase)||0,held=Number(PREMISE_STATE.phaseTurns)||0;
-  var base='【跨世界迁移状态——程序持久化事实；这里的英文状态名不是剧情内的阶段、协议或组织编号】本局已经选定游戏世界/异世界穿越为故事前提。固定迁移形式：'+String(PREMISE_STATE.mechanism||'未额外限定')+'。固定触发：'+String(PREMISE_STATE.trigger||'由场景自然形成')+'。'+(PREFS.extra?('玩家硬性备注：'+PREFS.extra+'。'):'')+'这些固定事实不得被相似的科技系统、秘密机构、梦境、实验或另一套阶段协议替代。不得替玩家作出点击、接受、上线或心理决定；但外部事件可以自行发生。玩家拒绝或忽略某个入口，只会改变穿越路径与当下反应，不会取消本局前提，也不得把同一入口换皮重发。每回合仍只推进一个迁移态并在可反应处停下。';
-  if(n===0)return base+'当前迁移态=ORIGIN_LIFE（原世界生活）。只建立生活与第一项眼前刺激，不完成穿越。'+(held>=2?'该迁移态已经停留过久：本回合必须让第一项可回应的外部刺激抵达玩家面前，然后立刻停下。':'');
-  if(n===1)return base+'当前迁移态=APPROACH（回应与逼近）。完整回应玩家刚才的行动；若玩家主动触发，可让转移征兆开始。若玩家忽略或拒绝入口，世界照常运转，但随后由与该选择无关的客观外部变化接管穿越路径，不能劝回同一按钮。'+(held>=2?'该迁移态已经停留过久：本回合必须出现可感知且不可逆的外部阈限征兆，不能继续现实生活支线。':'');
-  if(n===2)return base+'当前迁移态=THRESHOLD（阈限事件）。玩家此前的拒绝已经生效，原入口作废；本回合必须让另一条客观穿越过程开始。这不是替玩家选择。重点描写过程，并在玩家仍能反应或观察的位置停下，不能继续写现实生活支线。严禁把THRESHOLD解释成剧情中某个机构的“阶段2”。';
-  if(n===3)return base+'当前迁移态=IN_TRANSIT（转移途中）。完整描写时间、空间、身体、意识或数据层面的过渡，让玩家能够尝试观察、挣扎、呼喊或保持不动；本回合不得退回普通现实日常，结尾接近或刚触及落点。'+(held>=2?'该迁移态已经停留过久：本回合必须抵达新世界的最初落点，但只写首次感知，不替玩家探索。':'');
-  if(n===4)return base+'当前迁移态=FIRST_LANDING（首次落地）。本回合进入新世界并只呈现最初可感知环境与一个迫近的互动点；不得总结“已经适应数日”，不得一次讲完身份、系统和世界说明。';
-  return base+'当前迁移态=ARRIVED（穿越完成）。故事重心留在新世界；身份、身体、游戏规则和能力只能由玩家逐项探索，不自动全知。不得又把主角送回原世界重演入口，除非玩家日后主动追求返乡。';
-}
 function currentSaveDiagnosis(){
   var issues=[],selected=!!(PREFS&&/^(trans|game|book)$/.test(PREFS.entry||'')),p=normalizePremiseState(PREMISE_STATE,{history:HIST}),recent=premiseHistoryText(HIST),ev=premiseEvidence(recent);
   if(!HIST.length)issues.push({severity:'info',code:'NO_HISTORY',message:'当前没有可体检的剧情历史。'});
@@ -4427,38 +4415,38 @@ async function reconcileTurnState(before,input,reply,declared){
 
 // two-pass: silent GM adjudication call (judge mode — no storytelling, no sycophancy)
 async function directorPass(playerInput){
-  var recent=HIST.slice(-4).map(function(m){
-    var c=String(m.content).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'');
-    return (m.role==='user'?'玩家':'叙事')+': '+c.substring(0,400);
-  }).join('\n');
-  var ak=Object.keys(GAME_STATE.attrs);
-  var attrs=ak.length?ak.map(function(k){return k+'='+GAME_STATE.attrs[k];}).join(','):'未知（可自定合理属性名）';
-  var p='你是文字RPG的后台GM裁判。你不写剧情，只做冷静判定，玩家永远看不到你的输出。\n'
-    +'本局基调:'+(STORY_TONE||'未定')+'——节拍判断与裁定的松紧要符合基调\n'
-    +'本局最终有效设定（高于历史摘要与旧大纲）:'+(STORY_DNA||'尚未建立')+'\n'
-    +'当前跨世界迁移状态:'+(premiseDirective()||'非穿越路线')+'\n'
-    +'当前隐藏大纲:'+(OUTLINE||'无')+'\n'
-    +'角色属性:'+attrs+'\n'
-    +'角色技能:'+(GAME_STATE.skills.map(function(s){return s.name+'('+s.realm+',熟练'+s.proficiency+'%,系数'+s.coefficient+(s.active?',运转中':'')+')';}).join('、')||'无')+'\n'
-    +'角色天赋:'+((GAME_STATE.talents||[]).join('、')||'无')+'\n'
-    +'主角身份档案:'+(canonSummary()||'尚无锁定字段')+'\n'
-    +'人物关系与各自知情:'+(Object.keys(GAME_STATE.npcs||{}).slice(-10).map(function(n){var v=GAME_STATE.npcs[n],kn=Array.isArray(v.knows)?v.knows:[];return n+'('+(v.rel||'?')+',态度'+(Number(v.att)||0)+',已知='+(kn.length?kn.join('／'):'无额外秘密')+')';}).join('；')||'无')+'\n'
-    +'最近剧情:\n'+recent+'\n\n'
-    +'玩家本回合输入:'+playerInput+'\n\n'
-    +'先划定行动授权边界：只把玩家明确说出的动作及完成该动作不可分割的连续过程视为已授权；任何新的购买、追问、移动、承诺、攻击、使用、关系决定或时间跨越都不在授权内。玩家只提问、评价、抱怨或表达疑惑时，不授权点击、发送消息、说话、调查或作出决定。scene_note必须写明本回合在哪里停下。NPC不得使用其“已知”列表之外的主角秘密；陌生言行不能直接推导穿越身份。\n'
-    +'节拍参考：发育（纯日常，让玩家安心积累）/互动（完整回应对话或当前事务）/推进（只推进玩家主动追求的现有目标）/收获（结算实打实的结果）。不要自动循环，不要为了节奏强行制造冲突或钩子；连续日常完全正常。裁定只授权回应玩家明确做出的这一步，不授权叙事者代替玩家继续下一步；若即将出现选择、转场、承诺、点击、接受或拒绝，scene_note必须要求在该节点前停下。玩家忽略钩子或拒绝任务时，应尊重该方向并继续模拟世界，禁止设计换皮事件把玩家强拉回原路线。\n'
-    +'检定门槛必须严格：角色卡未揭示时risky必须为false。角色卡已揭示后，只有同时满足①结果确实不确定；②存在正在抵抗的对手、危险环境或技术难题；③失败会立即产生与成功不同的实质后果，risky才为true。普通走路、观察可见物、正常交谈、查阅已掌握资料、吃饭休息、无压力的本职工作一律false。不要为了制造戏剧而检定。\n'
-    +'若玩家输入是【时间跳跃】请求：risky填false，beat填发育，scene_note写"用蒙太奇概括跳过的时间并结算收获"。\n'
-    +'只输出一个JSON对象，不要任何其他文字:{"spoken":布尔值,"risky":布尔值,"action":"若检定，用八字内概括受检行动","attr":"若risky，从现有属性中原样选择一个，否则空字符串","skill":"若某项现有技能直接适用则原样填写，否则空字符串","talent":"若某项现有天赋直接适用则原样填写，否则空字符串","dc":难度数字(简单40,普通55,困难70,极难85),"npc":"直接互动NPC态度或空字符串","focus":"直接回应或结果","beat":"发育|互动|推进|收获","scene_note":"本回合回答范围和停止点","mainline":"仅玩家主动处理现有目标时填写，否则空字符串","fail_cost":"失败的直接代价"}';
-  debugEvent('director_request',{prompt:p});
-  var res=await doFetch([{role:'user',content:p}],350,null,null,{agent:'director',title:'裁定玩家行动与停止点',input:p});
-  var data=await res.json();
-  if(data.error||!data.choices){debugEvent('director_error',{apiError:data.error||'missing choices'});return null;}
-  if(data.usage&&data.usage.total_tokens)TOKENS+=data.usage.total_tokens;
-  var raw=chatContent(data),m=raw.match(/\{[\s\S]*\}/);
-  if(!m){debugEvent('director_response',{raw:raw,parsed:null,reason:'no JSON object'});return null;}
-  var parsed=JSON.parse(m[0]);debugEvent('director_response',{raw:raw,parsed:parsed,usage:data.usage||null});
-  return parsed;
+  // 三步走：后端出题 → 这里跑模型 → 后端阅卷。
+  // 注意迁移状态那一段现在用的是后端版本：之前前后端各有一份，
+  // 后端多了「快速迁移路线」的说明而前端没有，导致裁判和写手对
+  // 「当前处于什么迁移状态」的描述不一致。统一到后端那份才对得上。
+  try{
+    var qr=await fetch('/api/director/prompt',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        player_input:String(playerInput||''), game_state:GAME_STATE,
+        story_tone:STORY_TONE||'', story_dna:STORY_DNA||'', outline:OUTLINE||'',
+        player_canon:PLAYER_CANON||{}, premise_state:PREMISE_STATE||{}, prefs:PREFS||{},
+        recent_messages:HIST.slice(-4).map(function(m){return {role:m.role,content:m.content};})
+      })});
+    if(!qr.ok)throw new Error('HTTP '+qr.status);
+    var spec=await qr.json();
+    debugEvent('director_request',{prompt:spec.prompt});
+
+    var res=await doFetch([{role:'user',content:spec.prompt}],
+      Number(spec.max_tokens)||350,Number(spec.temperature),null,
+      {agent:'director',title:'裁定玩家行动与停止点',input:spec.prompt});
+    var data=await res.json();
+    if(data.error||!data.choices){debugEvent('director_error',{apiError:data.error||'missing choices'});return null;}
+    if(data.usage&&data.usage.total_tokens)TOKENS+=Number(data.usage.total_tokens)||0;
+
+    var raw=chatContent(data);
+    var vr=await fetch('/api/director/result',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({raw:raw})});
+    if(!vr.ok)throw new Error('HTTP '+vr.status);
+    var out=await vr.json();
+    debugEvent('director_response',{raw:raw,parsed:out.ruling,usage:data.usage||null});
+    return out.ok?out.ruling:null;
+  }catch(e){debugEvent('director_error',{message:String(e&&e.message||e)});return null;}
 }
 function directorPassNeeded(input){
   input=String(input||'').trim();if(!input)return false;
@@ -4964,7 +4952,7 @@ async function _runTurn(){
     var SP=(await compileSystemPrompt(recentText)) + worldPulse;
     monitorStage(pipelineRun,'组装上下文','done','system prompt '+SP.length+' 字；规则包 '+LAST_RULE_PACKS.length+' 个');
     if(DEBUG_ACTIVE){DEBUG_ACTIVE.systemPrompt=debugClone(SP);DEBUG_ACTIVE.systemPromptHash=debugHash(SP);DEBUG_ACTIVE.worldPulse=worldPulse;}
-    debugEvent('system_prompt_ready',{hash:debugHash(SP),chars:SP.length,premiseDirective:premiseDirective(),storyDNAHash:debugHash(STORY_DNA),worldPulse:worldPulse});
+    debugEvent('system_prompt_ready',{hash:debugHash(SP),chars:SP.length,premiseState:debugClone(PREMISE_STATE||{}),storyDNAHash:debugHash(STORY_DNA),worldPulse:worldPulse});
     var dice = null;
     var ruling=null, checkLine='',pendingCheck=null;
     if((SETTINGS.director||SETTINGS.dice) && HIST.length>2 && !SUMMING && directorPassNeeded(lastUser)){

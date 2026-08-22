@@ -21,6 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from app.config import get_settings
 from app.db.session import init_db
 from app.routers import chat as chat_router
+from app.routers import director as director_router
 from app.routers import config as config_router
 from app.routers import memory as memory_router
 from app.routers import saves as saves_router
@@ -68,6 +69,7 @@ app.add_middleware(
 )
 
 app.include_router(chat_router.router)
+app.include_router(director_router.router)
 app.include_router(config_router.router)
 app.include_router(worlds_router.router)
 app.include_router(memory_router.router)
@@ -80,7 +82,7 @@ app.include_router(turn_router.router)
 @app.get("/health", tags=["系统"], summary="健康检查")
 def health() -> dict:
     """部署平台和监控靠它判断服务是否存活。"""
-    return {"status": "ok", "version": app.version}
+    return {"status": "ok", "product": "wuji-rpg", "version": app.version}
 
 
 # ── 托管前端 ────────────────────────────────────────────────────
