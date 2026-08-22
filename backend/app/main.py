@@ -29,6 +29,7 @@ from app.routers import state as state_router
 from app.routers import story as story_router
 from app.routers import turn as turn_router
 from app.routers import worlds as worlds_router
+from app.routers import writer as writer_router
 from app.schemas.chat import ErrorDetail  # noqa: F401  (让它出现在 OpenAPI 文档里)
 
 settings = get_settings()
@@ -77,6 +78,7 @@ app.include_router(saves_router.router)
 app.include_router(state_router.router)
 app.include_router(story_router.router)
 app.include_router(turn_router.router)
+app.include_router(writer_router.router)
 
 
 @app.get("/health", tags=["系统"], summary="健康检查")

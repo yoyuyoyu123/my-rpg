@@ -4470,10 +4470,20 @@ function agencyViolationCodes(input,reply){
 }
 async function rewriteUnauthorizedDraft(draft,msgs,playerInput,codes){
   debugEvent('agency_guard_triggered',{codes:codes,draft:draft});
-  var guard='【玩家主权纠错——重写上一稿】上一稿出现以下越权：'+codes.join('、')+'。玩家本回合只授权了原输入明确表达的动作。请完整重写上一稿：保留世界对玩家输入的直接反馈与必要环境变化，删除所有玩家未明确做出的点击、发送、说话、接受、拒绝、决定、移动、使用或调查；在出现新选择之前停下。不得在正文提及纠错、上一稿或系统。仍需提供2-4个眼前行动参考和自由输入；隐藏状态块只保留真正发生的变化。';
   try{
-    var retry=msgs.concat([{role:'assistant',content:String(draft||'')},{role:'system',content:guard}]),res=await doFetch(retry,4096,null,null,{agent:'agency',title:'重写越权叙事',input:monitorInput(retry),meta:{violations:codes}}),data=await res.json();
-    if(data.error)return draft;if(data.usage&&data.usage.total_tokens)TOKENS+=data.usage.total_tokens;
+    var gr=await fetch('/api/writer/agency-guard',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({codes:codes||[]})});
+    if(!gr.ok)throw new Error('HTTP '+gr.status);
+    var spec=await gr.json();
+    // 纠错指令作为 system 消息追加在原始对话之后：世界设定已经在原 system prompt 里，
+    // 这里只说要改什么，不重复。
+    var retry=msgs.concat([{role:'assistant',content:String(draft||'')},
+                           {role:'system',content:spec.guard}]);
+    var res=await doFetch(retry,Number(spec.max_tokens)||4096,null,null,
+      {agent:'agency',title:'重写越权叙事',input:monitorInput(retry),meta:{violations:codes}});
+    var data=await res.json();
+    if(data.error)return draft;
+    if(data.usage&&data.usage.total_tokens)TOKENS+=Number(data.usage.total_tokens)||0;
     var fixed=chatContent(data);if(!fixed)return draft;
     debugEvent('agency_guard_rewrite',{originalHash:debugHash(draft),rewriteHash:debugHash(fixed),remaining:agencyViolationCodes(playerInput,fixed)});
     return fixed;
@@ -4483,21 +4493,28 @@ async function rewriteUnauthorizedDraft(draft,msgs,playerInput,codes){
 function fullVisibleSceneText(text){return String(text||'').replace(/【(?:STATE|SHEET_INIT|大纲|命名表|裁定)】[\s\S]*?(?:【\/(?:STATE|SHEET_INIT|大纲|命名表|裁定)】|$)/g,'').trim();}
 async function repairMissingActionOptions(draft,playerInput){
   if(SETTINGS.optionRepair===false||parseActionOptions(draft).found)return draft;
-  var visible=fullVisibleSceneText(draft).slice(-4500),prompt=
-    '你是互动小说的行动选项编辑器，不写或改动小说正文。根据已经发生的可见场景，提取2-4个玩家此刻立刻能做、彼此真正不同的行动。'+
-    '不得新增人物、地点、物品、秘密、任务或尚未出现的信息；不得替玩家选定长期目标。至少包含一个低承诺或暂不推进的选择。'+
-    '只输出JSON：{"options":["完整行动1","完整行动2"]}。\n玩家上一条输入：'+String(playerInput||'').slice(0,1200)+'\n可见场景：\n'+visible;
   try{
-    var res=await doFetch([{role:'user',content:prompt}],260,0.35,null,{agent:'utility',title:'补全缺失的行动选项',input:prompt,meta:{draftChars:String(draft||'').length}}),data=await res.json();
+    var qr=await fetch('/api/writer/option-repair',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({draft:String(draft||''),player_input:String(playerInput||'')})});
+    if(!qr.ok)throw new Error('HTTP '+qr.status);
+    var spec=await qr.json();
+    var res=await doFetch([{role:'user',content:spec.prompt}],
+      Number(spec.max_tokens)||260,Number(spec.temperature),null,
+      {agent:'utility',title:'补全缺失的行动选项',input:spec.prompt,
+       meta:{draftChars:String(draft||'').length}});
+    var data=await res.json();
     if(data.error)return draft;
     if(data.usage&&data.usage.total_tokens)TOKENS+=Number(data.usage.total_tokens)||0;
+    // 解析留在前端：判断「正文有没有选项」用的是同一个解析器，
+    // 主权检测那边也在用，搬到后端等于两边各存一份。
     var raw=chatContent(data),m=raw.match(/\{[\s\S]*\}/),arr=[];
     if(m){try{var obj=JSON.parse(m[0]);if(Array.isArray(obj.options))arr=obj.options;}catch(_e){}}
     if(!arr.length){
       var loose=parseActionOptions('选项：\n'+raw);if(loose.found)arr=loose.opts.map(function(o){return o.t;});
     }
     var clean=[];
-    arr.forEach(function(x){var s=cleanOptionMarkdown(x).replace(/^\d+[.、。．:：\-）)]\s*/,'').trim();if(s&&s.length<=160&&clean.indexOf(s)<0&&clean.length<4)clean.push(s);});
+    arr.forEach(function(x){var t=cleanOptionMarkdown(x).replace(/^\d+[.、。．:：\-）)]\s*/,'').trim();if(t&&t.length<=160&&clean.indexOf(t)<0&&clean.length<4)clean.push(t);});
     if(clean.length<2)return draft;
     return String(draft||'').trimEnd()+'\n\n选项：\n'+clean.map(function(x,i){return (i+1)+' '+x;}).join('\n')+'\n或输入任何你想做的事';
   }catch(e){debugEvent('option_repair_error',{message:String(e&&e.message||e)});return draft;}
