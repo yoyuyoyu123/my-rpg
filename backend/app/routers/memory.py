@@ -22,14 +22,18 @@ from app.db.session import get_db
 from app.domain.worlds import WORLDS
 from app.schemas.session import (
     ContextOut, ConflictOut, EntityOut, ExtractPromptOut, ExtractRequest,
-    ExtractResult, MemoryWrite, MemoryWriteResult, SessionCreate, SessionInfo,
+    ExtractResult, MemoryWrite, MemoryWriteResult, SessionCreate, SessionInfo, RollbackIn, RollbackOut,
 )
+from app.schemas.narrative import NarrativeLedgerOut, NarrativeLedgerResult, NarrativeLedgerWrite
+from app.services.turn_rollback import rollback_to_turn
 from app.services.extractor import (
-    EXTRACT_MAX_TOKENS, build_prompt, extract_facts, parse_result,
+    EXTRACT_MAX_TOKENS, build_prompt, extract_bundle, parse_bundle,
 )
 from app.services.memory import (
-    active_facts, record_fact, resolve_entity, retrieve_context, upsert_entity,
+    active_facts, record_fact, resolve_entity, retrieve_context,
+    retrieve_context_bundle, upsert_entity,
 )
+from app.services.narrative_memory import ledger_snapshot, write_ledger
 
 router = APIRouter(prefix="/api", tags=["会话与记忆"])
 
@@ -162,12 +166,12 @@ async def extract_and_store(
     await _get_session(db, sid)
     known, known_facts = await _known_memory(db, sid)
 
-    entities = await extract_facts(
+    bundle = await extract_bundle(
         settings=settings, provider_id=req.provider, model=req.model,
         narrative=req.narrative, player_input=req.player_input,
         known_names=known, known_facts=known_facts,
     )
-    return await _store_extracted(sid, req.turn, entities, db)
+    return await _store_extracted(sid, req.turn, bundle, db)
 
 
 @router.post("/sessions/{sid}/extract/prompt", response_model=ExtractPromptOut,
@@ -198,7 +202,7 @@ async def extract_result(
     sid: str, req: ExtractResult, db: AsyncSession = Depends(get_db)
 ) -> MemoryWriteResult:
     await _get_session(db, sid)
-    return await _store_extracted(sid, req.turn, parse_result(req.raw), db)
+    return await _store_extracted(sid, req.turn, parse_bundle(req.raw), db)
 
 
 async def _known_names(db: AsyncSession, sid: str) -> list[str]:
@@ -223,25 +227,68 @@ async def _known_memory(db: AsyncSession, sid: str) -> tuple[list[str], str]:
 
 
 async def _store_extracted(
-    sid: str, turn: int, entities: list[dict], db: AsyncSession
+    sid: str, turn: int, bundle: dict[str, list[dict]], db: AsyncSession
 ) -> MemoryWriteResult:
+    entities = bundle.get("entities") or []
+    base = MemoryWriteResult()
     if not entities:
-        return MemoryWriteResult()
-    payload = MemoryWrite(
-        turn=turn, source="narrative",
-        entities=[  # type: ignore[arg-type]
-            {"name": e["name"], "kind": e["kind"], "aliases": e["aliases"],
-             "importance": e["importance"], "facts": e["facts"]}
-            for e in entities
-        ],
+        base = MemoryWriteResult()
+    else:
+        payload = MemoryWrite(
+            turn=turn, source="narrative",
+            entities=[  # type: ignore[arg-type]
+                {"name": e["name"], "kind": e["kind"], "aliases": e["aliases"],
+                 "importance": e["importance"], "facts": e["facts"]}
+                for e in entities
+            ],
+        )
+        base = await write_memory(sid, payload, db)
+
+    ledger = NarrativeLedgerWrite(
+        turn=turn,
+        events=bundle.get("events") or [],
+        commitments=bundle.get("commitments") or [],
+        beliefs=bundle.get("beliefs") or [],
+        character_states=bundle.get("character_states") or [],
     )
-    return await write_memory(sid, payload, db)
+    counts = await write_ledger(db, sid, ledger)
+    s = await _get_session(db, sid)
+    s.turn_no = max(s.turn_no, turn)
+    await db.commit()
+    return MemoryWriteResult(
+        entities_touched=base.entities_touched,
+        facts_written=base.facts_written,
+        conflicts=base.conflicts,
+        **counts,
+    )
+
+
+@router.post("/sessions/{sid}/ledger", response_model=NarrativeLedgerResult,
+             summary="写入事件、承诺、NPC知识与人物动态状态")
+async def write_narrative_ledger(
+    sid: str, req: NarrativeLedgerWrite, db: AsyncSession = Depends(get_db),
+) -> NarrativeLedgerResult:
+    s = await _get_session(db, sid)
+    counts = await write_ledger(db, sid, req)
+    s.turn_no = max(s.turn_no, req.turn)
+    await db.commit()
+    return NarrativeLedgerResult(**counts)
+
+
+@router.get("/sessions/{sid}/ledger", response_model=NarrativeLedgerOut,
+            summary="读取结构化叙事账本")
+async def get_narrative_ledger(
+    sid: str, limit: int = 30, db: AsyncSession = Depends(get_db),
+) -> NarrativeLedgerOut:
+    await _get_session(db, sid)
+    return NarrativeLedgerOut(**await ledger_snapshot(db, sid, max(1, min(100, limit))))
 
 
 @router.get("/sessions/{sid}/context", response_model=ContextOut,
             summary="检索本回合该注入的设定")
 async def get_context(
-    sid: str, mentioned: str = "", db: AsyncSession = Depends(get_db)
+    sid: str, mentioned: str = "", turn: int = 0, speaker: str = "",
+    db: AsyncSession = Depends(get_db),
 ) -> ContextOut:
     """
     前端在组装提示词前调这个，把返回的 text 拼进 system prompt。
@@ -250,9 +297,9 @@ async def get_context(
     """
     await _get_session(db, sid)
     names = [n.strip() for n in mentioned.split(",") if n.strip()]
-    text = await retrieve_context(db, sid, mentioned=names)
-    # 每个实体占一行，形如 "[person] 吴四娘：..."
-    count = sum(1 for line in text.splitlines() if line.startswith("["))
+    bundle = await retrieve_context_bundle(
+        db, sid, mentioned=names, current_turn=max(0, turn), speaker=speaker.strip(),
+    )
 
     roster = list((await db.execute(
         select(Entity.canonical_name).where(Entity.session_id == sid)
@@ -261,7 +308,10 @@ async def get_context(
         select(EntityAlias.alias).where(EntityAlias.session_id == sid)
     )).scalars())
 
-    return ContextOut(text=text, entity_count=count, names=roster)
+    return ContextOut(
+        text=bundle.text, entity_count=bundle.entity_count, names=roster,
+        trace=bundle.trace, **bundle.counts,
+    )
 
 
 @router.get("/sessions/{sid}/entities", response_model=list[EntityOut],
@@ -299,3 +349,22 @@ async def delete_entity(sid: str, eid: int, db: AsyncSession = Depends(get_db)) 
     await db.delete(ent)
     await db.commit()
     return {"deleted": eid}
+
+
+@router.post("/sessions/{sid}/rollback", response_model=RollbackOut,
+             summary="丢弃某回合及其之后的叙事记录")
+async def rollback(
+    sid: str, req: RollbackIn, db: AsyncSession = Depends(get_db)
+) -> RollbackOut:
+    """
+    玩家撤销或重写回合时调用。
+
+    不这么做的话，被丢弃那版确立的设定会留在库里：既会注入下一回合的
+    提示词，还会把重写出来的新版本当成矛盾拦下来——矛盾检测反过来
+    强制执行玩家已经否决的内容。
+    """
+    s = await _get_session(db, sid)
+    removed = await rollback_to_turn(db, sid, req.from_turn)
+    s.turn_no = min(s.turn_no, max(0, req.from_turn - 1))
+    await db.commit()
+    return RollbackOut(**removed)

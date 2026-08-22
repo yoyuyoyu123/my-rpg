@@ -71,6 +71,10 @@ class MemoryWriteResult(BaseModel):
 
     entities_touched: int = 0
     facts_written: int = 0
+    events_written: int = 0
+    commitments_written: int = 0
+    beliefs_written: int = 0
+    character_states_written: int = 0
     conflicts: list[ConflictOut] = Field(default_factory=list)
 
 
@@ -104,6 +108,15 @@ class ContextOut(BaseModel):
 
     text: str = Field("", description="没有相关设定时为空串")
     entity_count: int = 0
+    fact_count: int = 0
+    event_count: int = 0
+    commitment_count: int = 0
+    belief_count: int = 0
+    character_state_count: int = 0
+    trace: list[dict] = Field(
+        default_factory=list,
+        description="每条记忆被纳入或排除的原因，供后台监视器解释检索结果。",
+    )
     names: list[str] = Field(
         default_factory=list,
         description="当前全部实体名与别名。前端拿它在下一回合的文本里做匹配，"
@@ -122,3 +135,21 @@ class EntityOut(BaseModel):
     first_turn: int = 0
     last_seen_turn: int = 0
     facts: list[dict] = Field(default_factory=list)
+
+
+class RollbackIn(BaseModel):
+    """丢弃某一回合及其之后写入的全部叙事记录。"""
+
+    from_turn: int = Field(..., ge=0, description="从这一回合起（含）全部丢弃")
+    reason: str = Field("", max_length=40, description="undo / regen / manual")
+
+
+class RollbackOut(BaseModel):
+    """各类记录删了多少条，前端据此如实告诉玩家动了什么。"""
+
+    facts: int = 0
+    entities: int = 0
+    events: int = 0
+    commitments: int = 0
+    beliefs: int = 0
+    character_states: int = 0

@@ -4208,6 +4208,27 @@ function requestSkip(){
   if(!v||!v.trim())return;
   send('【时间跳跃】跳过'+v.trim()+'。用蒙太奇概括这段时间：2-4个亮点小场景加具体收获，用【STATE】块结算属性/技能/资源/关系变化，正文第一行标注【章：标题】和经过的时间，然后从新时间点的一个具体场景继续。',false);
 }
+// 丢弃某回合及其之后写进服务端的叙事记录。
+// 不这么做的话，被玩家否决的那版设定会留在事实库里：既注入下一回合的
+// 提示词，还会把重写出来的新版本当成矛盾拦下——矛盾检测反过来
+// 强制执行玩家已经否决的内容。
+async function loreRollback(fromTurn, reason){
+  if(!LORE.on)return null;
+  try{
+    var r=await loreApi('/sessions/'+LORE.sid+'/rollback',{method:'POST',
+      body:JSON.stringify({from_turn:Math.max(0,fromTurn|0),reason:reason||'manual'})});
+    var n=(r.facts||0)+(r.entities||0)+(r.events||0)+(r.commitments||0)+(r.beliefs||0)+(r.character_states||0);
+    debugEvent('lore_rollback',{fromTurn:fromTurn,reason:reason,removed:r});
+    if(n)addBlk('sys','▸ 已同步撤回服务端记录：事实 '+(r.facts||0)+' 条、实体 '+(r.entities||0)+' 个、事件 '+(r.events||0)+' 条');
+    // 缓存的检索结果也作废，否则下一回合还会注入刚撤掉的设定
+    LORE.ctx=''; LORE.conflicts=[]; LORE_PENDING=[];
+    return r;
+  }catch(e){
+    addBlk('err','服务端记录撤回失败（'+String(e&&e.message||e)+'）：被撤销那回合确立的设定可能仍会影响后续，可在「设定档案」里手动删除');
+    return null;
+  }
+}
+
 function undoTurn(){
   if(LOADING) return;
   if(!TURN_BACKUPS.length){ addBlk('sys','▸ 当前进度没有可安全回滚的状态快照'); return; }
@@ -4215,9 +4236,11 @@ function undoTurn(){
   for(var i=HIST.length-1;i>=0;i--){ if(HIST[i].role==='assistant'){ai=i;break;} }
   if(ai<1 || HIST[ai-1].role!=='user'){ addBlk('sys','▸ 没有可撤销的回合'); return; }
   HIST.splice(ai-1,2);
+  var undone=TURNS;
   restoreRuntime(TURN_BACKUPS.pop());
   rebuildLog();
   addBlk('sys','▸ 已撤销上一回合');
+  loreRollback(undone,'undo');
 }
 
 async function startGame(){
@@ -5034,7 +5057,8 @@ function regenTurn(){
   rebuildLog();
   addBlk('sys','▸ 正在重写本回合...');
   LOADING=true;
-  _runTurn();
+  // 必须先撤再跑：不然重写出的新叙事会被上一版确立的设定当成矛盾拦下
+  loreRollback(TURNS,'regen').then(function(){ _runTurn(); });
 }
 
 
