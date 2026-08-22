@@ -85,11 +85,18 @@ def test_list_never_includes_payload(client: TestClient) -> None:
 
 
 def test_detail_round_trips_payload(client: TestClient) -> None:
-    """存进去什么，读出来必须一模一样——存档丢字段就是丢进度。"""
+    """
+    存进去什么，读出来一个字段都不能少——存档丢字段就是丢进度。
+
+    唯一允许的差异是服务端盖上的 schema_version：老存档靠它知道自己是
+    哪一代、该怎么升级（见 test_save_contract.py）。
+    """
     _write(client, "sv_1")
-    got = client.get("/api/saves/sv_1").json()
-    assert got["payload"] == SNAPSHOT
-    assert got["payload"]["loreSid"] == "abc123"
+    got = client.get("/api/saves/sv_1").json()["payload"]
+    for key, value in SNAPSHOT.items():
+        assert got[key] == value, f"字段 {key} 在往返中变了"
+    assert got["loreSid"] == "abc123"
+    assert set(got) - set(SNAPSHOT) == {"schema_version"}
 
 
 # ── 覆盖与删除 ──────────────────────────────────────────────────

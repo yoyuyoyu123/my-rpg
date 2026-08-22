@@ -56,6 +56,18 @@ class Session(Base):
     entities: Mapped[list["Entity"]] = relationship(
         back_populates="session", cascade="all, delete-orphan"
     )
+    narrative_events: Mapped[list["NarrativeEvent"]] = relationship(
+        back_populates="session", cascade="all, delete-orphan"
+    )
+    commitments: Mapped[list["Commitment"]] = relationship(
+        back_populates="session", cascade="all, delete-orphan"
+    )
+    npc_beliefs: Mapped[list["NpcBelief"]] = relationship(
+        back_populates="session", cascade="all, delete-orphan"
+    )
+    character_states: Mapped[list["CharacterState"]] = relationship(
+        back_populates="session", cascade="all, delete-orphan"
+    )
 
 
 class Entity(Base):
@@ -143,6 +155,8 @@ class Save(Base):
 
     payload_json: Mapped[str] = mapped_column(Text, default="{}")
     size_bytes: Mapped[int] = mapped_column(Integer, default=0)
+    # 正文的结构版本。存下来是为了不必解析几 MB 的 JSON 就知道该不该迁移。
+    schema_version: Mapped[int] = mapped_column(Integer, default=1)
 
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(default=utcnow, onupdate=utcnow)
@@ -187,3 +201,98 @@ class Fact(Base):
     @property
     def active(self) -> bool:
         return self.superseded_by is None
+
+
+class NarrativeEvent(Base):
+    """按回合保存的可追溯事件节点，而不是会被摘要吞掉的散文片段。"""
+
+    __tablename__ = "narrative_events"
+    __table_args__ = (
+        Index("ix_event_session_turn", "session_id", "turn"),
+        Index("ix_event_session_kind", "session_id", "kind"),
+    )
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    session_id: Mapped[str] = mapped_column(ForeignKey("sessions.id", ondelete="CASCADE"))
+    turn: Mapped[int] = mapped_column(Integer, default=0)
+    kind: Mapped[str] = mapped_column(String(32), default="scene")
+    actor: Mapped[str] = mapped_column(String(80), default="")
+    action: Mapped[str] = mapped_column(Text, default="")
+    outcome: Mapped[str] = mapped_column(Text, default="")
+    location: Mapped[str] = mapped_column(String(120), default="")
+    participants_json: Mapped[str] = mapped_column(Text, default="[]")
+    cause_ids_json: Mapped[str] = mapped_column(Text, default="[]")
+    # public=所有在场者可知 / participants=仅参与者 / private=后台正史
+    visibility: Mapped[str] = mapped_column(String(20), default="public")
+    source: Mapped[str] = mapped_column(String(20), default="narrative")
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    session: Mapped[Session] = relationship(back_populates="narrative_events")
+
+
+class Commitment(Base):
+    """承诺、拒绝与任务接受等持续约束；避免钩子被换皮重塞。"""
+
+    __tablename__ = "commitments"
+    __table_args__ = (
+        Index("ix_commitment_session_status", "session_id", "status"),
+        Index("ix_commitment_session_turn", "session_id", "updated_turn"),
+    )
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    session_id: Mapped[str] = mapped_column(ForeignKey("sessions.id", ondelete="CASCADE"))
+    kind: Mapped[str] = mapped_column(String(24), default="promise")
+    owner_name: Mapped[str] = mapped_column(String(80), default="")
+    counterparty_name: Mapped[str] = mapped_column(String(80), default="")
+    text: Mapped[str] = mapped_column(Text, default="")
+    status: Mapped[str] = mapped_column(String(20), default="active")
+    hard: Mapped[int] = mapped_column(Integer, default=0)
+    created_turn: Mapped[int] = mapped_column(Integer, default=0)
+    updated_turn: Mapped[int] = mapped_column(Integer, default=0)
+    due_turn: Mapped[int | None] = mapped_column(Integer, default=None)
+    forbids_json: Mapped[str] = mapped_column(Text, default="[]")
+    source_event_id: Mapped[str] = mapped_column(String(64), default="")
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    session: Mapped[Session] = relationship(back_populates="commitments")
+
+
+class NpcBelief(Base):
+    """某个 NPC 自己知道/相信/误解的内容，不等同于世界真相。"""
+
+    __tablename__ = "npc_beliefs"
+    __table_args__ = (
+        UniqueConstraint("session_id", "npc_name", "statement", name="uq_npc_belief"),
+        Index("ix_belief_session_npc", "session_id", "npc_name"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    session_id: Mapped[str] = mapped_column(ForeignKey("sessions.id", ondelete="CASCADE"))
+    npc_name: Mapped[str] = mapped_column(String(80))
+    statement: Mapped[str] = mapped_column(Text)
+    mode: Mapped[str] = mapped_column(String(20), default="knows")
+    confidence: Mapped[int] = mapped_column(Integer, default=100)
+    source_name: Mapped[str] = mapped_column(String(100), default="")
+    learned_turn: Mapped[int] = mapped_column(Integer, default=0)
+    status: Mapped[str] = mapped_column(String(20), default="active")
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    session: Mapped[Session] = relationship(back_populates="npc_beliefs")
+
+
+class CharacterState(Base):
+    """人物的身份、中期目标、短期状态和关系分层快照。"""
+
+    __tablename__ = "character_states"
+    __table_args__ = (
+        UniqueConstraint("session_id", "entity_name", name="uq_character_state"),
+        Index("ix_character_session_turn", "session_id", "updated_turn"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    session_id: Mapped[str] = mapped_column(ForeignKey("sessions.id", ondelete="CASCADE"))
+    entity_name: Mapped[str] = mapped_column(String(80))
+    identity_json: Mapped[str] = mapped_column(Text, default="{}")
+    mid_term_json: Mapped[str] = mapped_column(Text, default="{}")
+    short_term_json: Mapped[str] = mapped_column(Text, default="{}")
+    relationships_json: Mapped[str] = mapped_column(Text, default="{}")
+    updated_turn: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    session: Mapped[Session] = relationship(back_populates="character_states")

@@ -39,14 +39,36 @@ SessionLocal = async_sessionmaker(
 )
 
 
+# 已有表新增的列。create_all 只会建缺失的**表**，不会给现有表补**列**——
+# 老数据库启动后会直接报 "no such column"，而且是在玩家读档时才炸。
+# 正式项目该用 Alembic；在那之前，至少要有这么一张明确的补列清单，
+# 而不是让开发者自己记得删库重建。
+_ADDED_COLUMNS: list[tuple[str, str, str]] = [
+    # (表名, 列名, SQLite 列定义)
+    ("saves", "schema_version", "INTEGER NOT NULL DEFAULT 1"),
+]
+
+
+def _add_missing_columns(conn) -> None:
+    from sqlalchemy import text
+
+    for table, column, ddl in _ADDED_COLUMNS:
+        exists = conn.execute(
+            text(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table}'")
+        ).first()
+        if not exists:
+            continue  # 表还没建，create_all 会带上这一列
+        cols = {row[1] for row in conn.execute(text(f"PRAGMA table_info({table})"))}
+        if column not in cols:
+            conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {ddl}"))
+
+
 async def init_db() -> None:
     """
-    建表。应用启动时调用一次。
-
-    真实项目通常用 Alembic 做迁移（能处理「表已存在但结构变了」的情况），
-    现阶段表结构还在演进，先用 create_all 快速迭代。
+    建表并补齐缺失的列。应用启动时调用一次，可安全重复执行。
     """
     async with engine.begin() as conn:
+        await conn.run_sync(_add_missing_columns)
         await conn.run_sync(Base.metadata.create_all)
 
 
