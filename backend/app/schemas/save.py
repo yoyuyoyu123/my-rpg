@@ -59,6 +59,12 @@ class SaveWrite(BaseModel):
     turns: int = Field(0, ge=0)
     client_time: str = Field("", max_length=40, description="客户端本地时间的展示字符串")
 
+    # 「我是基于哪一版改的」。对不上说明这期间别人写过，服务端会拒绝并回 409。
+    # 留空表示不做检查——只给「明知有更新版本仍要覆盖」这种明确意图用。
+    base_revision: int | None = Field(
+        None, ge=0, description="基于的版本号；不传表示强制覆盖",
+    )
+
 
 class SaveSummary(BaseModel):
     """存档列表用的摘要，不含正文。"""
@@ -72,6 +78,7 @@ class SaveSummary(BaseModel):
     size_bytes: int = 0
     updated_at: str = ""
     schema_version: int = SAVE_SCHEMA_VERSION
+    revision: int = 0
     # 这次读写为了兼容老结构做了哪些补救。写入和读取两条路都会填，
     # 因为老存档既可能是库里的旧行，也可能是本机镜像刚传上来的。
     migrations: list[str] = Field(default_factory=list)

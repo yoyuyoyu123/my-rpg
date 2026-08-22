@@ -3116,7 +3116,12 @@ function idbDel(k){return idbOpen().then(function(db){return new Promise(functio
 //   后端可用 → 服务端为准，同时在本地留一份镜像（后端挂了还能玩）
 //   后端不可用 → 退回 IndexedDB，跟以前完全一样
 // 调试追踪不走这里（它是设备本地的诊断数据，也不该占服务端空间）。
-var SAVE_BACKEND=null;   // null=还没探测过；true/false=探测结果
+var SAVE_BACKEND=null;
+
+// 每个槽位在服务端的版本号，读写时更新。写回时带上它，服务端才能判断
+// 这期间有没有别人写过——多设备共用存档之后，「旧标签页覆盖新进度」
+// 是会真实发生的，而且默认行为是静默丢进度。
+var SAVE_REVISIONS={};   // null=还没探测过；true/false=探测结果
 
 async function saveBackendReady(){
   if(SAVE_BACKEND!==null)return SAVE_BACKEND;
@@ -3139,9 +3144,11 @@ function saveMeta(v){
   };
 }
 
-async function savePut(k,v){
+async function savePut(k,v,opts){
   if(await saveBackendReady()){
     var body=saveMeta(v); body.payload=v;
+    // force 只给「明知服务端更新、仍要覆盖」的明确操作用
+    if(!(opts&&opts.force)&&SAVE_REVISIONS[k]!==undefined)body.base_revision=SAVE_REVISIONS[k];
     // 先写本机，再传服务端。顺序不能反：
     // 后端半路挂掉时 fetch 会直接抛出，写在它后面的本地镜像根本执行不到，
     // 自动存档就会静默失败——进度悄悄丢掉是最不能接受的一种坏法。
@@ -3156,12 +3163,26 @@ async function savePut(k,v){
         msg='HTTP '+r.status;
         try{jr=await r.json();if(jr&&jr.detail&&jr.detail.message)msg=jr.detail.message;}catch(_e){}
         if(r.status===422)msg='存档结构不合法：'+msg+'（这多半是程序 bug，不是你的操作问题）';
+        if(r.status===409){
+          // 冲突不是故障，是「另一台设备有更新的进度」。
+          // 抛一个带标记的错误，让调用方按自动/明确两种意图分别处理。
+          var ce=new Error(msg); ce.conflict=true;
+          ce.currentRevision=(jr&&jr.detail&&jr.detail.current_revision)||0;
+          ce.currentTurns=(jr&&jr.detail&&jr.detail.current_turns)||0;
+          throw ce;
+        }
       }else{
         try{jr=await r.json();}catch(_e2){}
+        if(jr&&typeof jr.revision==='number')SAVE_REVISIONS[k]=jr.revision;
         if(jr&&jr.migrations&&jr.migrations.length)
           jr.migrations.forEach(function(n){ addBlk('sys','▸ 存档兼容处理：'+n); });
       }
-    }catch(e){ msg=String(e&&e.message||e); }
+    }catch(e){
+      // 冲突要原样抛出去：它带着「服务端到第几回合了」这些信息，
+      // 调用方按自动/明确两种意图分别处理。被这里压成一句话就没法区分了。
+      if(e&&e.conflict)throw e;
+      msg=String(e&&e.message||e);
+    }
 
     if(msg){
       // 抛出去，让「保存到存档N」这类明确操作如实报错；
@@ -3182,6 +3203,7 @@ async function saveSummaries(){
     try{
       (await (await fetch('/api/saves')).json()).forEach(function(s){
         out[s.slot]={desc:s.desc,time:s.client_time,turns:s.turns};
+        if(typeof s.revision==='number')SAVE_REVISIONS[s.slot]=s.revision;
       });
       return out;
     }catch(e){ /* 落到下面读本地 */ }
@@ -3201,6 +3223,7 @@ async function saveGet(k){
       if(r.status===404)return undefined;        // 空槽位，不是错误
       if(r.ok){
         var j=await r.json();
+        if(typeof j.revision==='number')SAVE_REVISIONS[k]=j.revision;
         // 老存档为了兼容当前结构被动过手脚时要明说，不能让玩家自己发现少了东西
         (j.migrations||[]).forEach(function(n){ addBlk('sys','▸ 存档兼容处理：'+n); });
         return j.payload;
@@ -3510,10 +3533,41 @@ async function resumeStartupSave(key){
     addBlk('sys','▸ 已从启动页读取'+(key==='auto'?'自动存档':('存档 '+(Number(key.slice(3))+1))));
   }catch(e){PENDING_STARTUP_LOAD=null;if(st){st.style.color='var(--r)';st.textContent='读取失败：'+String(e&&e.message||e);}renderStartupSlots();}
 }
-function autoSave(){ if(HIST.length){ savePut('auto',snapshot()).catch(function(){}); } }
+// 自动存档遇到冲突时**绝不覆盖**。
+// 它是后台行为，玩家没有表达任何意图；而另一台设备上的进度是真实存在的。
+// 静默覆盖等于替玩家做了一个他不知道的、不可逆的决定。
+var _autoSaveConflictWarned=false;
+function autoSave(){
+  if(!HIST.length)return;
+  savePut('auto',snapshot()).then(function(){
+    _autoSaveConflictWarned=false;
+  }).catch(function(e){
+    if(!(e&&e.conflict))return;              // 普通失败保持静默，本机镜像已经写了
+    if(_autoSaveConflictWarned)return;       // 每次冲突只提醒一次，不要每回合刷屏
+    _autoSaveConflictWarned=true;
+    addBlk('sys','▸ 另一台设备上的自动存档更新（已到第 '+(e.currentTurns||'?')+
+      ' 回合），本机进度只存在本地、没有上传。要以这一边为准，请手动存到某个存档位。');
+  });
+}
 function saveSv(i){
   if(!HIST.length)return;
-  savePut('sv_'+i,snapshot()).then(function(){renderSlots();addBlk('sys','▸ 已保存至存档 '+(i+1));}).catch(function(e){addBlk('err','保存失败：'+String(e&&e.message||e));});
+  savePut('sv_'+i,snapshot()).then(function(){
+    renderSlots();addBlk('sys','▸ 已保存至存档 '+(i+1));
+  }).catch(function(e){
+    if(e&&e.conflict){
+      // 明确的保存动作可以覆盖，但必须让玩家知道自己在覆盖什么
+      if(confirm('存档 '+(i+1)+' 在服务端已经更新到第 '+(e.currentTurns||'?')+' 回合'+
+                 '（可能来自另一台设备），你当前是第 '+TURNS+' 回合。\n\n确定用当前进度覆盖吗？')){
+        savePut('sv_'+i,snapshot(),{force:true}).then(function(){
+          renderSlots();addBlk('sys','▸ 已覆盖存档 '+(i+1));
+        }).catch(function(e2){addBlk('err','保存失败：'+String(e2&&e2.message||e2));});
+      }else{
+        addBlk('sys','▸ 已取消，服务端的进度保持不变');
+      }
+      return;
+    }
+    addBlk('err','保存失败：'+String(e&&e.message||e));
+  });
 }
 function confirmSaveSv(i){if(confirm('确定覆盖存档 '+(i+1)+'？原进度将被替换。'))saveSv(i);}
 

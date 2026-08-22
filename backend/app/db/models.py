@@ -157,6 +157,9 @@ class Save(Base):
     size_bytes: Mapped[int] = mapped_column(Integer, default=0)
     # 正文的结构版本。存下来是为了不必解析几 MB 的 JSON 就知道该不该迁移。
     schema_version: Mapped[int] = mapped_column(Integer, default=1)
+    # 每次写入 +1。客户端写回时要声明「我是基于哪一版改的」，
+    # 对不上说明这期间别人写过——多设备共用存档后这是会真实发生的。
+    revision: Mapped[int] = mapped_column(Integer, default=0)
 
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
     updated_at: Mapped[datetime] = mapped_column(default=utcnow, onupdate=utcnow)

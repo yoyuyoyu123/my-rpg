@@ -67,10 +67,13 @@ def a_save(**kw) -> dict:
     return payload
 
 
-def _put(client: TestClient, slot: str, payload: dict):
-    return client.put(f"/api/saves/{slot}", json={
-        "payload": payload, "desc": "测试", "world_id": "wuxia",
-        "world_name": "武侠江湖", "turns": 23, "client_time": "8/22 10:00"})
+def _put(client: TestClient, slot: str, payload: dict, **body):
+    # 摘要里的 turns 跟正文里的保持一致，否则测试断言会对着两个不同的数
+    req = {"payload": payload, "desc": "测试", "world_id": "wuxia",
+           "world_name": "武侠江湖", "turns": payload.get("turns", 23),
+           "client_time": "8/22 10:00"}
+    req.update(body)
+    return client.put(f"/api/saves/{slot}", json=req)
 
 
 # ── 字段改名必须当场炸，而不是静默丢进度 ────────────────────────
@@ -190,3 +193,66 @@ def test_round_trip_preserves_every_field(client: TestClient) -> None:
     got = client.get("/api/saves/sv_0").json()["payload"]
     for key, value in original.items():
         assert got[key] == value, f"字段 {key} 在往返中变了"
+
+
+# ── 多设备并发：旧标签页不能抹掉新进度 ──────────────────────────
+
+def test_stale_write_is_rejected(client: TestClient) -> None:
+    """
+    实测过的场景：手机玩到第 20 回合存了服务端，电脑上一个停在第 5 回合的
+    旧标签页做了一次自动存档，15 个回合的进度就没了，而且毫无提示。
+    存档跟着服务端走之后这是会真实发生的，所以写入必须声明基于哪一版。
+    """
+    first = _put(client, "auto", a_save(turns=20))
+    assert first.status_code == 200
+    rev = first.json()["revision"]
+
+    # 旧标签页基于版本 0（它进来时槽位还是空的）
+    stale = client.put("/api/saves/auto", json={
+        "payload": a_save(turns=5), "desc": "旧标签页", "world_id": "wuxia",
+        "world_name": "武侠江湖", "turns": 5, "client_time": "x",
+        "base_revision": 0})
+    assert stale.status_code == 409
+    assert stale.json()["detail"]["code"] == "save_conflict"
+    assert stale.json()["detail"]["current_turns"] == 20
+
+    # 服务端的进度必须原封不动
+    assert client.get("/api/saves/auto").json()["turns"] == 20
+    assert client.get("/api/saves/auto").json()["revision"] == rev
+
+
+def test_write_with_current_revision_succeeds(client: TestClient) -> None:
+    """拿着最新版本号写回去是正常操作，版本随之递增。"""
+    r1 = _put(client, "sv_0", a_save(turns=10))
+    rev = r1.json()["revision"]
+
+    r2 = client.put("/api/saves/sv_0", json={
+        "payload": a_save(turns=11), "desc": "继续", "world_id": "wuxia",
+        "world_name": "武侠江湖", "turns": 11, "client_time": "x",
+        "base_revision": rev})
+    assert r2.status_code == 200
+    assert r2.json()["revision"] == rev + 1
+    assert client.get("/api/saves/sv_0").json()["turns"] == 11
+
+
+def test_omitting_base_revision_forces_overwrite(client: TestClient) -> None:
+    """
+    不带版本号 = 明确要覆盖。只留给玩家确认过的操作用——
+    自动存档永远会带上版本号，所以它不可能走到这条路。
+    """
+    _put(client, "sv_0", a_save(turns=20))
+    forced = client.put("/api/saves/sv_0", json={
+        "payload": a_save(turns=5), "desc": "强制", "world_id": "wuxia",
+        "world_name": "武侠江湖", "turns": 5, "client_time": "x"})
+    assert forced.status_code == 200
+    assert client.get("/api/saves/sv_0").json()["turns"] == 5
+
+
+def test_first_write_to_empty_slot_expects_revision_zero(client: TestClient) -> None:
+    """空槽位的版本是 0，新客户端据此写入不该被拒。"""
+    r = client.put("/api/saves/sv_1", json={
+        "payload": a_save(), "desc": "新的", "world_id": "wuxia",
+        "world_name": "武侠江湖", "turns": 1, "client_time": "x",
+        "base_revision": 0})
+    assert r.status_code == 200
+    assert r.json()["revision"] == 1

@@ -46,6 +46,7 @@ SessionLocal = async_sessionmaker(
 _ADDED_COLUMNS: list[tuple[str, str, str]] = [
     # (表名, 列名, SQLite 列定义)
     ("saves", "schema_version", "INTEGER NOT NULL DEFAULT 1"),
+    ("saves", "revision", "INTEGER NOT NULL DEFAULT 0"),
 ]
 
 

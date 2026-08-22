@@ -45,6 +45,7 @@ def _to_summary(s: Save) -> SaveSummary:
         turns=s.turns, client_time=s.client_time, size_bytes=s.size_bytes,
         updated_at=s.updated_at.replace(tzinfo=timezone.utc).isoformat() if s.updated_at else "",
         schema_version=s.schema_version or 1,
+        revision=s.revision or 0,
     )
 
 
@@ -109,12 +110,34 @@ async def put_save(
         )
 
     s = await db.get(Save, slot)
+
+    # 乐观并发：客户端声明「我是基于第 N 版改的」，对不上就拒绝。
+    # 不做这一步的代价实测过——电脑上一个停在第 5 回合的旧标签页，
+    # 一次自动存档就能抹掉手机上 15 个回合的进度，而且毫无提示。
+    if req.base_revision is not None:
+        current = (s.revision or 0) if s is not None else 0
+        if req.base_revision != current:
+            raise HTTPException(
+                409,
+                detail={
+                    "code": "save_conflict",
+                    "message": (
+                        f"服务端的存档已经更新到第 {s.turns if s else 0} 回合"
+                        f"（版本 {current}），你这边是基于版本 {req.base_revision} 的进度。"
+                        "直接覆盖会丢掉另一台设备上的进度"
+                    ),
+                    "current_revision": current,
+                    "current_turns": s.turns if s is not None else 0,
+                },
+            )
+
     if s is None:
         s = Save(slot=slot)
         db.add(s)
 
     s.payload_json = blob
     s.schema_version = SAVE_SCHEMA_VERSION
+    s.revision = (s.revision or 0) + 1
     s.size_bytes = size
     s.desc = req.desc
     s.world_id = req.world_id
