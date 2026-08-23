@@ -354,6 +354,15 @@ def _story_scene_summary(runtime: dict) -> str:
     # 把篇幅填满，那正是「越描越细但没推进」的来路。
     if scene.get("narration") != "summary" and scene.get("conflict"):
         lines.append("本幕的冲突（详写的理由，正文必须让它真的发生）:" + str(scene["conflict"]))
+    # 新专名由程序挑定（见 services/naming.py）。写手照用，不要另起——
+    # 让它自由命名的结果实测是两局不同的游戏都叫「青石镇」。
+    picked = [n for n in (scene.get("new_names") or [])
+              if isinstance(n, dict) and n.get("chosen")]
+    if picked:
+        lines.append(
+            "本幕要用的新专名（已定，直接使用，不要另起别的名字）:"
+            + "；".join(f"{n.get('slot') or '新事物'}={n['chosen']}" for n in picked[:6])
+        )
     intents = scene.get("participant_intents") or {}
     if isinstance(intents, dict) and intents:
         lines.append("在场人物眼前意图:" + "；".join(f"{k}={v}" for k, v in list(intents.items())[:8]))

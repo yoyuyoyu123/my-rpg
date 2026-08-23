@@ -32,6 +32,19 @@ class StoryThread(BaseModel):
     status: Literal["dormant", "active", "paused", "resolved", "abandoned"] = "active"
 
 
+class NameProposal(BaseModel):
+    """本幕要引入的一个新专名，以及规划器给出的候选。
+
+    模型不直接定名，只给候选和自评概率；程序从分布里挑（避开众数）。
+    这是 Verbalized Sampling 的做法，用来绕开模型对「青石镇」这类
+    最典型名字的默认偏好。详见 app/services/naming.py。
+    """
+    slot: str = ""          # 这个名字是给什么的：「落点城镇」「渡口老板」
+    kind: str = ""          # place / person / faction / other
+    candidates: list[dict[str, Any]] = Field(default_factory=list)
+    chosen: str = ""        # 程序挑定的结果；写手必须用这个
+
+
 class SceneCard(BaseModel):
     id: str = ""
     title: str = ""
@@ -69,6 +82,9 @@ class SceneCard(BaseModel):
     # 那就不再是纯过程，理应详写。判断权仍在规划器手里，程序只检查它
     # 有没有把理由说出来：说不出具体冲突，就按纯过程处理。
     conflict: str = ""
+
+    # 本幕要引入的新专名。程序挑定后写进命名表，写手照用。
+    new_names: list[NameProposal] = Field(default_factory=list)
 
     stop_points: list[str] = Field(default_factory=list)
     refresh_after_turn: int = 0

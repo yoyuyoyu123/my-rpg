@@ -21,6 +21,7 @@ from app.services.migration_contract import (
     forced_scene,
     should_force,
 )
+from app.services.naming import NAMING_INSTRUCTION, clean_candidates, pick_name
 from app.services.prompt_builder import premise_stall_note
 
 
@@ -240,6 +241,29 @@ def parse_story_runtime(
         # 退回详写比给一个空目标安全。
         warnings.append("略写场景缺少 summary_target，已按详写处理")
         scene["narration"] = "scene"
+
+    # 新专名：模型给候选，程序挑。避开众数就是全部收益所在。
+    proposals = scene.get("new_names")
+    cleaned_names: list[dict[str, Any]] = []
+    if isinstance(proposals, list):
+        for item in proposals[:6]:
+            if not isinstance(item, dict):
+                continue
+            slot = str(item.get("slot") or "").strip()[:60]
+            cands = clean_candidates(item.get("candidates"))
+            if not slot or not cands:
+                continue
+            chosen, why = pick_name(cands)
+            if not chosen:
+                continue
+            cleaned_names.append({
+                "slot": slot,
+                "kind": str(item.get("kind") or "").strip()[:20],
+                "candidates": cands,
+                "chosen": chosen,
+            })
+            warnings.append(f"命名「{slot}」：{why}")
+    scene["new_names"] = cleaned_names
 
     scene["stop_points"] = _clean_list(scene.get("stop_points"), 6)
 
@@ -547,8 +571,10 @@ premise_phase 填的是「**本幕结束时**故事所处的阶段」，不是�
 9. causal_event_ids 与 soft_commitment_ids 只能引用【已检索事实】里真实出现的 evt_/com_ id；没有就留空。forbidden 至少包含当前场景最容易犯的一项错误。
 10. 输出纯 JSON，不要 Markdown，不要解释。
 
+{NAMING_INSTRUCTION}
+
 输出结构：
-{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用；必须与上一幕不同","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary","summary_target":"略写时写明本幕要跨过什么、停在哪里；详写留空","conflict":"本幕的冲突是什么：谁或什么在阻碍、玩家要面对什么；纯过程没有冲突就留空","stop_points":["purpose 兑现之后、轮到玩家决定下一步的那一刻"],"refresh_after_turn":{ctx.turn + 4},"premise_phase":null,"status":"active"}}}}
+{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用；必须与上一幕不同","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary","summary_target":"略写时写明本幕要跨过什么、停在哪里；详写留空","conflict":"本幕的冲突是什么：谁或什么在阻碍、玩家要面对什么；纯过程没有冲突就留空","new_names":[{{"slot":"这个名字是给什么的","kind":"place|person|faction","candidates":[{{"name":"候选名","probability":0.3}}]}}],"stop_points":["purpose 兑现之后、轮到玩家决定下一步的那一刻"],"refresh_after_turn":{ctx.turn + 4},"premise_phase":null,"status":"active"}}}}
 
 {stall_note}{repeat_note}【规划原因】{ctx.reason}；当前玩家回合={ctx.turn}；篇幅={ctx.pace}；预设={ctx.preset_id or '无'}
 【世界设定】\n{str(world_text)[:9000]}
