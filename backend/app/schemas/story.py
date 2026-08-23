@@ -66,6 +66,12 @@ class SceneCard(BaseModel):
     stop_points: list[str] = Field(default_factory=list)
     refresh_after_turn: int = 0
     premise_phase: int | None = Field(default=None, ge=0, le=5)
+    # 这张卡的阶段是程序下的令，不是规划器的提案。
+    #
+    # 前端对 premise_phase > 当前+1 会静默回退（applyStoryPremisePhase），
+    # 那个钳制是用来不信任模型「赶进度」的。程序接管迁移时下发的卡不是
+    # 模型提案，必须能越过它，否则接管多少次都会被打回原样。
+    premise_phase_forced: bool = False
     status: Literal["active", "resolved"] = "active"
 
 
@@ -120,6 +126,8 @@ class StoryPlanResultIn(BaseModel):
     premise_state: dict[str, Any] = Field(default_factory=dict)
     turn: int = Field(0, ge=0)
     reason: str = "opening"
+    # 迁移预算按篇幅算，所以校验这一步也要知道篇幅。
+    pace: str = "medium"
 
 
 class StoryPlanResultOut(BaseModel):

@@ -15,6 +15,12 @@ from pydantic import ValidationError
 
 from app.domain.worlds import WORLDS
 from app.schemas.story import StoryPlanContext, StoryRuntime
+from app.services.migration_contract import (
+    budget_note,
+    current_phase as current_phase_of,
+    forced_scene,
+    should_force,
+)
 from app.services.prompt_builder import premise_stall_note
 
 
@@ -108,6 +114,7 @@ def parse_story_runtime(
     turn: int,
     reason: str,
     premise_state: dict[str, Any] | None = None,
+    pace: str = "medium",
 ) -> tuple[StoryRuntime, list[str]]:
     """解析并收紧模型输出，避免规划数据无限膨胀。"""
     try:
@@ -289,6 +296,19 @@ def parse_story_runtime(
                 f"低于程序记录的 {current_phase}，已按叙事回退"
             )
             scene["premise_phase"] = proposed_phase
+
+    # 硬接管：预算用尽而玩家还没落地，程序自己下发这一幕。
+    #
+    # 放在所有钳制之后，因为它不是「模型提案的一种」——上面那些规则
+    # 全部是用来约束模型的，而这一步是程序在行使执行权。四轮实测证明，
+    # 只要「穿越是否发生」还取决于模型配合，它就会用新的方式不配合。
+    if should_force(premise_state, turn, pace):
+        forced = forced_scene(premise_state, turn, scene)
+        warnings.append(
+            f"迁移预算已用尽（阶段仍为 {current_phase_of(premise_state)}），"
+            "本幕由程序接管：直接完成穿越并落地"
+        )
+        scene = forced
     data["current_scene"] = scene
 
     try:
@@ -379,6 +399,10 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
     # 顶部四条结构性的「不要强推」规则，必然输。实测规划器连着四次收到
     # 「严重停滞」仍然规划夜班公交站、回家路上这类纯日常场景。
     stall_note = (stall + "\n\n") if stall else ""
+    # 迁移预算：常态路径。给规划器可推理的调度信息，让它自己安排决定性
+    # 的一幕；程序接管是兜底，不该是常态。停滞加压是「你卡住了」（回顾），
+    # 预算是「你还剩几回合」（前瞻）——后者才让模型排得出计划。
+    stall_note += budget_note(ctx.premise_state or {}, ctx.turn, ctx.pace)
 
     # 原地打转加压，和停滞加压同理：放在规则区旁边，且必须回显上一幕的
     # purpose 原文——模型看不到自己上次写了什么，只讲抽象规则约束不住它。

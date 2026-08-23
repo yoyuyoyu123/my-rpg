@@ -22,6 +22,7 @@ from app.db.models import Entity, EntityAlias, Fact
 from app.domain.ontology import (
     EntityKind, Stability, conflict_guarded, stability_of,
 )
+from app.services.narrative_memory import retrieve_narrative_context
 
 
 @dataclass
@@ -204,14 +205,24 @@ async def record_fact(
     return fact, None
 
 
-async def retrieve_context(
+@dataclass
+class RetrievedContext:
+    text: str
+    entity_count: int
+    trace: list[dict]
+    counts: dict[str, int]
+
+
+async def retrieve_context_bundle(
     db: AsyncSession,
     session_id: str,
     *,
     mentioned: list[str] | None = None,
     max_entities: int = 12,
     max_facts_each: int = 6,
-) -> str:
+    current_turn: int = 0,
+    speaker: str = "",
+) -> RetrievedContext:
     """
     检索式注入：只带回本回合可能用得上的事实。
 
@@ -243,24 +254,64 @@ async def retrieve_context(
                 break
             picked.setdefault(ent.id, ent)
 
-    if not picked:
-        return ""
-
     lines: list[str] = []
+    trace: list[dict] = []
+    fact_count = 0
     for ent in picked.values():
-        facts = await active_facts(db, ent.id)
+        stmt = select(Fact).where(
+            Fact.entity_id == ent.id, Fact.superseded_by.is_(None),
+        )
+        if current_turn > 0:
+            stmt = stmt.where(Fact.turn <= current_turn)
+        facts = list((await db.execute(stmt)).scalars())
         if not facts:
             continue
         # 稳定属性优先——它们是最不该被改错的
         facts.sort(key=lambda f: (f.stability != "stable", -f.turn))
-        parts = [f"{f.key}={f.value}" for f in facts[:max_facts_each]]
+        selected = facts[:max_facts_each]
+        fact_count += len(selected)
+        parts = [f"{f.key}={f.value}（事实#{f.id}，第{f.turn}回合，来源={f.source}）" for f in selected]
         lines.append(f"[{ent.kind}] {ent.canonical_name}：" + "；".join(parts))
+        for fact in selected:
+            trace.append({"id": f"fact:{fact.id}", "type": "fact", "included": True,
+                          "reason": "提及实体" if ent.canonical_name in (mentioned or []) else "重要度/近期"})
 
-    if not lines:
-        return ""
+    sections: list[str] = []
+    if lines:
+        sections.append(
+            "【已确立的设定——带时间与来源的权威正史】\n"
+            + "\n".join(lines)
+            + "\n稳定设定不得直接改写；若叙事明确揭示旧记录只是传闻或误解，先写出证据，再由程序更新。"
+        )
 
-    return (
-        "【已确立的设定——程序记录，不得与之矛盾】\n"
-        + "\n".join(lines)
-        + "\n若需要改变其中的稳定设定，必须在叙事中给出明确的解释（如先前是误传、有人隐瞒），不得直接改写。"
+    context_names = list(dict.fromkeys([
+        *(mentioned or []), *[ent.canonical_name for ent in picked.values()],
+    ]))
+    narrative_sections, narrative_trace, narrative_counts = await retrieve_narrative_context(
+        db, session_id, mentioned=context_names, current_turn=current_turn, speaker=speaker,
     )
+    sections.extend(narrative_sections)
+    trace.extend(narrative_trace)
+    counts = {"fact_count": fact_count}
+    counts.update(narrative_counts)
+    return RetrievedContext(
+        text="\n\n".join(sections), entity_count=len(lines), trace=trace, counts=counts,
+    )
+
+
+async def retrieve_context(
+    db: AsyncSession,
+    session_id: str,
+    *,
+    mentioned: list[str] | None = None,
+    max_entities: int = 12,
+    max_facts_each: int = 6,
+    current_turn: int = 0,
+    speaker: str = "",
+) -> str:
+    """兼容旧调用：只返回可直接注入 system prompt 的文本。"""
+    bundle = await retrieve_context_bundle(
+        db, session_id, mentioned=mentioned, max_entities=max_entities,
+        max_facts_each=max_facts_each, current_turn=current_turn, speaker=speaker,
+    )
+    return bundle.text

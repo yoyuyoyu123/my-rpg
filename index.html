@@ -4866,6 +4866,16 @@ function applyStoryPremisePhase(runtime){
   phase=Math.max(0,Math.min(5,Math.round(Number(phase))));
   var old=Math.max(0,Math.min(5,Math.round(Number(PREMISE_STATE.phase)||0)));
   if(!isFinite(phase)||phase===old)return;
+  // 程序接管迁移时下发的场景卡不是模型提案，下面那道 +1 钳制不适用。
+  // 钳制存在的理由是不信任模型「赶进度」；而这张卡是后端在预算用尽后
+  // 自己造的一幕真戏（narration=summary、purpose=完成穿越并落地），
+  // 叙事和阶段一起走。不放行的话，程序接管多少次都会被静默打回原样。
+  if(scene.premise_phase_forced===true){
+    debugEvent('story_plan_phase_forced',{planned:phase,program:old});
+    PREMISE_STATE.phase=phase;PREMISE_STATE.phaseTurns=0;PREMISE_STATE.lastAdvancedAt=TURNS;
+    addBlk('sys','▸ 迁移预算已用尽，本幕由程序接管：穿越将在这一幕完成');
+    return;
+  }
   if(phase>old+1){
     // 一次跳好几级基本是在赶进度，玩家还在原世界就被宣布已抵达
     debugEvent('story_plan_phase_ignored',{planned:phase,program:old});
@@ -4902,7 +4912,7 @@ async function requestStoryPlan(reason){
       {role:'user',content:'根据以上事实更新结构化剧情规划，只返回要求的 JSON。'}
     ],Number(spec.max_tokens)||2400,Number(spec.temperature)||0.55,SETTINGS.plannerModel||'',{agent:'planner',title:reason==='opening'?'建立首个场景':'更新剧情线与场景卡',input:spec.prompt,meta:{reason:reason,previousRevision:Number(previous.revision)||0}});
     var modelData=await modelRes.json(),raw=chatContent(modelData);
-    var vr=await fetch('/api/story/plan/result',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({raw:raw,previous_runtime:previous,premise_state:PREMISE_STATE||{},turn:TURNS,reason:reason})});
+    var vr=await fetch('/api/story/plan/result',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({raw:raw,previous_runtime:previous,premise_state:PREMISE_STATE||{},turn:TURNS,reason:reason,pace:PACE||'medium'})});
     if(!vr.ok){var ve='';try{var vj=await vr.json();ve=typeof vj.detail==='string'?vj.detail:JSON.stringify(vj.detail||vj);}catch(_e2){}throw new Error('规划校验 HTTP '+vr.status+(ve?'：'+ve:''));}
     var checked=await vr.json();STORY_RUNTIME=checked.runtime||{};applyStoryPremisePhase(STORY_RUNTIME);
     if(modelData.usage&&modelData.usage.total_tokens){TOKENS+=Number(modelData.usage.total_tokens)||0;document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString();}

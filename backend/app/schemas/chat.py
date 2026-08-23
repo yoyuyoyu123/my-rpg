@@ -58,6 +58,9 @@ class ChatResponse(BaseModel):
     """一次非流式调用的结果。"""
 
     content: str = Field(..., description="模型输出的正文")
+    reasoning_content: str = Field(
+        "", description="模型返回的推理内容；只用于本机后台监视器，不进入游戏正文"
+    )
     provider: str = Field(..., description="实际使用的后端")
     model: str = Field(..., description="实际使用的模型")
     usage: Usage = Field(default_factory=Usage)

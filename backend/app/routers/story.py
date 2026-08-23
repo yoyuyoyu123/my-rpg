@@ -21,7 +21,8 @@ def plan_prompt(ctx: StoryPlanContext) -> StoryPlanPromptOut:
 def plan_result(body: StoryPlanResultIn) -> StoryPlanResultOut:
     try:
         runtime, warnings = parse_story_runtime(
-            body.raw, body.previous_runtime, body.turn, body.reason,
+            body.raw, body.previous_runtime, body.turn, body.reason, body.premise_state,
+            body.pace,
         )
         return StoryPlanResultOut(runtime=runtime, warnings=warnings)
     except ValueError as exc:

@@ -74,6 +74,7 @@ async def chat(req: ChatRequest, settings: Settings = Depends(get_settings)) -> 
 
     return ChatResponse(
         content=result.content,
+        reasoning_content=result.reasoning_content,
         provider=result.provider,
         model=result.model,
         usage=Usage(

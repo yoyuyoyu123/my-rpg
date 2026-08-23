@@ -26,9 +26,18 @@ from app.services.prompt_builder import (  # noqa: E402
 from app.services.story_planner import parse_story_runtime  # noqa: E402
 
 
-def ps(phase: int, held: int, **kw) -> dict:
+def ps(phase: int, held: int, started_at: int = 10**6, **kw) -> dict:
+    """
+    started_at 默认取一个极大值，等价于「迁移预算还没开始消耗」。
+
+    下面绝大多数测试锁的是阶段钳制和幕长，与迁移预算无关；而预算是按
+    turn - startedAt 算的，若让它默认为 0，那些用了较大 turn 的测试会
+    统统落进「预算用尽、程序接管」的分支，测的就不是它们要测的东西了。
+    预算本身的行为由 test_migration_contract.py 专门覆盖。
+    """
     base = {"kind": "transmigration", "phase": phase, "phaseTurns": held,
-            "mechanism": "游戏弹窗", "trigger": "深夜加班", "fast": True}
+            "mechanism": "游戏弹窗", "trigger": "深夜加班", "fast": True,
+            "startedAt": started_at}
     base.update(kw)
     return base
 

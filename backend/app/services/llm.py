@@ -42,6 +42,7 @@ class LLMError(Exception):
 @dataclass
 class LLMResult:
     content: str
+    reasoning_content: str
     provider: str
     model: str
     prompt_tokens: int = 0
@@ -312,12 +313,14 @@ def _parse_success(data: dict, provider_id: str, model: str, attempt: int) -> LL
 
     message = choices[0].get("message") or {}
     content = message.get("content") or ""
+    reasoning_content = message.get("reasoning_content") or message.get("reasoning") or ""
     if not content.strip():
         raise LLMError("empty_response", "后端返回了空内容", retryable=True, status=502)
 
     usage = data.get("usage") or {}
     return LLMResult(
         content=content,
+        reasoning_content=str(reasoning_content),
         provider=provider_id,
         model=model,
         prompt_tokens=int(usage.get("prompt_tokens") or 0),
