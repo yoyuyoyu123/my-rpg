@@ -61,7 +61,18 @@ def test_planner_prompt_demands_partial_order_and_causal_bridge() -> None:
     assert "西式奇幻世界" in prompt
 
 
-def test_transmigration_plan_is_bound_to_program_phase() -> None:
+def test_transmigration_plan_lets_planner_own_the_phase() -> None:
+    """
+    阶段的所有权归规划器。
+
+    这条测试原名 ..._is_bound_to_program_phase，断言提示词里有
+    「current_scene.premise_phase 必须填写这个数值；不得自行改成别的阶段」。
+    那句话和硬规则 7「若叙事确实推进了就如实上调一级」正面冲突，而规划器
+    服从的是前者——它给了具体数字。实测一局 14 回合 4 次规划，程序告知
+    阶段和规划器回填阶段只有 1 次不同；也就是说迁移只在模型「违抗指令」
+    时才前进。同一局里正则快速通道 14 个回合命中 0 次，没有别的推进路径。
+    旧断言把这个死锁固化成了规范，所以连同名字一起改掉。
+    """
     prompt = build_story_plan_prompt(StoryPlanContext(
         world_id="fantasy",
         turn=2,
@@ -70,8 +81,16 @@ def test_transmigration_plan_is_bound_to_program_phase() -> None:
         premise_state={"kind": "transmigration", "phase": 2, "fast": True},
     ))
     assert "穿越规划专用约束" in prompt
-    assert "current_scene.premise_phase 必须填写这个数值" in prompt
     assert "快速迁移路线" in prompt
+    # 阶段仍要如实告知，但只作为「当前」事实。
+    assert "当前**处在迁移阶段=2" in prompt
+    # 锁死的那句话必须消失。
+    assert "不得自行改成别的阶段" not in prompt
+    # 填的是本幕结束时的阶段，不是开始时的。
+    assert "**本幕结束时**故事所处的阶段" in prompt
+    # 每一幕要让阶段完成，而不是为它铺垫。
+    assert "每一幕都要让当前阶段结束，而不是为它铺垫" in prompt
+    assert "禁止把本幕的作用写成「为下一阶段铺垫」" in prompt
 
 
 def test_parser_clamps_planner_migration_jump() -> None:
@@ -89,7 +108,7 @@ def test_parser_clamps_planner_migration_jump() -> None:
         {"kind": "transmigration", "phase": 1},
     )
     assert runtime.current_scene.premise_phase == 2
-    assert any("限制为只前进一级" in w for w in warnings)
+    assert any("限制为只前进 1 级" in w for w in warnings)
 
 
 def test_parser_accepts_fenced_json_and_clamps_growth() -> None:

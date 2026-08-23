@@ -224,18 +224,26 @@ def parse_story_runtime(
     else:
         data["scene_repeat_count"] = 0
 
-    # 视野下限从 turn+2 提到 turn+4。
+    ps = premise_state if isinstance(premise_state, dict) else {}
+    try:
+        _phase_now = max(0, min(5, int(ps.get("phase", 0))))
+    except (TypeError, ValueError):
+        _phase_now = 0
+    # 迁移进行中（已离开原世界日常、尚未落地）的幕要短。
     #
-    # 实测一局 17 回合触发了 8 次规划（间隔 3,2,2,2,3,2,2），其中回合 3 和
-    # 回合 5 产出的 purpose、causal_bridge 一字不差——模型不管模板给什么，
-    # 都倾向于回填一个很小的 refresh_after_turn，于是每两回合重规划一次。
-    # 这不只是浪费：每次重规划都在把「上一幕没兑现的 purpose」重新固化一遍。
-    # 一幕至少要给到 4 回合才谈得上落地；场景真的提前结束时，前端的
-    # scene_boundary / premise 触发路径仍会立刻重规划，不受这里影响。
-    requested_horizon = int(scene.get("refresh_after_turn") or turn + 4)
-    scene["refresh_after_turn"] = max(turn + 4, min(turn + 8, requested_horizon))
+    # 平时视野下限是 turn+4：实测一局 17 回合触发 8 次规划（间隔 3,2,2,2,3,2,2），
+    # 回合 3 和回合 5 产出的 purpose 一字不差——模型不管模板给什么都回填很小的值，
+    # 每两回合重规划一次既烧钱又在反复固化没兑现的 purpose。
+    #
+    # 但阶段是按「幕」推进的，所以幕长直接乘进穿越耗时：跨过去要 4 幕，
+    # 每幕 4 回合就是 16 回合起步，玩家的抱怨正是这个数。迁移途中的幕本来
+    # 就该是决定性的短镜头，给 turn+2；原世界日常和落地之后仍用 turn+4。
+    migrating = ps.get("kind") == "transmigration" and 1 <= _phase_now <= 4
+    floor_gap = 2 if migrating else 4
+    requested_horizon = int(scene.get("refresh_after_turn") or turn + floor_gap)
+    scene["refresh_after_turn"] = max(turn + floor_gap, min(turn + 8, requested_horizon))
 
-    # 迁移阶段：规划器可以自由下调，但一次最多上调一级。
+    # 迁移阶段：规划器可以自由下调；详写一次上调一级，略写可上调两级。
     #
     # 为什么把规划器当主要判据：正则证据检测（premiseEvidence）只认得
     # 「游戏弹窗/停服/VR」那一类路线的措辞。实测一局召唤路线，第 0 回合就
@@ -246,27 +254,29 @@ def parse_story_runtime(
     #   下调 —— 发现程序阶段虚高（曾被空转的计时器冲坏），采纳。
     #   上调一级 —— 观察到真实推进，采纳。
     #   跳好几级 —— 基本是模型在赶进度，玩家还在原世界就被宣布已抵达，限制。
-    ps = premise_state if isinstance(premise_state, dict) else {}
     if ps.get("kind") == "transmigration":
-        try:
-            current_phase = max(0, min(5, int(ps.get("phase", 0))))
-        except (TypeError, ValueError):
-            current_phase = 0
+        current_phase = _phase_now
         proposed = scene.get("premise_phase")
         try:
             proposed_phase = None if proposed is None else max(0, min(5, int(proposed)))
         except (TypeError, ValueError):
             proposed_phase = None
 
+        # 略写的一幕明确覆盖「整段过程」，本来就跨得比详写远：阈限之后的
+        # 转移途中与首次落地是同一段过程，硬拆成两幕就是之前那种「每回合
+        # 换个感官细节重复同一件事」。所以略写允许一次前进两级。
+        # 仍然不给更多：0→5 一张卡搞定就是「玩家在阳台撸猫时被宣布已抵达」，
+        # 那个失败模式实测过一次了。
+        max_step = 2 if scene.get("narration") == "summary" else 1
         if proposed_phase is None:
             scene["premise_phase"] = current_phase
-        elif proposed_phase > current_phase + 1:
+        elif proposed_phase > current_phase + max_step:
             # 一次跳好几级基本是模型在赶进度，玩家还在原世界就被宣布已抵达
             warnings.append(
                 f"规划器想从阶段 {current_phase} 直接跳到 {proposed_phase}，"
-                "已限制为只前进一级"
+                f"已限制为只前进 {max_step} 级"
             )
-            scene["premise_phase"] = current_phase + 1
+            scene["premise_phase"] = current_phase + max_step
         elif proposed_phase > current_phase:
             # 允许前进一级：正则证据只认得「游戏弹窗」那一类路线，
             # 召唤、神明、重生等路线的征兆它一个都匹配不上。规划器读的是
@@ -403,9 +413,15 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
         }
         migration_note = f"""
 【穿越规划专用约束】
-本局穿越是已经确定的故事前提，不是可有可无的支线。程序当前迁移阶段={phase}（{stage_names[phase]}），current_scene.premise_phase 必须填写这个数值；不得自行改成别的阶段。
-规划器必须围绕当前迁移阶段规划一张可执行场景卡：给出从当前场景到下一步迁移进展的可见因果桥、玩家可回应的具体入口，以及停下的位置。可以保留当前生活线作为桥，但不能让无关日常、职业任务或邻里琐事连续占用迁移阶段。
-阶段 0 只安排一项眼前刺激并为逼近留下可观察的因果桥；阶段 1 安排触发征兆或回应后的逼近；阶段 2 安排阈限过程；阶段 3 安排转移中的可感知过程；阶段 4 安排首次落地的第一感知。阶段 5 才恢复普通异世界主线。
+本局穿越是已经确定的故事前提，不是可有可无的支线。故事**当前**处在迁移阶段={phase}（{stage_names[phase]}）。
+premise_phase 填的是「**本幕结束时**故事所处的阶段」，不是本幕开始时的阶段。本幕让迁移前进了，就填更大的数；没前进就填 {phase}。阶段由你判断，程序采纳。
+**每一幕都要让当前阶段结束，而不是为它铺垫。**下面写的是每个阶段该在本幕内**完成**什么：
+阶段 0 完成：异常正式打断日常生活，玩家已经无法把它当成错觉——本幕结束时应当进入阶段 1。
+阶段 1 完成：征兆产生实际的、不可逆的后果，入口真实出现在玩家面前——本幕结束时应当进入阶段 2。
+阶段 2 完成：阈限事件发生，玩家已经跨过去或被卷进去——这是玩家最后一次真正的选择点，值得详写。
+阶段 3、4 是纯过程（转移途中、首次落地的第一感知）：默认 narration="summary" 一幕带过，直接把玩家送到新世界站稳。
+阶段 5 恢复普通异世界主线。
+**禁止把本幕的作用写成「为下一阶段铺垫」「留下因果桥」「让玩家感知到征兆」。**铺垫不是事件。一幕只做铺垫，等于这一幕没有发生。
 {('这是快速迁移路线：原世界最多保留一个可回应起点，不能规划数回合的原世界职业生活。' if fast else '')}
 不要因为玩家尚未接受入口就把穿越规划成“以后再说”；玩家的选择只改变路径，不取消前提。不要提前替玩家接受、答应、选择身份或能力。
 """
@@ -428,7 +444,7 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
   一句话自检：**照着你写的停止点收场，purpose 兑现了吗？**没有就把停止点往后挪。
 5b. **不要重复上一幕没兑现的 purpose**。如果你发现本幕的 purpose 和上一幕实质相同，那说明上一幕的停止点设早了，不是说明这件事需要再来一次。此时应当：把那件事当作**已经发生的既成事实**写进 situation 和 causal_bridge，purpose 换成**下一件**事。同一个目标连写两幕，玩家看到的就是原地打转。
 6. 身份、身体种族、职业、阵营、关系与穿越落点保持开放；没有玩家设定或已确立事实时不要替玩家锁死。
-7. 非穿越场景的 premise_phase 必须为 null。穿越场景请**根据最近叙事判断故事实际处在哪个阶段**并如实填写 0-5：0原生活、1逼近、2阈限、3转移途中、4首次落地、5已抵达。【迁移状态】里的程序阶段仅供参考——若它与叙事明显不符（例如程序说已抵达新世界，而叙事仍在原世界的公寓里），以叙事为准如实下调，程序会采纳你的判断。若叙事确实推进了，就如实上调一级——同一个征兆连着几个回合只是被反复加深细化（越描越细但没进入下一步），那本身就说明卡住了，应当在本场景让当前阶段结束并把 premise_phase 上调一级。但一次最多上调一级，不得为了赶进度直接跳到已抵达。
+7. 非穿越场景的 premise_phase 必须为 null。穿越场景请**根据最近叙事判断故事实际处在哪个阶段**并如实填写 0-5：0原生活、1逼近、2阈限、3转移途中、4首次落地、5已抵达。【迁移状态】里的程序阶段仅供参考——若它与叙事明显不符（例如程序说已抵达新世界，而叙事仍在原世界的公寓里），以叙事为准如实下调，程序会采纳你的判断。premise_phase 填的是**本幕结束时**的阶段：本幕让当前阶段完成了，就填下一级。同一个征兆连着几个回合只是被反复加深细化（越描越细但没进入下一步），那本身就说明卡住了。详写一次最多上调一级；略写（narration="summary"）因为覆盖整段过程，可以上调两级。不得为了赶进度直接跳到已抵达。
 8. pressure_budget 与 mystery_budget 各为 0-4。普通生活/社交默认 pressure 0-1、mystery 0；只有已发生事件和玩家主动选择支持时才能提高。预算不是必须花完，禁止用辞藻假装强度。
 8b. **narration 决定这一幕详写还是略写，按小说的常规分寸来判断**：
   narration="scene"（详写）——本幕存在真正的冲突、需要玩家做出的选择、或影响后续的新信息。逐步展开，停在玩家要反应的地方。

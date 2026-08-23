@@ -8,6 +8,7 @@
     这个文件        —— 路由层契约（状态码、字段名、请求体校验）
 """
 import asyncio
+import json
 import sys
 from pathlib import Path
 
@@ -233,6 +234,57 @@ def test_extract_result_survives_garbage(client: TestClient) -> None:
                     json={"turn": 4, "raw": "抱歉，我无法完成这个请求。"})
     assert r.status_code == 200
     assert r.json()["facts_written"] == 0
+
+
+def test_structured_ledger_roundtrip_and_context_trace(client: TestClient) -> None:
+    sid = _new_session(client)
+    payload = {
+        "turn": 5,
+        "events": [{"id": "evt_decline", "kind": "player_turn", "actor": "玩家",
+                    "action": "拒绝加入冒险队", "outcome": "队长接受了拒绝",
+                    "participants": ["队长"]}],
+        "commitments": [{"id": "com_decline", "kind": "refusal", "owner": "玩家",
+                         "text": "拒绝加入冒险队", "status": "rejected", "hard": True,
+                         "forbids": ["不得换皮重发邀请"]}],
+        "beliefs": [{"npc": "队长", "statement": "玩家不愿加入队伍", "mode": "knows"}],
+        "character_states": [{"name": "队长", "mid_term": {"goal": "另找队员"},
+                              "short_term": {"mood": "失望但克制"}}],
+    }
+    written = client.post(f"/api/sessions/{sid}/ledger", json=payload)
+    assert written.status_code == 200
+    assert written.json() == {"events_written": 1, "commitments_written": 1,
+                              "beliefs_written": 1, "character_states_written": 1}
+
+    ctx = client.get(f"/api/sessions/{sid}/context", params={
+        "mentioned": "队长", "turn": 5,
+    }).json()
+    assert "evt_decline" in ctx["text"] and "com_decline" in ctx["text"]
+    assert "玩家不愿加入队伍" in ctx["text"]
+    assert ctx["event_count"] == 1 and ctx["commitment_count"] == 1
+    assert any(x["id"] == "com_decline" and x["included"] for x in ctx["trace"])
+
+    ledger = client.get(f"/api/sessions/{sid}/ledger").json()
+    assert ledger["events"][0]["id"] == "evt_decline"
+    assert ledger["character_states"][0]["mid_term"]["goal"] == "另找队员"
+    assert client.delete(f"/api/sessions/{sid}").status_code == 200
+
+
+def test_extract_result_stores_structured_layers_without_entities(client: TestClient) -> None:
+    sid = _new_session(client)
+    raw = json.dumps({
+        "entities": [],
+        "events": [{"id": "ignored-by-sanitizer", "kind": "discovery",
+                    "actor": "莉亚", "action": "看见钟楼起火"}],
+        "commitments": [{"kind": "promise", "owner": "莉亚", "counterparty": "玩家",
+                         "text": "天黑前回来", "status": "active"}],
+        "beliefs": [{"npc": "莉亚", "statement": "钟楼正在起火", "mode": "knows"}],
+    }, ensure_ascii=False)
+    r = client.post(f"/api/sessions/{sid}/extract/result", json={"turn": 3, "raw": raw})
+    assert r.status_code == 200
+    assert r.json()["facts_written"] == 0
+    assert r.json()["events_written"] == 1
+    assert r.json()["commitments_written"] == 1
+    assert r.json()["beliefs_written"] == 1
 
 
 # ── 设定档案 ────────────────────────────────────────────────────

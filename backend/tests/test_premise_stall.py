@@ -117,7 +117,7 @@ def test_planner_advance_is_capped_at_one_step() -> None:
     runtime, warnings = parse_story_runtime(
         _runtime(5), {}, turn=6, reason="horizon", premise_state=ps(0, 1))
     assert runtime.current_scene.premise_phase == 1
-    assert any("限制为只前进一级" in w for w in warnings)
+    assert any("限制为只前进 1 级" in w for w in warnings)
 
 
 def test_missing_phase_falls_back_to_program_state() -> None:
@@ -178,7 +178,7 @@ def test_planner_cannot_leap_several_steps() -> None:
     runtime, warnings = parse_story_runtime(
         _runtime(5), {}, turn=9, reason="horizon", premise_state=ps(0, 9))
     assert runtime.current_scene.premise_phase == 1     # 被限制成只前进一级
-    assert any("限制为只前进一级" in w for w in warnings)
+    assert any("限制为只前进 1 级" in w for w in warnings)
 
 
 # ── 规划器规则里必须给「玩家选定的前提」开口子 ──────────────────
@@ -228,3 +228,74 @@ def test_stall_note_sits_before_the_data_section() -> None:
 def test_no_stall_note_when_not_stalled() -> None:
     p = _planner_prompt(premise_state=ps(0, 0))
     assert "迁移已停滞" not in p.split("硬规则")[-1].split("1. 玩家可做任何行动")[-1]
+
+
+# ── 阶段所有权与幕长：2026-08-23 那局的根因 ────────────────────
+#
+# 那局 14 回合、4 次规划，程序告知阶段与规划器回填阶段只有 1 次不同，
+# 而正则快速通道 14 个回合命中 0 次。迁移只在模型「违抗指令」时前进，
+# 因为提示词同时说「必须填这个数值、不得改」和「推进了就上调一级」。
+# 下面几条锁的是修好之后的契约。
+
+def _runtime_narration(phase, narration: str = "scene") -> str:
+    import json
+    return json.dumps({
+        "premise": "x", "threads": [],
+        "current_scene": {"id": "s", "title": "t", "situation": "白光包裹住你",
+                          "purpose": "跨过去并在新世界站稳", "causal_bridge": "c",
+                          "narration": narration,
+                          "summary_target": "抵达新世界的落点" if narration == "summary" else "",
+                          "premise_phase": phase},
+    }, ensure_ascii=False)
+
+
+def test_summary_scene_may_advance_two_phases() -> None:
+    """
+    略写的一幕覆盖「整段过程」，本来就跨得比详写远。
+    阈限之后的「转移途中」和「首次落地」是同一段过程，硬拆成两幕
+    就会退回「每回合换个感官细节重复同一件事」。
+    """
+    runtime, warnings = parse_story_runtime(
+        _runtime_narration(4, "summary"), {}, turn=9, reason="horizon",
+        premise_state=ps(2, 3))
+    assert runtime.current_scene.premise_phase == 4
+    assert not any("限制为只前进" in w for w in warnings)
+
+
+def test_summary_still_cannot_leap_to_arrival() -> None:
+    """略写放宽到两级，不是放开。0→5 一张卡就是「撸猫时被宣布已抵达」。"""
+    runtime, warnings = parse_story_runtime(
+        _runtime_narration(5, "summary"), {}, turn=9, reason="horizon",
+        premise_state=ps(0, 3))
+    assert runtime.current_scene.premise_phase == 2
+    assert any("限制为只前进 2 级" in w for w in warnings)
+
+
+def test_scene_narration_still_capped_at_one_phase() -> None:
+    """详写没有理由跨两级——放宽只针对明确声明为过程的那一幕。"""
+    runtime, warnings = parse_story_runtime(
+        _runtime_narration(4, "scene"), {}, turn=9, reason="horizon",
+        premise_state=ps(2, 3))
+    assert runtime.current_scene.premise_phase == 3
+    assert any("限制为只前进 1 级" in w for w in warnings)
+
+
+def test_migration_scenes_get_a_shorter_horizon() -> None:
+    """
+    阶段是按「幕」推进的，所以幕长直接乘进穿越耗时。
+    普通幕的下限 turn+4 用在迁移途中就是 4 幕 × 4 回合 = 16 回合起步，
+    玩家抱怨的正是这个数。迁移途中的幕该是决定性的短镜头。
+    """
+    runtime, _ = parse_story_runtime(
+        _runtime_narration(2, "scene"), {}, turn=10, reason="horizon",
+        premise_state=ps(1, 2))
+    assert runtime.current_scene.refresh_after_turn == 12   # turn+2
+
+
+def test_ordinary_life_keeps_the_longer_horizon() -> None:
+    """原世界日常和落地之后仍用 turn+4，短幕下限只在迁移途中生效。"""
+    for phase in (0, 5):
+        runtime, _ = parse_story_runtime(
+            _runtime_narration(phase, "scene"), {}, turn=10, reason="horizon",
+            premise_state=ps(phase, 2))
+        assert runtime.current_scene.refresh_after_turn == 14, f"phase={phase}"

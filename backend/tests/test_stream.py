@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from app.config import Settings, get_settings  # noqa: E402
 from app.domain.providers import PROVIDERS  # noqa: E402
 from app.main import app  # noqa: E402
-from app.services.llm import LLMError, _build_payload, call_chat  # noqa: E402
+from app.services.llm import LLMError, _build_payload, _parse_success, call_chat  # noqa: E402
 
 
 @pytest.fixture
@@ -65,6 +65,16 @@ def test_stream_options_absent_when_not_streaming() -> None:
     assert "stream_options" not in _build_payload(
         "m", [], 0.8, 512, PROVIDERS["deepseek"], stream=False
     )
+
+
+def test_non_stream_reasoning_is_preserved_for_monitor() -> None:
+    result = _parse_success({
+        "choices": [{"message": {"content": "最终答案", "reasoning_content": "内部推理"}}],
+        "usage": {"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30},
+    }, "deepseek", "deepseek-v4-flash", 0)
+    assert result.content == "最终答案"
+    assert result.reasoning_content == "内部推理"
+    assert result.total_tokens == 30
 
 
 # ── 连接阶段的失败必须是普通 HTTP 错误 ──────────────────────────

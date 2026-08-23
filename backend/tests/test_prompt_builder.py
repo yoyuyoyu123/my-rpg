@@ -149,6 +149,22 @@ def test_opening_text_only_on_turn_zero() -> None:
     assert o not in build_system_prompt(ctx(turns=1, opening_text=o))
 
 
+def test_fast_transmigration_does_not_inject_a_long_origin_life_chain() -> None:
+    sp = build_system_prompt(ctx(
+        turns=0,
+        premise_state={
+            "kind": "transmigration",
+            "phase": 0,
+            "phaseTurns": 0,
+            "fast": True,
+            "mechanism": "普通转移",
+            "trigger": "公开跨界通道",
+        },
+    ))
+    assert "这是快速迁移路线" in sp
+    assert "不扩写职业生活" in sp
+
+
 def test_unrevealed_sheet_block_appears_only_when_hidden() -> None:
     """角色卡未揭示时要禁止模型凭空造数值，揭示后这段就该消失。"""
     hidden = build_system_prompt(ctx(game_state={"revealed": False}))
