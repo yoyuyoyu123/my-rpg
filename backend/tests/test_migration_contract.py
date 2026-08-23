@@ -101,7 +101,7 @@ def test_program_takes_over_when_budget_runs_out() -> None:
         _plan(0), {}, turn=total, reason="horizon",
         premise_state=ps(0, started_at=0), pace="medium")
     scene = runtime.current_scene
-    assert scene.premise_phase == LANDED_PHASE
+    assert scene.premise_phase == 5
     assert scene.premise_phase_forced is True
     assert any("由程序接管" in w for w in warnings)
 
@@ -131,7 +131,7 @@ def test_forced_scene_moves_the_story_not_just_the_ledger() -> None:
     scene = forced_scene(ps(1, started_at=0), turn=7, previous_scene={"situation": "茶楼靠窗的位置"})
 
     # 是一幕戏，不是一个数字
-    assert "完成穿越" in scene["purpose"] and "落在新世界并站稳" in scene["purpose"]
+    assert "完成穿越" in scene["purpose"] and "落在新世界站稳并睁开眼" in scene["purpose"]
     assert scene["stop_points"] and scene["summary_target"]
     # 承接上一幕的处境，不是凭空另起
     assert "茶楼靠窗的位置" in scene["causal_bridge"]
@@ -144,16 +144,23 @@ def test_forced_scene_moves_the_story_not_just_the_ledger() -> None:
     assert "逐步描写转移过程" in forbidden
 
 
-def test_forced_scene_lands_but_does_not_skip_arrival() -> None:
+def test_forced_scene_compresses_transit_but_leaves_arrival_to_next_scene() -> None:
     """
-    落到阶段 4（首次落地）而不是 5（已抵达）。
+    小说的常规分寸：转移过程压缩，抵达单独成幕。
 
-    落地的第一眼是玩家要亲历的内容；直接跳 5 会把它吞掉，而且阶段一到 5
-    所有推进压力停摆——那正是第一轮的失败形状。
+    实测过反面——一张略写卡把转移和抵达一起包了，第二个回合用「略写」
+    写了 597 字的新世界环境，最该详写的第一眼被压扁了。
+
+    落点填 5（已抵达）而不是 4（首次落地）：填 4 会让下一幕再规划一次
+    「落地」，玩家看到的就是穿越隔了一回合才完成。
     """
     scene = forced_scene(ps(0, started_at=0), turn=5, previous_scene=None)
-    assert scene["premise_phase"] == LANDED_PHASE == 4
-    assert scene["premise_phase"] < 5
+    assert scene["premise_phase"] == 5
+    assert "睁开眼" in scene["summary_target"]
+    assert "新世界的样子留给下一幕" in scene["summary_target"]
+    assert any("第一眼留给下一幕详写" in x for x in scene["forbidden"])
+    # 接管的判据仍是 4：已经跨过去就不再接管。
+    assert should_force(ps(LANDED_PHASE, started_at=0), turn=99, pace="short") is False
 
 
 def test_forced_scene_hands_control_back_next_turn() -> None:
@@ -170,5 +177,69 @@ def test_takeover_survives_a_planner_that_refuses_to_advance() -> None:
     runtime, _ = parse_story_runtime(
         _plan(0), {}, turn=30, reason="horizon",
         premise_state=ps(0, started_at=0), pace="long")
-    assert runtime.current_scene.premise_phase == LANDED_PHASE
+    assert runtime.current_scene.premise_phase == 5
     assert "完成穿越" in runtime.current_scene.purpose
+
+
+# ── 强制令：压过每回合指令 ──────────────────────────────────────
+
+def _ctx(scene: dict | None):
+    from app.schemas.turn import TurnContext
+    return TurnContext(
+        world_id="wuxia", pace="medium", turns=6, game_state={"revealed": True},
+        story_runtime=({"current_scene": scene} if scene else {}),
+    )
+
+
+def test_no_mandate_on_ordinary_turns() -> None:
+    from app.services.prompt_builder import turn_mandate
+    assert turn_mandate(_ctx(None)) == ""
+    assert turn_mandate(_ctx({"id": "s", "purpose": "普通一幕"})) == ""
+
+
+def test_mandate_overrides_the_stop_at_decision_boundary_rule() -> None:
+    """
+    实测的失败：写手拿到了程序的「穿过去」卡，玩家输入是「拿起那枚铜钱，
+    看颤动是否还在」，写手就只拿起了铜钱——因为前端在整份系统提示词之后
+    还追加了一句「只完成玩家明确行动、在下一个决策边界前停下」，它更靠后
+    也更具体。穿越因此推迟了一回合。
+
+    强制令必须明写它压过那一条，否则同样的冲突会再发生一次。
+    """
+    from app.services.prompt_builder import turn_mandate
+    note = turn_mandate(_ctx(forced_scene(ps(1, started_at=0), turn=6, previous_scene=None)))
+    assert "优先级高于" in note and "在决策边界前停下" in note
+    assert "必须在这一回合内发生并走完" in note
+    assert "不得推迟到下一回合" in note
+    assert "完成穿越" in note
+
+
+# ── 略写幕只占一个回合 ──────────────────────────────────────────
+
+def test_summary_scene_lasts_exactly_one_turn() -> None:
+    """
+    略写=「一到两段带过整段过程并抵达终点」，挂两个回合就自相矛盾。
+    实测：落地那张略写卡挂了回合 7 和 8，第 8 回合用「略写」写了 597 字的
+    新世界环境——最该详写的第一眼被压扁了。
+    """
+    raw = json.dumps({
+        "premise": "x", "threads": [],
+        "current_scene": {"id": "s", "title": "赶路", "situation": "官道上",
+                          "purpose": "跨过三天的路程", "causal_bridge": "c",
+                          "narration": "summary", "summary_target": "抵达县城",
+                          "refresh_after_turn": 99},
+    }, ensure_ascii=False)
+    runtime, _ = parse_story_runtime(raw, {}, turn=10, reason="horizon")
+    assert runtime.current_scene.refresh_after_turn == 11
+
+
+def test_scene_narration_keeps_the_normal_horizon() -> None:
+    """详写幕不受影响，仍按正常下限走——只有略写是一回合。"""
+    raw = json.dumps({
+        "premise": "x", "threads": [],
+        "current_scene": {"id": "s", "title": "谈判", "situation": "堂上",
+                          "purpose": "谈成或谈崩", "causal_bridge": "c",
+                          "narration": "scene", "refresh_after_turn": 0},
+    }, ensure_ascii=False)
+    runtime, _ = parse_story_runtime(raw, {}, turn=10, reason="horizon")
+    assert runtime.current_scene.refresh_after_turn > 11

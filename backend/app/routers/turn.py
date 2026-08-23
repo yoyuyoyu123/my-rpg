@@ -10,7 +10,7 @@ from fastapi import APIRouter
 
 from app.schemas.turn import TurnContext, TurnPromptOut
 from app.services.prompt_builder import (
-    active_rule_packs, build_system_prompt, debug_hash,
+    active_rule_packs, build_system_prompt, debug_hash, turn_mandate,
 )
 
 router = APIRouter(prefix="/api", tags=["回合"])
@@ -28,7 +28,8 @@ def compile_prompt(ctx: TurnContext) -> TurnPromptOut:
     sp = build_system_prompt(ctx)
     packs = active_rule_packs(ctx)
     return TurnPromptOut(
-        system_prompt=sp, chars=len(sp), hash=debug_hash(sp),
+        system_prompt=sp, turn_mandate=turn_mandate(ctx),
+        chars=len(sp), hash=debug_hash(sp),
         rule_packs=[label for _, label, _ in packs],
         rules_hash=debug_hash("\n\n".join(text for _, _, text in packs)),
     )

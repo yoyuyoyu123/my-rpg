@@ -250,6 +250,17 @@ def parse_story_runtime(
     requested_horizon = int(scene.get("refresh_after_turn") or turn + floor_gap)
     scene["refresh_after_turn"] = max(turn + floor_gap, min(turn + 8, requested_horizon))
 
+    # 略写幕只占一个回合——这是定义决定的，不是调参。
+    #
+    # 略写的意思是「用一到两段带过整段过程并抵达终点」。一张略写卡如果
+    # 挂两个回合，第二个回合的写手会拿着「本幕略写」继续写下一段，结果是
+    # 一段本该压缩的过程被摊成两段，比详写还长。
+    # 实测：穿越落地那张略写卡挂了回合 7 和 8，第 7 回合把转移压缩得很好，
+    # 第 8 回合却用「略写」写了 597 字的新世界环境——而新世界的第一眼
+    # 恰恰是最该详写的东西。压缩过程和压缩抵达被同一张卡混为一谈了。
+    if scene.get("narration") == "summary":
+        scene["refresh_after_turn"] = turn + 1
+
     # 迁移阶段：规划器可以自由下调；详写一次上调一级，略写可上调两级。
     #
     # 为什么把规划器当主要判据：正则证据检测（premiseEvidence）只认得

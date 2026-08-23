@@ -4806,7 +4806,7 @@ function loreConflictNote(){
 // 规则常量、世界包正文、状态协议都是核心资产，已经全部移到服务端。
 // 前端只负责把「本回合的运行时状态」打包上去，换回组装好的 system prompt。
 // 这也意味着从这一版起后端是必需的——资产不在浏览器里了，离线拼不出提示词。
-var LAST_SYSTEM_PROMPT='', LAST_RULE_PACKS=[], LAST_RULES_HASH='';
+var LAST_SYSTEM_PROMPT='', LAST_RULE_PACKS=[], LAST_RULES_HASH='', TURN_MANDATE='';
 
 // 单回合输出上限。调高不会多花钱——按实际生成量计费，不是按上限；
 // 但调低了撞上限就是白烧掉一整段，所以默认给足。
@@ -4958,6 +4958,8 @@ async function compileSystemPrompt(recentText){
   if(msg)throw new Error('提示词编译失败（'+msg+'）。世界包与规则已迁到服务端，请确认后端正在运行。');
   var d=await r.json();
   LAST_SYSTEM_PROMPT=d.system_prompt||'';
+  // 程序接管本幕时的强制令，追加在每回合指令的最后（见后端 turn_mandate）
+  TURN_MANDATE=d.turn_mandate||'';
   LAST_RULE_PACKS=d.rule_packs||[]; LAST_RULES_HASH=d.rules_hash||'';
   return LAST_SYSTEM_PROMPT;
 }
@@ -5044,6 +5046,11 @@ async function _runTurn(){
     }
     // 上一回合被拦下的矛盾，作为纠正指令跟本回合一起发出去
     noteContent+=loreConflictNote();
+    // 程序接管本幕时的强制令必须排在最后。上面两个分支（裁定版和常规版）
+    // 都以「只完成玩家这一步／在决策边界前停下」收尾，实测正是这句话把
+    // 程序强制的穿越吃掉、推迟了一回合——写手跟的是最靠后最具体的指令。
+    // 这里用同一个位置优势把它盖回来。
+    noteContent+=TURN_MANDATE;
     var requestHist=HIST.map(function(m){
       if(m.role==='system'&&/^【(?:历史摘要|较早剧情摘要)/.test(String(m.content||'')))return {role:'assistant',content:'【较早剧情记忆——仅用于连续性，若与系统中的“本局最终有效设定”冲突，必须以后者为准】\n'+String(m.content||'').replace(/^【[^】]+】\s*/,'')};
       return m;

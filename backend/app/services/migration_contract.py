@@ -130,8 +130,16 @@ def forced_scene(premise_state: Any, turn: int, previous_scene: Any) -> dict:
     关键在于它是**一幕要被写出来的戏**，不是一个被改写的数字。写手照着
     它写，阶段和叙事就一起走到了新世界；这正是当年那个计时器缺的东西。
 
-    刻意选择落到阶段 4（首次落地）而不是 5（已抵达）：落地的第一眼
-    仍然是玩家要亲历的内容，直接跳到 5 会把它吞掉。
+    分寸按小说的常规做法：**转移过程压缩，抵达单独成幕**。
+
+    这一幕只负责把玩家送过去，停在落地睁眼的那一刻，不描写新世界的环境
+    ——那是下一幕的事，而且值得详写。实测过反面：一张略写卡把转移和抵达
+    一起包了，第二个回合用「略写」写了 597 字的新世界环境，最该详写的
+    第一眼被压扁了。
+
+    因此落点填阶段 5（已抵达），不是 4（首次落地）：填 4 会让下一幕再规划
+    一次「落地」，玩家看到的就是穿越隔了一回合才完成。ARRIVED_PHASE 仍然
+    留在 4，那是「已经跨过去、不必再接管」的判据，两者用途不同。
     """
     prev = previous_scene if isinstance(previous_scene, dict) else {}
     situation = str(prev.get("situation") or "").strip()
@@ -144,18 +152,19 @@ def forced_scene(premise_state: Any, turn: int, previous_scene: Any) -> dict:
         "id": f"crossing-{turn}",
         "title": "穿过去",
         "situation": situation or "玩家所处的日常场景，异常已经积累到临界。",
-        "purpose": "本幕完成穿越：玩家离开原世界，穿过转移过程，落在新世界并站稳。",
+        "purpose": "本幕完成穿越：玩家离开原世界，穿过转移过程，落在新世界站稳并睁开眼。",
         "causal_bridge": bridge,
         "active_thread_ids": [],
         "participant_intents": {},
         "available_information": [],
         "causal_event_ids": [],
-        "affordances": ["在被带走的瞬间做出反应", "落地后观察四周", "落地后开口说话"],
-        "allowed_developments": ["穿越发生并完成", "玩家在新世界落地并看清第一眼环境"],
+        "affordances": ["在被带走的瞬间做出反应", "落地后开口说话"],
+        "allowed_developments": ["穿越发生并完成", "玩家在新世界站稳并睁开眼"],
         "forbidden": [
             "把本幕写成又一次征兆、预感或前兆",
             "本幕结束时玩家仍然留在原世界",
             "逐步描写转移过程的每一层感受",
+            "详细铺开新世界的环境——落地的第一眼留给下一幕详写",
             "替玩家决定他到达后的身份、能力或立场",
         ],
         "soft_commitment_ids": [],
@@ -163,11 +172,13 @@ def forced_scene(premise_state: Any, turn: int, previous_scene: Any) -> dict:
         "mystery_budget": 1,
         # 转移过程本身是纯过程，正是略写该管的东西。
         "narration": "summary",
-        "summary_target": "跨过阈限、穿过转移过程，停在新世界落地站稳、看清第一眼环境的那一刻。",
-        "stop_points": ["玩家在新世界站定并看清第一眼环境之后，轮到他决定下一步时。"],
+        "summary_target": "跨过阈限、穿过转移过程，停在落地站稳、睁开眼的那一刻；新世界的样子留给下一幕。",
+        "stop_points": ["玩家在新世界站定睁眼之后，轮到他决定下一步时。"],
         # 下一回合就重新规划：接管只负责这一幕，之后交还给规划器。
         "refresh_after_turn": _int(turn) + 1,
-        "premise_phase": LANDED_PHASE,
+        # 填 5（已抵达）而不是 4：填 4 会让下一幕再规划一次「落地」，
+        # 玩家看到的就是穿越隔了一回合才完成。见本函数 docstring。
+        "premise_phase": 5,
         # 程序下的令，不是模型提案——前端的 +1 钳制不适用。
         "premise_phase_forced": True,
         "status": "active",

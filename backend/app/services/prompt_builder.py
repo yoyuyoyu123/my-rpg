@@ -599,3 +599,35 @@ def build_system_prompt(ctx: TurnContext) -> str:
         )
 
     return sp
+
+
+def turn_mandate(ctx) -> str:
+    """程序接管本幕时，压过每回合指令的强制令。
+
+    为什么必须放在最后
+    ------------------
+    前端每回合会在整份系统提示词之后再追加一句「【本回合】只完成玩家明确
+    行动及其直接反馈，在下一个决策边界前停下」。实测里程序接管的那一幕
+    就是被这句话吃掉的：写手拿到了「本幕完成穿越」的场景卡，玩家输入是
+    「拿起那枚铜钱，看颤动是否还在」，写手于是只拿起了铜钱——它服从了
+    最靠后、最具体的那条指令，穿越推迟到了下一回合。
+
+    这和规划器那次是同一种病（两条指令冲突，模型跟更近更具体的那条）。
+    所以这里不去改那句话，而是把强制令放到比它更后的位置——用同一个
+    机制反过来解决问题。
+    """
+    scene = (getattr(ctx, "story_runtime", None) or {}).get("current_scene") or {}
+    if not isinstance(scene, dict) or scene.get("premise_phase_forced") is not True:
+        return ""
+    purpose = str(scene.get("purpose") or "").strip()
+    target = str(scene.get("summary_target") or "").strip()
+    note = (
+        "\n\n【本回合强制事件——优先级高于上面「只完成玩家明确行动、"
+        "在决策边界前停下」的要求】\n"
+        f"{purpose}\n"
+        "玩家的行动仍然要如实回应，但回应之后，本幕的事件**必须在这一回合内发生并走完**，"
+        "不得停在决策边界之前，不得推迟到下一回合，也不得只写成征兆或预感。"
+    )
+    if target:
+        note += f"\n本回合要抵达的终点：{target}"
+    return note
