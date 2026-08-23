@@ -137,13 +137,14 @@ def test_summary_rules_override_the_default_expansion_instinct() -> None:
 
 # ── 转移途中／首次落地一律略写 ──────────────────────────────────
 
-def _plan_scene(end_phase, narration="scene"):
+def _plan_scene(end_phase, narration="scene", conflict="", pressure=1):
     import json
     return json.dumps({
         "premise": "x", "threads": [],
         "current_scene": {"id": "s", "title": "跨入阈限", "situation": "白光里",
                           "purpose": "跨过去", "causal_bridge": "c",
-                          "narration": narration, "premise_phase": end_phase},
+                          "narration": narration, "premise_phase": end_phase,
+                          "conflict": conflict, "pressure_budget": pressure},
     }, ensure_ascii=False)
 
 
@@ -151,13 +152,14 @@ def _ps(phase):
     return {"kind": "transmigration", "phase": phase, "startedAt": 10**6, "fast": True}
 
 
-def test_transit_phases_are_forced_to_summary() -> None:
+def test_transit_without_a_declared_conflict_falls_back_to_summary() -> None:
     """
+    默认：转移途中是纯过程，略写。
+
     实测一局 VR 路线：规划器把阶段 3 的「跨入阈限」规划成详写，占掉回合
     5 和 6，回合 7 才略写，回合 8 被强制接管。玩家原话是「戴个 VR 头显
-    还在虚空里走半天」。
-
-    提示词里早写着「阶段 3、4 是纯过程，默认略写」——但那只是一句话。
+    还在虚空里走半天」。规则 8b 早就写着「只有过程中真的发生冲突时才详写」，
+    规划器照样无视——所以改成举证：说不出冲突就按纯过程处理。
     """
     from app.services.story_planner import parse_story_runtime
     for end_phase in (3, 4):
@@ -167,9 +169,71 @@ def test_transit_phases_are_forced_to_summary() -> None:
         scene = runtime.current_scene
         assert scene.narration == "summary", f"phase={end_phase}"
         assert scene.summary_target, "强制略写必须同时给出终点，否则写手无从下手"
-        assert any("纯过程" in w for w in warnings)
+        assert any("未声明冲突" in w for w in warnings)
         # 略写幕只占一个回合，两条规则要串起来才有意义
         assert scene.refresh_after_turn == 6
+
+
+def test_transit_with_a_real_conflict_stays_detailed() -> None:
+    """
+    例外：过程中真的出事就不再是纯过程，该详写。
+
+    「穿越途中发生冲突」是玩家明确点出的合法情形——有人中途拦截、机制
+    故障、途中必须当场做选择。程序不替规划器判断有没有冲突，只要求它
+    把冲突说出来。
+    """
+    from app.services.story_planner import parse_story_runtime
+    runtime, warnings = parse_story_runtime(
+        _plan_scene(3, conflict="守门的旧程序拦下玩家，要求他交出通行凭证才放行", pressure=3),
+        {}, turn=5, reason="horizon", premise_state=_ps(2), pace="long")
+    scene = runtime.current_scene
+    assert scene.narration == "scene"
+    assert "旧程序拦下玩家" in scene.conflict
+    assert any("声明了冲突" in w for w in warnings)
+    # 详写幕不受「略写只占一回合」约束
+    assert scene.refresh_after_turn > 6
+
+
+def test_vacuous_conflict_does_not_buy_detail() -> None:
+    """
+    举证得是具体的。「有阻力」这种空话不算，否则这道闸等于没有——
+    规划器只要反射性填一个字段就能拿回详写。
+    """
+    from app.services.story_planner import parse_story_runtime
+    runtime, _ = parse_story_runtime(
+        _plan_scene(3, conflict="有阻力", pressure=3),
+        {}, turn=5, reason="horizon", premise_state=_ps(2), pace="long")
+    assert runtime.current_scene.narration == "summary"
+
+
+def test_conflict_without_pressure_does_not_buy_detail() -> None:
+    """
+    真正的冲突必然带压力。要求 pressure_budget≥2 是第二道独立信号，
+    让「随手填个 conflict 换详写」有代价——压力预算受硬规则 8 约束，
+    不能凭空抬高。
+    """
+    from app.services.story_planner import parse_story_runtime
+    runtime, _ = parse_story_runtime(
+        _plan_scene(3, conflict="守门的旧程序拦下玩家，要求他交出通行凭证", pressure=1),
+        {}, turn=5, reason="horizon", premise_state=_ps(2), pace="long")
+    assert runtime.current_scene.narration == "summary"
+
+
+def test_writer_is_told_what_the_conflict_is() -> None:
+    """
+    详写的理由要传给写手。不告诉它冲突是什么，它只能靠加细节把篇幅填满
+    ——那正是「越描越细但没推进」的来路。
+    """
+    from app.schemas.turn import TurnContext
+    from app.services.prompt_builder import build_system_prompt
+    sp = build_system_prompt(TurnContext(
+        world_id="wuxia", pace="long", turns=5, game_state={"revealed": True},
+        story_runtime={"current_scene": {
+            "id": "s", "title": "跨入阈限", "situation": "白光里", "purpose": "跨过去",
+            "narration": "scene", "pressure_budget": 3,
+            "conflict": "守门的旧程序拦下玩家，要求他交出通行凭证才放行"}},
+    ))
+    assert "本幕的冲突" in sp and "守门的旧程序拦下玩家" in sp
 
 
 def test_threshold_scene_stays_detailed() -> None:

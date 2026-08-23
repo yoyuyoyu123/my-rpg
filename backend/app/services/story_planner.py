@@ -55,6 +55,30 @@ def _text_overlap(a: str, b: str) -> float:
     return len(ga & gb) / len(ga | gb)
 
 
+# 声明冲突至少要写这么多字。低于这个长度基本是「有阻力」「有变故」这类
+# 空话，不构成举证。
+CONFLICT_MIN_CHARS = 8
+# 真正的冲突必然带压力。要求这一项，是为了让「随手填个 conflict 换详写」
+# 有代价——pressure_budget 受硬规则 8 约束，不能凭空抬高。
+CONFLICT_MIN_PRESSURE = 2
+
+
+def _has_declared_conflict(scene: dict[str, Any]) -> bool:
+    """规划器是否把「这一幕为什么该详写」说清楚了。
+
+    两道闸都很浅，但都要求规划器**主动做点什么**，而不是默认就能拿到详写。
+    这是举证责任，不是判断权——判断仍归规划器。
+    """
+    text = re.sub(r"\s", "", str(scene.get("conflict") or ""))
+    if len(text) < CONFLICT_MIN_CHARS:
+        return False
+    try:
+        pressure = int(scene.get("pressure_budget") or 0)
+    except (TypeError, ValueError):
+        pressure = 0
+    return pressure >= CONFLICT_MIN_PRESSURE
+
+
 def scene_repeat_note(count: int) -> str:
     """把「场景原地打转」回灌进下一次规划提示词。
 
@@ -182,7 +206,7 @@ def parse_story_runtime(
         else:
             raise ValueError("剧情规划缺少 current_scene")
     scene = dict(scene)
-    for key in ("id", "title", "situation", "purpose", "causal_bridge"):
+    for key in ("id", "title", "situation", "purpose", "causal_bridge", "conflict"):
         scene[key] = str(scene.get(key) or "").strip()[:500]
     if not scene["id"]:
         scene["id"] = f"scene-{turn}-{data['revision']}"
@@ -297,22 +321,36 @@ def parse_story_runtime(
             )
             scene["premise_phase"] = proposed_phase
 
-    # 转移途中与首次落地是纯过程，一律略写——程序说了算，不问规划器。
+    # 转移途中与首次落地：默认纯过程略写，除非规划器把冲突说出来。
     #
-    # 提示词里早就写着「阶段 3、4 是纯过程，默认 narration=summary 一幕带过」，
-    # 但那只是一句话。实测一局 VR 路线：规划器把阶段 3 的「跨入阈限」规划成
-    # 详写，占掉回合 5 和 6，回合 7 才略写，回合 8 被强制接管——玩家的原话是
-    # 「戴个 VR 头显还在虚空里走半天」。
+    # 判据不是「哪个阶段」，而是**有没有冲突**——有冲突的地方详写，没有的
+    # 地方略写。转移过程里真的出事（有人阻拦、机制故障、玩家必须当场做
+    # 选择）当然该详写，只是这种情况少见。
     #
-    # 阈限（阶段 2）是玩家最后一次真正的选择，值得详写；跨过去之后就只剩
-    # 过程了。这里只管本幕**结束时**落在 3 或 4 的场景：那意味着阈限已经
-    # 发生，本幕内容是转移本身。
+    # 但只把这条写进规则是不够的：规则 8b 早就这么写了，规划器照样把阶段 3
+    # 的「跨入阈限」规划成详写，占掉回合 5 和 6，回合 7 才略写，回合 8 被
+    # 强制接管——玩家的原话是「戴个 VR 头显还在虚空里走半天」。
+    #
+    # 所以这里改的是**举证责任**，不是判断权：判断仍归规划器，程序只检查
+    # 它有没有把冲突说出来。说得出具体冲突就按它的判断详写；说不出，就是
+    # 纯过程。这样既保住了保证，又没把「过程中的冲突」这条路堵死。
+    #
+    # 只在阶段 3、4 强制举证：那里有滥用实绩。阈限（阶段 2）是玩家最后一次
+    # 真正的选择，本来就该详写，不必举证。
     _end_phase = scene.get("premise_phase")
     if isinstance(_end_phase, int) and _end_phase in (3, 4) and scene.get("narration") != "summary":
-        warnings.append(f"阶段 {_end_phase} 是纯过程（转移途中／首次落地），已强制改为略写")
-        scene["narration"] = "summary"
-        if not str(scene.get("summary_target") or "").strip():
-            scene["summary_target"] = "一幕带过整段转移过程，停在玩家落地站稳、睁开眼的那一刻。"
+        if _has_declared_conflict(scene):
+            warnings.append(
+                f"阶段 {_end_phase} 本是纯过程，但规划器声明了冲突「"
+                f"{str(scene.get('conflict'))[:40]}」，按详写处理"
+            )
+        else:
+            warnings.append(
+                f"阶段 {_end_phase} 是纯过程（转移途中／首次落地）且未声明冲突，已改为略写"
+            )
+            scene["narration"] = "summary"
+            if not str(scene.get("summary_target") or "").strip():
+                scene["summary_target"] = "一幕带过整段转移过程，停在玩家落地站稳、睁开眼的那一刻。"
 
     # 略写幕只占一个回合——这是定义决定的，不是调参。
     #
@@ -471,7 +509,9 @@ premise_phase 填的是「**本幕结束时**故事所处的阶段」，不是�
 阶段 0 完成：异常正式打断日常生活，玩家已经无法把它当成错觉——本幕结束时应当进入阶段 1。
 阶段 1 完成：征兆产生实际的、不可逆的后果，入口真实出现在玩家面前——本幕结束时应当进入阶段 2。
 阶段 2 完成：阈限事件发生，玩家已经跨过去或被卷进去——这是玩家最后一次真正的选择点，值得详写。
-阶段 3、4 是纯过程（转移途中、首次落地的第一感知）：默认 narration="summary" 一幕带过，直接把玩家送到新世界站稳。
+阶段 3、4（转移途中、首次落地的第一感知）默认是纯过程：narration="summary" 一幕带过，直接把玩家送到新世界站稳。
+  例外——**转移过程中真的出事**时它就不再是纯过程，该详写：有人在中途拦截、转移机制出故障或跑偏、玩家必须在过程里当场做出选择、途中遇到了会影响落点的东西。
+  想在阶段 3、4 用详写，必须同时做到两件事：把 conflict 写成一句具体的冲突（谁／什么在阻碍，玩家要面对什么），并把 pressure_budget 提到 2 以上。只写「有阻力」「出现变故」这类空话不算，程序会按纯过程处理并改回略写。
 阶段 5 恢复普通异世界主线。
 **禁止把本幕的作用写成「为下一阶段铺垫」「留下因果桥」「让玩家感知到征兆」。**铺垫不是事件。一幕只做铺垫，等于这一幕没有发生。
 {('这是快速迁移路线：原世界最多保留一个可回应起点，不能规划数回合的原世界职业生活。' if fast else '')}
@@ -508,7 +548,7 @@ premise_phase 填的是「**本幕结束时**故事所处的阶段」，不是�
 10. 输出纯 JSON，不要 Markdown，不要解释。
 
 输出结构：
-{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用；必须与上一幕不同","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary","summary_target":"略写时写明本幕要跨过什么、停在哪里；详写留空","stop_points":["purpose 兑现之后、轮到玩家决定下一步的那一刻"],"refresh_after_turn":{ctx.turn + 4},"premise_phase":null,"status":"active"}}}}
+{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用；必须与上一幕不同","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary","summary_target":"略写时写明本幕要跨过什么、停在哪里；详写留空","conflict":"本幕的冲突是什么：谁或什么在阻碍、玩家要面对什么；纯过程没有冲突就留空","stop_points":["purpose 兑现之后、轮到玩家决定下一步的那一刻"],"refresh_after_turn":{ctx.turn + 4},"premise_phase":null,"status":"active"}}}}
 
 {stall_note}{repeat_note}【规划原因】{ctx.reason}；当前玩家回合={ctx.turn}；篇幅={ctx.pace}；预设={ctx.preset_id or '无'}
 【世界设定】\n{str(world_text)[:9000]}

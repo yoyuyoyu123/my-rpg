@@ -350,6 +350,10 @@ def _story_scene_summary(runtime: dict) -> str:
     ]
     if scene.get("narration") == "summary" and scene.get("summary_target"):
         lines.append("本幕要跨过并抵达:" + str(scene["summary_target"]))
+    # 详写是因为有冲突，就得让写手知道冲突是什么——否则它只能靠加细节
+    # 把篇幅填满，那正是「越描越细但没推进」的来路。
+    if scene.get("narration") != "summary" and scene.get("conflict"):
+        lines.append("本幕的冲突（详写的理由，正文必须让它真的发生）:" + str(scene["conflict"]))
     intents = scene.get("participant_intents") or {}
     if isinstance(intents, dict) and intents:
         lines.append("在场人物眼前意图:" + "；".join(f"{k}={v}" for k, v in list(intents.items())[:8]))

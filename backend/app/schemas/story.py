@@ -62,6 +62,13 @@ class SceneCard(BaseModel):
     narration: Literal["scene", "summary"] = "scene"
     # 略写时这一幕要跨过什么、停在哪里。详写时留空。
     summary_target: str = ""
+    # 本幕的冲突是什么；没有冲突就留空。
+    #
+    # 这是「详写」的举证。纯过程的幕（转移途中、赶路、等待）默认略写，
+    # 但过程中真的出事时——有人阻拦、机制故障、玩家必须当场做选择——
+    # 那就不再是纯过程，理应详写。判断权仍在规划器手里，程序只检查它
+    # 有没有把理由说出来：说不出具体冲突，就按纯过程处理。
+    conflict: str = ""
 
     stop_points: list[str] = Field(default_factory=list)
     refresh_after_turn: int = 0
