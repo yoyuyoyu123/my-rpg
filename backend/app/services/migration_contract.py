@@ -179,6 +179,35 @@ def dm_actions(premise_state: Any, turn: int, pace: str) -> DMActions:
     )
 
 
+def takeover_verify_note(previous_runtime: Any) -> str:
+    """接管之后的下一次规划，必须先核对写手到底穿没穿。
+
+    程序发完强制卡就把阶段标成已抵达，是「推账本不推剧情」的另一种形态
+    ——我以为自己避开了它，其实只避开了一半：test_forced_scene_moves_the_
+    story_not_just_the_ledger 检查的是**卡片**是不是一幕真戏，没有任何东西
+    检查**写手**是不是真的照做了。
+
+    实测那一局：接管当回合写手照旧写了回仓库拍照发微信，而程序已经标记
+    已抵达，于是下一幕只能让玩家凭空出现在异世界的石板路上，中间一片空白。
+
+    程序判断不了叙事有没有跨过去（正则实测 14 回合命中 0 次），但规划器
+    读得到最近对话。所以这里把核对这件事显式交给它——向下修正本来就是
+    采纳的，缺的只是有人提醒它去看。
+    """
+    prev = previous_runtime if isinstance(previous_runtime, dict) else {}
+    scene = prev.get("current_scene")
+    if not isinstance(scene, dict) or scene.get("premise_phase_forced") is not True:
+        return ""
+    return (
+        "【核对上一幕】上一幕是程序接管的，要求当场完成穿越并落地。"
+        "**请先读最近对话再填 premise_phase**：玩家真的到新世界了吗？\n"
+        "· 到了——正常继续，规划新世界的场景。\n"
+        "· 没到（正文仍在原世界，或者只写了玩家的日常动作）——**如实填写更低的阶段**，"
+        "程序会采纳并重新接管。不要因为程序说已抵达就顺着写下去，"
+        "那会让玩家凭空出现在异世界，中间一片空白。\n\n"
+    )
+
+
 def hint_directive(actions: DMActions) -> str:
     """hint 动作：提示**玩家**，不是提示模型。
 
@@ -255,18 +284,42 @@ def forced_scene(premise_state: Any, turn: int, previous_scene: Any) -> dict:
     一次「落地」，玩家看到的就是穿越隔了一回合才完成。ARRIVED_PHASE 仍然
     留在 4，那是「已经跨过去、不必再接管」的判据，两者用途不同。
     """
+    ps = premise_state if isinstance(premise_state, dict) else {}
     prev = previous_scene if isinstance(previous_scene, dict) else {}
     situation = str(prev.get("situation") or "").strip()
-    bridge = (
-        f"此前已经出现的异常在这一刻收束，不再是征兆——它直接把玩家带走。"
-        if not situation else
-        f"{situation[:160]}——此前积累的异常在这一刻收束，不再是征兆，它直接把玩家带走。"
-    )
+
+    # 用玩家开局声明的触发方式与迁移形式来造这一幕。
+    #
+    # 此前这里完全没读 premise_state 里的 mechanism / trigger，只会写
+    # 「此前积累的异常在这一刻收束」——可实测那一局根本没有积累任何异常
+    # （故事在查一块带符号的布），于是写手无从下手，接管当回合照旧写了
+    # 拍照发微信，而程序已经把阶段标成已抵达，下一幕只能让玩家凭空出现在
+    # 异世界的石板路上。玩家的原话是「莫名其妙搬箱子触发了」。
+    #
+    # 程序手里明明有「触发=正常生活中的睡眠或非自愿失去意识」这句话，
+    # 不用它就等于自己撕毁玩家点的单。
+    trigger = str(ps.get("trigger") or "").strip()
+    mechanism = str(ps.get("mechanism") or "").strip()
+    if trigger:
+        bridge = (
+            (f"{situation[:140]}——" if situation else "")
+            + f"本局开局就定下的触发方式在此刻发生：{trigger[:120]}。"
+            "它不需要此前有过任何征兆，就是这一刻发生的。"
+        )
+    elif situation:
+        bridge = f"{situation[:160]}——此前积累的异常在这一刻收束，不再是征兆，它直接把玩家带走。"
+    else:
+        bridge = "此前已经出现的异常在这一刻收束，不再是征兆——它直接把玩家带走。"
+
+    purpose = "本幕完成穿越：玩家离开原世界，穿过转移过程，落在新世界站稳并睁开眼。"
+    if mechanism:
+        purpose += f"迁移形式按开局设定：{mechanism[:120]}。"
+
     return {
         "id": f"crossing-{turn}",
         "title": "穿过去",
-        "situation": situation or "玩家所处的日常场景，异常已经积累到临界。",
-        "purpose": "本幕完成穿越：玩家离开原世界，穿过转移过程，落在新世界站稳并睁开眼。",
+        "situation": situation or "玩家所处的日常场景。",
+        "purpose": purpose,
         "causal_bridge": bridge,
         "active_thread_ids": [],
         "participant_intents": {},

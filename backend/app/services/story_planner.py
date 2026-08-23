@@ -21,6 +21,7 @@ from app.services.migration_contract import (
     dm_actions,
     forced_scene,
     should_force,
+    takeover_verify_note,
     temporer_note,
 )
 from app.services.naming import NAMING_INSTRUCTION, clean_candidates, pick_name
@@ -653,6 +654,8 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
     stall_note += temporer_note(dm_actions(ctx.premise_state or {}, ctx.turn, ctx.pace))
     # 缺失的那一侧：整套规则都在防「强推戏剧」，没有一条要求「有东西可失去」。
     stall_note += stakes_note(int((ctx.story_runtime or {}).get("quiet_scene_count") or 0))
+    # 接管之后必须先核对写手到底穿没穿，再决定这一幕规划什么。
+    stall_note += takeover_verify_note(ctx.story_runtime or {})
 
     # 原地打转加压，和停滞加压同理：放在规则区旁边，且必须回显上一幕的
     # purpose 原文——模型看不到自己上次写了什么，只讲抽象规则约束不住它。

@@ -562,6 +562,17 @@ def build_system_prompt(ctx: TurnContext) -> str:
     world_prompt = re.sub(r"\n【状态栏】[\s\S]*?(?=\n【任务】|$)", "", str(world_prompt_src or ""), count=1)
     world_prompt = re.sub(r"\n【任务】[^\n]*", "", world_prompt)
     sp += "\n\n【世界包】\n" + world_prompt
+    # 摘掉旧状态栏之后，一个世界的活体身份只剩约 60 字，而紧接着的状态协议
+    # 就有 800 字、整份提示词四千多字。60 字撑不住一个世界——实测一局剑与
+    # 魔法从头到尾没出现魔法或异种族，村子叫「榆树村」。所以把「必须让玩家
+    # 看见什么」和「怎么起名」补在世界包正文之后、状态协议之前：紧挨着世界
+    # 身份，不被协议隔开。
+    world_obj = WORLDS.get(ctx.world_id)
+    if world_obj is not None and not ctx.custom_world_prompt:
+        if world_obj.flavor:
+            sp += "\n【本世界必须让玩家看见的东西】" + world_obj.flavor
+        if world_obj.naming:
+            sp += "\n【本世界的命名规矩——新地名、人名、组织名一律照此】" + world_obj.naming
     sp += "\n" + STATE_PROTOCOL
 
     if not ctx.game_state.get("revealed"):

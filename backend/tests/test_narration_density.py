@@ -290,7 +290,10 @@ def test_naming_rule_demands_a_local_reason() -> None:
     正好从缝里漏过去。两局完全不同的游戏都落到了这个名字。
     """
     from app.domain.rules import CORE_RULES
-    assert "名字必须从那件具体的事里长出来" in CORE_RULES
+    assert "名字要从那件具体的事里长出来" in CORE_RULES
+    # 「从这地方靠什么活着长出来」这条方法在中文提示词里执行出来就是
+    # 「榆树村」——方法对，但必须先有语言锚点，否则剑与魔法照样出中式地名。
+    assert "先看【本世界的命名规矩】" in CORE_RULES
     assert "通用形容词／颜色／材质＋镇村城" in CORE_RULES
     assert "换个世界也一样贴切" in CORE_RULES
 
