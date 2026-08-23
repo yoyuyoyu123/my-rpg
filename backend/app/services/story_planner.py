@@ -110,6 +110,48 @@ def scene_repeat_note(count: int) -> str:
     )
 
 
+# 连续几幕没有冲突就开始施压。
+#
+# 1 幕安静是正常的（大事之后要喘口气），2 幕还行，3 幕起就是走马观花了。
+# 阈值不设成 1，是因为把「每一幕都必须有冲突」写死，等于回到玩家最早
+# 抱怨的那种强推。
+STAKES_QUIET_LIMIT = 2
+# 再往上就不只是提醒了。
+STAKES_QUIET_ESCALATE = 4
+
+
+def stakes_note(count: int) -> str:
+    """把「连着几幕什么都没发生」回灌进下一次规划提示词。
+
+    程序只能观测和施压，不能像迁移那样直接接管——迁移是玩家开局点的单，
+    程序知道该发生什么；冲突不是，凭空造一个正是「凭空塞入玩家没有选择的
+    事件」，那是玩家最早抱怨的东西。所以这里判断权仍归规划器，程序负责
+    把「你已经连着 N 幕什么都没发生」这个事实摆到它面前。
+    """
+    if count < STAKES_QUIET_LIMIT:
+        return ""
+    common = (
+        "冲突不等于阴谋。**从已经建立的人和事里找**：客栈老板要的钱你还没有、"
+        "公会不收没有担保人的外乡人、铁匠等着你手里那件东西、"
+        "同行的人想去的方向和你不一样、天黑前必须找到落脚处。"
+        "小、具体、就在眼前——这类冲突不违反任何一条反强推规则，"
+        "因为它本来就长在已有的事实上。\n\n"
+    )
+    if count >= STAKES_QUIET_ESCALATE:
+        return (
+            f"【连续 {count} 幕没有冲突·严重】故事已经变成走马观花：玩家从一个地方"
+            "走到另一个地方，看见东西，然后选择下一个地方。这不是节奏慢，是没有故事。\n"
+            "本幕**必须**让某件事变得不确定：写明 conflict（谁或什么在阻碍、"
+            "玩家可能失去什么），并把 pressure_budget 提到 2 以上。"
+            "空着 conflict 交上来就是又一幕观光。\n" + common
+        )
+    return (
+        f"【连续 {count} 幕没有冲突】最近几幕都只是抵达、观察、再选择去哪，"
+        "没有任何东西处在不确定中。本幕请给玩家一件**可能失去的东西**，"
+        "并填写 conflict。\n" + common
+    )
+
+
 def _json_object(raw: str) -> dict[str, Any]:
     text = str(raw or "").strip()
     fenced = re.search(r"```(?:json)?\s*([\s\S]*?)```", text, re.I)
@@ -200,6 +242,23 @@ def parse_story_runtime(
             beat["setup"] = _clean_list(beat.get("setup"), 5)
             clean_beats.append(beat)
         item["beats"] = clean_beats
+
+        # 剧情线退化成状态报告的检测。
+        #
+        # 实测那一局唯一的活跃线是：
+        #   公开目标 = 确认自身处境，找到有人烟的聚落，开始新生活
+        #   幕后原因 = 穿越已经完成，玩家已抵达新世界，需要建立新的生活起点
+        # 两句说的是同一件事，而且都只是在陈述现状——没有人想要什么，
+        # 也没有什么挡着。这样的线喂给场景规划，只能产出「走到下一个地方」。
+        #
+        # private_cause 的定义是「幕后真实因果」，它复述 public_goal 就说明
+        # 这条线根本没有幕后。词面重合抓得到这种最典型的形态。
+        pub, priv = item["public_goal"], item["private_cause"]
+        if pub and priv and _text_overlap(pub, priv) >= PURPOSE_REPEAT_RATIO:
+            warnings.append(
+                f"剧情线「{item['title'] or tid}」的幕后原因只是在复述公开目标，"
+                "这条线没有真正的驱动力"
+            )
         cleaned_threads.append(item)
 
     # temporer：临时压制新支线。
@@ -288,6 +347,20 @@ def parse_story_runtime(
             "场景缺少 summary_target，已按详写处理"
         )
         scene["narration"] = "scene"
+
+    # 安静幕计数：连着几幕什么都没发生。
+    #
+    # 只看 conflict 是否填写——不判断内容质量。判断权归规划器，程序负责
+    # 把观测到的事实摆出来（和迁移停滞、原地打转同一套机制）。
+    if str(scene.get("conflict") or "").strip():
+        data["quiet_scene_count"] = 0
+    else:
+        data["quiet_scene_count"] = int((previous or {}).get("quiet_scene_count") or 0) + 1
+        if data["quiet_scene_count"] >= STAKES_QUIET_LIMIT:
+            warnings.append(
+                f"已连续 {data['quiet_scene_count']} 幕没有声明冲突，"
+                "故事可能已经变成走马观花"
+            )
 
     # 新专名：模型给候选，程序挑。避开众数就是全部收益所在。
     proposals = scene.get("new_names")
@@ -578,6 +651,8 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
     # 预算是「你还剩几回合」（前瞻）——后者才让模型排得出计划。
     stall_note += budget_note(ctx.premise_state or {}, ctx.turn, ctx.pace)
     stall_note += temporer_note(dm_actions(ctx.premise_state or {}, ctx.turn, ctx.pace))
+    # 缺失的那一侧：整套规则都在防「强推戏剧」，没有一条要求「有东西可失去」。
+    stall_note += stakes_note(int((ctx.story_runtime or {}).get("quiet_scene_count") or 0))
 
     # 原地打转加压，和停滞加压同理：放在规则区旁边，且必须回显上一幕的
     # purpose 原文——模型看不到自己上次写了什么，只讲抽象规则约束不住它。
@@ -654,6 +729,13 @@ premise_phase 填的是「**本幕结束时**故事所处的阶段」，不是�
 2. 任何新事件都必须有具体的 causal_bridge：它从哪项已知事实、人物需求或玩家行动自然产生，以及为什么是现在。没有铺垫就不要发生。
 3. 保留旧 runtime 中仍成立的线程 id、人物动机与因果。玩家拒绝、忽略或绕开某个钩子后，更新该线为 paused/abandoned；禁止把同一钩子换皮再次强塞。
 4. 同时最多 3 条剧情线，每条 2-4 个节点；生活、职业、关系、经营、旅行本身都能成为完整主线，不必加入阴谋、幕后组织或世界危机。
+4b. **一条剧情线必须是「某个人想要某样东西，而有什么挡着」，不能是状态描述。**
+  反例（实测出现过）：公开目标=「确认自身处境，找到有人烟的聚落，开始新生活」，幕后原因=「穿越已经完成，需要建立新的生活起点」——两句在说同一件事，而且都只是陈述现状：没有人想要什么，也没有什么挡着。这样的线喂给场景规划，只能产出「走到下一个地方看一看」。
+  private_cause 是**幕后真实因果**，它复述 public_goal 就说明这条线根本没有幕后。至少要答上来：谁在推动？他图什么？谁会不高兴？
+4c. **每一幕都要回答「这一幕里，玩家可能失去什么」，答得上来就填 conflict。**
+  这是和第 2/3/6/7 条配套的另一半。那几条防的是**凭空塞入**玩家没选择的事件（阴谋、幕后组织、突然灾难），它们**不反对冲突本身**——冲突长在已经建立的人和事上就是合法的。
+  合法的冲突长这样：客栈老板要的钱玩家还没有；公会不收没有担保人的外乡人；铁匠等着玩家手里那件东西；同行的人想去的方向和玩家不一样；天黑前必须找到落脚处。小、具体、就在眼前。
+  真正的过渡幕可以留空 conflict，但**不能连着几幕都空**——那说明故事已经变成走马观花：抵达、观察、再选下一个地方。
 5. current_scene 是严格的 SceneContract：写明参与者各自想做什么、现在能公开的信息、玩家可用 affordances、禁止事项、以及停止点。不得要求写手透露 private_cause。
 5a. **停止点必须落在 purpose 兑现之后，不能落在它兑现之前**。stop_points 回答的是「这一幕该做的事做完了，接下来轮到玩家决定」，不是「刚发生了点什么、玩家可以有反应了」。
   错误示范：purpose=「让异常产生实际后果，把阶段推进到逼近」，stop_points=「玩家对异常做出反应后」——玩家一反应就收场，后果根本没发生，这一幕等于没写。
@@ -662,7 +744,7 @@ premise_phase 填的是「**本幕结束时**故事所处的阶段」，不是�
 5b. **不要重复上一幕没兑现的 purpose**。如果你发现本幕的 purpose 和上一幕实质相同，那说明上一幕的停止点设早了，不是说明这件事需要再来一次。此时应当：把那件事当作**已经发生的既成事实**写进 situation 和 causal_bridge，purpose 换成**下一件**事。同一个目标连写两幕，玩家看到的就是原地打转。
 6. 身份、身体种族、职业、阵营、关系与穿越落点保持开放；没有玩家设定或已确立事实时不要替玩家锁死。
 7. 非穿越场景的 premise_phase 必须为 null。穿越场景请**根据最近叙事判断故事实际处在哪个阶段**并如实填写 0-5：0原生活、1逼近、2阈限、3转移途中、4首次落地、5已抵达。【迁移状态】里的程序阶段仅供参考——若它与叙事明显不符（例如程序说已抵达新世界，而叙事仍在原世界的公寓里），以叙事为准如实下调，程序会采纳你的判断。premise_phase 填的是**本幕结束时**的阶段：本幕让当前阶段完成了，就填下一级。同一个征兆连着几个回合只是被反复加深细化（越描越细但没进入下一步），那本身就说明卡住了。详写一次最多上调一级；略写（narration="summary"）因为覆盖整段过程，可以上调两级。不得为了赶进度直接跳到已抵达。
-8. pressure_budget 与 mystery_budget 各为 0-4。普通生活/社交默认 pressure 0-1、mystery 0；只有已发生事件和玩家主动选择支持时才能提高。预算不是必须花完，禁止用辞藻假装强度。
+8. pressure_budget 与 mystery_budget 各为 0-4。**压力跟着冲突走，不跟着题材走**：conflict 为空的过渡幕用 0-1；填了 conflict 就说明有东西处在不确定中，pressure 至少 2，否则写手会把冲突写成一句轻描淡写的背景。上限 3-4 留给真正的危险。mystery 默认 0，只有已发生事件支持时才提高。预算不是必须花完，禁止用辞藻假装强度。
 8b. **narration 决定这一幕详写还是略写，按小说的常规分寸来判断**：
   narration="scene"（详写）——本幕存在真正的冲突、需要玩家做出的选择、或影响后续的新信息。逐步展开，停在玩家要反应的地方。
   narration="summary"（略写）——纯过程且结果已定：赶路、等待、传送、搬运、排队、例行公事、单纯的时间流逝。这类内容用一两段概括**整段过程**并直接抵达它的终点，不要逐步描写。同时填写 summary_target，写明这一幕要跨过什么、最终停在哪里。
