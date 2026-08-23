@@ -250,17 +250,6 @@ def parse_story_runtime(
     requested_horizon = int(scene.get("refresh_after_turn") or turn + floor_gap)
     scene["refresh_after_turn"] = max(turn + floor_gap, min(turn + 8, requested_horizon))
 
-    # 略写幕只占一个回合——这是定义决定的，不是调参。
-    #
-    # 略写的意思是「用一到两段带过整段过程并抵达终点」。一张略写卡如果
-    # 挂两个回合，第二个回合的写手会拿着「本幕略写」继续写下一段，结果是
-    # 一段本该压缩的过程被摊成两段，比详写还长。
-    # 实测：穿越落地那张略写卡挂了回合 7 和 8，第 7 回合把转移压缩得很好，
-    # 第 8 回合却用「略写」写了 597 字的新世界环境——而新世界的第一眼
-    # 恰恰是最该详写的东西。压缩过程和压缩抵达被同一张卡混为一谈了。
-    if scene.get("narration") == "summary":
-        scene["refresh_after_turn"] = turn + 1
-
     # 迁移阶段：规划器可以自由下调；详写一次上调一级，略写可上调两级。
     #
     # 为什么把规划器当主要判据：正则证据检测（premiseEvidence）只认得
@@ -307,6 +296,34 @@ def parse_story_runtime(
                 f"低于程序记录的 {current_phase}，已按叙事回退"
             )
             scene["premise_phase"] = proposed_phase
+
+    # 转移途中与首次落地是纯过程，一律略写——程序说了算，不问规划器。
+    #
+    # 提示词里早就写着「阶段 3、4 是纯过程，默认 narration=summary 一幕带过」，
+    # 但那只是一句话。实测一局 VR 路线：规划器把阶段 3 的「跨入阈限」规划成
+    # 详写，占掉回合 5 和 6，回合 7 才略写，回合 8 被强制接管——玩家的原话是
+    # 「戴个 VR 头显还在虚空里走半天」。
+    #
+    # 阈限（阶段 2）是玩家最后一次真正的选择，值得详写；跨过去之后就只剩
+    # 过程了。这里只管本幕**结束时**落在 3 或 4 的场景：那意味着阈限已经
+    # 发生，本幕内容是转移本身。
+    _end_phase = scene.get("premise_phase")
+    if isinstance(_end_phase, int) and _end_phase in (3, 4) and scene.get("narration") != "summary":
+        warnings.append(f"阶段 {_end_phase} 是纯过程（转移途中／首次落地），已强制改为略写")
+        scene["narration"] = "summary"
+        if not str(scene.get("summary_target") or "").strip():
+            scene["summary_target"] = "一幕带过整段转移过程，停在玩家落地站稳、睁开眼的那一刻。"
+
+    # 略写幕只占一个回合——这是定义决定的，不是调参。
+    #
+    # 略写的意思是「用一到两段带过整段过程并抵达终点」。一张略写卡如果
+    # 挂两个回合，第二个回合的写手会拿着「本幕略写」继续写下一段，结果是
+    # 一段本该压缩的过程被摊成两段，比详写还长。
+    # 实测：穿越落地那张略写卡挂了回合 7 和 8，第 7 回合把转移压缩得很好，
+    # 第 8 回合却用「略写」写了 597 字的新世界环境——而新世界的第一眼
+    # 恰恰是最该详写的东西。压缩过程和压缩抵达被同一张卡混为一谈了。
+    if scene.get("narration") == "summary":
+        scene["refresh_after_turn"] = turn + 1
 
     # 硬接管：预算用尽而玩家还没落地，程序自己下发这一幕。
     #

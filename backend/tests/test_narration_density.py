@@ -133,3 +133,99 @@ def test_summary_rules_override_the_default_expansion_instinct() -> None:
     assert "压过上面第 1 条" in sp
     assert "过程本身最多两三句" in sp
     assert "不要为了「有画面感」把同一件事换角度再写一遍" in sp
+
+
+# ── 转移途中／首次落地一律略写 ──────────────────────────────────
+
+def _plan_scene(end_phase, narration="scene"):
+    import json
+    return json.dumps({
+        "premise": "x", "threads": [],
+        "current_scene": {"id": "s", "title": "跨入阈限", "situation": "白光里",
+                          "purpose": "跨过去", "causal_bridge": "c",
+                          "narration": narration, "premise_phase": end_phase},
+    }, ensure_ascii=False)
+
+
+def _ps(phase):
+    return {"kind": "transmigration", "phase": phase, "startedAt": 10**6, "fast": True}
+
+
+def test_transit_phases_are_forced_to_summary() -> None:
+    """
+    实测一局 VR 路线：规划器把阶段 3 的「跨入阈限」规划成详写，占掉回合
+    5 和 6，回合 7 才略写，回合 8 被强制接管。玩家原话是「戴个 VR 头显
+    还在虚空里走半天」。
+
+    提示词里早写着「阶段 3、4 是纯过程，默认略写」——但那只是一句话。
+    """
+    from app.services.story_planner import parse_story_runtime
+    for end_phase in (3, 4):
+        runtime, warnings = parse_story_runtime(
+            _plan_scene(end_phase), {}, turn=5, reason="horizon",
+            premise_state=_ps(end_phase - 1), pace="long")
+        scene = runtime.current_scene
+        assert scene.narration == "summary", f"phase={end_phase}"
+        assert scene.summary_target, "强制略写必须同时给出终点，否则写手无从下手"
+        assert any("纯过程" in w for w in warnings)
+        # 略写幕只占一个回合，两条规则要串起来才有意义
+        assert scene.refresh_after_turn == 6
+
+
+def test_threshold_scene_stays_detailed() -> None:
+    """阶段 2（阈限）是玩家最后一次真正的选择，必须留给详写。"""
+    from app.services.story_planner import parse_story_runtime
+    runtime, _ = parse_story_runtime(
+        _plan_scene(2), {}, turn=5, reason="horizon",
+        premise_state=_ps(1), pace="long")
+    assert runtime.current_scene.narration == "scene"
+
+
+def test_ordinary_scenes_are_untouched() -> None:
+    """非穿越局 premise_phase 是 None，不能被这条规则误伤。"""
+    from app.services.story_planner import parse_story_runtime
+    runtime, _ = parse_story_runtime(
+        _plan_scene(None), {}, turn=5, reason="horizon")
+    assert runtime.current_scene.narration == "scene"
+
+
+# ── 命名 ────────────────────────────────────────────────────────
+
+def test_name_table_is_derived_from_authoritative_facts() -> None:
+    """
+    命名表本来是死代码：没有任何提示词要求模型输出【命名表】块，
+    翻遍全部历史导出一次都没产出过，ctx.names 恒为空。
+    改成从 game_state 里已有的地点和 NPC 推导，零成本且不会和状态栏对不上。
+    """
+    from app.schemas.turn import TurnContext
+    from app.services.prompt_builder import build_system_prompt, derived_name_table
+    ctx = TurnContext(
+        world_id="wuxia", pace="medium", turns=3,
+        game_state={"revealed": True, "loc": "陈家渡渡口",
+                    "npcs": {"吴四娘": {"rel": "邻居"}, "王掌柜": {"rel": "债主"}}},
+    )
+    table = derived_name_table(ctx)
+    assert "陈家渡渡口" in table and "吴四娘" in table and "王掌柜" in table
+    assert "【命名表" in build_system_prompt(ctx)
+
+
+def test_explicit_name_table_wins_over_derived() -> None:
+    from app.schemas.turn import TurnContext
+    from app.services.prompt_builder import build_system_prompt
+    ctx = TurnContext(
+        world_id="wuxia", pace="medium", turns=3, names="地点：黑水峪",
+        game_state={"revealed": True, "loc": "陈家渡渡口", "npcs": {}},
+    )
+    sp = build_system_prompt(ctx)
+    assert "黑水峪" in sp
+
+
+def test_naming_rule_demands_a_local_reason() -> None:
+    """
+    旧规则只说「避免跨题材模板名和夸张堆砌」——「青石镇」两样都不沾，
+    正好从缝里漏过去。两局完全不同的游戏都落到了这个名字。
+    """
+    from app.domain.rules import CORE_RULES
+    assert "名字必须从那件具体的事里长出来" in CORE_RULES
+    assert "通用形容词／颜色／材质＋镇村城" in CORE_RULES
+    assert "换个世界也一样贴切" in CORE_RULES

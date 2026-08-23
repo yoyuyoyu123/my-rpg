@@ -460,6 +460,31 @@ def _relevant_lore(recent_text: str, lorebook: list[dict]) -> str:
     return "\n\n".join(f"[{c.get('name','')}] {c.get('text','')}" for c in picked)
 
 
+def derived_name_table(ctx) -> str:
+    """从已经存在的事实里推出命名表。
+
+    为什么需要：命名表本来是死代码。前端只在模型输出 【命名表】…【/命名表】
+    时才填 NAMES，而**没有任何一处提示词要求模型输出这个块**——全部引用都是
+    「剥离它」「提取它（如果有）」「回灌它（如果非空）」。翻遍全部历史导出，
+    这个块一次都没有产出过，于是 ctx.names 恒为空，命名一致性从未生效。
+
+    与其加一条让写手每回合多输出一个块的指令（每回合都要付 token，而且模型
+    经常漏），不如从系统本来就维护的权威事实里推：地点和 NPC 名字本来就在
+    game_state 里。这样命名表零成本、且永远不会和状态栏对不上。
+    """
+    gs = ctx.game_state if isinstance(ctx.game_state, dict) else {}
+    places = [str(gs.get("loc") or "").strip()]
+    npcs = gs.get("npcs")
+    people = [str(k).strip() for k in npcs][:20] if isinstance(npcs, dict) else []
+    lines = []
+    places = [p for p in places if p]
+    if places:
+        lines.append("地点：" + "、".join(dict.fromkeys(places)))
+    if people:
+        lines.append("人物：" + "、".join(dict.fromkeys(people)))
+    return "\n".join(lines)
+
+
 def build_system_prompt(ctx: TurnContext) -> str:
     """
     编译一回合的 system prompt。
@@ -541,8 +566,9 @@ def build_system_prompt(ctx: TurnContext) -> str:
         if (ctx.story_runtime.get("current_scene") or {}).get("narration") == "summary":
             sp += "\n\n" + SUMMARY_MODE_RULES
 
-    if ctx.names:
-        sp += "\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n" + ctx.names
+    names = ctx.names or derived_name_table(ctx)
+    if names:
+        sp += "\n\n【命名表——地名/势力/人名优先取自此表，新名字保持同风格】\n" + names
     if ctx.outline and not agent_mode:
         sp += ("\n\n【剧情备忘——保持目标与因果连续的编剧笔记，不是悬念清单】\n" + ctx.outline
                + "\n（剧情实质推进时才输出更新版【大纲】块）")
