@@ -86,3 +86,98 @@ def test_note_escalates() -> None:
     # 升级版必须给出可执行的动作，而不是重复「不要打转」。
     assert "既成事实" in hard
     assert "让玩家对X做出反应" in hard
+
+
+# ── 已演记账（storylet 的「可重复性」维度）──────────────────────
+#
+# Kreminski & Wardrip-Fruin 的分类法把「这个 storylet 用过了没有」列为
+# 设计时就要回答的一维（docs/RESEARCH_MAP.md 第二节）。我们此前的答案是
+# 最弱的一档：拿新 purpose 和**上一幕**比字符重合度。
+
+def _card(purpose: str, sid: str, repeatable: bool = False) -> str:
+    return json.dumps({
+        "premise": "x", "threads": [],
+        "current_scene": {"id": sid, "title": f"幕{sid}", "situation": "s",
+                          "purpose": purpose, "causal_bridge": "c",
+                          "repeatable": repeatable},
+    }, ensure_ascii=False)
+
+
+def test_non_adjacent_repeat_is_caught() -> None:
+    """
+    这条是加已演记账的全部理由。
+
+    改之前实测：A→B→A 的第三幕完全检测不到——只比上一幕的话，中间隔一幕
+    就绕过去了。规划器完全可能这么写，而玩家感受到的就是原地打转。
+    """
+    r1, _ = parse_story_runtime(_card(PURPOSE_T7, "s1"), {}, 0, "opening")
+    r2, _ = parse_story_runtime(_card(PURPOSE_DIFF, "s2"), r1.model_dump(), 4, "horizon")
+    r3, warnings = parse_story_runtime(_card(PURPOSE_T7, "s3"), r2.model_dump(), 8, "horizon")
+    assert r3.scene_repeat_count == 1
+    assert any("已演过的「幕s1」" in w for w in warnings)
+
+
+def test_spent_list_records_finished_scenes_only() -> None:
+    """换了 id 才算演完。同一个 id 是这一幕的延续，不该记账。"""
+    r1, _ = parse_story_runtime(_card(PURPOSE_T7, "s1"), {}, 0, "opening")
+    assert r1.spent_scenes == []          # 第一幕之前什么都没演过
+
+    r2, _ = parse_story_runtime(_card(PURPOSE_DIFF, "s2"), r1.model_dump(), 4, "horizon")
+    assert [s.id for s in r2.spent_scenes] == ["s1"]
+
+    # 同 id 续演：不新增记账
+    r2b, _ = parse_story_runtime(_card(PURPOSE_DIFF, "s2"), r2.model_dump(), 6, "horizon")
+    assert [s.id for s in r2b.spent_scenes] == ["s1"]
+
+
+def test_repeatable_scenes_are_allowed_through() -> None:
+    """
+    有些幕本来就该复现：固定的出摊、每周的例会、反复去同一个铺子打听。
+    判断权归规划器，程序只要求它把「这是可复现的日常」说出来。
+    """
+    r1, _ = parse_story_runtime(_card(PURPOSE_T7, "s1"), {}, 0, "opening")
+    r2, _ = parse_story_runtime(_card(PURPOSE_DIFF, "s2"), r1.model_dump(), 4, "horizon")
+    r3, warnings = parse_story_runtime(
+        _card(PURPOSE_T7, "s3", repeatable=True), r2.model_dump(), 8, "horizon")
+    assert r3.scene_repeat_count == 0
+    # 放行也要留痕，免得「万物皆可复现」变成绕过检测的后门
+    assert any("已声明为可复现的日常模式，放行" in w for w in warnings)
+
+
+def test_spent_list_is_capped() -> None:
+    """
+    这个列表要进提示词。无限增长会把世界设定和已检索事实挤出窗口——
+    账本挤掉 loc/npcs 那次就是这么发生的。
+    """
+    from app.services.story_planner import SPENT_SCENE_LIMIT
+    runtime, prev = None, {}
+    for i in range(SPENT_SCENE_LIMIT + 6):
+        runtime, _ = parse_story_runtime(
+            _card(f"第 {i} 件完全不同的事，与其他各幕毫无关联{i}", f"s{i}"),
+            prev, i, "horizon")
+        prev = runtime.model_dump()
+    assert len(runtime.spent_scenes) == SPENT_SCENE_LIMIT
+    # 留的是最近的
+    assert runtime.spent_scenes[-1].id == f"s{SPENT_SCENE_LIMIT + 4}"
+
+
+def test_planner_sees_what_has_been_played() -> None:
+    """
+    程序检测是兜底。让规划器一开始就看见「这些演过了」才是正路——
+    它此前只看得到上一幕。
+    """
+    from app.schemas.story import StoryPlanContext
+    from app.services.story_planner import build_story_plan_prompt
+    p = build_story_plan_prompt(StoryPlanContext(
+        world_id="wuxia", pace="medium", turn=9, reason="horizon",
+        story_runtime={
+            "current_scene": {"id": "s3", "purpose": "眼下这一幕"},
+            "spent_scenes": [{"id": "s1", "title": "码头的争执",
+                              "purpose": "让玩家看清谁在收保护费", "turn": 0}],
+        },
+    ))
+    assert "【已经演过的幕——不要再规划一次】" in p
+    assert "码头的争执" in p and "让玩家看清谁在收保护费" in p
+    assert "本幕的 purpose 必须是它们之后的**下一件**事" in p
+    # 例外路径也要写明，否则合理的日常复现会被堵死
+    assert "repeatable 设为 true" in p

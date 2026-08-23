@@ -43,6 +43,13 @@ PURPOSE_REPEAT_RATIO = 0.45
 # 连续几次目标重复就升级措辞。
 PURPOSE_REPEAT_ESCALATE = 2
 
+# 已演历史保留多少幕。
+#
+# 这个列表要进规划器提示词，无限增长会把世界设定和已检索事实挤出窗口
+# ——账本挤掉 loc/npcs 那次就是这么发生的。12 幕按当前节奏约等于 30-40
+# 个回合，足够覆盖「隔几幕又绕回来」这种重复，再往前的幕玩家自己也忘了。
+SPENT_SCENE_LIMIT = 12
+
 
 def _bigrams(text: str) -> set[str]:
     # 中文没有空格分词，按字符二元组比对足够稳，也不必引入分词依赖。
@@ -302,14 +309,51 @@ def parse_story_runtime(
 
     scene["stop_points"] = _clean_list(scene.get("stop_points"), 6)
 
-    # 目标重复检测：新 purpose 与上一幕实质相同，说明上一幕没落地。
+    # ── 幕的记账与重复检测 ──────────────────────────────────────
+    #
+    # 演完的幕进 spent_scenes。这是 storylet 系统里「这个 storylet 用过了
+    # 没有」那一维的实现（见 docs/RESEARCH_MAP.md 第二节）。
+    #
+    # 此前只拿新 purpose 和**上一幕**比，实测证明这条路只抓得住相邻重复：
+    # 规划器写出 A→B→A 时完全无感（隔一幕的重复检测不到）。现在比对整个
+    # 已演历史。
     prev_scene = (previous or {}).get("current_scene")
-    prev_purpose = str((prev_scene or {}).get("purpose") or "") if isinstance(prev_scene, dict) else ""
-    if prev_purpose and _text_overlap(scene["purpose"], prev_purpose) >= PURPOSE_REPEAT_RATIO:
-        data["scene_repeat_count"] = int((previous or {}).get("scene_repeat_count") or 0) + 1
+    prev_scene = prev_scene if isinstance(prev_scene, dict) else {}
+    spent: list[dict[str, Any]] = [
+        s for s in ((previous or {}).get("spent_scenes") or []) if isinstance(s, dict)
+    ]
+    # 换了新的一幕，说明上一幕演完了，记账。同一个 id 是同一幕的延续，不记。
+    if prev_scene.get("id") and prev_scene.get("id") != scene["id"]:
+        spent.append({
+            "id": str(prev_scene.get("id") or "")[:64],
+            "title": str(prev_scene.get("title") or "")[:80],
+            "purpose": str(prev_scene.get("purpose") or "")[:200],
+            "turn": int((previous or {}).get("last_planned_turn") or 0),
+        })
+    spent = spent[-SPENT_SCENE_LIMIT:]
+    data["spent_scenes"] = spent
+
+    # 比对范围 = 已演历史 + 当前这一幕（当前幕还没进 spent，但它同样不该被重复）
+    history = spent + ([prev_scene] if prev_scene.get("purpose") else [])
+    hit = next(
+        (h for h in reversed(history)
+         if _text_overlap(scene["purpose"], str(h.get("purpose") or "")) >= PURPOSE_REPEAT_RATIO),
+        None,
+    )
+    if hit and scene.get("repeatable") is True:
+        # 声明为可复现的日常模式：允许，但记下来，免得「万物皆可复现」
+        # 变成绕过检测的后门。
         warnings.append(
-            f"本幕 purpose 与上一幕实质相同（已连续 {data['scene_repeat_count']} 次），"
-            "多半是上一幕的停止点设在了 purpose 兑现之前"
+            f"本幕 purpose 与已演过的「{str(hit.get('title') or hit.get('id') or '某幕')}」"
+            "相同，但已声明为可复现的日常模式，放行"
+        )
+        data["scene_repeat_count"] = 0
+    elif hit:
+        data["scene_repeat_count"] = int((previous or {}).get("scene_repeat_count") or 0) + 1
+        where = "上一幕" if hit is prev_scene else f"已演过的「{hit.get('title') or hit.get('id')}」"
+        warnings.append(
+            f"本幕 purpose 与{where}实质相同（已连续 {data['scene_repeat_count']} 次），"
+            "多半是那一幕的停止点设在了 purpose 兑现之前"
         )
     else:
         data["scene_repeat_count"] = 0
@@ -543,6 +587,22 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
             "把它当既成事实写进 situation，purpose 换成下一件事。两种情况都不许原样重写。\n\n"
         )
 
+    # 已演历史。程序侧的重复检测是兜底；让规划器一开始就看见「这些已经演过」
+    # 才是正路——它此前只看得到上一幕，隔一幕绕回同一个目标它完全无感。
+    spent = [s for s in (runtime.get("spent_scenes") or []) if isinstance(s, dict)]
+    if spent:
+        lines = "\n".join(
+            f"· 第 {s.get('turn', 0)} 回合「{str(s.get('title') or '未命名')}」"
+            f"：{str(s.get('purpose') or '')[:90]}"
+            for s in spent[-SPENT_SCENE_LIMIT:]
+        )
+        repeat_note += (
+            "【已经演过的幕——不要再规划一次】\n" + lines + "\n"
+            "这些目标都已经达成过了。本幕的 purpose 必须是它们之后的**下一件**事。\n"
+            "例外：确实是可复现的日常模式（固定的出摊、每周的例会、反复去同一个铺子"
+            "打听），那就把 repeatable 设为 true，程序会放行；说不出理由就别重复。\n\n"
+        )
+
     state = state_digest(ctx.game_state or {})
     canon = json.dumps(ctx.player_canon or {}, ensure_ascii=False, separators=(",", ":"))
     premise = json.dumps(ctx.premise_state or {}, ensure_ascii=False, separators=(",", ":"))
@@ -610,7 +670,7 @@ premise_phase 填的是「**本幕结束时**故事所处的阶段」，不是�
 {NAMING_INSTRUCTION}
 
 输出结构：
-{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用；必须与上一幕不同","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary","summary_target":"略写时写明本幕要跨过什么、停在哪里；详写留空","conflict":"本幕的冲突是什么：谁或什么在阻碍、玩家要面对什么；纯过程没有冲突就留空","new_names":[{{"slot":"这个名字是给什么的","kind":"place|person|faction","candidates":[{{"name":"候选名","probability":0.3}}]}}],"stop_points":["purpose 兑现之后、轮到玩家决定下一步的那一刻"],"refresh_after_turn":{ctx.turn + 4},"premise_phase":null,"status":"active"}}}}
+{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用；必须与上一幕不同","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary","summary_target":"略写时写明本幕要跨过什么、停在哪里；详写留空","conflict":"本幕的冲突是什么：谁或什么在阻碍、玩家要面对什么；纯过程没有冲突就留空","repeatable":false,"new_names":[{{"slot":"这个名字是给什么的","kind":"place|person|faction","candidates":[{{"name":"候选名","probability":0.3}}]}}],"stop_points":["purpose 兑现之后、轮到玩家决定下一步的那一刻"],"refresh_after_turn":{ctx.turn + 4},"premise_phase":null,"status":"active"}}}}
 
 {stall_note}{repeat_note}【规划原因】{ctx.reason}；当前玩家回合={ctx.turn}；篇幅={ctx.pace}；预设={ctx.preset_id or '无'}
 【世界设定】\n{str(world_text)[:9000]}

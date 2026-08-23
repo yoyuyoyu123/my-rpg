@@ -45,6 +45,22 @@ class NameProposal(BaseModel):
     chosen: str = ""        # 程序挑定的结果；写手必须用这个
 
 
+class SpentScene(BaseModel):
+    """已经演完的一幕。
+
+    storylet 系统里「这个 storylet 用过了没有」是设计时就要回答的一维
+    （Kreminski & Wardrip-Fruin 的分类法，见 docs/RESEARCH_MAP.md 第二节）。
+    我们此前的答案是最弱的一档：事后拿新 purpose 和**上一幕**比字符重合度。
+    实测这条路只抓得住相邻重复——规划器写出 A→B→A 时完全无感。
+
+    所以改成显式记账：演完的幕进这个列表，既发给规划器看，也用来做检测。
+    """
+    id: str = ""
+    title: str = ""
+    purpose: str = ""
+    turn: int = 0
+
+
 class SceneCard(BaseModel):
     id: str = ""
     title: str = ""
@@ -86,6 +102,16 @@ class SceneCard(BaseModel):
     # 本幕要引入的新专名。程序挑定后写进命名表，写手照用。
     new_names: list[NameProposal] = Field(default_factory=list)
 
+    # 这一幕是一次性的，还是可以复现的日常模式。
+    #
+    # 默认 False（一次性）：揭示、初次见面、下定决心这类幕演过就不能再演，
+    # 再演一次就是原地打转。少数幕确实该复现——固定的出摊、每周的例会、
+    # 反复去同一个铺子打听——那种要显式声明。
+    #
+    # 举证责任和 conflict 那条一样：判断权归规划器，程序只要求它把
+    # 「这是可复现的日常」说出来，说不出就按一次性处理。
+    repeatable: bool = False
+
     stop_points: list[str] = Field(default_factory=list)
     refresh_after_turn: int = 0
     premise_phase: int | None = Field(default=None, ge=0, le=5)
@@ -104,6 +130,10 @@ class StoryRuntime(BaseModel):
     premise: str = ""
     threads: list[StoryThread] = Field(default_factory=list)
     current_scene: SceneCard | None = None
+    # 已经演完的幕，最近的排在最后。只留最近若干条：这个列表要进提示词，
+    # 无限增长会把世界设定和已检索事实挤出窗口（账本挤掉 loc/npcs 那次
+    # 就是这么发生的）。
+    spent_scenes: list[SpentScene] = Field(default_factory=list)
     last_planned_turn: int = 0
     plan_reason: str = "opening"
     # 连续多少幕的 purpose 与上一幕实质相同。
