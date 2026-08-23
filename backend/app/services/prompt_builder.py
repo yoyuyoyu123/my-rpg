@@ -78,6 +78,26 @@ SUMMARY_MODE_RULES = (
     "· 抵达终点后停下，把回合交还给玩家。"
 )
 
+# 省略：比略写更狠的一档。略写还写过程，省略连过程都不写。
+# 玩家说「等三天」「练一个月」时，此前只能走略写——于是写手仍然会
+# 交代这段时间里的见闻和心情，几百字下来什么也没发生。
+ELLIPSIS_MODE_RULES = (
+    "【本幕省略——最高优先级，压过上面第 1 条的「完整回应」】\n"
+    "这段时间里没有值得叙述的事。**用一到两句话跨过去**，然后正文从终点写起：\n"
+    "· 不要写这段时间里的见闻、心情起伏或琐事，哪怕只是一两句；\n"
+    "· 玩家的行动要被承认，但只需交代结果（做了、做成了或没做成）；\n"
+    "· 正文的绝大部分篇幅留给**抵达终点之后**的当下处境；\n"
+    "· 到了就停下，把回合交还给玩家。"
+)
+
+# 压缩类的时距。省略和概述在「写手要不要逐步展开」上行为一致，差别只在
+# 压缩强度，所以判据统一走这个函数——散在十几处各自比字符串必然漂移。
+COMPRESSED_NARRATION = ("summary", "ellipsis")
+
+
+def is_compressed(narration) -> bool:
+    return str(narration or "") in COMPRESSED_NARRATION
+
 
 def debug_hash(text: str) -> str:
     """
@@ -346,13 +366,25 @@ def _story_scene_summary(runtime: dict) -> str:
         + "/4。预算是上限而非配额，不必花完；禁止用力过猛的辞藻虚抬强度。",
         # 详写/略写要和场景标题、处境挨在一起，别让写手读到一半才知道该压缩
         "叙事密度:" + ("略写——一到两段带过整段过程"
-                       if scene.get("narration") == "summary" else "详写——逐步展开"),
+                       if scene.get("narration") == "summary"
+                       else "省略——一两句跨过这段时间，正文从终点写起"
+                       if scene.get("narration") == "ellipsis"
+                       else "详写——逐步展开"),
     ]
-    if scene.get("narration") == "summary" and scene.get("summary_target"):
+    # 反复叙述：这一幕写的是一段时间里反复发生的事，不是某一次。
+    # 不说明的话写手会把「每天去码头」写成某一个具体的早晨——那就变回
+    # 单次场景了，压缩日常的效果全部失掉。
+    if scene.get("frequency") == "iterative":
+        lines.append(
+            "叙事频率:反复——本幕写的是这段时间里**反复发生**的事，"
+            "用「每天／每次／总是」这样的笔法概括常态，不要写成某一个具体的日子；"
+            "需要举例时可以带一次具体的，但要点明它是常态里的一次。"
+        )
+    if is_compressed(scene.get("narration")) and scene.get("summary_target"):
         lines.append("本幕要跨过并抵达:" + str(scene["summary_target"]))
     # 详写是因为有冲突，就得让写手知道冲突是什么——否则它只能靠加细节
     # 把篇幅填满，那正是「越描越细但没推进」的来路。
-    if scene.get("narration") != "summary" and scene.get("conflict"):
+    if not is_compressed(scene.get("narration")) and scene.get("conflict"):
         lines.append("本幕的冲突（详写的理由，正文必须让它真的发生）:" + str(scene["conflict"]))
     # 新专名由程序挑定（见 services/naming.py）。写手照用，不要另起——
     # 让它自由命名的结果实测是两局不同的游戏都叫「青石镇」。
@@ -417,6 +449,8 @@ def active_rule_packs(ctx: TurnContext) -> list[tuple[str, str, str]]:
         if scene.get("narration") == "summary":
             # 只在略写时挂。详写场景挂上它是纯噪音，还会诱导模型压缩不该压缩的戏。
             out.append(("summary-mode", "summary-mode", SUMMARY_MODE_RULES))
+        elif scene.get("narration") == "ellipsis":
+            out.append(("ellipsis-mode", "ellipsis-mode", ELLIPSIS_MODE_RULES))
         return out
 
     packs: list[tuple[str, str, str]] = []
@@ -576,8 +610,11 @@ def build_system_prompt(ctx: TurnContext) -> str:
         # 略写指令紧跟场景卡：它要用到卡上的 summary_target，隔远了就断了。
         # 注意 agent 模式下规则包整体不追加（写手契约已经是提示词开头），
         # 所以这里必须直接拼，不能指望 active_rule_packs。
-        if (ctx.story_runtime.get("current_scene") or {}).get("narration") == "summary":
+        _narr = (ctx.story_runtime.get("current_scene") or {}).get("narration")
+        if _narr == "summary":
             sp += "\n\n" + SUMMARY_MODE_RULES
+        elif _narr == "ellipsis":
+            sp += "\n\n" + ELLIPSIS_MODE_RULES
 
     names = ctx.names or derived_name_table(ctx)
     if names:

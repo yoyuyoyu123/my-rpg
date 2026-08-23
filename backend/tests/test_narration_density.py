@@ -293,3 +293,130 @@ def test_naming_rule_demands_a_local_reason() -> None:
     assert "名字必须从那件具体的事里长出来" in CORE_RULES
     assert "通用形容词／颜色／材质＋镇村城" in CORE_RULES
     assert "换个世界也一样贴切" in CORE_RULES
+
+
+# ── 热奈特的时距与频率 ──────────────────────────────────────────
+#
+# 时距(duration)=故事时长 vs 叙述篇幅；频率(frequency)=发生几次 vs 叙述几次。
+# 见 docs/RESEARCH_MAP.md 第四节。
+#
+# 记一笔教训：最早那个「同一件事换角度写 11 回合」其实是**频率**问题，
+# 当时当成时距问题修，方向偏了。两个维度分开就是为了不再混淆。
+
+def _card(**kw) -> str:
+    import json
+    scene = {"id": "s", "title": "t", "situation": "官道上", "purpose": "跨过三天",
+             "causal_bridge": "c"}
+    scene.update(kw)
+    return json.dumps({"premise": "x", "threads": [], "current_scene": scene},
+                      ensure_ascii=False)
+
+
+def _sp(**scene):
+    from app.schemas.turn import TurnContext
+    from app.services.prompt_builder import build_system_prompt
+    base = {"id": "s", "title": "t", "situation": "官道上", "purpose": "p"}
+    base.update(scene)
+    return build_system_prompt(TurnContext(
+        world_id="wuxia", pace="long", turns=5, game_state={"revealed": True},
+        story_runtime={"current_scene": base}))
+
+
+def test_ellipsis_is_accepted_and_compresses_hardest() -> None:
+    """
+    省略是比略写更狠的一档：略写还写过程，省略连过程都不写。
+    玩家说「等三天」时此前只能走略写——写手仍会交代这段时间的见闻和心情，
+    几百字下来什么也没发生。
+    """
+    from app.services.story_planner import parse_story_runtime
+    runtime, _ = parse_story_runtime(
+        _card(narration="ellipsis", summary_target="跨过三天，停在回到码头的那一刻"),
+        {}, turn=10, reason="horizon")
+    assert runtime.current_scene.narration == "ellipsis"
+    # 压缩类的幕都只占一个回合
+    assert runtime.current_scene.refresh_after_turn == 11
+
+
+def test_ellipsis_without_a_target_falls_back() -> None:
+    """没说要跨过什么，写手无从下手，只会又开始逐步描写。"""
+    from app.services.story_planner import parse_story_runtime
+    runtime, warnings = parse_story_runtime(
+        _card(narration="ellipsis"), {}, turn=10, reason="horizon")
+    assert runtime.current_scene.narration == "scene"
+    assert any("省略场景缺少 summary_target" in w for w in warnings)
+
+
+def test_ellipsis_rules_reach_the_writer() -> None:
+    sp = _sp(narration="ellipsis", summary_target="跨过三天，停在回到码头那一刻")
+    assert "【本幕省略" in sp
+    assert "用一到两句话跨过去" in sp
+    assert "不要写这段时间里的见闻、心情起伏或琐事" in sp
+    # 省略挂的是省略规则，不能同时挂略写规则
+    assert "【本幕略写" not in sp
+
+
+def test_summary_still_gets_its_own_rules() -> None:
+    sp = _sp(narration="summary", summary_target="带过整段赶路")
+    assert "【本幕略写" in sp and "【本幕省略" not in sp
+
+
+def test_stretch_and_pause_are_not_valid_options() -> None:
+    """
+    热奈特还有延缓和停顿两档，我们刻意不实现——那两档正是这个引擎反复
+    犯的毛病（把一个瞬间铺开写、故事时间停住纯描写）。做成合法选项等于
+    把模型最容易滥用的两把刀递过去。非法取值一律退回详写。
+    """
+    from app.services.story_planner import parse_story_runtime
+    for bad in ("stretch", "pause", "延缓", "随便"):
+        runtime, _ = parse_story_runtime(
+            _card(narration=bad, summary_target="x"), {}, turn=10, reason="horizon")
+        assert runtime.current_scene.narration == "scene", bad
+
+
+def test_iterative_frequency_is_told_to_the_writer() -> None:
+    """
+    不说明的话写手会把「每天去码头」写成某一个具体的早晨——那就变回单次
+    场景了，压缩日常的效果全部失掉。
+    """
+    sp = _sp(frequency="iterative")
+    assert "叙事频率:反复" in sp
+    assert "不要写成某一个具体的日子" in sp
+
+
+def test_once_is_the_default_and_silent() -> None:
+    from app.services.story_planner import parse_story_runtime
+    runtime, _ = parse_story_runtime(_card(), {}, turn=10, reason="horizon")
+    assert runtime.current_scene.frequency == "once"
+    assert "叙事频率" not in _sp()
+
+
+def test_invalid_frequency_falls_back_to_once() -> None:
+    from app.services.story_planner import parse_story_runtime
+    runtime, _ = parse_story_runtime(
+        _card(frequency="repeating"), {}, turn=10, reason="horizon")
+    # 「重复叙述」（发生一次却叙述多遍）没有合法取值——那就是我们一直在
+    # 打的那个 bug，由 spent_scenes 的重复检测负责拦截。
+    assert runtime.current_scene.frequency == "once"
+
+
+def test_duration_and_frequency_are_independent() -> None:
+    """日常修炼通常是 iterative + summary：反复发生，压成一段。"""
+    from app.services.story_planner import parse_story_runtime
+    runtime, _ = parse_story_runtime(
+        _card(narration="summary", summary_target="半个月的早课", frequency="iterative"),
+        {}, turn=10, reason="horizon")
+    assert runtime.current_scene.narration == "summary"
+    assert runtime.current_scene.frequency == "iterative"
+    sp = _sp(narration="summary", summary_target="半个月的早课", frequency="iterative")
+    assert "叙事频率:反复" in sp and "【本幕略写" in sp
+
+
+def test_planner_learns_both_dimensions() -> None:
+    from app.schemas.story import StoryPlanContext
+    from app.services.story_planner import build_story_plan_prompt
+    p = build_story_plan_prompt(StoryPlanContext(world_id="wuxia"))
+    assert 'narration="ellipsis"' in p
+    assert "8c." in p and 'frequency="iterative"' in p
+    # 必须点明两者是不同的维度，否则模型会拿一个当另一个用
+    assert "它和 narration 是两回事" in p
+    assert '"frequency":"once|iterative"' in p

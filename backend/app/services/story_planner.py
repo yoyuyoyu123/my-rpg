@@ -24,7 +24,7 @@ from app.services.migration_contract import (
     temporer_note,
 )
 from app.services.naming import NAMING_INSTRUCTION, clean_candidates, pick_name
-from app.services.prompt_builder import premise_stall_note
+from app.services.prompt_builder import is_compressed, premise_stall_note
 
 
 # 两段 purpose 的字符二元组重合度超过这个比例就算「实质相同」。
@@ -276,12 +276,17 @@ def parse_story_runtime(
         except (TypeError, ValueError):
             scene[key] = default
     narration = str(scene.get("narration") or "").strip().lower()
-    scene["narration"] = narration if narration in ("scene", "summary") else "scene"
+    scene["narration"] = narration if narration in ("scene", "summary", "ellipsis") else "scene"
+    freq = str(scene.get("frequency") or "").strip().lower()
+    scene["frequency"] = freq if freq in ("once", "iterative") else "once"
     scene["summary_target"] = str(scene.get("summary_target") or "").strip()[:300]
-    if scene["narration"] == "summary" and not scene["summary_target"]:
-        # 略写却没说要跨过什么，写手无从下手，只能又开始逐步描写。
+    if is_compressed(scene["narration"]) and not scene["summary_target"]:
+        # 压缩却没说要跨过什么，写手无从下手，只能又开始逐步描写。
         # 退回详写比给一个空目标安全。
-        warnings.append("略写场景缺少 summary_target，已按详写处理")
+        warnings.append(
+            f"{'省略' if scene['narration'] == 'ellipsis' else '略写'}"
+            "场景缺少 summary_target，已按详写处理"
+        )
         scene["narration"] = "scene"
 
     # 新专名：模型给候选，程序挑。避开众数就是全部收益所在。
@@ -401,7 +406,7 @@ def parse_story_runtime(
         # 换个感官细节重复同一件事」。所以略写允许一次前进两级。
         # 仍然不给更多：0→5 一张卡搞定就是「玩家在阳台撸猫时被宣布已抵达」，
         # 那个失败模式实测过一次了。
-        max_step = 2 if scene.get("narration") == "summary" else 1
+        max_step = 2 if is_compressed(scene.get("narration")) else 1
         if proposed_phase is None:
             scene["premise_phase"] = current_phase
         elif proposed_phase > current_phase + max_step:
@@ -441,7 +446,7 @@ def parse_story_runtime(
     # 只在阶段 3、4 强制举证：那里有滥用实绩。阈限（阶段 2）是玩家最后一次
     # 真正的选择，本来就该详写，不必举证。
     _end_phase = scene.get("premise_phase")
-    if isinstance(_end_phase, int) and _end_phase in (3, 4) and scene.get("narration") != "summary":
+    if isinstance(_end_phase, int) and _end_phase in (3, 4) and not is_compressed(scene.get("narration")):
         if _has_declared_conflict(scene):
             warnings.append(
                 f"阶段 {_end_phase} 本是纯过程，但规划器声明了冲突「"
@@ -463,7 +468,7 @@ def parse_story_runtime(
     # 实测：穿越落地那张略写卡挂了回合 7 和 8，第 7 回合把转移压缩得很好，
     # 第 8 回合却用「略写」写了 597 字的新世界环境——而新世界的第一眼
     # 恰恰是最该详写的东西。压缩过程和压缩抵达被同一张卡混为一谈了。
-    if scene.get("narration") == "summary":
+    if is_compressed(scene.get("narration")):
         scene["refresh_after_turn"] = turn + 1
 
     # 硬接管：预算用尽而玩家还没落地，程序自己下发这一幕。
@@ -663,14 +668,21 @@ premise_phase 填的是「**本幕结束时**故事所处的阶段」，不是�
   narration="summary"（略写）——纯过程且结果已定：赶路、等待、传送、搬运、排队、例行公事、单纯的时间流逝。这类内容用一两段概括**整段过程**并直接抵达它的终点，不要逐步描写。同时填写 summary_target，写明这一幕要跨过什么、最终停在哪里。
   判断依据只有一条：**如果这一幕出了岔子会怎样？**答案是「不会怎样」，就略写。
   尤其注意：穿越/传送/转移的过程本身默认略写。只有当过程中真的发生冲突（有人阻拦、出了故障、玩家必须做选择）时才详写——那种情况很少见。
+  narration="ellipsis"（省略）——比略写更狠的一档：这段时间里连过程都不值得写。玩家说「等三天」「练一个月」「在城里住到开春」，而这期间没有要发生的事，就用它：正文一两句跨过去，从终点写起。同样要填 summary_target。
+  三档的区别是**压缩强度**：详写≈原速，略写把过程压成一两段，省略连过程都不要。宁可选更狠的一档——写长了是水，写短了玩家自己会问。
   略写不是敷衍，是把回合让给真正有选择的时刻。连续几个回合都在描写同一个过程的不同侧面，说明这里本来就该略写。
+8c. **frequency 决定这一幕叙述的是一次还是很多次**：
+  frequency="once"（默认）——发生一次，叙述一次。绝大多数幕都是这个。
+  frequency="iterative"——发生很多次，只叙述一次：「接下来半个月，你每天天不亮就去码头，学会了认潮汐」。用来把重复的日常压成一段，而不是让它占掉十几个回合。
+  注意它和 narration 是两回事：iterative 说的是「这件事反复发生」，narration 说的是「这一幕写多长」。日常修炼通常是 iterative + summary。
+  **发生一次却叙述好几遍是错的**，没有对应取值——同一个目标已经演过就不要再规划一次，见下面的已演历史。
 9. causal_event_ids 与 soft_commitment_ids 只能引用【已检索事实】里真实出现的 evt_/com_ id；没有就留空。forbidden 至少包含当前场景最容易犯的一项错误。
 10. 输出纯 JSON，不要 Markdown，不要解释。
 
 {NAMING_INSTRUCTION}
 
 输出结构：
-{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用；必须与上一幕不同","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary","summary_target":"略写时写明本幕要跨过什么、停在哪里；详写留空","conflict":"本幕的冲突是什么：谁或什么在阻碍、玩家要面对什么；纯过程没有冲突就留空","repeatable":false,"new_names":[{{"slot":"这个名字是给什么的","kind":"place|person|faction","candidates":[{{"name":"候选名","probability":0.3}}]}}],"stop_points":["purpose 兑现之后、轮到玩家决定下一步的那一刻"],"refresh_after_turn":{ctx.turn + 4},"premise_phase":null,"status":"active"}}}}
+{{"version":1,"revision":1,"premise":"本局当前可验证前提", "threads":[{{"id":"稳定id","title":"","kind":"生活/关系/职业/冒险/调查等","public_goal":"玩家能理解的目标","private_cause":"幕后真实因果；没有就空","why_now":"为什么此刻会动","player_connection":"为何与玩家当前生活有关","established_clues":[],"open_questions":[],"beats":[{{"id":"稳定id","label":"","purpose":"","prerequisites":[],"setup":[],"activation_condition":"","status":"dormant|available|active|resolved|abandoned"}}],"status":"dormant|active|paused|resolved|abandoned"}}],"current_scene":{{"id":"稳定id","title":"","situation":"玩家此刻可观察的处境","purpose":"本场景唯一主要作用；必须与上一幕不同","causal_bridge":"从上一幕到这一幕的可见因果桥","causal_event_ids":[],"active_thread_ids":[],"participant_intents":{{"人物":"眼前具体意图"}},"available_information":[],"affordances":[],"allowed_developments":[],"forbidden":[],"soft_commitment_ids":[],"pressure_budget":1,"mystery_budget":0,"narration":"scene|summary|ellipsis","summary_target":"略写或省略时写明本幕要跨过什么、停在哪里；详写留空","frequency":"once|iterative","conflict":"本幕的冲突是什么：谁或什么在阻碍、玩家要面对什么；纯过程没有冲突就留空","repeatable":false,"new_names":[{{"slot":"这个名字是给什么的","kind":"place|person|faction","candidates":[{{"name":"候选名","probability":0.3}}]}}],"stop_points":["purpose 兑现之后、轮到玩家决定下一步的那一刻"],"refresh_after_turn":{ctx.turn + 4},"premise_phase":null,"status":"active"}}}}
 
 {stall_note}{repeat_note}【规划原因】{ctx.reason}；当前玩家回合={ctx.turn}；篇幅={ctx.pace}；预设={ctx.preset_id or '无'}
 【世界设定】\n{str(world_text)[:9000]}
