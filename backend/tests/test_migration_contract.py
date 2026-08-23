@@ -243,3 +243,158 @@ def test_scene_narration_keeps_the_normal_horizon() -> None:
     }, ensure_ascii=False)
     runtime, _ = parse_story_runtime(raw, {}, turn=10, reason="horizon")
     assert runtime.current_scene.refresh_after_turn > 11
+
+
+# ── 干预动作阶梯（DM action taxonomy）───────────────────────────
+#
+# 此前只有 causer 一档：要么完全不干预，要么一次性夺走整幕的作者权。
+# 文献的共识是 DM 应尽量少侵入，接管该是兜底而非唯一手段。
+# 见 docs/RESEARCH_MAP.md 第一节。
+
+def test_no_intervention_while_budget_is_comfortable() -> None:
+    from app.services.migration_contract import dm_actions
+    a = dm_actions(ps(0, started_at=0), turn=0, pace="long")
+    assert not a.any, a
+
+
+def test_hint_comes_first() -> None:
+    """最轻的一档：过半预算时开始提示玩家，不碰规划权。"""
+    from app.services.migration_contract import budget_total, dm_actions
+    total = budget_total(ps(0), "long")
+    a = dm_actions(ps(0, started_at=0), turn=total // 2 + 1, pace="long")
+    assert a.hint and not a.temporer and not a.causer, a
+
+
+def test_temporer_then_causer() -> None:
+    from app.services.migration_contract import TEMPORER_TURNS_LEFT, budget_total, dm_actions
+    total = budget_total(ps(0), "long")
+    mid = dm_actions(ps(0, started_at=0), turn=total - TEMPORER_TURNS_LEFT, pace="long")
+    assert mid.hint and mid.temporer and not mid.causer, mid
+    late = dm_actions(ps(0, started_at=0), turn=total, pace="long")
+    assert late.causer, late
+
+
+def test_landing_is_the_re_enabler() -> None:
+    """
+    temporer 必须配对 re-enabler，否则会永久卡死被压制的那条线——
+    文献特别强调这一点。我们的解除条件就是「玩家落地」。
+    """
+    from app.services.migration_contract import LANDED_PHASE, dm_actions
+    a = dm_actions(ps(LANDED_PHASE, started_at=0), turn=999, pace="short")
+    assert not a.any, a
+    assert not dm_actions(ps(5, started_at=0), turn=999, pace="short").any
+
+
+def test_hint_is_aimed_at_the_player_not_the_model() -> None:
+    """
+    budget_note 说给规划器听（「你还剩几回合」），玩家在屏幕上看不到任何
+    变化。真正的 hint 要落到玩家能点的东西上。
+    """
+    from app.services.migration_contract import dm_actions, hint_directive
+    note = hint_directive(dm_actions(ps(1, started_at=0), turn=99, pace="short"))
+    # 预算已用尽时 causer 生效，hint 让位——两者不并存
+    assert note == ""
+    from app.services.migration_contract import budget_total
+    total = budget_total(ps(0), "long")
+    note = hint_directive(dm_actions(ps(1, started_at=0), turn=total - 1, pace="long"))
+    assert "行动参考" in note and "迁移入口" in note
+    # 不能把它写成唯一出路，否则等于替玩家做决定
+    assert "不要把这一个写成唯一出路" in note
+
+
+def test_hint_reaches_the_writer_every_turn() -> None:
+    """
+    规划器只在刷新场景卡时才跑（每 2-4 回合一次），靠它给提示会漏掉中间的
+    回合。hint 走 turn_mandate 通道，程序每回合都能保证送到。
+    """
+    from app.schemas.turn import TurnContext
+    from app.services.migration_contract import budget_total
+    from app.services.prompt_builder import turn_mandate
+    total = budget_total(ps(0), "long")
+    ctx = TurnContext(world_id="wuxia", pace="long", turns=total - 1,
+                      game_state={"revealed": True},
+                      premise_state=ps(1, started_at=0))
+    assert "迁移入口" in turn_mandate(ctx)
+
+
+def test_forced_scene_supersedes_the_hint() -> None:
+    """接管的那一幕本来就要把穿越走完，再提示「去看看入口」是多余的。"""
+    from app.schemas.turn import TurnContext
+    from app.services.prompt_builder import turn_mandate
+    ctx = TurnContext(world_id="wuxia", pace="long", turns=99,
+                      game_state={"revealed": True},
+                      premise_state=ps(1, started_at=0),
+                      story_runtime={"current_scene": forced_scene(
+                          ps(1, started_at=0), turn=99, previous_scene=None)})
+    note = turn_mandate(ctx)
+    assert "强制事件" in note and "行动参考" not in note
+
+
+def test_temporer_drops_new_threads_but_keeps_old_ones() -> None:
+    """
+    提示词里写了「不要新开剧情线」，但软规则约束不住模型——所以加程序保证。
+    已有的线必须全部保留：压制的是新增，不是存量。
+    """
+    from app.services.migration_contract import budget_total
+    total = budget_total(ps(0), "medium")
+    previous = {"revision": 3, "threads": [{"id": "work", "title": "旧线"}]}
+    raw = json.dumps({
+        "premise": "x",
+        "threads": [{"id": "work", "title": "旧线", "public_goal": "g"},
+                    {"id": "brand_new", "title": "邻里纠纷", "public_goal": "g"}],
+        "current_scene": {"id": "s", "title": "t", "situation": "x",
+                          "purpose": "p", "causal_bridge": "c"},
+    }, ensure_ascii=False)
+    runtime, warnings = parse_story_runtime(
+        raw, previous, turn=total - 1, reason="horizon",
+        premise_state=ps(1, started_at=0), pace="medium")
+    ids = [t.id for t in runtime.threads]
+    assert ids == ["work"]
+    assert any("临时压制" in w for w in warnings)
+
+
+def test_temporer_never_empties_the_thread_list() -> None:
+    """
+    全是新线时不能清空——留给模型一个空 threads 会让下一轮规划失去全部
+    上下文，比放行更糟。
+    """
+    from app.services.migration_contract import budget_total
+    total = budget_total(ps(0), "medium")
+    raw = json.dumps({
+        "premise": "x",
+        "threads": [{"id": "n1", "title": "新线", "public_goal": "g"}],
+        "current_scene": {"id": "s", "title": "t", "situation": "x",
+                          "purpose": "p", "causal_bridge": "c"},
+    }, ensure_ascii=False)
+    runtime, warnings = parse_story_runtime(
+        raw, {"revision": 1, "threads": [{"id": "work"}]},
+        turn=total - 1, reason="horizon",
+        premise_state=ps(1, started_at=0), pace="medium")
+    assert [t.id for t in runtime.threads] == ["n1"]
+    assert any("未压制" in w for w in warnings)
+
+
+def test_no_temporer_in_non_migration_games() -> None:
+    raw = json.dumps({
+        "premise": "x",
+        "threads": [{"id": "brand_new", "title": "新线", "public_goal": "g"}],
+        "current_scene": {"id": "s", "title": "t", "situation": "x",
+                          "purpose": "p", "causal_bridge": "c"},
+    }, ensure_ascii=False)
+    runtime, warnings = parse_story_runtime(
+        raw, {"revision": 1, "threads": [{"id": "work"}]},
+        turn=99, reason="horizon", premise_state={"kind": "none"}, pace="medium")
+    assert [t.id for t in runtime.threads] == ["brand_new"]
+    assert not any("临时压制" in w for w in warnings)
+
+
+def test_temporer_note_reaches_the_planner() -> None:
+    from app.schemas.story import StoryPlanContext
+    from app.services.migration_contract import budget_total
+    from app.services.story_planner import build_story_plan_prompt
+    total = budget_total(ps(0), "medium")
+    p = build_story_plan_prompt(StoryPlanContext(
+        world_id="fantasy", pace="medium", turn=total - 1, reason="horizon",
+        premise_state=ps(1, started_at=0)))
+    assert "【临时压制·新支线】" in p
+    assert "玩家落地之后自动解除" in p

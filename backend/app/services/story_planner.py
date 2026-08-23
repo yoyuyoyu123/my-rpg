@@ -18,8 +18,10 @@ from app.schemas.story import StoryPlanContext, StoryRuntime
 from app.services.migration_contract import (
     budget_note,
     current_phase as current_phase_of,
+    dm_actions,
     forced_scene,
     should_force,
+    temporer_note,
 )
 from app.services.naming import NAMING_INSTRUCTION, clean_candidates, pick_name
 from app.services.prompt_builder import premise_stall_note
@@ -192,6 +194,39 @@ def parse_story_runtime(
             clean_beats.append(beat)
         item["beats"] = clean_beats
         cleaned_threads.append(item)
+
+    # temporer：临时压制新支线。
+    #
+    # 提示词里写了一句「本次规划不要新开剧情线」，但六轮实测的教训是
+    # 软规则约束不住模型——所以这里再加一道程序保证：预算紧张时，把上一版
+    # runtime 里不存在的线程 id 直接丢掉。已有的线全部保留，只挡新增。
+    #
+    # 这是 temporer 而不是 denier：它有明确的解除条件（玩家落地后
+    # dm_actions 不再返回 temporer），不会永久卡死任何一条线。
+    actions = dm_actions(premise_state, turn, pace)
+    if actions.temporer and cleaned_threads:
+        known = {
+            str(t.get("id") or "")
+            for t in ((previous or {}).get("threads") or [])
+            if isinstance(t, dict)
+        }
+        if known:
+            kept = [t for t in cleaned_threads if t.get("id") in known]
+            dropped = len(cleaned_threads) - len(kept)
+            if dropped and kept:
+                warnings.append(
+                    f"迁移预算只剩 {max(0, actions.turns_left)} 回合，"
+                    f"临时压制了 {dropped} 条新剧情线（玩家落地后解除）"
+                )
+                cleaned_threads = kept
+            elif dropped:
+                # 全是新线时不能清空——留给模型一个空 threads 会让下一轮
+                # 规划失去全部上下文，比放行更糟。
+                warnings.append(
+                    f"迁移预算只剩 {max(0, actions.turns_left)} 回合，"
+                    f"但本次规划的 {dropped} 条线全是新的，未压制（压制会清空剧情线）"
+                )
+
     data["threads"] = cleaned_threads
 
     scene = data.get("current_scene")
@@ -493,6 +528,7 @@ def build_story_plan_prompt(ctx: StoryPlanContext) -> str:
     # 的一幕；程序接管是兜底，不该是常态。停滞加压是「你卡住了」（回顾），
     # 预算是「你还剩几回合」（前瞻）——后者才让模型排得出计划。
     stall_note += budget_note(ctx.premise_state or {}, ctx.turn, ctx.pace)
+    stall_note += temporer_note(dm_actions(ctx.premise_state or {}, ctx.turn, ctx.pace))
 
     # 原地打转加压，和停滞加压同理：放在规则区旁边，且必须回显上一幕的
     # purpose 原文——模型看不到自己上次写了什么，只讲抽象规则约束不住它。

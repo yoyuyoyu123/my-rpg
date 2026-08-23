@@ -96,6 +96,120 @@ def should_force(premise_state: Any, turn: int, pace: str) -> bool:
     return turns_left(premise_state, turn, pace) <= 0
 
 
+# ── 干预动作阶梯 ────────────────────────────────────────────────
+#
+# 搜索式 drama management 把「干预」拆成五类动作（Nelson & Mateas 在
+# 交互小说 Anchorhead 上做的实验，见 docs/RESEARCH_MAP.md 第一节）：
+#
+#   causer      直接让某件事发生
+#   denier      阻止某件事发生
+#   temporer    临时阻止（必须配对 re-enabler）
+#   re-enabler  解除临时阻止
+#   hint        提示玩家往某个方向走
+#
+# 我们此前只有 causer，而且是最重的形态：预算用尽时程序接管整幕。
+# 结果是干预要么完全不发生、要么一次性夺走一整幕的作者权，中间没有档位。
+# 文献的共识是 DM 应当尽量少侵入——接管应该是兜底，不是唯一手段。
+#
+# 这里补上 hint 和 temporer/re-enabler，形成一条阶梯：
+#
+#   剩余预算 > 一半      不干预
+#   剩余 ≤ 一半          hint：每回合要求正文给出一个指向迁移入口的行动选项
+#   剩余 ≤ 2            hint + temporer：禁止规划器开启新的非迁移剧情线
+#   剩余 ≤ 0            causer：程序接管整幕（原有行为）
+#   已落地               re-enabler：全部解除
+#
+# denier 我们没有实现，也不打算实现：它在文献里的用途是「阻止剧情过早
+# 到达高潮」，而我们的问题恰恰相反（永远到不了）。硬要加只会增加一条
+# 可能把玩家卡死的路径。需要时再说。
+
+# 剩几回合开始压制新支线。取 2 是因为一幕的最短视野就是 2 回合
+# （迁移途中的 floor_gap），少于这个数再压制已经来不及了。
+TEMPORER_TURNS_LEFT = 2
+
+
+class DMActions:
+    """本回合该采取哪些干预动作。"""
+
+    __slots__ = ("hint", "temporer", "causer", "turns_left", "total")
+
+    def __init__(self, hint: bool, temporer: bool, causer: bool,
+                 turns_left: int, total: int) -> None:
+        self.hint = hint
+        self.temporer = temporer
+        self.causer = causer
+        self.turns_left = turns_left
+        self.total = total
+
+    @property
+    def any(self) -> bool:
+        return self.hint or self.temporer or self.causer
+
+    def labels(self) -> list[str]:
+        out = []
+        if self.hint:
+            out.append("hint")
+        if self.temporer:
+            out.append("temporer")
+        if self.causer:
+            out.append("causer")
+        return out
+
+    def __repr__(self) -> str:  # 调试面板和测试失败信息里要看得懂
+        return f"DMActions({'+'.join(self.labels()) or 'none'}, left={self.turns_left})"
+
+
+def dm_actions(premise_state: Any, turn: int, pace: str) -> DMActions:
+    """按剩余预算决定干预强度。
+
+    已经落地（阶段 ≥ LANDED_PHASE）时全部关闭——这就是 re-enabler：
+    临时压制必须有解除条件，否则会永久卡死被压制的那条线。文献特别
+    强调 temporer 与 re-enabler 必须配对。
+    """
+    if not is_migration(premise_state) or current_phase(premise_state) >= LANDED_PHASE:
+        return DMActions(False, False, False, 0, 0)
+    total = budget_total(premise_state, pace)
+    left = turns_left(premise_state, turn, pace)
+    return DMActions(
+        hint=left <= total / 2,
+        temporer=left <= TEMPORER_TURNS_LEFT,
+        causer=left <= 0,
+        turns_left=left,
+        total=total,
+    )
+
+
+def hint_directive(actions: DMActions) -> str:
+    """hint 动作：提示**玩家**，不是提示模型。
+
+    此前的 budget_note 是说给规划器听的（「你还剩几回合」），玩家在屏幕上
+    看不到任何变化。真正的 hint 要落到玩家能点的东西上——结尾的行动选项里
+    得有一个真的指向迁移入口，否则玩家根本不知道有这条路。
+
+    这条每回合都发。规划器只在刷新场景卡时才跑（每 2-4 回合一次），
+    靠它给提示会漏掉中间的回合；程序每回合都能保证。
+    """
+    if not actions.hint or actions.causer:
+        return ""
+    return (
+        "\n\n【本回合行动选项要求】结尾给出的行动参考里，"
+        "**必须有一个是指向当前那个迁移入口／异常的具体行动**"
+        "（去看、去碰、去问、去接受都算，写成玩家可以直接照做的一句话）。"
+        "其余选项照常给，不要把这一个写成唯一出路，也不要替玩家评价它好不好。"
+    )
+
+
+def temporer_note(actions: DMActions) -> str:
+    """temporer 动作：临时压制新支线，说给规划器听。"""
+    if not actions.temporer:
+        return ""
+    return (
+        f"【临时压制·新支线】迁移只剩 {max(0, actions.turns_left)} 个回合的预算。"
+        "本次规划**不要新开剧情线**——已有的线继续维护，但不要引入新的职业任务、"
+        "邻里纠纷、商业机会这类和迁移无关的新线程。玩家落地之后自动解除。\n\n"
+    )
+
+
 def budget_note(premise_state: Any, turn: int, pace: str) -> str:
     """软提示：把剩余预算摆给规划器，让它自己安排。
 

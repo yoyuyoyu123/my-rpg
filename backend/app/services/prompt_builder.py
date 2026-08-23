@@ -640,6 +640,13 @@ def build_system_prompt(ctx: TurnContext) -> str:
     return sp
 
 
+def _dm():
+    # 延迟导入：migration_contract 与本模块之间存在导入环
+    # （story_planner → prompt_builder，story_planner → migration_contract）。
+    from app.services.migration_contract import dm_actions, hint_directive
+    return dm_actions, hint_directive
+
+
 def turn_mandate(ctx) -> str:
     """程序接管本幕时，压过每回合指令的强制令。
 
@@ -657,7 +664,15 @@ def turn_mandate(ctx) -> str:
     """
     scene = (getattr(ctx, "story_runtime", None) or {}).get("current_scene") or {}
     if not isinstance(scene, dict) or scene.get("premise_phase_forced") is not True:
-        return ""
+        # 没有接管时，看是否该发轻一级的 hint（干预阶梯，见 migration_contract）。
+        # 两者不会并存：接管的那一幕本来就要把穿越走完，再提示玩家「去看看
+        # 那个入口」是多余的。
+        dm_actions, hint_directive = _dm()
+        return hint_directive(dm_actions(
+            getattr(ctx, "premise_state", None) or {},
+            getattr(ctx, "turns", 0),
+            getattr(ctx, "pace", "medium"),
+        ))
     purpose = str(scene.get("purpose") or "").strip()
     target = str(scene.get("summary_target") or "").strip()
     note = (
