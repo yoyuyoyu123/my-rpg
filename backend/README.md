@@ -2,6 +2,8 @@
 
 FastAPI 后端：剧情规划、提示词编译、状态结算、存档、事实记忆与流式对话代理。
 
+正常游玩请直接双击仓库根目录的 `启动无界.vbs`。图形启动器只打开控制面板；点击 `Start and Play` 后才会隐藏终端启动后端并打开游戏。它还负责停止、首次安装/修复、打开网页设置和日志；下面的命令只用于开发或排错。
+
 ## 快速开始
 
 ```bash
@@ -25,7 +27,9 @@ notepad .env
 `.env` 只放在 `backend/` 目录，不要提交到 Git。修改密钥后必须重启后端；
 打开 `http://127.0.0.1:8000/api/providers`，看到对应后端的 `configured: true`
 才表示配置生效。叙事默认关闭 DeepSeek V4 思考模式，避免思考内容耗尽输出预算；
-需要时可在游戏设置中手动打开。
+设置页可以为场景写手、剧情规划、GM 裁定、状态审计和事实记忆分别启用。
+DeepSeek 返回的 `reasoning_content` 会由非流式接口和 SSE 原样保留，前端只在本机
+“后台运行监视器”显示，不会拼进小说正文或权威状态。
 
 `.env` 中的 provider 配置如下（不需要的可以留空）：
 
@@ -72,6 +76,16 @@ DEFAULT_PROVIDER=deepseek
 .venv/Scripts/python.exe -m pytest tests/ -v
 ```
 
+协议级固定回放（不调用真实模型）在仓库根目录执行：
+
+```powershell
+cd D:\\claudecode\\my-rpg
+backend\\.venv\\Scripts\\python.exe tools\\run_replay.py `
+  --fixture research\\regression\\fixtures\\replay_baseline.json
+```
+
+它会固定模型响应，同时真实运行后端的 SQLite 账本、事实检索、提示词编译、状态结算和存档提交；当前 seed 集包含 10 个场景，覆盖普通冒险、武侠、仙侠、现代、赛博、NPC 知识、资源交易、分支和穿越入口。
+
 ## 当前进度
 
 - [x] 对话代理（`POST /api/chat`）— key 不再下发前端
@@ -82,3 +96,6 @@ DEFAULT_PROVIDER=deepseek
 - [x] 剧情规划 Agent（`POST /api/story/plan/prompt` + `/api/story/plan/result`）— 维护部分有序剧情线和短期场景卡，叙事模型不读取幕后原因
 - [x] 状态结算（`POST /api/state/apply`）
 - [x] 存档持久化（`/api/saves`）
+- [x] 结构化叙事账本（`POST/GET /api/sessions/{sid}/ledger`）— 事件、承诺/拒绝、NPC 独立知识、人物分层状态
+- [x] 可解释上下文检索（`GET /api/sessions/{sid}/context`）— 按回合、来源、可见性和说话者过滤，并返回 trace
+- [x] SceneContract — 因果事件、affordances、压力/悬疑预算、明确禁止项与承诺引用；旧场景卡自动兼容升级
