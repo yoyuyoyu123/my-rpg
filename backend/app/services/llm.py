@@ -67,7 +67,8 @@ def _backoff_seconds(attempt: int) -> float:
 
 def _build_payload(req_model: str, messages: list[dict], temperature: float,
                    max_tokens: int, provider: Provider, stream: bool = False,
-                   thinking: str = "disabled") -> dict:
+                   thinking: str = "disabled",
+                   sampling: dict[str, float] | None = None) -> dict:
     """
     组装请求体。
 
@@ -82,6 +83,17 @@ def _build_payload(req_model: str, messages: list[dict], temperature: float,
         "temperature": temperature,
         "max_tokens": max_tokens,
     }
+    # 额外采样参数按 provider 能力分发。
+    #
+    # 不能统一加：本模块下面那条 thinking 的注释已经写过教训——兼容 OpenAI
+    # 的后端收到未知字段可能直接拒绝请求。而且各家能力差异是实的：
+    # DeepSeek 把 frequency_penalty 标为弃用（传了不生效），硅基流动支持。
+    # 能力表在 domain/providers.py，逐家核实过才写进去。
+    for key, value in (sampling or {}).items():
+        if value is None or key not in provider.sampling_params:
+            continue
+        payload[key] = value
+
     # 流式默认不回 token 用量，要显式索取；但不是每家都认这个字段
     if stream and provider.stream_usage:
         payload["stream_options"] = {"include_usage": True}
@@ -108,6 +120,7 @@ async def call_chat(
     temperature: float = 0.85,
     max_tokens: int = 4096,
     thinking: str = "disabled",
+    sampling: dict[str, float] | None = None,
 ) -> LLMResult:
     """
     调用一次对话补全，自动处理限流与瞬时故障。
@@ -128,7 +141,8 @@ async def call_chat(
 
     use_model = (model or "").strip() or provider.default_model
     payload = _build_payload(
-        use_model, messages, temperature, max_tokens, provider, thinking=thinking
+        use_model, messages, temperature, max_tokens, provider, thinking=thinking,
+        sampling=sampling,
     )
     headers = _build_headers(provider, api_key)
 
@@ -227,6 +241,7 @@ async def open_stream(
     temperature: float = 0.85,
     max_tokens: int = 4096,
     thinking: str = "disabled",
+    sampling: dict[str, float] | None = None,
 ) -> StreamSession:
     """
     连上上游的流式接口。连接阶段的失败会重试；一旦开始出字就不再重试。
@@ -249,7 +264,7 @@ async def open_stream(
     use_model = (model or "").strip() or provider.default_model
     payload = _build_payload(
         use_model, messages, temperature, max_tokens, provider,
-        stream=True, thinking=thinking,
+        stream=True, thinking=thinking, sampling=sampling,
     )
     headers = _build_headers(provider, api_key)
 

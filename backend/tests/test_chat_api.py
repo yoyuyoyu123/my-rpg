@@ -115,3 +115,60 @@ def test_backoff_grows_and_jitters() -> None:
     second = [_backoff_seconds(1) for _ in range(20)]
     assert min(second) > min(first)          # 递增
     assert len(set(first)) > 1               # 有抖动，不是固定值
+
+
+# ── 采样参数按 provider 能力分发 ────────────────────────────────
+#
+# 不能统一加：llm.py 里那条 thinking 的注释已经写过教训——兼容 OpenAI 的
+# 后端收到未知字段可能直接拒绝请求。而且差异是实的：DeepSeek 把
+# frequency_penalty 标为弃用（官方明写「传了也不生效」），硅基流动支持。
+
+def _payload(provider_id: str, **sampling):
+    from app.domain.providers import get_provider
+    from app.services.llm import _build_payload
+    return _build_payload("m", [{"role": "user", "content": "x"}], 0.85, 100,
+                          get_provider(provider_id), sampling=sampling)
+
+
+def test_deepseek_never_receives_frequency_penalty() -> None:
+    """
+    传了不生效还占字段。真正的风险是它给人「已经治了重复」的错觉——
+    我们为这个毛病改过三轮提示词。
+    """
+    p = _payload("deepseek", frequency_penalty=0.6, top_p=0.9)
+    assert "frequency_penalty" not in p
+    assert p["top_p"] == 0.9
+
+
+def test_siliconflow_receives_the_verified_params() -> None:
+    p = _payload("siliconflow", frequency_penalty=0.6, top_k=40, min_p=0.05)
+    assert p["frequency_penalty"] == 0.6
+    assert p["top_k"] == 40 and p["min_p"] == 0.05
+
+
+def test_unverified_providers_get_the_minimal_safe_set() -> None:
+    """没查过文档的几家只发通用字段，不照抄别家的能力表。"""
+    p = _payload("zhipu", frequency_penalty=0.6, top_k=40, top_p=0.9)
+    assert "frequency_penalty" not in p and "top_k" not in p
+    assert p["top_p"] == 0.9
+
+
+def test_absent_params_are_not_sent_as_defaults() -> None:
+    """
+    留空表示不发送，不是「发一个我们以为的默认值」——各家默认值不一定
+    相同，显式发反而改变行为。
+    """
+    from app.schemas.chat import ChatRequest
+    req = ChatRequest(messages=[{"role": "user", "content": "x"}])
+    assert req.sampling() == {}
+    p = _payload("siliconflow")
+    for key in ("top_p", "top_k", "frequency_penalty", "min_p"):
+        assert key not in p
+
+
+def test_out_of_range_sampling_is_rejected() -> None:
+    import pytest as _pytest
+    from pydantic import ValidationError
+    from app.schemas.chat import ChatRequest
+    with _pytest.raises(ValidationError):
+        ChatRequest(messages=[{"role": "user", "content": "x"}], frequency_penalty=9.0)

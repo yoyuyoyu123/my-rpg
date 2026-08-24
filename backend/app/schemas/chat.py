@@ -37,6 +37,18 @@ class ChatRequest(BaseModel):
 
     # 生成参数。给上下限是为了防止前端传出离谱的值把账单打爆。
     temperature: float = Field(0.85, ge=0.0, le=2.0, description="随机性")
+    # 额外采样参数。哪些真正会被发出去由 provider 的能力表决定
+    # （domain/providers.py），这里不做能力判断，只做取值范围校验。
+    #
+    # 留 None 表示不发送——不是「发默认值」。各家的默认值不一定相同，
+    # 显式发一个我们以为的默认值反而会改变行为。
+    top_p: float | None = Field(None, ge=0.0, le=1.0, description="核采样")
+    top_k: int | None = Field(None, ge=0, le=200, description="候选截断")
+    frequency_penalty: float | None = Field(
+        None, ge=-2.0, le=2.0,
+        description="重复惩罚；DeepSeek 已弃用该参数，只在硅基流动等平台生效",
+    )
+    min_p: float | None = Field(None, ge=0.0, le=1.0, description="动态概率下限，仅 Qwen3")
     max_tokens: int = Field(4096, ge=1, le=32000, description="最大输出长度")
     stream: bool = Field(False, description="是否流式返回")
     # DeepSeek V4 默认可能进入思考模式。叙事请求默认关闭，避免思考内容吃完
@@ -44,6 +56,19 @@ class ChatRequest(BaseModel):
     thinking: Literal["enabled", "disabled"] = Field(
         "disabled", description="DeepSeek 思考模式；仅 DeepSeek 后端使用"
     )
+
+    def sampling(self) -> dict[str, float]:
+        """收成一个字典交给 llm 层。没填的不进去。
+
+        这里不判断 provider 支不支持——那是能力表的职责
+        （domain/providers.py），两处都判会漂移。
+        """
+        out: dict[str, float] = {}
+        for key in ("top_p", "top_k", "frequency_penalty", "min_p"):
+            value = getattr(self, key, None)
+            if value is not None:
+                out[key] = value
+        return out
 
 
 class Usage(BaseModel):

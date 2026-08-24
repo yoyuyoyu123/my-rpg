@@ -61,6 +61,7 @@ async def chat(req: ChatRequest, settings: Settings = Depends(get_settings)) -> 
             model=req.model,
             messages=[m.model_dump() for m in req.messages],
             temperature=req.temperature,
+            sampling=req.sampling(),
             max_tokens=req.max_tokens,
             thinking=req.thinking,
         )
@@ -106,6 +107,7 @@ async def chat_stream(
             model=req.model,
             messages=[m.model_dump() for m in req.messages],
             temperature=req.temperature,
+            sampling=req.sampling(),
             max_tokens=req.max_tokens,
             thinking=req.thinking,
         )
