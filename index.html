@@ -4459,6 +4459,24 @@ function directorPassNeeded(input){
   return /(攻击|战斗|偷袭|潜行|躲避|追赶|逃跑|闯入|撬锁|破解|黑客|欺骗|说服|威胁|审讯|赌博|竞赛|比赛|施法|炼制|突破|修炼|训练|治疗|手术|偷窃|抢夺|购买|出售|交易|支付|签订|接受任务|加入|离队|快进|跳过|数日|数月|数年|直到|尝试|冒险|危险)/.test(input);
 }
 
+// 玩家这一句是不是「只提问/只观察/没动作」。
+//
+// 每回合指令里那条规则本来就是有条件的：「**若玩家只提问、评价、抱怨或表达
+// 疑惑**，只回应其问题和情绪，不得替玩家点击、发送消息、开口询问、决定或
+// 展开新调查」。守卫此前把它执行成了无条件，于是玩家明明给了具体动作，
+// 写手照做也被判越权。
+//
+// 判「被动」要保守：错判成主动只是少拦一次（回到没有守卫的状态），
+// 错判成被动会误杀一整段正文并触发重写——实测两次触发全是这么来的。
+// 所以只有明确是提问或纯观察时才算被动。
+function playerInputIsPassive(input){
+  var s=String(input||'').replace(/^\s*\d+[\s.、)]*/,'').trim();
+  if(!s)return true;
+  if(/[?？]|吗[？?]?$|呢[？?]?$|(什么|为什么|怎么回事|是不是|有没有|能不能)/.test(s))return true;
+  // 纯观察：整句只有看/听/想这类，没有任何会改变世界状态的动作
+  if(/^(先)?(看|瞧|观察|打量|听|闻|想|回忆|发呆|愣|等|沉默|不动|什么都不做)[^。；]{0,12}$/.test(s))return true;
+  return false;
+}
 function agencyViolationCodes(input,reply){
   input=String(input||'');reply=String(reply||'').replace(/【(?:STATE|大纲|SHEET_INIT|命名表)】[\s\S]*?(?:【\/(?:STATE|大纲|SHEET_INIT|命名表)】|$)/g,'');
   var parsedChoiceTail=parseActionOptions(reply);if(parsedChoiceTail.found)reply=parsedChoiceTail.main;
@@ -4467,7 +4485,20 @@ function agencyViolationCodes(input,reply){
     {code:'UNAUTHORIZED_CHOICE',out:/你[^。！？\n]{0,24}(?:答应|同意|接受|拒绝|承诺|决定(?:了|要)|选择(?:了)?)/,auth:/(答应|同意|接受|拒绝|承诺|决定|选择|我要|我不)/},
     {code:'UNAUTHORIZED_INTERACTION',out:/你[^。！？\n]{0,24}(?:点击|按下|启动|关闭|打开|使用|购买|支付|签下|攻击|跟随|进入|离开|前往)[了着]?(?:按钮|界面|设备|物品|房间|建筑|地点|对方|目标)?/,auth:/(点击|按|启动|关闭|关掉|打开|使用|购买|支付|签|攻击|跟随|进入|离开|前往|去|走)/}
   ],out=[];
-  rows.forEach(function(r){if(r.out.test(reply)&&!r.auth.test(input))out.push(r.code);});
+  // 「替玩家做出承诺/拒绝」无论玩家主动与否都是越权——玩家说「问他价格」，
+  // 写手写「你答应了他的条件」，那是凭空替他表了态。所以这一条无条件生效。
+  //
+  // 另外两条（通讯、互动）只在玩家被动时才成立：玩家说「截图留证」，写手写
+  // 「你按下电源键和音量键」——那是截图的操作方式，不是替他做决定。此前
+  // 无条件生效，实测触发两次全是这种误判：
+  //   「记在手机备忘录里」→ 写「打开备忘录」→ 判 UNAUTHORIZED_INTERACTION
+  //   「截图留证」        → 写「按下电源键」→ 判 UNAUTHORIZED_INTERACTION
+  // 代价不只是多跑一次重写：整段正文会被丢掉重写，而违规词往往只在第一句。
+  var passive=playerInputIsPassive(input);
+  rows.forEach(function(r){
+    if(r.code!=='UNAUTHORIZED_CHOICE'&&!passive)return;
+    if(r.out.test(reply)&&!r.auth.test(input))out.push(r.code);
+  });
   return out;
 }
 async function rewriteUnauthorizedDraft(draft,msgs,playerInput,codes){
@@ -5087,8 +5118,21 @@ async function _runTurn(){
       typ.remove(); typ=null;
     }
     monitorStage(pipelineRun,'场景写作','done','正文 '+String(reply||'').length+' 字'+(truncated?'；已触及输出上限':''));
-    var rawModelReply=String(reply||''),agencyCodes=SETTINGS.agencyGuard!==false?agencyViolationCodes(lastUser,rawModelReply):[];
-    if(agencyCodes.length)reply=await rewriteUnauthorizedDraft(rawModelReply,msgs,lastUser,agencyCodes);
+    // 程序接管的那一幕不受主权守卫管辖。
+    //
+    // 强制卡要求「玩家离开原世界，穿过转移过程，落在新世界站稳并睁开眼」
+    // ——那本来就是不问玩家意愿的事件（是他开局点的单）。让守卫再去检查
+    // 「玩家授权了吗」，等于程序自己下令又自己判罚：实测穿越那一幕的正文
+    // 被整段丢掉重写，玩家看到的就是先写出穿越过程、又突然裁掉换成穿越后。
+    var forcedScene=!!((STORY_RUNTIME&&STORY_RUNTIME.current_scene||{}).premise_phase_forced===true);
+    var rawModelReply=String(reply||''),
+        agencyCodes=(SETTINGS.agencyGuard!==false&&!forcedScene)?agencyViolationCodes(lastUser,rawModelReply):[];
+    if(forcedScene)monitorStage(pipelineRun,'主权守卫','skipped','本幕由程序接管，事件不需要玩家授权');
+    if(agencyCodes.length){
+      // 重写会替换掉玩家已经看到的整段正文。不说一声就是凭空一跳。
+      addBlk('sys','▸ 本回合正文替玩家做了决定（'+agencyCodes.join('、')+'），已重写');
+      reply=await rewriteUnauthorizedDraft(rawModelReply,msgs,lastUser,agencyCodes);
+    }
     if(!parseActionOptions(reply).found&&SETTINGS.optionRepair!==false){
       monitorStage(pipelineRun,'行动选项','running','正文没有可识别的2-4项行动，启动短格式修复');
       reply=await repairMissingActionOptions(reply,lastUser);
