@@ -6,9 +6,13 @@
 这一步之后，index.html 里不再有任何世界包正文与规则常量 ——
 `/api/worlds` 不下发 prompt 的设计到这里才真正生效。
 """
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.application.turn_service import TurnCommitError, commit_completed_turn
+from app.db.session import get_db
 from app.schemas.turn import TurnContext, TurnPromptOut
+from app.schemas.turn_commit import TurnCommitRequest, TurnCommitResult
 from app.services.prompt_builder import (
     active_rule_packs, build_system_prompt, debug_hash, turn_mandate,
 )
@@ -33,3 +37,19 @@ def compile_prompt(ctx: TurnContext) -> TurnPromptOut:
         rule_packs=[label for _, label, _ in packs],
         rules_hash=debug_hash("\n\n".join(text for _, _, text in packs)),
     )
+
+
+@router.post(
+    "/sessions/{session_id}/turn/commit",
+    response_model=TurnCommitResult,
+    summary="原子提交已完成回合的账本与自动存档",
+)
+async def commit_turn(
+    session_id: str,
+    req: TurnCommitRequest,
+    db: AsyncSession = Depends(get_db),
+) -> TurnCommitResult:
+    try:
+        return await commit_completed_turn(db, session_id, req)
+    except TurnCommitError as exc:
+        raise HTTPException(exc.status_code, detail=exc.detail()) from exc

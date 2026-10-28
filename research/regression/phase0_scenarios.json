@@ -1,0 +1,69 @@
+{
+  "version": 1,
+  "scenarios": [
+    {
+      "id": "commitment_recall_20_turns",
+      "label": "20回合承诺召回",
+      "failure": "NPC忘记承诺、截止时间或玩家已接受/拒绝的约定",
+      "primaryMetric": "commitment_errors",
+      "automation": "requires_structured_commitment",
+      "status": "specified"
+    },
+    {
+      "id": "npc_knowledge_boundary",
+      "label": "NPC知识边界",
+      "failure": "未参与私聊的NPC无来源知道秘密",
+      "primaryMetric": "unauthorized_knowledge_uses",
+      "automation": "requires_belief_provenance",
+      "status": "specified"
+    },
+    {
+      "id": "rejection_persistence",
+      "label": "拒绝持续有效",
+      "failure": "已拒绝入口被换名、换皮或原样再次强塞",
+      "primaryMetric": "reintroduced_gate_count",
+      "automation": "debug_trace_heuristic_then_commitment",
+      "status": "fixture_covered"
+    },
+    {
+      "id": "player_causal_footprint",
+      "label": "玩家选择留下因果足迹",
+      "failure": "不同选择在关系、状态或后续可能性上没有可观察差异",
+      "primaryMetric": "branch_state_difference",
+      "automation": "requires_branch_replay",
+      "status": "specified"
+    },
+    {
+      "id": "low_pressure_tone",
+      "label": "低压力场景不自动悬疑升级",
+      "failure": "日常、经营或轻喜剧在无玩家触发时变成阴谋、追杀或神秘警告",
+      "primaryMetric": "unprepared_pressure_escalations",
+      "automation": "debug_trace_heuristic_plus_human",
+      "status": "fixture_covered"
+    },
+    {
+      "id": "description_relevance",
+      "label": "描述与当前行动相关",
+      "failure": "出现不服务行动、空间、关系或信息的段落",
+      "primaryMetric": "irrelevant_sentence_ratio",
+      "automation": "human_blind_review",
+      "status": "specified"
+    },
+    {
+      "id": "character_dynamic_coherence",
+      "label": "角色能变化但不漂移",
+      "failure": "短期情绪固化成人格，或稳定人格阻止合理情绪变化",
+      "primaryMetric": "identity_errors_and_dynamic_score",
+      "automation": "structured_state_plus_human",
+      "status": "specified"
+    },
+    {
+      "id": "legacy_ux_parity",
+      "label": "原版UX零回退",
+      "failure": "世界包、供应商、主界面、存档、长文本、SSE、Enter或行动选项失效",
+      "primaryMetric": "hard_regression_count",
+      "automation": "static_contract_plus_browser",
+      "status": "partially_automated"
+    }
+  ]
+}

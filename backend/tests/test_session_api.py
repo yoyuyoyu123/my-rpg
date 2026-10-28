@@ -70,7 +70,20 @@ def test_worlds_never_leak_prompt(client: TestClient) -> None:
     assert len(worlds) >= 5
     for w in worlds:
         assert "prompt" not in w
+        assert "flavor" not in w
+        assert "naming" not in w
         assert w["id"] and w["name"]
+        assert w["color"] and w["card"]["icon"] and w["card"]["description"]
+        assert w["presets"] and "note" in w["presets"][0]
+
+
+def test_shared_world_catalog_is_served_as_static_metadata(client: TestClient) -> None:
+    r = client.get("/data/worlds/catalog.json")
+    assert r.status_code == 200
+    payload = r.json()
+    assert payload["schema_version"] == 1
+    assert len(payload["worlds"]) == 10
+    assert all("prompt" not in world for world in payload["worlds"])
 
 
 # ── 会话 ────────────────────────────────────────────────────────
@@ -261,7 +274,11 @@ def test_structured_ledger_roundtrip_and_context_trace(client: TestClient) -> No
     assert "evt_decline" in ctx["text"] and "com_decline" in ctx["text"]
     assert "玩家不愿加入队伍" in ctx["text"]
     assert ctx["event_count"] == 1 and ctx["commitment_count"] == 1
-    assert any(x["id"] == "com_decline" and x["included"] for x in ctx["trace"])
+    commitment_trace = next(x for x in ctx["trace"] if x["id"] == "com_decline")
+    assert commitment_trace["included"]
+    assert commitment_trace["source"] == "ledger"
+    assert commitment_trace["turn"] == 5
+    assert commitment_trace["version"] == "com_decline"
 
     ledger = client.get(f"/api/sessions/{sid}/ledger").json()
     assert ledger["events"][0]["id"] == "evt_decline"

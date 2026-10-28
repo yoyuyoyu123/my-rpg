@@ -33,6 +33,8 @@ import json
 import re
 from typing import Any
 
+from app.services.writer_output import normalize_writer_output
+
 # 一个世界「立起来了」的独立判据。
 #
 # 刻意不复用 worlds.py 的 flavor 字段：那是写给模型看的提示词，拿它来当
@@ -84,13 +86,91 @@ TRANSIT_SLOW_TURNS = 3
 # 从来没落地的局，总回合数超过这个就算「永远不穿越」。
 CROSSING_NEVER_TURNS = 8
 
+# 这些是可解释的诊断信号，不是“文风评分”。命中一次只说明正文使用了
+# 高风险的回避表达，最终仍要结合玩家是否主动追问来判断。
+MYSTERY_EVASION_PHRASES = (
+    "你不该知道", "现在还不是时候", "别问", "他们已经来了",
+    "你会后悔的", "这座城市不简单", "不能告诉你", "不方便说",
+)
+
+
+def _run_turn(run: dict[str, Any]) -> int:
+    """兼容旧导出、当前前端导出和后端 AgentRun 的回合字段。"""
+    for key in ("turn", "turnId", "turn_id"):
+        value = run.get(key)
+        if isinstance(value, int):
+            return value
+        if isinstance(value, str) and value.strip().isdigit():
+            return int(value.strip())
+    meta = run.get("meta")
+    if isinstance(meta, dict):
+        value = meta.get("turn", meta.get("turnId", meta.get("turn_id")))
+        if isinstance(value, int):
+            return value
+        if isinstance(value, str) and value.strip().isdigit():
+            return int(value.strip())
+    return 0
+
+
+def _extract_option_count(text: str) -> int:
+    """从正文末尾提取可见行动选项数量，不把普通编号正文误算进去。"""
+    raw = str(text or "")
+    structured = normalize_writer_output(raw)
+    if structured is not None:
+        return min(len(structured.options), 4)
+    matches = list(re.finditer(r"(?:^|\n)[ \t]*(?:\*\*)?(?:选项|行动选项)[ \t]*[:：]?[ \t]*(?:\*\*)?[ \t]*\n", raw))
+    if not matches:
+        return 0
+    tail = raw[matches[-1].end():]
+    count = 0
+    for line in tail.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        if re.match(r"^(?:[1-4](?:[\.)、][ \t]*|[ \t]+)|\([1-4]\)[ \t]*)\S+", line):
+            count += 1
+            continue
+        if re.match(r"^(?:或输入|自由输入)", line):
+            break
+        # 选项块之后出现普通正文，避免把后面的编号列表算进去。
+        if count:
+            break
+    return min(count, 4)
+
 
 def _strip_protocol(text: str) -> str:
     """去掉 STATE/大纲/选项这类协议块，只留玩家真正读到的正文。"""
     t = str(text or "")
+    structured = normalize_writer_output(t)
+    if structured is not None:
+        t = structured.narrative
     t = re.sub(r"【(?:STATE|SHEET_INIT|大纲|命名表|裁定|检定)】[\s\S]*?(?:【/(?:STATE|SHEET_INIT|大纲|命名表|裁定|检定)】|$)", "", t)
     t = re.sub(r"\n选项：[\s\S]*$", "", t)
     return t.strip()
+
+
+def _state_patch_signature(text: str) -> str:
+    """取回合中程序可见的状态候选，供分叉比较使用。"""
+    raw = str(text or "")
+    structured = normalize_writer_output(raw)
+    if structured is not None:
+        return json.dumps(structured.state_patch, ensure_ascii=False, sort_keys=True)
+    patches: list[Any] = []
+    for match in re.finditer(r"【STATE】([\s\S]*?)【/STATE】", raw):
+        try:
+            value = json.loads(match.group(1).strip().strip("`").replace("json\n", "", 1))
+        except (TypeError, ValueError, json.JSONDecodeError):
+            continue
+        if isinstance(value, dict):
+            patches.append(value)
+    return json.dumps(patches, ensure_ascii=False, sort_keys=True)
+
+
+def _same_text(left: str, right: str) -> bool:
+    """比较可见正文，忽略协议块和多余空白。"""
+    def compact(value: str) -> str:
+        return re.sub(r"\s+", "", _strip_protocol(value))
+    return compact(left) == compact(right)
 
 
 def _scene_of(run: dict) -> dict:
@@ -115,13 +195,13 @@ def score_session(monitor: dict[str, Any], world_id: str = "") -> dict[str, Any]
     runs = [r for r in (monitor.get("runs") or []) if isinstance(r, dict)]
     narratives = sorted(
         [r for r in runs if r.get("agent") == "narrative"],
-        key=lambda r: (r.get("turn") if isinstance(r.get("turn"), int) else 0),
+        key=_run_turn,
     )
     planners = sorted(
         [r for r in runs if r.get("agent") == "planner"],
-        key=lambda r: (r.get("turn") if isinstance(r.get("turn"), int) else 0),
+        key=_run_turn,
     )
-    scenes = [(r.get("turn") or 0, _scene_of(r)) for r in planners]
+    scenes = [(_run_turn(r), _scene_of(r)) for r in planners]
     scenes = [(t, s) for t, s in scenes if s]
 
     turns = len(narratives)
@@ -149,11 +229,61 @@ def score_session(monitor: dict[str, Any], world_id: str = "") -> dict[str, Any]
     if is_migration and landed_turn is None:
         scored = []          # 还没到那个世界，无从评判
     elif is_migration:
-        scored = [r for r in narratives if (r.get("turn") or 0) >= landed_turn]
+        scored = [r for r in narratives if _run_turn(r) >= landed_turn]
     else:
         scored = narratives
     body = "\n".join(_strip_protocol(r.get("output") or "") for r in scored)
     full_body = "\n".join(_strip_protocol(r.get("output") or "") for r in narratives)
+
+    option_counts = [_extract_option_count(r.get("output") or "") for r in narratives]
+    valid_option_counts = [n for n in option_counts if n > 0]
+    option_complete_rate = (
+        sum(1 for n in option_counts if 2 <= n <= 4) / len(option_counts)
+        if option_counts else None
+    )
+    mystery_turns = sum(
+        1 for r in narratives
+        if any(phrase in _strip_protocol(r.get("output") or "") for phrase in MYSTERY_EVASION_PHRASES)
+    )
+
+    # 因果连续的确定性下限：除开局幕外，每张卡都应给出可见因果桥；
+    # 相邻场景不应重复同一个 purpose。它们不是剧情好坏评分，只是抓住
+    # “突然开始”和“同一件事反复演”的低成本信号。
+    causal_rows = scenes[1:]
+    causal_missing = sum(
+        1 for _, scene in causal_rows
+        if not str(scene.get("causal_bridge") or "").strip()
+    )
+    repeated_purpose_turns = 0
+    previous_purpose = ""
+    for turn, scene in scenes:
+        purpose = re.sub(r"\s+", "", str(scene.get("purpose") or ""))
+        if purpose and purpose == previous_purpose:
+            repeated_purpose_turns += 1
+        if purpose:
+            previous_purpose = purpose
+
+    # 记忆可解释性：pipeline 元数据里的 trace 必须能回答“为什么把这条
+    # 记忆放进上下文”。没有 trace 的旧导出返回 None，不冒充失败。
+    memory_trace_rows = 0
+    memory_trace_included = 0
+    memory_trace_turns = 0
+    for run in runs:
+        meta = run.get("meta")
+        context = meta.get("memoryContext") if isinstance(meta, dict) else None
+        trace = context.get("trace") if isinstance(context, dict) else None
+        if not isinstance(trace, list):
+            continue
+        memory_trace_turns += 1
+        for item in trace:
+            if not isinstance(item, dict):
+                continue
+            memory_trace_rows += 1
+            if item.get("included") is True and str(item.get("reason") or "").strip():
+                memory_trace_included += 1
+    memory_trace_coverage = (
+        memory_trace_included / memory_trace_rows if memory_trace_rows else None
+    )
 
     markers = WORLD_MARKERS.get(wid, [])
     hit = sorted({m for m in markers if m in body}) if body else []
@@ -202,6 +332,19 @@ def score_session(monitor: dict[str, Any], world_id: str = "") -> dict[str, Any]
         "scenes": len(scenes),
         "world_id": wid,
         "body_chars": len(full_body),
+        "option_counts": option_counts,
+        "option_count_min": min(valid_option_counts) if valid_option_counts else 0,
+        "option_complete_rate": round(option_complete_rate, 3) if option_complete_rate is not None else None,
+        "option_missing_turns": sum(1 for n in option_counts if n < 2),
+        "mystery_evasion_turns": mystery_turns,
+        "mystery_evasion_rate": round(mystery_turns / turns, 3) if turns else None,
+        "causal_bridge_missing_turns": causal_missing,
+        "causal_bridge_missing_rate": round(causal_missing / len(causal_rows), 3) if causal_rows else None,
+        "repeated_purpose_turns": repeated_purpose_turns,
+        "memory_trace_turns": memory_trace_turns,
+        "memory_trace_rows": memory_trace_rows,
+        "memory_trace_included": memory_trace_included,
+        "memory_trace_coverage": round(memory_trace_coverage, 3) if memory_trace_coverage is not None else None,
         # 世界身份（穿越局只统计落地之后的回合）
         "flavor_hit_rate": round(flavor_rate, 3) if flavor_rate is not None else None,
         "flavor_hits": hit,
@@ -223,6 +366,99 @@ def score_session(monitor: dict[str, Any], world_id: str = "") -> dict[str, Any]
         "narration_mix": narration,
         "narrative_chars_avg": round(sum(lengths) / len(lengths)) if lengths else 0,
     }
+
+
+def _option_signature(text: str) -> tuple[str, ...]:
+    """取选项内容而不把正文/协议带进分叉比较。"""
+    structured = normalize_writer_output(str(text or ""))
+    if structured is not None:
+        return tuple(structured.options)
+    raw = str(text or "")
+    matches = list(re.finditer(r"(?:^|\n)[ \t]*(?:\*\*)?(?:选项|行动选项)[ \t]*[:：]?[ \t]*(?:\*\*)?[ \t]*\n", raw))
+    if not matches:
+        return ()
+    values: list[str] = []
+    for line in raw[matches[-1].end():].splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        option = re.match(r"^(?:[1-4](?:[.)、][ \t]*|[ \t]+)|\([1-4]\)[ \t]*)(.+)$", line)
+        if option:
+            values.append(re.sub(r"\s+", " ", option.group(1)).strip())
+            continue
+        if re.match(r"^(?:或输入|自由输入)", line) or values:
+            break
+    return tuple(values[:4])
+
+
+def compare_branch_sessions(
+    left: dict[str, Any], right: dict[str, Any], world_id: str = "",
+) -> dict[str, Any]:
+    """比较同一初始局面的两条玩家输入分支。
+
+    这是确定性“玩家影响”下限：它不判断哪条写得更好，只回答玩家输入不同后，
+    正文、选项或状态候选是否真的产生了差异。没有共同回合或没有可识别的输入时，
+    返回 ``effective=None``，不把缺数据误报成分支失败。
+    """
+    def by_agent(monitor: dict[str, Any], agent: str) -> dict[int, dict[str, Any]]:
+        out: dict[int, dict[str, Any]] = {}
+        for run in monitor.get("runs") or []:
+            if not isinstance(run, dict) or run.get("agent") != agent:
+                continue
+            turn = _run_turn(run)
+            out[turn] = run
+        return out
+
+    left_n = by_agent(left, "narrative")
+    right_n = by_agent(right, "narrative")
+    common = sorted(set(left_n) & set(right_n))
+    left_pipeline = by_agent(left, "pipeline")
+    right_pipeline = by_agent(right, "pipeline")
+    input_diffs = [
+        turn for turn in common
+        if str((left_pipeline.get(turn) or {}).get("input") or "")
+        != str((right_pipeline.get(turn) or {}).get("input") or "")
+    ]
+    branch_turn = min(input_diffs) if input_diffs else None
+    compared = [turn for turn in common if branch_turn is None or turn >= branch_turn]
+    narrative_diffs = [
+        turn for turn in compared
+        if not _same_text(left_n[turn].get("output") or "", right_n[turn].get("output") or "")
+    ]
+    option_diffs = [
+        turn for turn in compared
+        if _option_signature(left_n[turn].get("output") or "")
+        != _option_signature(right_n[turn].get("output") or "")
+    ]
+    state_diffs = [
+        turn for turn in compared
+        if _state_patch_signature(left_n[turn].get("output") or "")
+        != _state_patch_signature(right_n[turn].get("output") or "")
+    ]
+    all_diffs = sorted(set(narrative_diffs) | set(option_diffs) | set(state_diffs))
+    result: dict[str, Any] = {
+        "world_id": world_id or str(left.get("world_id") or right.get("world_id") or ""),
+        "shared_turns": common,
+        "branch_turn": branch_turn,
+        "different_input_turns": input_diffs,
+        "compared_turns": compared,
+        "narrative_divergent_turns": narrative_diffs,
+        "option_divergent_turns": option_diffs,
+        "state_divergent_turns": state_diffs,
+        "first_divergence_turn": min(all_diffs) if all_diffs else None,
+        "effective": bool(all_diffs) if branch_turn is not None and compared else None,
+        "left": score_session(left, world_id),
+        "right": score_session(right, world_id),
+    }
+    verdict: list[str] = []
+    if branch_turn is not None and compared and not all_diffs:
+        verdict.append("玩家分支未产生可检测差异：正文、选项和状态候选均相同")
+    if branch_turn is None and common:
+        verdict.append("未识别到两条分支的不同玩家输入，无法判断玩家影响")
+    if not common:
+        verdict.append("两条记录没有共同回合，无法比较分支")
+    result["verdicts"] = verdict
+    return result
 
 
 def verdicts(m: dict[str, Any]) -> list[str]:
@@ -248,4 +484,14 @@ def verdicts(m: dict[str, Any]) -> list[str]:
         )
     if m["scene_span_max"] >= 8:
         out.append(f"场景拖沓：一张卡挂了 {m['scene_span_max']} 个回合")
+    if m.get("option_complete_rate") is not None and m["turns"] >= 3 and m["option_complete_rate"] < 0.7:
+        out.append(f"行动选项不完整：仅 {m['option_complete_rate']:.0%} 的回合提供 2-4 个有效选项")
+    if m.get("mystery_evasion_rate") is not None and m["turns"] >= 3 and m["mystery_evasion_rate"] >= 0.25:
+        out.append(f"谜语人信号偏高：{m['mystery_evasion_rate']:.0%} 的回合出现回避表达")
+    if m.get("causal_bridge_missing_rate") is not None and m["causal_bridge_missing_rate"] > 0.4:
+        out.append(f"因果桥缺失：{m['causal_bridge_missing_rate']:.0%} 的后续场景没有说明为何现在发生")
+    if m.get("repeated_purpose_turns", 0) >= 2:
+        out.append(f"场景目的重复：连续规划中有 {m['repeated_purpose_turns']} 次重复上一幕目的")
+    if m.get("memory_trace_coverage") is not None and m["memory_trace_coverage"] < 0.8:
+        out.append(f"记忆召回不可解释：仅 {m['memory_trace_coverage']:.0%} 的召回条目带有纳入理由")
     return out

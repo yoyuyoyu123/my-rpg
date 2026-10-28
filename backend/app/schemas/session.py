@@ -153,3 +153,4 @@ class RollbackOut(BaseModel):
     commitments: int = 0
     beliefs: int = 0
     character_states: int = 0
+    turn_commits: int = 0

@@ -20,7 +20,15 @@ const profileBlock = html.slice(html.indexOf('var RANDOM_PROFILES='), html.index
 assert(!profileBlock.includes('医生'), 'doctor remains in a generic random profile pool');
 assert(/'冒险探索':\['adventure','rivalry','relationship','building'\]/.test(html), 'adventure direction is still locked to one profile');
 assert(html.includes('fast:!!trans.fast'), 'transmigration state does not preserve fast-route metadata');
-assert(html.includes('else if(old===2||old===3)phase=4'), 'fast migration still requires a separate full turn for transit');
+// Fast migration is evidence-backed now: transit/threshold evidence may land
+// directly in phase 4. Keep this semantic rather than matching the old
+// implementation's exact branch text, so harmless refactors do not make the
+// contract test lie about the actual behavior.
+assert(
+  /fast&&ev\.transit\)phase=Math\.max\(4,old\)/.test(html)
+    && /fast&&ev\.threshold\)phase=Math\.max\(4,old\)/.test(html),
+  'fast migration no longer advances evidence-backed transit/threshold to phase 4'
+);
 assert(html.includes('目标世界身份参考：'), 'transmigration identity scope is not separated from origin life');
 assert(html.includes("targetScope+'故事引擎：'"), 'transmigration story engine still leaks into origin-life scope');
 

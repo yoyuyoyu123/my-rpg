@@ -1,0 +1,17 @@
+{
+  "name": "wuji-ai-rpg",
+  "version": "0.1.0",
+  "private": true,
+  "description": "无界 AI 文字 RPG 的前端契约与浏览器验收依赖",
+  "scripts": {
+    "test:browser:isolation": "node tools/test-browser-isolation.mjs",
+    "test:contracts": "node tools/test-debug-analyzer.mjs && node tools/test-narrative-diagnostics.mjs && node tools/test-opening-identity-contract.mjs && node tools/test-option-parser.mjs && node tools/test-turn-lifecycle-contract.mjs && node tools/test-world-catalog-contract.mjs",
+    "test:browser:smoke": "node tools/test-browser-smoke.mjs",
+    "test:browser:turn": "node tools/test-browser-turn-transaction.mjs",
+    "test:browser:mobile": "node tools/test-browser-mobile.mjs",
+    "test:browser:stream": "node tools/test-browser-stream.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  }
+}

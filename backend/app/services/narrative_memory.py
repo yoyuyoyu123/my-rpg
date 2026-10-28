@@ -9,7 +9,9 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import CharacterState, Commitment, NarrativeEvent, NpcBelief
+from app.db.models import (
+    CharacterState, Commitment, LedgerRevision, NarrativeEvent, NpcBelief,
+)
 from app.schemas.narrative import NarrativeLedgerWrite
 
 
@@ -28,6 +30,33 @@ def _load(value: str, fallback: Any) -> Any:
 def _fingerprint(prefix: str, session_id: str, turn: int, *parts: str) -> str:
     raw = "\x1f".join([session_id, str(turn), *[str(x or "").strip() for x in parts]])
     return prefix + hashlib.sha1(raw.encode("utf-8")).hexdigest()[:24]
+
+
+async def _remember_revision(
+    db: AsyncSession,
+    *,
+    session_id: str,
+    record_type: str,
+    record_key: str | int,
+    change_turn: int,
+    snapshot: dict[str, Any],
+) -> None:
+    """同一记录每回合只保存一次“修改前”快照。"""
+    key = str(record_key)
+    exists = await db.scalar(select(LedgerRevision.id).where(
+        LedgerRevision.session_id == session_id,
+        LedgerRevision.record_type == record_type,
+        LedgerRevision.record_key == key,
+        LedgerRevision.change_turn == change_turn,
+    ))
+    if exists is None:
+        db.add(LedgerRevision(
+            session_id=session_id,
+            record_type=record_type,
+            record_key=key,
+            change_turn=change_turn,
+            snapshot_json=_json(snapshot, "{}"),
+        ))
 
 
 async def write_ledger(
@@ -85,6 +114,30 @@ async def write_ledger(
             ))
             counts["commitments_written"] += 1
         else:
+            if payload.turn < old.updated_turn:
+                continue  # 后台抽取晚到：旧回合不得覆盖已经确认的新回合
+            await _remember_revision(
+                db,
+                session_id=session_id,
+                record_type="commitment",
+                record_key=old.id,
+                change_turn=payload.turn,
+                snapshot={
+                    "id": old.id,
+                    "session_id": old.session_id,
+                    "kind": old.kind,
+                    "owner_name": old.owner_name,
+                    "counterparty_name": old.counterparty_name,
+                    "text": old.text,
+                    "status": old.status,
+                    "hard": old.hard,
+                    "created_turn": old.created_turn,
+                    "updated_turn": old.updated_turn,
+                    "due_turn": old.due_turn,
+                    "forbids_json": old.forbids_json,
+                    "source_event_id": old.source_event_id,
+                },
+            )
             old.status = row.status
             old.updated_turn = payload.turn
             old.due_turn = row.due_turn
@@ -106,14 +159,36 @@ async def write_ledger(
             db.add(NpcBelief(
                 session_id=session_id, npc_name=npc, statement=statement,
                 mode=row.mode, confidence=row.confidence, source_name=row.source.strip(),
-                learned_turn=payload.turn, status=row.status,
+                learned_turn=payload.turn, updated_turn=payload.turn, status=row.status,
             ))
             counts["beliefs_written"] += 1
         else:
+            if payload.turn < max(old.learned_turn, old.updated_turn):
+                continue
+            await _remember_revision(
+                db,
+                session_id=session_id,
+                record_type="belief",
+                record_key=old.id,
+                change_turn=payload.turn,
+                snapshot={
+                    "id": old.id,
+                    "session_id": old.session_id,
+                    "npc_name": old.npc_name,
+                    "statement": old.statement,
+                    "mode": old.mode,
+                    "confidence": old.confidence,
+                    "source_name": old.source_name,
+                    "learned_turn": old.learned_turn,
+                    "updated_turn": old.updated_turn,
+                    "status": old.status,
+                },
+            )
             old.mode = row.mode
             old.confidence = row.confidence
             old.source_name = row.source.strip() or old.source_name
             old.status = row.status
+            old.updated_turn = payload.turn
 
     for row in payload.character_states[:12]:
         name = row.name.strip()
@@ -134,6 +209,25 @@ async def write_ledger(
             ))
             counts["character_states_written"] += 1
         else:
+            if payload.turn < old.updated_turn:
+                continue
+            await _remember_revision(
+                db,
+                session_id=session_id,
+                record_type="character_state",
+                record_key=old.id,
+                change_turn=payload.turn,
+                snapshot={
+                    "id": old.id,
+                    "session_id": old.session_id,
+                    "entity_name": old.entity_name,
+                    "identity_json": old.identity_json,
+                    "mid_term_json": old.mid_term_json,
+                    "short_term_json": old.short_term_json,
+                    "relationships_json": old.relationships_json,
+                    "updated_turn": old.updated_turn,
+                },
+            )
             # 空层不覆盖已有层：抽取器没观察到，不等于人物失去目标或关系。
             if row.identity:
                 old.identity_json = _json(row.identity, "{}")
@@ -184,12 +278,15 @@ async def retrieve_narrative_context(
         visible = event.visibility == "public" or not speaker or speaker in participants or speaker == event.actor
         if not visible:
             trace.append({"id": event.id, "type": "event", "included": False,
-                          "reason": f"对 {speaker} 不可见"})
+                          "reason": f"对 {speaker} 不可见", "source": event.source or "narrative",
+                          "turn": event.turn, "version": event.id})
             continue
         if relevant or len(chosen_events) < max(2, max_events // 2):
             chosen_events.append(event)
             trace.append({"id": event.id, "type": "event", "included": True,
-                          "reason": "提及实体命中" if relevant else "近期事件"})
+                          "reason": "提及实体命中" if relevant else "近期事件",
+                          "source": event.source or "narrative", "turn": event.turn,
+                          "version": event.id})
         if len(chosen_events) >= max_events:
             break
     if chosen_events:
@@ -217,7 +314,9 @@ async def retrieve_narrative_context(
         if relevant:
             chosen_coms.append(item)
             trace.append({"id": item.id, "type": "commitment", "included": True,
-                          "reason": "硬约束" if item.hard else "人物/主题命中"})
+                          "reason": "硬约束" if item.hard else "人物/主题命中",
+                          "source": item.source_event_id or "ledger", "turn": item.updated_turn,
+                          "version": item.id})
         if len(chosen_coms) >= max_commitments:
             break
     if chosen_coms:
@@ -249,14 +348,17 @@ async def retrieve_narrative_context(
                 if label == "眼前" and current_turn > 0 and current_turn - item.updated_turn > 4:
                     if value:
                         trace.append({"id": f"char:{item.id}:short", "type": "character_state",
-                                      "included": False, "reason": "短期状态已自然衰减"})
+                                      "included": False, "reason": "短期状态已自然衰减",
+                                      "source": "ledger", "turn": item.updated_turn,
+                                      "version": item.id})
                     value = {}
                 if value:
                     layers.append(label + "=" + json.dumps(value, ensure_ascii=False, separators=(",", ":")))
             if layers:
                 lines.append(f"- {item.entity_name}（第{item.updated_turn}回合更新）：" + "；".join(layers))
                 trace.append({"id": f"char:{item.id}", "type": "character_state",
-                              "included": True, "reason": "在场人物"})
+                              "included": True, "reason": "在场人物", "source": "ledger",
+                              "turn": item.updated_turn, "version": item.id})
         if lines:
             sections.append("【人物动态状态——短期情绪不能覆盖身份与长期目标】\n" + "\n".join(lines))
             counts["character_state_count"] = len(lines)
@@ -285,7 +387,9 @@ async def retrieve_narrative_context(
             )
             counts["belief_count"] = len(beliefs)
             trace.extend({"id": f"belief:{b.id}", "type": "belief", "included": True,
-                          "reason": "当前说话者" if speaker else "提及 NPC"} for b in beliefs)
+                          "reason": "当前说话者" if speaker else "提及 NPC",
+                          "source": b.source_name or "ledger", "turn": b.learned_turn,
+                          "version": b.id} for b in beliefs)
 
     return sections, trace, counts
 
@@ -319,7 +423,8 @@ async def ledger_snapshot(db: AsyncSession, session_id: str, limit: int = 30) ->
                          "forbids": _load(x.forbids_json, [])} for x in commitments],
         "beliefs": [{"id": x.id, "npc": x.npc_name, "statement": x.statement,
                      "mode": x.mode, "confidence": x.confidence, "source": x.source_name,
-                     "learned_turn": x.learned_turn, "status": x.status} for x in beliefs],
+                     "learned_turn": x.learned_turn, "updated_turn": x.updated_turn,
+                     "status": x.status} for x in beliefs],
         "character_states": [{"id": x.id, "name": x.entity_name,
                               "identity": _load(x.identity_json, {}),
                               "mid_term": _load(x.mid_term_json, {}),

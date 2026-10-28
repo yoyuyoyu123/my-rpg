@@ -24,7 +24,9 @@ except Exception:
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "backend"))
 
-from app.services.quality_metrics import score_session, verdicts  # noqa: E402
+from app.services.quality_metrics import (  # noqa: E402
+    compare_branch_sessions, score_session, verdicts,
+)
 
 # 人工标注的真值：玩家对每一局的原话，以及该局的世界。
 # 指标要能在这些局上触发对应的判定。
@@ -60,6 +62,14 @@ def report(path: str, world: str) -> dict:
     if m["cn_place_names_in_western_world"]:
         print(f"   中式地名：{'、'.join(m['cn_place_names_in_western_world'][:6])}")
     print(f"   详略分布 {m['narration_mix']}")
+    if m.get("option_complete_rate") is not None:
+        print(f"   选项完整度 {m['option_complete_rate']:.0%}，缺失回合 {m['option_missing_turns']}，数量序列 {m['option_counts']}")
+    if m.get("mystery_evasion_rate") is not None:
+        print(f"   谜语人回避信号 {m['mystery_evasion_rate']:.0%}（{m['mystery_evasion_turns']}/{m['turns']} 回合）")
+    if m.get("causal_bridge_missing_rate") is not None:
+        print(f"   因果桥缺失 {m['causal_bridge_missing_rate']:.0%}，重复场景目的 {m['repeated_purpose_turns']} 次")
+    if m.get("memory_trace_coverage") is not None:
+        print(f"   记忆召回解释覆盖 {m['memory_trace_coverage']:.0%}（{m['memory_trace_included'] if 'memory_trace_included' in m else '?'} 条有理由）")
     for line in v:
         print(f"   ✗ {line}")
     if not v:
@@ -99,6 +109,8 @@ def validate(folder: str) -> int:
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("files", nargs="*", help="监控导出 JSON")
+    p.add_argument("--compare", nargs=2, metavar=("LEFT", "RIGHT"),
+                   help="比较同一初始局面的两条分支")
     p.add_argument("--world", default="", help="世界 id，导出里没有时手动指定")
     p.add_argument("--dir", help="批量扫描目录")
     p.add_argument("--validate", action="store_true", help="对照玩家原话验证指标")
@@ -106,6 +118,19 @@ def main() -> int:
 
     if a.validate:
         return validate(a.dir or "~/Downloads")
+    if a.compare:
+        left_path, right_path = a.compare
+        result = compare_branch_sessions(load(left_path), load(right_path), a.world)
+        print("== 玩家分支比较 ==")
+        print(f"共同回合：{result['shared_turns']}；分支输入回合：{result['different_input_turns']}")
+        print(f"正文差异：{result['narrative_divergent_turns']}；选项差异：{result['option_divergent_turns']}")
+        print(f"状态候选差异：{result['state_divergent_turns']}；首次差异：{result['first_divergence_turn']}")
+        if result["verdicts"]:
+            for line in result["verdicts"]:
+                print(f"   ✗ {line}")
+        else:
+            print("   ✓ 玩家输入产生了可检测的分支影响")
+        return 0
     targets = list(a.files)
     if a.dir:
         targets += sorted(glob.glob(os.path.join(os.path.expanduser(a.dir),

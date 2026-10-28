@@ -17,6 +17,13 @@ router = APIRouter(prefix="/api", tags=["世界观"])
 class PresetOut(BaseModel):
     id: str
     name: str
+    note: str = ""
+
+
+class WorldCardOut(BaseModel):
+    icon: str
+    description: str
+    tag: str
 
 
 class WorldOut(BaseModel):
@@ -24,8 +31,10 @@ class WorldOut(BaseModel):
     name: str
     family: str
     skill_label: str
+    color: str
     daily: list[str] = Field(default_factory=list)
     presets: list[PresetOut] = Field(default_factory=list)
+    card: WorldCardOut
     # 注意这里没有 prompt 字段——它不下发
 
 
@@ -34,8 +43,12 @@ def list_worlds() -> list[WorldOut]:
     return [
         WorldOut(
             id=w.id, name=w.name, family=w.family, skill_label=w.skill_label,
+            color=w.color,
             daily=list(w.daily),
-            presets=[PresetOut(id=p.id, name=p.name) for p in w.presets],
+            presets=[PresetOut(id=p.id, name=p.name, note=p.note) for p in w.presets],
+            card=WorldCardOut(
+                icon=w.card_icon, description=w.card_description, tag=w.card_tag,
+            ),
         )
         for w in WORLDS.values()
     ]

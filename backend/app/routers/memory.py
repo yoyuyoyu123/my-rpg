@@ -110,18 +110,11 @@ async def delete_session(sid: str, db: AsyncSession = Depends(get_db)) -> dict:
 
 # ── 记忆写入与检索 ──────────────────────────────────────────────
 
-@router.post("/sessions/{sid}/memory", response_model=MemoryWriteResult,
-             summary="写入事实（含矛盾检测）")
-async def write_memory(
-    sid: str, req: MemoryWrite, db: AsyncSession = Depends(get_db)
-) -> MemoryWriteResult:
-    """
-    写入一批事实。稳定属性被改写时会拦截并返回冲突，**不写入**。
 
-    前端拿到 conflicts 后可以：
-      - 展示给玩家，让玩家裁决
-      - 或塞进下一回合的提示词，要求 AI 自己纠正
-    """
+async def _write_memory_uncommitted(
+    sid: str, req: MemoryWrite, db: AsyncSession,
+) -> MemoryWriteResult:
+    """写入事实但不提交；由最外层用例决定整个工作单元何时 commit。"""
     s = await _get_session(db, sid)
     written, conflicts = 0, []
 
@@ -130,9 +123,9 @@ async def write_memory(
             db, sid, name=ent_in.name, kind=ent_in.kind, turn=req.turn,
             aliases=ent_in.aliases, importance=ent_in.importance,
         )
-        for f in ent_in.facts:
+        for fact_in in ent_in.facts:
             fact, conflict = await record_fact(
-                db, sid, entity, key=f.key, value=f.value,
+                db, sid, entity, key=fact_in.key, value=fact_in.value,
                 turn=req.turn, source=req.source,
             )
             if fact:
@@ -145,10 +138,26 @@ async def write_memory(
                 ))
 
     s.turn_no = max(s.turn_no, req.turn)
-    await db.commit()
     return MemoryWriteResult(
-        entities_touched=len(req.entities), facts_written=written, conflicts=conflicts
+        entities_touched=len(req.entities), facts_written=written, conflicts=conflicts,
     )
+
+
+@router.post("/sessions/{sid}/memory", response_model=MemoryWriteResult,
+             summary="写入事实（含矛盾检测）")
+async def write_memory(
+    sid: str, req: MemoryWrite, db: AsyncSession = Depends(get_db)
+) -> MemoryWriteResult:
+    """
+    写入一批事实。稳定属性被改写时会拦截并返回冲突，**不写入**。
+
+    前端拿到 conflicts 后可以：
+      - 展示给玩家，让玩家裁决
+      - 或塞进下一回合的提示词，要求 AI 自己纠正
+    """
+    result = await _write_memory_uncommitted(sid, req, db)
+    await db.commit()
+    return result
 
 
 @router.post("/sessions/{sid}/extract", response_model=MemoryWriteResult,
@@ -229,38 +238,42 @@ async def _known_memory(db: AsyncSession, sid: str) -> tuple[list[str], str]:
 async def _store_extracted(
     sid: str, turn: int, bundle: dict[str, list[dict]], db: AsyncSession
 ) -> MemoryWriteResult:
-    entities = bundle.get("entities") or []
-    base = MemoryWriteResult()
-    if not entities:
+    try:
+        entities = bundle.get("entities") or []
         base = MemoryWriteResult()
-    else:
-        payload = MemoryWrite(
-            turn=turn, source="narrative",
-            entities=[  # type: ignore[arg-type]
-                {"name": e["name"], "kind": e["kind"], "aliases": e["aliases"],
-                 "importance": e["importance"], "facts": e["facts"]}
-                for e in entities
-            ],
-        )
-        base = await write_memory(sid, payload, db)
+        if entities:
+            payload = MemoryWrite(
+                turn=turn, source="narrative",
+                entities=[  # type: ignore[arg-type]
+                    {"name": e["name"], "kind": e["kind"], "aliases": e["aliases"],
+                     "importance": e["importance"], "facts": e["facts"]}
+                    for e in entities
+                ],
+            )
+            base = await _write_memory_uncommitted(sid, payload, db)
 
-    ledger = NarrativeLedgerWrite(
-        turn=turn,
-        events=bundle.get("events") or [],
-        commitments=bundle.get("commitments") or [],
-        beliefs=bundle.get("beliefs") or [],
-        character_states=bundle.get("character_states") or [],
-    )
-    counts = await write_ledger(db, sid, ledger)
-    s = await _get_session(db, sid)
-    s.turn_no = max(s.turn_no, turn)
-    await db.commit()
-    return MemoryWriteResult(
-        entities_touched=base.entities_touched,
-        facts_written=base.facts_written,
-        conflicts=base.conflicts,
-        **counts,
-    )
+        ledger = NarrativeLedgerWrite(
+            turn=turn,
+            events=bundle.get("events") or [],
+            commitments=bundle.get("commitments") or [],
+            beliefs=bundle.get("beliefs") or [],
+            character_states=bundle.get("character_states") or [],
+        )
+        counts = await write_ledger(db, sid, ledger)
+        s = await _get_session(db, sid)
+        s.turn_no = max(s.turn_no, turn)
+        await db.commit()
+        return MemoryWriteResult(
+            entities_touched=base.entities_touched,
+            facts_written=base.facts_written,
+            conflicts=base.conflicts,
+            **counts,
+        )
+    except Exception:
+        # 事实、实体、事件、承诺和人物状态属于同一个抽取批次；任何一步失败
+        # 都不能把半个回合留在数据库里。
+        await db.rollback()
+        raise
 
 
 @router.post("/sessions/{sid}/ledger", response_model=NarrativeLedgerResult,

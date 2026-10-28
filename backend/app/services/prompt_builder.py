@@ -17,6 +17,7 @@ from app.domain.decks import PACE_CONFIG, STATE_SCHEMAS
 from app.domain.rules import (
     AGENCY_RULES, ANTI_MYSTERY, CORE_RULES, FIRST_CHAPTER, GAMEWORLD_VARIANTS,
     IDENTITY_FREEDOM, ISEKAI_MODERN, NPC_KNOWLEDGE_RULES, OPTION_RULES,
+    STRUCTURED_WRITER_RULES,
     PRESET_EXPANSION_KEYS, WORLD_EXPANSION_KEYS, WORLD_EXPANSIONS,
 )
 from app.domain.worlds import WORLDS
@@ -555,6 +556,8 @@ def build_system_prompt(ctx: TurnContext) -> str:
     # 之前 agent_mode 只保留了“给 2-4 个参考”的语义要求，却漏掉精确格式，
     # 导致模型常写成 Markdown/【行动选项】而前端无法识别。
     sp += "\n\n" + OPTION_RULES
+    if ctx.prefs.get("structured_writer") is True:
+        sp += "\n\n" + STRUCTURED_WRITER_RULES
     if not agent_mode:
         sp += "\n\n" + AGENCY_RULES
 

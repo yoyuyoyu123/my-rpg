@@ -14,6 +14,9 @@
 
 这份度量的目的就一个：**让改动能在推给玩家之前先被自己检验一遍。**
 
+评分器同时兼容旧版导出的 `turn`、当前前端的 `turnId` 和后端 AgentRun 的
+`turn_id`，不会因为监视器协议升级而把整局压成第 0 回合。
+
 ## 用法
 
 ```bash
@@ -22,6 +25,9 @@ backend/.venv/Scripts/python.exe tools/score_session.py 监控导出.json --worl
 
 # 批量扫一个目录
 backend/.venv/Scripts/python.exe tools/score_session.py --dir ~/Downloads
+
+# 比较同一初始局面的两条玩家分支
+backend/.venv/Scripts/python.exe tools/score_session.py --compare left.json right.json --world fantasy
 
 # 对照玩家原话验证指标本身是否可信
 backend/.venv/Scripts/python.exe tools/score_session.py --validate --dir ~/Downloads
@@ -79,6 +85,28 @@ backend/.venv/Scripts/python.exe tools/score_session.py --validate --dir ~/Downl
 | `scene_span_max` | 一张场景卡最多挂了几个回合 | ≥8 报「场景拖沓」 |
 | `forced_takeovers` | 程序接管了几次 | 观察项，高说明模型不配合 |
 | `narration_mix` | 详写/略写/省略的分布 | 观察项 |
+| `option_complete_rate` | 有多少回合提供 2-4 个有效行动选项 | 低于 70% 且至少 3 回合时报警 |
+| `option_missing_turns` | 少于 2 个有效选项的回合数 | 观察项，避免把选项缺失误判成剧情质量 |
+| `mystery_evasion_rate` | 正文出现典型回避表达的回合比例 | ≥25% 且至少 3 回合时报警 |
+| `causal_bridge_missing_rate` | 后续场景没有可见因果桥的比例 | >40% 报「因果桥缺失」 |
+| `repeated_purpose_turns` | 相邻规划重复上一幕目的的次数 | ≥2 报「场景目的重复」 |
+| `memory_trace_coverage` | 记忆召回条目带有纳入理由的比例 | <80% 报「记忆召回不可解释」 |
+
+### 固定分叉比较
+
+`--compare` 不评价文笔，也不假设某一条路线更正确。它先找两份监视器记录中
+第一次不同的玩家输入，再比较该回合及之后的：
+
+- 可见正文是否不同；
+- 行动选项是否不同；
+- `【STATE】` 或结构化 `state_patch` 是否不同。
+
+三者都没有差异时才报“玩家分支未产生可检测差异”。如果没有共同回合或没有
+可识别的不同输入，则返回“无法判断”，不会误报成剧情无分支。
+
+规则动作的可复算契约位于 `/api/rules/action`：移动、交易、任务动作先由服务端
+校验，再返回状态/任务补丁。这样质量回放可以区分“模型写了一个交易结果”和“程序
+真正接受了交易”，后续浏览器意图层应只调用这一份契约。
 
 ## 已知局限（不掩盖）
 
@@ -107,10 +135,24 @@ backend/.venv/Scripts/python.exe tools/score_session.py --validate --dir ~/Downl
 
 ## 下一步
 
-1. **模型裁判层**：对可判定的问题提问（这一幕有没有真正的冲突？名字符不符合
+1. **玩家影响与分叉差异**：用同一存档的两条固定输入比较状态、事件和可用行动，
+   先确定“玩家选择真的改变了什么”，再考虑模型裁判。
+2. **模型裁判层**：对可判定的问题提问（这一幕有没有真正的冲突？名字符不符合
    本世界的命名规矩？），而不是让它打一个笼统的分。参考 `RESEARCH_MAP.md`
    第八节列的 NarraBench / NARRA-Gym。
-2. **接进回放**：现有 `tools/run_replay.py` 用的是预置回复，测程序不测模型。
+3. **接进回放**：现有 `tools/run_replay.py` 用的是预置回复，测程序不测模型。
    需要一条真实模型回放的路径，跑完自动打分。
-3. **改动前后对比**：同一份剧本、同一个种子，改动前后各跑一次，比较指标。
+4. **改动前后对比**：同一份剧本、同一个种子，改动前后各跑一次，比较指标。
    这才是「改完能自己验一遍」真正成立的形态。
+
+## P2-2 结构化输出的当前边界
+
+后端已经提供 `StructuredWriterResult`（`narrative`、`options`、`state_patch`、
+`memory_writes`）和 `/api/writer/normalize` 识别接口；前端遇到完整 JSON 信封时
+直接显示正文和按钮，并将状态候选送入原有审计。默认仍接受纯文本，避免把供应商或旧
+存档一次性切换到 JSON。下一步应在固定回放里比较两种输出路径，而不是凭一次试玩
+决定是否强制启用。
+
+记忆 trace 的每条记录现在还带 `source`、`turn`、`version` 和 `reason`。因此监视器
+可以区分“因为提及实体召回”“因为近期召回”“因为 NPC 不可见而排除”，而不是只显示
+一段已经拼好的上下文。

@@ -30,6 +30,8 @@ from app.routers import story as story_router
 from app.routers import turn as turn_router
 from app.routers import worlds as worlds_router
 from app.routers import writer as writer_router
+from app.routers import rules as rules_router
+from app.routers import agent_runs as agent_runs_router
 from app.schemas.chat import ErrorDetail  # noqa: F401  (让它出现在 OpenAPI 文档里)
 
 settings = get_settings()
@@ -79,6 +81,8 @@ app.include_router(state_router.router)
 app.include_router(story_router.router)
 app.include_router(turn_router.router)
 app.include_router(writer_router.router)
+app.include_router(rules_router.router)
+app.include_router(agent_runs_router.router)
 
 
 @app.get("/health", tags=["系统"], summary="健康检查")
@@ -106,3 +110,8 @@ def serve_index() -> FileResponse:
 research_dir = FRONTEND_DIR / "research"
 if research_dir.is_dir():
     app.mount("/research", StaticFiles(directory=research_dir), name="research")
+
+# 世界目录是前后端共享的公开元数据；私有 prompt 不在这个目录中。
+world_data_dir = FRONTEND_DIR / "data" / "worlds"
+if world_data_dir.is_dir():
+    app.mount("/data/worlds", StaticFiles(directory=world_data_dir), name="world-data")

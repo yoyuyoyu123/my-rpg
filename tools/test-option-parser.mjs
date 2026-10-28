@@ -12,7 +12,7 @@ function extractFunction(name) {
 
 // Evaluate the production parser itself instead of maintaining a duplicate.
 const parseActionOptions = new Function(
-  `${extractFunction('cleanOptionMarkdown')}\n${extractFunction('parseActionOptions')}\nreturn parseActionOptions;`,
+  `${extractFunction('cleanOptionMarkdown')}\n${extractFunction('parseStructuredWriterOutput')}\n${extractFunction('parseActionOptions')}\nreturn parseActionOptions;`,
 )();
 
 const cases = [
@@ -35,6 +35,15 @@ const cases = [
     name: 'full-width numbers and markdown heading',
     text: '正文。\n### 行动参考\n１、和她谈谈\n２、查看地图',
     expected: ['和她谈谈', '查看地图'],
+  },
+  {
+    name: 'structured writer envelope',
+    text: JSON.stringify({
+      narrative: '门开了。',
+      options: ['进去', '观察', '离开'],
+      state_patch: { loc: '门口' },
+    }),
+    expected: ['进去', '观察', '离开'],
   },
 ];
 

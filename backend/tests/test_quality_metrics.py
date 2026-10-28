@@ -19,7 +19,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from app.services.quality_metrics import (  # noqa: E402
-    QUIET_STREAK_BAD, TRANSIT_SLOW_TURNS, score_session, verdicts,
+    QUIET_STREAK_BAD, TRANSIT_SLOW_TURNS, compare_branch_sessions,
+    score_session, verdicts,
 )
 
 SESSIONS = ROOT.parent / "research" / "regression" / "sessions"
@@ -141,3 +142,103 @@ def test_non_migration_session_scores_all_turns() -> None:
 def test_empty_monitor_does_not_crash() -> None:
     m = score_session({"runs": []}, "wuxia")
     assert m["turns"] == 0 and verdicts(m) == []
+
+
+def test_accepts_current_agent_run_turn_fields_and_scores_options() -> None:
+    mon = {
+        "runs": [
+            {"agent": "narrative", "turnId": 2,
+             "output": "你走进街口。\n\n选项：\n1 询问掌柜\n2 离开街口\n3 观察招牌\n或输入任何你想做的事"},
+            {"agent": "narrative", "turn_id": 3,
+             "output": "你等了一会儿。\n\n选项：\n1 继续等待"},
+        ]
+    }
+    m = score_session(mon, "wuxia")
+    assert m["turns"] == 2
+    assert m["option_counts"] == [3, 1]
+    assert m["option_missing_turns"] == 1
+    assert m["option_complete_rate"] == 0.5
+
+
+def test_mystery_evasion_is_a_diagnostic_not_a_global_score() -> None:
+    mon = {"runs": [
+        {"agent": "narrative", "turn": 1, "output": "现在还不是时候。"},
+        {"agent": "narrative", "turn": 2, "output": "掌柜直接告诉你市场在东门。"},
+        {"agent": "narrative", "turn": 3, "output": "你不该知道这件事。"},
+    ]}
+    m = score_session(mon, "wuxia")
+    assert m["mystery_evasion_turns"] == 2
+    assert m["mystery_evasion_rate"] == 0.667
+    assert any("谜语人信号偏高" in item for item in verdicts(m))
+
+
+def test_structured_writer_output_is_scored_like_legacy_text() -> None:
+    mon = {"runs": [{
+        "agent": "narrative", "turn": 1,
+        "output": json.dumps({
+            "narrative": "门开了。",
+            "options": ["进去", "观察", "离开"],
+            "state_patch": {"loc": "门口"},
+        }, ensure_ascii=False),
+    }]}
+    m = score_session(mon, "wuxia")
+    assert m["option_counts"] == [3]
+    assert m["narrative_chars_avg"] == 4
+
+
+def test_causal_and_memory_trace_metrics_are_deterministic() -> None:
+    mon = {
+        "runs": [
+            {"agent": "planner", "turn": 0,
+             "output": json.dumps({"current_scene": {"id": "a", "purpose": "开场"}})},
+            {"agent": "planner", "turn": 1,
+             "output": json.dumps({"current_scene": {"id": "b", "purpose": "开场", "causal_bridge": ""}})},
+            {"agent": "pipeline", "turn": 1,
+             "meta": {"memoryContext": {"trace": [
+                 {"id": "fact:1", "included": True, "reason": "近期"},
+                 {"id": "fact:2", "included": True, "reason": ""},
+             ]}}},
+            {"agent": "narrative", "turn": 0, "output": "开场"},
+            {"agent": "narrative", "turn": 1, "output": "继续"},
+        ],
+    }
+    m = score_session(mon, "wuxia")
+    assert m["causal_bridge_missing_turns"] == 1
+    assert m["causal_bridge_missing_rate"] == 1.0
+    assert m["repeated_purpose_turns"] == 1
+    assert m["memory_trace_coverage"] == 0.5
+    v = verdicts(m)
+    assert any("因果桥缺失" in item for item in v)
+    assert any("记忆召回不可解释" in item for item in v)
+
+
+def _branch_monitor(second_input: str, second_reply: str, patch: dict) -> dict:
+    return {"runs": [
+        {"agent": "pipeline", "turn": 0, "input": "开始游戏"},
+        {"agent": "pipeline", "turn": 1, "input": second_input},
+        {"agent": "narrative", "turn": 0, "output": "你站在门口。"},
+        {"agent": "narrative", "turn": 1, "output": json.dumps({
+            "narrative": second_reply,
+            "options": ["进去", "离开"],
+            "state_patch": patch,
+        }, ensure_ascii=False)},
+    ]}
+
+
+def test_branch_compare_detects_real_player_impact() -> None:
+    left = _branch_monitor("进去", "你推门进入。", {"loc": "屋内"})
+    right = _branch_monitor("离开", "你转身离开。", {"loc": "街上"})
+    result = compare_branch_sessions(left, right, "wuxia")
+    assert result["branch_turn"] == 1
+    assert result["effective"] is True
+    assert result["narrative_divergent_turns"] == [1]
+    assert result["state_divergent_turns"] == [1]
+    assert result["verdicts"] == []
+
+
+def test_branch_compare_flags_identical_branch() -> None:
+    left = _branch_monitor("进去", "你推门进入。", {"loc": "屋内"})
+    right = _branch_monitor("离开", "你推门进入。", {"loc": "屋内"})
+    result = compare_branch_sessions(left, right, "wuxia")
+    assert result["effective"] is False
+    assert result["verdicts"] == ["玩家分支未产生可检测差异：正文、选项和状态候选均相同"]

@@ -1,0 +1,43 @@
+id,title,year,source,stage,decision,primary_reason,url
+S01,Re3: Generating Longer Stories With Recursive Reprompting and Revision,2022,EMNLP,full_text,include,长篇规划与事实修订且有人工对照,https://aclanthology.org/2022.emnlp-main.296/
+S02,DOC: Improving Long Story Coherence With Detailed Outline Control,2023,ACL,full_text,include,层次大纲与控制且有人工对照,https://aclanthology.org/2023.acl-long.190/
+S03,CONCOCT: Vaguest-First Dynamic Planning for Creative Long-Form Story Generation,2023,Findings_EMNLP,full_text,include,层次规划和节奏的人评证据,https://aclanthology.org/2023.findings-emnlp.723/
+S04,Generating Long-form Story Using Dynamic Hierarchical Outlining with Memory-Enhancement,2025,NAACL,full_text,include,动态规划加时间知识图记忆及消融,https://aclanthology.org/2025.naacl-long.63/
+S05,Collective Critics for Creative Story Generation,2024,EMNLP,full_text,include,多批评者收益与反例边界,https://aclanthology.org/2024.emnlp-main.1046/
+S06,Plan Write and Revise: an Interactive System for Open-Domain Story Generation,2019,NAACL_Demo,full_text,include,人机规划写作修订的早期交互证据,https://aclanthology.org/N19-4016/
+S07,Are Large Language Models Capable of Generating Human-Level Narratives?,2024,EMNLP,full_text,include,人类与LLM叙事差异及弧线控制,https://aclanthology.org/2024.emnlp-main.978/
+S08,How to Tame Your Plotline: A Framework for Storytelling with LLMs,2024,WNU,full_text,include,目标停止条件和轻量阶段结构,https://aclanthology.org/2024.wnu-1.2/
+S09,Beyond Single-shot Writing: Deep Research Agents are Unreliable at Multi-turn Report Revision,2026,ACL,full_text,include,长文多轮修订会引发范围外回归的反证,https://aclanthology.org/2026.acl-long.609/
+S10,From Role-Play to Drama-Interaction: An LLM Solution,2024,Findings_ACL,full_text,include,直接互动戏剧与叙事链,https://aclanthology.org/2024.findings-acl.196/
+S11,IBSEN: Director-Actor Agent Collaboration for Controllable and Interactive Drama Script Generation,2024,ACL,full_text,include,导演演员架构的直接但窄场景证据,https://aclanthology.org/2024.acl-long.88/
+S12,Towards Enhanced Immersion and Agency for LLM-based Interactive Drama,2025,ACL,full_text,include,真实人评能动性且报告混合架构代价,https://aclanthology.org/2025.acl-long.546/
+S13,Player-Driven Emergence in LLM-Driven Game Narrative,2024,IEEE_CoG,full_text,include,28名玩家的开放互动行为证据,https://arxiv.org/abs/2404.17027
+S14,StoryVerse: Towards Co-authoring Dynamic Plot with LLM-based Character Simulation via Narrative Planning,2024,FDG,full_text,include,抽象行动与世界状态的直接原型,https://arxiv.org/abs/2405.13042
+S15,Drama Llama: An LLM-Powered Storylets Framework for Authorable Responsiveness in Interactive Narrative,2025,arXiv,full_text,include,故事片段触发器及六名作者预备研究,https://arxiv.org/abs/2501.09099
+S16,Open-Theatre: An Open-Source Toolkit for LLM-based Interactive Drama,2025,EMNLP_Demo,full_text,include,分层检索与高低成本互动架构参考,https://aclanthology.org/2025.emnlp-demos.31/
+S17,Generative Agents: Interactive Simulacra of Human Behavior,2023,UIST,full_text,include,记忆反思规划消融和行为可信度,https://arxiv.org/abs/2304.03442
+S18,CharacterBox: Evaluating the Role-Playing Capabilities of LLMs in Text-Based Virtual Worlds,2025,NAACL,full_text,include,轨迹式角色评估和BDI状态,https://aclanthology.org/2025.naacl-long.323/
+S19,TimeChara: Evaluating Point-in-Time Character Hallucination of Role-Playing Large Language Models,2024,Findings_ACL,full_text,include,时间点知识边界和RAG反例,https://aclanthology.org/2024.findings-acl.197/
+S20,Memory-Driven Role-Playing: Evaluation and Enhancement of Persona Knowledge Utilization in LLMs,2026,Findings_ACL,full_text,include,结构化记忆的选择与边界协议,https://aclanthology.org/2026.findings-acl.1175/
+S21,Beyond Static Persona Consistency: Dynamic Persona Coherence in LLM Role-Playing,2026,ACL,full_text,include,稳定身份与动态心理状态分层,https://aclanthology.org/2026.acl-long.1336/
+S22,Evaluating Very Long-Term Conversational Memory of LLM Agents,2024,ACL,full_text,include,600回合长程记忆与RAG局限,https://aclanthology.org/2024.acl-long.747/
+S23,Locomo-Plus: Beyond-Factual Cognitive Memory Evaluation Framework for LLM Agents,2026,ACL,full_text,include,隐式约束和语义线索断裂,https://aclanthology.org/2026.acl-long.1150/
+S24,RMM: A Recursive Memory Management Approach for Large Language Models,2025,ACL,full_text,include,多粒度摘要和回溯检索,https://aclanthology.org/2025.acl-long.413/
+S25,Can LLM Agents Stick to the Script? A Benchmark for Long-Horizon Consistency in Interactive Narratives,2026,arXiv,full_text,include,100个交互环境的事实与承诺压力测试,https://arxiv.org/abs/2608.08160
+S26,Lost in Stories: Consistency Bugs in Long Story Generation by LLMs,2026,arXiv,full_text,include,2000提示与19类长篇一致性错误,https://arxiv.org/abs/2603.05890
+S27,OpenMEVA: A Benchmark for Evaluating Open-ended Story Generation Metrics,2021,ACL,full_text,include,自动指标与人评相关性反证,https://aclanthology.org/2021.acl-long.500/
+S28,Of Human Criteria and Automatic Metrics: A Benchmark of the Evaluation of Story Generation,2022,COLING,full_text,include,1056故事和72指标的评估边界,https://aclanthology.org/2022.coling-1.509/
+S29,Mary the Cheeseburger-Eating Vegetarian: Do LLMs Recognize Incoherence in Narratives?,2026,EACL,full_text,include,LLM无法稳定识别人设冲突的反证,https://aclanthology.org/2026.eacl-long.280/
+S30,Illusions of the Gold Standard: A Large-scale Analysis of Human Evaluation Protocols for Long-form Text Generation,2026,ACL,full_text,include,284篇人工评价协议审计,https://aclanthology.org/2026.acl-long.635/
+S31,What Matters in Evaluating Book-Length Stories?,2025,ACL,full_text,include,书长文本聚合评价方法,https://aclanthology.org/2025.acl-long.799/
+S32,RoleLLM: Benchmarking Eliciting and Enhancing Role-Playing Abilities of Large Language Models,2024,Findings_ACL,full_text,exclude,主要是训练与角色问答不能直接支持运行架构,https://aclanthology.org/2024.findings-acl.878/
+S33,InCharacter: Evaluating Personality Fidelity in Role-Playing Agents through Psychological Interviews,2024,ACL,full_text,exclude,只用于静态人格访谈评价不覆盖互动剧情,https://aclanthology.org/2024.acl-long.102/
+S34,CharacterEval: A Chinese Benchmark for Role-Playing Conversational Agent Evaluation,2024,ACL,full_text,exclude,对话快照基准不能证明长程状态机制,https://aclanthology.org/2024.acl-long.638/
+S35,OpenToM: A Comprehensive Benchmark for Evaluating Theory-of-Mind Reasoning Capabilities of Large Language Models,2024,ACL,abstract,exclude,通用心智推理与项目叙事链路过远,https://aclanthology.org/2024.acl-long.466/
+S36,CharacterGPT: Scaling Character Simulation with Large Language Models,2025,NAACL_Industry,full_text,exclude,增量角色重建但运行时互动证据不足,https://aclanthology.org/2025.naacl-industry.24/
+S37,Post Persona Alignment for Multi-Session Personalized Dialogue,2025,Findings_EMNLP,abstract,exclude,主要是用户画像个性化对话而非虚构世界角色,https://aclanthology.org/2025.findings-emnlp.1098/
+S38,World-State Transformations for Consistent Interactive Narrative,2026,arXiv,full_text,exclude,仅8人探索性研究且细节不足以单独支持实现,https://arxiv.org/abs/2605.24719
+S39,IVIE: Interactive and Verifiable Storytelling with LLMs,2026,arXiv,abstract,exclude,极新预印本且结果核验不足,https://arxiv.org/abs/2606.13348
+S40,ConWriter: Consistency-Aware Long Story Generation,2026,arXiv,abstract,exclude,极新预印本且与已有一致性证据重复,https://arxiv.org/abs/2608.05169
+S41,AutoPlan: Automatic Planning of Interactive Decision-Making Tasks With Large Language Models,2023,Findings_EMNLP,title_abstract,exclude,通用决策任务未连接叙事体验,https://aclanthology.org/2023.findings-emnlp.205/
+S42,LONGAGENT: Achieving Question Answering for 128k-Token-Long Documents through Multi-Agent Collaboration,2024,EMNLP,title_abstract,exclude,长文问答多Agent不能外推到互动小说,https://aclanthology.org/2024.emnlp-main.912/

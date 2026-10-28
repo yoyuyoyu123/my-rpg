@@ -1,10 +1,8 @@
 """
 领域数据测试
 ============
-这些数据是从前端迁移过来的核心资产。测试确保迁移完整、结构自洽。
-
-为什么值得测：数据是自动提取生成的，如果哪天提取脚本出错或前端结构变了，
-这些断言会立刻发现，而不是等到玩的时候才发现某个世界观没提示词。
+世界公开元数据来自版本化 catalog，私有叙事资产留在后端。测试确保两部分
+能够完整合并，并与角色状态、扩展映射等领域数据保持自洽。
 """
 import sys
 from pathlib import Path
@@ -56,8 +54,25 @@ def test_every_world_has_prompt_and_presets() -> None:
     for wid, w in worlds.WORLDS.items():
         assert w.prompt.strip(), f"{wid} 缺提示词"
         assert w.name and w.family and w.skill_label, f"{wid} 缺基础字段"
+        assert w.color and w.card_icon and w.card_description and w.card_tag, f"{wid} 缺前端卡片字段"
         assert w.daily, f"{wid} 缺快捷动作"
         assert w.presets, f"{wid} 缺特色预设"
+
+
+def test_versioned_catalog_is_the_world_metadata_authority() -> None:
+    import json
+
+    payload = json.loads(worlds.CATALOG_PATH.read_text(encoding="utf-8"))
+    assert payload["schema_version"] == worlds.CATALOG_SCHEMA_VERSION
+    assert [row["id"] for row in payload["worlds"]] == list(worlds.WORLDS)
+    for row in payload["worlds"]:
+        loaded = worlds.WORLDS[row["id"]]
+        assert loaded.name == row["name"]
+        assert loaded.family == row["family"]
+        assert loaded.skill_label == row["skill_label"]
+        assert loaded.color == row["color"]
+        assert loaded.daily == row["daily"]
+        assert [preset.id for preset in loaded.presets] == [preset["id"] for preset in row["presets"]]
 
 
 def test_families_are_the_five_known_ones() -> None:

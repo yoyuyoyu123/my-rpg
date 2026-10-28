@@ -274,7 +274,9 @@ async def retrieve_context_bundle(
         lines.append(f"[{ent.kind}] {ent.canonical_name}：" + "；".join(parts))
         for fact in selected:
             trace.append({"id": f"fact:{fact.id}", "type": "fact", "included": True,
-                          "reason": "提及实体" if ent.canonical_name in (mentioned or []) else "重要度/近期"})
+                          "reason": "提及实体" if ent.canonical_name in (mentioned or []) else "重要度/近期",
+                          "source": fact.source or "narrative", "turn": fact.turn,
+                          "version": fact.id})
 
     sections: list[str] = []
     if lines:

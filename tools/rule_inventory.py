@@ -60,7 +60,39 @@ SOURCES = [
     ("app/services/director.py", "_CHECK_RULES", "GM 裁定", "检定"),
     ("app/services/state_audit.py", "AUDIT_RULES", "状态审计", "状态审计"),
     ("app/services/naming.py", "NAMING_INSTRUCTION", "规划器", "新专名产生方式"),
+    ("app/domain/rules.py", "STRUCTURED_WRITER_RULES", "写手", "结构化输出信封"),
 ]
+
+# 不是规则、只是被当成常量的东西。列在这里表示「看见了，确认不用清点」，
+# 而不是漏掉。
+NOT_RULES = {"COMPRESSED_NARRATION"}
+
+
+def untracked_rule_constants() -> list[tuple[str, str]]:
+    """找出像规则文本、却没进 SOURCES 的常量。
+
+    SOURCES 是手列的，新增的规则常量会**静默漏掉**——实测就漏了一次：
+    别人加了 STRUCTURED_WRITER_RULES 之后，棘轮照样全绿，因为清点器根本
+    没看见那条规则。一个有盲区的警报器等于没有警报器，所以这里反过来扫。
+    """
+    tracked = {c for _, c, _, _ in SOURCES} | NOT_RULES
+    out: list[tuple[str, str]] = []
+    for root, _dirs, files in os.walk(os.path.join(BACKEND, "app")):
+        for fn in files:
+            if not fn.endswith(".py"):
+                continue
+            path = os.path.join(root, fn)
+            with open(path, encoding="utf-8") as fh:
+                src = fh.read()
+            for m in re.finditer(r"^(_?[A-Z][A-Z_]{3,})\s*=\s*\(", src, re.M):
+                name = m.group(1)
+                if name in tracked:
+                    continue
+                body = extract_constant(src, name)
+                # 够长且含中文才像规则文本，排除元组、路径、枚举一类
+                if len(body) > 120 and re.search(r"[一-龥]", body):
+                    out.append((name, os.path.relpath(path, BACKEND)))
+    return sorted(out)
 
 # 规划器的硬规则不是一个常量，是嵌在提示词模板里的编号列表。
 PLANNER_FILE = "app/services/story_planner.py"

@@ -1,0 +1,2708 @@
+{
+  "schema_version": 1,
+  "fixture": "research\\regression\\fixtures\\replay_baseline.json",
+  "mode": "deterministic_protocol",
+  "scenario_count": 10,
+  "passed": 10,
+  "failed": 0,
+  "comparisons": [
+    {
+      "kind": "branch_difference",
+      "left": "ordinary_adventure_branch_a",
+      "right": "ordinary_adventure_branch_b",
+      "paths": [
+        "final_state.loc",
+        "final_state.inv",
+        "final_state.res"
+      ],
+      "differences": [
+        "final_state.loc",
+        "final_state.inv",
+        "final_state.res"
+      ],
+      "status": "passed"
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "commitment_recall_5_turns",
+      "status": "passed",
+      "turn_count": 5,
+      "model_calls": 5,
+      "failures": [],
+      "counts": {
+        "entities": 0,
+        "facts": 0,
+        "events": 0,
+        "commitments": 1,
+        "beliefs": 0
+      },
+      "turns": [
+        {
+          "turn": 1,
+          "input": "向王掌柜答应明天上午来取货",
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "cde388e2",
+          "prompt_chars": 5340,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 20,
+          "option_count": 3,
+          "state_before": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {
+            "events_written": 0,
+            "commitments_written": 1,
+            "beliefs_written": 0,
+            "character_states_written": 0
+          },
+          "duration_ms": 12.364,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 2,
+          "input": "去市场买水",
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "retrieved_ids": [
+            "com_pickup_goods",
+            "com_pickup_goods"
+          ],
+          "excluded_ids": [],
+          "retrieval_reasons": [
+            {
+              "id": "com_pickup_goods",
+              "reason": "硬约束"
+            },
+            {
+              "id": "com_pickup_goods",
+              "reason": "硬约束"
+            }
+          ],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "01446312",
+          "prompt_chars": 5539,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 1,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 8,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 5.707,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 3,
+          "input": "在街边休息",
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "retrieved_ids": [
+            "com_pickup_goods",
+            "com_pickup_goods"
+          ],
+          "excluded_ids": [],
+          "retrieval_reasons": [
+            {
+              "id": "com_pickup_goods",
+              "reason": "硬约束"
+            },
+            {
+              "id": "com_pickup_goods",
+              "reason": "硬约束"
+            }
+          ],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "01446312",
+          "prompt_chars": 5539,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 1,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 12,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 4.089,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 4,
+          "input": "回到茶馆询问昨天的约定",
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "retrieved_ids": [
+            "com_pickup_goods",
+            "com_pickup_goods"
+          ],
+          "excluded_ids": [],
+          "retrieval_reasons": [
+            {
+              "id": "com_pickup_goods",
+              "reason": "硬约束"
+            },
+            {
+              "id": "com_pickup_goods",
+              "reason": "硬约束"
+            }
+          ],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "01446312",
+          "prompt_chars": 5539,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 1,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 22,
+          "option_count": 3,
+          "state_before": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {
+            "events_written": 0,
+            "commitments_written": 0,
+            "beliefs_written": 0,
+            "character_states_written": 0
+          },
+          "duration_ms": 9.601,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 5,
+          "input": "先离开茶馆",
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "retrieved_ids": [
+            "com_pickup_goods",
+            "com_pickup_goods"
+          ],
+          "excluded_ids": [],
+          "retrieval_reasons": [
+            {
+              "id": "com_pickup_goods",
+              "reason": "硬约束"
+            },
+            {
+              "id": "com_pickup_goods",
+              "reason": "硬约束"
+            }
+          ],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "01446312",
+          "prompt_chars": 5539,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 1,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 9,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 3.531,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        }
+      ],
+      "final_state": {
+        "res": {
+          "coins": 100
+        },
+        "inv": [],
+        "skills": [],
+        "loc": "",
+        "npcs": {},
+        "ledger_count": 0
+      }
+    },
+    {
+      "id": "npc_knowledge_boundary_3_turns",
+      "status": "passed",
+      "turn_count": 3,
+      "model_calls": 3,
+      "failures": [],
+      "counts": {
+        "entities": 0,
+        "facts": 0,
+        "events": 0,
+        "commitments": 0,
+        "beliefs": 1
+      },
+      "turns": [
+        {
+          "turn": 1,
+          "input": "私下告诉林晓，钥匙藏在旧井边",
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "cde388e2",
+          "prompt_chars": 5340,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 15,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {
+            "events_written": 0,
+            "commitments_written": 0,
+            "beliefs_written": 1,
+            "character_states_written": 0
+          },
+          "duration_ms": 10.705,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 2,
+          "input": "去找王掌柜买面包",
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "cde388e2",
+          "prompt_chars": 5340,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 15,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 6.791,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 3,
+          "input": "问王掌柜是否知道钥匙在哪",
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "cde388e2",
+          "prompt_chars": 5340,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 17,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 7.731,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        }
+      ],
+      "final_state": {
+        "res": {},
+        "inv": [],
+        "skills": [],
+        "loc": "",
+        "npcs": {},
+        "ledger_count": 0
+      }
+    },
+    {
+      "id": "state_transaction_4_turns",
+      "status": "passed",
+      "turn_count": 4,
+      "model_calls": 4,
+      "failures": [],
+      "counts": {
+        "entities": 0,
+        "facts": 0,
+        "events": 0,
+        "commitments": 0,
+        "beliefs": 0
+      },
+      "turns": [
+        {
+          "turn": 1,
+          "input": "花二十枚金币买两瓶药水",
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "e0122c4b",
+          "prompt_chars": 5337,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 21,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "coins": 100
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "coins": 80
+            },
+            "inv": [
+              {
+                "id": "item_1q8i17i",
+                "name": "药水",
+                "quantity": 2
+              }
+            ],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "patch": {
+            "res_delta": {
+              "coins": -20
+            },
+            "inv_add": [
+              {
+                "name": "药水",
+                "quantity": 2
+              }
+            ]
+          },
+          "ledger_counts": {},
+          "duration_ms": 8.752,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 2,
+          "input": "把一瓶药水放进背包",
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "7c479392",
+          "prompt_chars": 5348,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 9,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "coins": 80
+            },
+            "inv": [
+              {
+                "id": "item_1q8i17i",
+                "name": "药水",
+                "quantity": 2
+              }
+            ],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "state_after": {
+            "res": {
+              "coins": 80
+            },
+            "inv": [
+              {
+                "id": "item_1q8i17i",
+                "name": "药水",
+                "quantity": 2
+              }
+            ],
+            "skills": [],
+            "loc": "商店后门",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "patch": {
+            "loc": "商店后门"
+          },
+          "ledger_counts": {},
+          "duration_ms": 4.651,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 3,
+          "input": "喝掉一瓶药水",
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "6b958761",
+          "prompt_chars": 5396,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 9,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "coins": 80
+            },
+            "inv": [
+              {
+                "id": "item_1q8i17i",
+                "name": "药水",
+                "quantity": 2
+              }
+            ],
+            "skills": [],
+            "loc": "商店后门",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "state_after": {
+            "res": {
+              "coins": 80
+            },
+            "inv": [
+              {
+                "id": "item_1q8i17i",
+                "name": "药水",
+                "quantity": 1
+              }
+            ],
+            "skills": [],
+            "loc": "商店后门",
+            "npcs": {},
+            "ledger_count": 2
+          },
+          "patch": {
+            "inv_rm": [
+              {
+                "name": "药水",
+                "quantity": 1
+              }
+            ]
+          },
+          "ledger_counts": {},
+          "duration_ms": 5.627,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 4,
+          "input": "查看余额和背包",
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "e9c28544",
+          "prompt_chars": 5396,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 10,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "coins": 80
+            },
+            "inv": [
+              {
+                "id": "item_1q8i17i",
+                "name": "药水",
+                "quantity": 1
+              }
+            ],
+            "skills": [],
+            "loc": "商店后门",
+            "npcs": {},
+            "ledger_count": 2
+          },
+          "state_after": {
+            "res": {
+              "coins": 80
+            },
+            "inv": [
+              {
+                "id": "item_1q8i17i",
+                "name": "药水",
+                "quantity": 1
+              }
+            ],
+            "skills": [],
+            "loc": "商店后门",
+            "npcs": {},
+            "ledger_count": 2
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 5.018,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        }
+      ],
+      "final_state": {
+        "res": {
+          "coins": 80
+        },
+        "inv": [
+          {
+            "id": "item_1q8i17i",
+            "name": "药水",
+            "quantity": 1
+          }
+        ],
+        "skills": [],
+        "loc": "商店后门",
+        "npcs": {},
+        "ledger_count": 2
+      }
+    },
+    {
+      "id": "rejection_persistence_4_turns",
+      "status": "passed",
+      "turn_count": 4,
+      "model_calls": 4,
+      "failures": [],
+      "counts": {
+        "entities": 0,
+        "facts": 0,
+        "events": 0,
+        "commitments": 1,
+        "beliefs": 0
+      },
+      "turns": [
+        {
+          "turn": 1,
+          "input": "我不接护送镖车的委托",
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "c57ce59a",
+          "prompt_chars": 5494,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 19,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {
+            "events_written": 0,
+            "commitments_written": 1,
+            "beliefs_written": 0,
+            "character_states_written": 0
+          },
+          "duration_ms": 11.747,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 2,
+          "input": "去武馆看弟子练拳",
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "retrieved_ids": [
+            "refusal_escort",
+            "refusal_escort"
+          ],
+          "excluded_ids": [],
+          "retrieval_reasons": [
+            {
+              "id": "refusal_escort",
+              "reason": "硬约束"
+            },
+            {
+              "id": "refusal_escort",
+              "reason": "硬约束"
+            }
+          ],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "d2d8522a",
+          "prompt_chars": 5683,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 1,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 23,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 4.682,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 3,
+          "input": "在街上买烧饼",
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "retrieved_ids": [
+            "refusal_escort",
+            "refusal_escort"
+          ],
+          "excluded_ids": [],
+          "retrieval_reasons": [
+            {
+              "id": "refusal_escort",
+              "reason": "硬约束"
+            },
+            {
+              "id": "refusal_escort",
+              "reason": "硬约束"
+            }
+          ],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "d2d8522a",
+          "prompt_chars": 5683,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 1,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 15,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 4.977,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 4,
+          "input": "再问赵镖头那趟护送",
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "retrieved_ids": [
+            "refusal_escort",
+            "refusal_escort"
+          ],
+          "excluded_ids": [],
+          "retrieval_reasons": [
+            {
+              "id": "refusal_escort",
+              "reason": "硬约束"
+            },
+            {
+              "id": "refusal_escort",
+              "reason": "硬约束"
+            }
+          ],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "d2d8522a",
+          "prompt_chars": 5683,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 1,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 25,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 7.669,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        }
+      ],
+      "final_state": {
+        "res": {},
+        "inv": [],
+        "skills": [],
+        "loc": "",
+        "npcs": {},
+        "ledger_count": 0
+      }
+    },
+    {
+      "id": "ordinary_adventure_branch_a",
+      "status": "passed",
+      "turn_count": 2,
+      "model_calls": 2,
+      "failures": [],
+      "counts": {
+        "entities": 0,
+        "facts": 0,
+        "events": 0,
+        "commitments": 0,
+        "beliefs": 0
+      },
+      "turns": [
+        {
+          "turn": 1,
+          "input": "我向公会接下采集蓝莓的工作",
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "b4e60ba4",
+          "prompt_chars": 5551,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 26,
+          "option_count": 3,
+          "state_before": {
+            "res": {
+              "coins": 20
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "coins": 25
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "北门",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {
+            "loc": "北门",
+            "res_delta": {
+              "coins": 5
+            }
+          },
+          "ledger_counts": {},
+          "duration_ms": 9.859,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 2,
+          "input": "我带着采集到的蓝莓回公会交差",
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "a54b654f",
+          "prompt_chars": 5595,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 20,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "coins": 25
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "北门",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "coins": 40
+            },
+            "inv": [
+              {
+                "id": "item_1p8oma2",
+                "name": "采集篮",
+                "quantity": 1
+              }
+            ],
+            "skills": [],
+            "loc": "北门",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "patch": {
+            "res_delta": {
+              "coins": 15
+            },
+            "inv_add": [
+              {
+                "name": "采集篮",
+                "quantity": 1
+              }
+            ]
+          },
+          "ledger_counts": {},
+          "duration_ms": 7.199,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        }
+      ],
+      "final_state": {
+        "res": {
+          "coins": 40
+        },
+        "inv": [
+          {
+            "id": "item_1p8oma2",
+            "name": "采集篮",
+            "quantity": 1
+          }
+        ],
+        "skills": [],
+        "loc": "北门",
+        "npcs": {},
+        "ledger_count": 1
+      }
+    },
+    {
+      "id": "ordinary_adventure_branch_b",
+      "status": "passed",
+      "turn_count": 2,
+      "model_calls": 2,
+      "failures": [],
+      "counts": {
+        "entities": 0,
+        "facts": 0,
+        "events": 0,
+        "commitments": 0,
+        "beliefs": 0
+      },
+      "turns": [
+        {
+          "turn": 1,
+          "input": "我不接公会工作，去河边找地方钓鱼",
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "b4e60ba4",
+          "prompt_chars": 5551,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 26,
+          "option_count": 4,
+          "state_before": {
+            "res": {
+              "coins": 20
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "coins": 20
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "河滩",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {
+            "loc": "河滩"
+          },
+          "ledger_counts": {},
+          "duration_ms": 6.149,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 2,
+          "input": "我把钓到的鱼卖给河边的摊主",
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "0cabaa6b",
+          "prompt_chars": 5595,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 23,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "coins": 20
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "河滩",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "coins": 28
+            },
+            "inv": [
+              {
+                "id": "item_w5oks8",
+                "name": "鱼篓",
+                "quantity": 1
+              }
+            ],
+            "skills": [],
+            "loc": "河滩",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "patch": {
+            "res_delta": {
+              "coins": 8
+            },
+            "inv_add": [
+              {
+                "name": "鱼篓",
+                "quantity": 1
+              }
+            ]
+          },
+          "ledger_counts": {},
+          "duration_ms": 4.851,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        }
+      ],
+      "final_state": {
+        "res": {
+          "coins": 28
+        },
+        "inv": [
+          {
+            "id": "item_w5oks8",
+            "name": "鱼篓",
+            "quantity": 1
+          }
+        ],
+        "skills": [],
+        "loc": "河滩",
+        "npcs": {},
+        "ledger_count": 1
+      }
+    },
+    {
+      "id": "xianxia_growth_4_turns",
+      "status": "passed",
+      "turn_count": 4,
+      "model_calls": 4,
+      "failures": [],
+      "counts": {
+        "entities": 0,
+        "facts": 0,
+        "events": 0,
+        "commitments": 0,
+        "beliefs": 0
+      },
+      "turns": [
+        {
+          "turn": 1,
+          "input": "我先询问师兄这枚灵石能换多少药材",
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "b83c868f",
+          "prompt_chars": 5209,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 32,
+          "option_count": 3,
+          "state_before": {
+            "res": {
+              "灵石": 3
+            },
+            "inv": [],
+            "skills": [
+              "吐纳"
+            ],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "灵石": 3
+            },
+            "inv": [],
+            "skills": [
+              "吐纳"
+            ],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 9.035,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 2,
+          "input": "我用一枚灵石买下最便宜的炼气药材",
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "fe3a9c5d",
+          "prompt_chars": 5217,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 21,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "灵石": 3
+            },
+            "inv": [],
+            "skills": [
+              "吐纳"
+            ],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "灵石": 2
+            },
+            "inv": [
+              {
+                "id": "item_fdw0qa",
+                "name": "炼气药材",
+                "quantity": 1
+              }
+            ],
+            "skills": [
+              "吐纳"
+            ],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "patch": {
+            "res_delta": {
+              "灵石": -1
+            },
+            "inv_add": [
+              {
+                "name": "炼气药材",
+                "quantity": 1
+              }
+            ]
+          },
+          "ledger_counts": {},
+          "duration_ms": 7.427,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 3,
+          "input": "我按师兄教的方法吐纳一晚",
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "2f00b993",
+          "prompt_chars": 5233,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 23,
+          "option_count": 3,
+          "state_before": {
+            "res": {
+              "灵石": 2
+            },
+            "inv": [
+              {
+                "id": "item_fdw0qa",
+                "name": "炼气药材",
+                "quantity": 1
+              }
+            ],
+            "skills": [
+              "吐纳"
+            ],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "state_after": {
+            "res": {
+              "灵石": 2
+            },
+            "inv": [
+              {
+                "id": "item_fdw0qa",
+                "name": "炼气药材",
+                "quantity": 1
+              }
+            ],
+            "skills": [
+              "吐纳"
+            ],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "patch": {
+            "attr_delta": {
+              "灵力": 1
+            }
+          },
+          "ledger_counts": {},
+          "duration_ms": 7.155,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 4,
+          "input": "查看自己的灵力和药材",
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "d707ede2",
+          "prompt_chars": 5233,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 19,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "灵石": 2
+            },
+            "inv": [
+              {
+                "id": "item_fdw0qa",
+                "name": "炼气药材",
+                "quantity": 1
+              }
+            ],
+            "skills": [
+              "吐纳"
+            ],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "state_after": {
+            "res": {
+              "灵石": 2
+            },
+            "inv": [
+              {
+                "id": "item_fdw0qa",
+                "name": "炼气药材",
+                "quantity": 1
+              }
+            ],
+            "skills": [
+              "吐纳"
+            ],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 1
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 4.497,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        }
+      ],
+      "final_state": {
+        "res": {
+          "灵石": 2
+        },
+        "inv": [
+          {
+            "id": "item_fdw0qa",
+            "name": "炼气药材",
+            "quantity": 1
+          }
+        ],
+        "skills": [
+          "吐纳"
+        ],
+        "loc": "",
+        "npcs": {},
+        "ledger_count": 1
+      }
+    },
+    {
+      "id": "modernlife_relationship_4_turns",
+      "status": "passed",
+      "turn_count": 4,
+      "model_calls": 4,
+      "failures": [],
+      "counts": {
+        "entities": 0,
+        "facts": 0,
+        "events": 0,
+        "commitments": 0,
+        "beliefs": 0
+      },
+      "turns": [
+        {
+          "turn": 1,
+          "input": "我向同桌夏遥道歉，说明昨天忘了带资料",
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "d906feea",
+          "prompt_chars": 5292,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 29,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {
+            "events_written": 0,
+            "commitments_written": 0,
+            "beliefs_written": 0,
+            "character_states_written": 1
+          },
+          "duration_ms": 10.887,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 2,
+          "input": "放学后和夏遥一起整理资料",
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "retrieved_ids": [
+            "char:1",
+            "char:1"
+          ],
+          "excluded_ids": [],
+          "retrieval_reasons": [
+            {
+              "id": "char:1",
+              "reason": "在场人物"
+            },
+            {
+              "id": "char:1",
+              "reason": "在场人物"
+            }
+          ],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "35d2d6ba",
+          "prompt_chars": 5521,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 20,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {
+            "events_written": 0,
+            "commitments_written": 0,
+            "beliefs_written": 0,
+            "character_states_written": 0
+          },
+          "duration_ms": 8.745,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 3,
+          "input": "第二天在教室和夏遥打招呼",
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "retrieved_ids": [
+            "char:1",
+            "char:1"
+          ],
+          "excluded_ids": [],
+          "retrieval_reasons": [
+            {
+              "id": "char:1",
+              "reason": "在场人物"
+            },
+            {
+              "id": "char:1",
+              "reason": "在场人物"
+            }
+          ],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "9c49b626",
+          "prompt_chars": 5513,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 24,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 8.068,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 4,
+          "input": "查看夏遥的状态",
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "retrieved_ids": [
+            "char:1",
+            "char:1"
+          ],
+          "excluded_ids": [],
+          "retrieval_reasons": [
+            {
+              "id": "char:1",
+              "reason": "在场人物"
+            },
+            {
+              "id": "char:1",
+              "reason": "在场人物"
+            }
+          ],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "9c49b626",
+          "prompt_chars": 5513,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 21,
+          "option_count": 2,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 7.522,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        }
+      ],
+      "final_state": {
+        "res": {},
+        "inv": [],
+        "skills": [],
+        "loc": "",
+        "npcs": {},
+        "ledger_count": 0
+      }
+    },
+    {
+      "id": "cyber_social_4_turns",
+      "status": "passed",
+      "turn_count": 4,
+      "model_calls": 4,
+      "failures": [],
+      "counts": {
+        "entities": 0,
+        "facts": 0,
+        "events": 0,
+        "commitments": 0,
+        "beliefs": 0
+      },
+      "turns": [
+        {
+          "turn": 1,
+          "input": "我给刚进门的快递员调一杯不含酒精的饮料",
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "0698c027",
+          "prompt_chars": 5802,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 21,
+          "option_count": 3,
+          "state_before": {
+            "res": {
+              "credits": 80
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "credits": 80
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 11.034,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 2,
+          "input": "我听他讲今天送件遇到的麻烦",
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "0698c027",
+          "prompt_chars": 5802,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 32,
+          "option_count": 3,
+          "state_before": {
+            "res": {
+              "credits": 80
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "credits": 80
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 7.097,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 3,
+          "input": "我收下饮料钱，继续招呼普通客人",
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "0698c027",
+          "prompt_chars": 5802,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 23,
+          "option_count": 3,
+          "state_before": {
+            "res": {
+              "credits": 80
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "credits": 88
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {
+            "res_delta": {
+              "credits": 8
+            }
+          },
+          "ledger_counts": {},
+          "duration_ms": 4.971,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 4,
+          "input": "打烊后回住处休息",
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "0698c027",
+          "prompt_chars": 5802,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 22,
+          "option_count": 2,
+          "state_before": {
+            "res": {
+              "credits": 88
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {
+              "credits": 88
+            },
+            "inv": [],
+            "skills": [],
+            "loc": "住处",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {
+            "loc": "住处"
+          },
+          "ledger_counts": {},
+          "duration_ms": 4.186,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        }
+      ],
+      "final_state": {
+        "res": {
+          "credits": 88
+        },
+        "inv": [],
+        "skills": [],
+        "loc": "住处",
+        "npcs": {},
+        "ledger_count": 0
+      }
+    },
+    {
+      "id": "transmigration_chain_5_turns",
+      "status": "passed",
+      "turn_count": 5,
+      "model_calls": 5,
+      "failures": [],
+      "counts": {
+        "entities": 0,
+        "facts": 0,
+        "events": 0,
+        "commitments": 0,
+        "beliefs": 0
+      },
+      "turns": [
+        {
+          "turn": 1,
+          "input": "我还在原世界的房间里，先确认发生了什么",
+          "state_version_before": 0,
+          "state_version_after": 1,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": true,
+          "premise_phase": "before",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "9a3aee72",
+          "prompt_chars": 6385,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 42,
+          "option_count": 3,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 6.757,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 2,
+          "input": "我拆开信封，确认那道光来自哪里",
+          "state_version_before": 1,
+          "state_version_after": 2,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": true,
+          "premise_phase": "trigger",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "d3260b44",
+          "prompt_chars": 6442,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 32,
+          "option_count": 3,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 4.514,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 3,
+          "input": "我抓住桌沿，不想被强行带走",
+          "state_version_before": 2,
+          "state_version_after": 3,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": true,
+          "premise_phase": "threshold",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "dab9a5f9",
+          "prompt_chars": 6472,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 32,
+          "option_count": 3,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {},
+          "ledger_counts": {},
+          "duration_ms": 4.66,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 4,
+          "input": "我在陌生的草地上醒来，先确认自己还活着",
+          "state_version_before": 3,
+          "state_version_after": 4,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "arrival",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "e2f327ac",
+          "prompt_chars": 6433,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 40,
+          "option_count": 3,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "陌生草地",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {
+            "loc": "陌生草地"
+          },
+          "ledger_counts": {},
+          "duration_ms": 5.708,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        },
+        {
+          "turn": 5,
+          "input": "我沿着道路走向看得见的学院围墙",
+          "state_version_before": 4,
+          "state_version_after": 5,
+          "retrieved_ids": [],
+          "excluded_ids": [],
+          "retrieval_reasons": [],
+          "scene_contract_id": "",
+          "planner_called": false,
+          "premise_phase": "landed",
+          "agent_runs": [
+            {
+              "agent": "cassette_provider",
+              "status": "completed",
+              "calls": 1
+            }
+          ],
+          "prompt_hash": "37213f01",
+          "prompt_chars": 6476,
+          "retrieval_counts": {
+            "facts": 0,
+            "events": 0,
+            "commitments": 0,
+            "beliefs": 0
+          },
+          "model_calls": 1,
+          "narrative_chars": 30,
+          "option_count": 3,
+          "state_before": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "陌生草地",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "state_after": {
+            "res": {},
+            "inv": [],
+            "skills": [],
+            "loc": "学院门口",
+            "npcs": {},
+            "ledger_count": 0
+          },
+          "patch": {
+            "loc": "学院门口"
+          },
+          "ledger_counts": {},
+          "duration_ms": 4.649,
+          "status": "completed",
+          "validation_result": {
+            "status": "passed",
+            "errors": []
+          }
+        }
+      ],
+      "final_state": {
+        "res": {},
+        "inv": [],
+        "skills": [],
+        "loc": "学院门口",
+        "npcs": {},
+        "ledger_count": 0
+      }
+    }
+  ]
+}

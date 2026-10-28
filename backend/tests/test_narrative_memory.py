@@ -9,7 +9,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from app.db.models import Base, NarrativeEvent, Session  # noqa: E402
+from app.db.models import (  # noqa: E402
+    Base, CharacterState, Commitment, NarrativeEvent, NpcBelief, Session,
+)
 from app.schemas.narrative import NarrativeLedgerWrite  # noqa: E402
 from app.services.extractor import parse_bundle  # noqa: E402
 from app.services.memory import retrieve_context_bundle  # noqa: E402
@@ -138,3 +140,54 @@ async def test_character_state_layers_do_not_get_erased_by_empty_update(db: Asyn
     assert "找到帮工" in ctx.text
     assert "忙碌" not in ctx.text
     assert any(x["reason"] == "短期状态已自然衰减" for x in ctx.trace)
+
+
+@pytest.mark.asyncio
+async def test_late_arriving_older_turn_cannot_overwrite_newer_ledger_state(
+    db: AsyncSession,
+) -> None:
+    """后台抽取可能乱序完成；第 6 回合晚到也不能盖掉已经入库的第 8 回合。"""
+    common = {
+        "commitments": [{
+            "id": "com_async",
+            "kind": "promise",
+            "owner": "老板",
+            "text": "替玩家保管包裹",
+            "status": "active",
+        }],
+        "beliefs": [{
+            "npc": "老板",
+            "statement": "包裹在柜台下",
+            "mode": "knows",
+            "confidence": 80,
+            "status": "active",
+        }],
+        "character_states": [{
+            "name": "老板",
+            "mid_term": {"goal": "经营茶馆"},
+        }],
+    }
+    await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({"turn": 3, **common}))
+    await db.commit()
+    await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+        "turn": 8,
+        "commitments": [{**common["commitments"][0], "status": "fulfilled"}],
+        "beliefs": [{**common["beliefs"][0], "confidence": 100, "status": "corrected"}],
+        "character_states": [{"name": "老板", "mid_term": {"goal": "筹备分店"}}],
+    }))
+    await db.commit()
+    await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+        "turn": 6,
+        "commitments": [{**common["commitments"][0], "status": "cancelled"}],
+        "beliefs": [{**common["beliefs"][0], "confidence": 20, "status": "active"}],
+        "character_states": [{"name": "老板", "mid_term": {"goal": "关闭茶馆"}}],
+    }))
+    await db.commit()
+
+    commitment = await db.get(Commitment, "com_async")
+    belief = (await db.execute(select(NpcBelief))).scalar_one()
+    character = (await db.execute(select(CharacterState))).scalar_one()
+    assert commitment.status == "fulfilled" and commitment.updated_turn == 8
+    assert belief.status == "corrected" and belief.confidence == 100
+    assert character.mid_term_json == '{"goal":"筹备分店"}'
+    assert character.updated_turn == 8

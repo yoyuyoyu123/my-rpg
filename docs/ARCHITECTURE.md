@@ -126,10 +126,11 @@ FAILED 必须保留用户输入、错误原因和可恢复状态，不得清空�
 | 系统/配置 | `/health`、`/api/config`、`/api/providers` | 本机配置和服务诊断 |
 | 世界 | `/api/worlds` | 世界/预设目录，未来由版本化世界包提供 |
 | 对话 | `/api/chat`、`/api/chat/stream` | 供应商代理和 SSE |
-| 回合 | `/api/turn/prompt`、`/api/state/apply` | 当前兼容层；最终由 `TurnService` 统一编排 |
+| 回合 | `/api/turn/prompt`、`/api/state/apply`、`/api/sessions/{sid}/turn/commit` | 提示词/状态仍是兼容层；TurnService 已接管最终原子提交，后续向前扩展到整条状态机 |
 | 规划 | `/api/story/plan/prompt`、`/api/story/plan/result` | SceneContract 生成与校验 |
 | 记忆 | `/api/sessions/*` | 事实、事件、承诺、NPC知识和上下文检索 |
 | 存档 | `/api/saves/*` | 快照保存、读取、删除和槽位管理 |
+| 运行监视 | `/api/agent-runs`、`/api/sessions/{sid}/agent-runs` | AgentRun 运行记录写入；按会话/回合、Agent、状态查询并支持 `offset/limit` 分页；当前为尽力持久化 |
 
 API 以后必须补充：契约版本、错误码、幂等键、超时语义和向后兼容策略。
 
@@ -176,4 +177,3 @@ my-rpg/
 ```
 
 迁移原则：先把接口和职责抽出来，再移动文件；禁止一次性重写前端和后端。
-

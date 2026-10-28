@@ -1,0 +1,287 @@
+{
+  "schema_version": 1,
+  "description": "Phase 0 deterministic protocol replay seed set",
+  "scenarios": [
+    {
+      "id": "commitment_recall_5_turns",
+      "description": "承诺写入、跨回合召回与幂等更新",
+      "world_id": "fantasy",
+      "pace": "medium",
+      "setup": {
+        "game_state": {
+          "revealed": false,
+          "res": {"coins": 100},
+          "caps": {"coins": 1000},
+          "inv": [],
+          "skills": [],
+          "loadout": {"activeCoreId": null},
+          "attrs": {},
+          "npcs": {},
+          "ledger": []
+        }
+      },
+      "turns": [
+        {
+          "input": "向王掌柜答应明天上午来取货",
+          "mentioned": ["王掌柜"],
+          "response": {
+            "narrative": "王掌柜记下了约定，说明天上午会把货备好。",
+            "options": ["确认时间", "先离开", "询问价格"],
+            "ledger": {
+              "commitments": [
+                {
+                  "id": "com_pickup_goods",
+                  "kind": "promise",
+                  "owner": "王掌柜",
+                  "counterparty": "玩家",
+                  "text": "王掌柜答应明天上午把货备好",
+                  "status": "active",
+                  "hard": true,
+                  "due_turn": 4,
+                  "forbids": ["不得假装从未约定"]
+                }
+              ]
+            }
+          },
+          "expect_option_count": 3
+        },
+        {"input": "去市场买水", "response": {"narrative": "你在市场买了水。", "options": ["回茶馆", "去码头"]}},
+        {"input": "在街边休息", "response": {"narrative": "你在树荫下休息了一会儿。", "options": ["继续走", "回客栈"]}},
+        {
+          "input": "回到茶馆询问昨天的约定",
+          "mentioned": ["王掌柜"],
+          "response": {
+            "narrative": "王掌柜认出了你，说明天上午的货已经记在账上。",
+            "options": ["确认取货", "询问变更", "暂时离开"],
+            "ledger": {
+              "commitments": [
+                {
+                  "id": "com_pickup_goods",
+                  "kind": "promise",
+                  "owner": "王掌柜",
+                  "counterparty": "玩家",
+                  "text": "王掌柜答应明天上午把货备好",
+                  "status": "active",
+                  "hard": true,
+                  "due_turn": 4,
+                  "forbids": ["不得假装从未约定"]
+                }
+              ]
+            }
+          }
+        },
+        {"input": "先离开茶馆", "response": {"narrative": "你暂时离开了茶馆。", "options": ["去码头", "回住处"]}}
+      ],
+      "assertions": [
+        {"kind": "commitment", "text_contains": "明天上午把货备好", "status": "active"},
+        {"kind": "no_commitment_duplicate", "text_contains": "明天上午把货备好", "max_count": 1}
+      ]
+    },
+    {
+      "id": "npc_knowledge_boundary_3_turns",
+      "description": "秘密只进入被授权 NPC 的知识层",
+      "world_id": "fantasy",
+      "pace": "medium",
+      "setup": {
+        "game_state": {
+          "revealed": false,
+          "res": {},
+          "caps": {},
+          "inv": [],
+          "skills": [],
+          "loadout": {"activeCoreId": null},
+          "attrs": {},
+          "npcs": {},
+          "ledger": []
+        }
+      },
+      "turns": [
+        {
+          "input": "私下告诉林晓，钥匙藏在旧井边",
+          "mentioned": ["林晓"],
+          "response": {
+            "narrative": "你压低声音告诉林晓钥匙的位置。",
+            "options": ["叮嘱保密", "询问她的打算"],
+            "ledger": {
+              "beliefs": [
+                {
+                  "npc": "林晓",
+                  "statement": "钥匙藏在旧井边",
+                  "mode": "knows",
+                  "confidence": 100,
+                  "source": "玩家私下告知",
+                  "status": "active"
+                }
+              ]
+            }
+          }
+        },
+        {"input": "去找王掌柜买面包", "mentioned": ["王掌柜"], "response": {"narrative": "王掌柜只按公开价格卖给你面包。", "options": ["付款", "询问营业时间"]}},
+        {"input": "问王掌柜是否知道钥匙在哪", "mentioned": ["王掌柜"], "response": {"narrative": "王掌柜表示自己从未听说过那把钥匙。", "options": ["相信他", "继续追问"]}}
+      ],
+      "assertions": [
+        {"kind": "belief_absent", "npc": "王掌柜", "text_contains": "钥匙藏在旧井边"}
+      ]
+    },
+    {
+      "id": "state_transaction_4_turns",
+      "description": "资源、物品、位置的程序结算",
+      "world_id": "fantasy",
+      "pace": "short",
+      "setup": {
+        "game_state": {
+          "revealed": false,
+          "res": {"coins": 100},
+          "caps": {"coins": 1000},
+          "inv": [],
+          "skills": [],
+          "loadout": {"activeCoreId": null},
+          "attrs": {},
+          "npcs": {},
+          "ledger": []
+        }
+      },
+      "turns": [
+        {
+          "input": "花二十枚金币买两瓶药水",
+          "response": {
+            "narrative": "店主收下二十枚金币，把两瓶药水放到柜台上。",
+            "options": ["收好药水", "检查药水"],
+            "patch": {"res_delta": {"coins": -20}, "inv_add": [{"name": "药水", "quantity": 2}]}
+          }
+        },
+        {
+          "input": "把一瓶药水放进背包",
+          "response": {
+            "narrative": "你把药水收进背包。",
+            "options": ["继续购物", "离开商店"],
+            "patch": {"loc": "商店后门"}
+          }
+        },
+        {
+          "input": "喝掉一瓶药水",
+          "response": {
+            "narrative": "你喝掉了一瓶药水。",
+            "options": ["休息", "继续赶路"],
+            "patch": {"inv_rm": [{"name": "药水", "quantity": 1}]}
+          }
+        },
+        {"input": "查看余额和背包", "response": {"narrative": "你核对了余额和背包。", "options": ["离开", "继续询价"]}}
+      ],
+      "assertions": [
+        {"kind": "resource", "key": "coins", "equals": 80},
+        {"kind": "inventory_quantity", "name": "药水", "equals": 1},
+        {"kind": "location", "equals": "商店后门"}
+      ]
+    },
+    {
+      "id": "rejection_persistence_4_turns",
+      "description": "玩家拒绝任务后，原入口保持拒绝状态，不换皮重发",
+      "world_id": "wuxia",
+      "preset_id": "daxia",
+      "pace": "medium",
+      "setup": {"game_state": {"revealed": false, "res": {}, "caps": {}, "inv": [], "skills": [], "loadout": {"activeCoreId": null}, "attrs": {}, "npcs": {}, "ledger": []}},
+      "turns": [
+        {"input": "我不接护送镖车的委托", "mentioned": ["赵镖头"], "response": {"narrative": "赵镖头听完你的拒绝，点头收回了委托书。", "options": ["继续赶路", "询问别的活"], "ledger": {"commitments": [{"id": "refusal_escort", "kind": "refusal", "owner": "玩家", "counterparty": "赵镖头", "text": "玩家拒绝护送镖车的委托", "status": "rejected", "hard": true, "forbids": ["不得在没有新条件时重复邀请"]}]}}},
+        {"input": "去武馆看弟子练拳", "response": {"narrative": "武馆里传来整齐的喝声，师傅正在纠正弟子的步法。", "options": ["旁观一会儿", "离开武馆"]}},
+        {"input": "在街上买烧饼", "response": {"narrative": "摊主给你包了两个刚出炉的烧饼。", "options": ["付款", "问问附近的路"]}},
+        {"input": "再问赵镖头那趟护送", "mentioned": ["赵镖头"], "response": {"narrative": "赵镖头说明那趟镖已经另找了人，只能等以后有新的活。", "options": ["询问新委托", "暂时告辞"]}}
+      ],
+      "assertions": [{"kind": "commitment", "text_contains": "拒绝护送镖车", "status": "rejected"}, {"kind": "no_commitment_duplicate", "text_contains": "拒绝护送镖车", "max_count": 1}]
+    },
+    {
+      "id": "ordinary_adventure_branch_a",
+      "description": "普通冒险开局分支 A：接下采集工作",
+      "world_id": "fantasy",
+      "preset_id": "elona",
+      "pace": "medium",
+      "setup": {"game_state": {"revealed": false, "res": {"coins": 20}, "caps": {"coins": 1000}, "inv": [], "skills": [], "loadout": {"activeCoreId": null}, "attrs": {}, "npcs": {}, "ledger": []}},
+      "turns": [
+        {"input": "我向公会接下采集蓝莓的工作", "mentioned": ["公会柜台"], "response": {"narrative": "公会柜台登记了你的名字，给出北门外的采集地点和报酬。", "options": ["出发去北门", "先买篮子", "询问采集期限"], "patch": {"loc": "北门", "res_delta": {"coins": 5}}}},
+        {"input": "我带着采集到的蓝莓回公会交差", "mentioned": ["公会柜台"], "response": {"narrative": "柜台确认了蓝莓的数量，按约定结算了报酬。", "options": ["领取报酬", "询问下一份工作"], "patch": {"res_delta": {"coins": 15}, "inv_add": [{"name": "采集篮", "quantity": 1}]}}}
+      ],
+      "assertions": [{"kind": "location", "equals": "北门"}, {"kind": "resource", "key": "coins", "equals": 40}]
+    },
+    {
+      "id": "ordinary_adventure_branch_b",
+      "description": "普通冒险开局分支 B：留在河边钓鱼",
+      "world_id": "fantasy",
+      "preset_id": "elona",
+      "pace": "medium",
+      "setup": {"game_state": {"revealed": false, "res": {"coins": 20}, "caps": {"coins": 1000}, "inv": [], "skills": [], "loadout": {"activeCoreId": null}, "attrs": {}, "npcs": {}, "ledger": []}},
+      "turns": [
+        {"input": "我不接公会工作，去河边找地方钓鱼", "response": {"narrative": "你绕开公会，沿着小路来到河滩，找了块平整的石头坐下。", "options": ["整理鱼线", "观察水流", "回城", "找个安静位置"], "patch": {"loc": "河滩"}}},
+        {"input": "我把钓到的鱼卖给河边的摊主", "response": {"narrative": "摊主按市价收下了鱼，顺手告诉你明早河面会涨水。", "options": ["继续钓鱼", "回城休息"], "patch": {"res_delta": {"coins": 8}, "inv_add": [{"name": "鱼篓", "quantity": 1}]}}}
+      ],
+      "assertions": [{"kind": "location", "equals": "河滩"}, {"kind": "resource", "key": "coins", "equals": 28}]
+    },
+    {
+      "id": "xianxia_growth_4_turns",
+      "description": "仙侠凡人流：低阶资源、谨慎成长和师徒关系",
+      "world_id": "xianxia",
+      "preset_id": "fanren",
+      "pace": "long",
+      "story_dna": "凡人流、资源稀缺、成长缓慢；不默认天命或无代价突破。",
+      "setup": {"game_state": {"revealed": true, "res": {"灵石": 3}, "caps": {"灵石": 999}, "inv": [], "skills": [{"name": "吐纳", "category": "功法", "id": "skill_tuna", "proficiency": 0}], "loadout": {"activeCoreId": "skill_tuna"}, "attrs": {"灵力": 1}, "npcs": {}, "ledger": []}},
+      "turns": [
+        {"input": "我先询问师兄这枚灵石能换多少药材", "mentioned": ["师兄"], "response": {"narrative": "师兄按坊市今日的价格给你解释了药材和灵石的兑换，不承诺额外机缘。", "options": ["记下价格", "继续询问", "去坊市看看"]}},
+        {"input": "我用一枚灵石买下最便宜的炼气药材", "mentioned": ["坊市"], "response": {"narrative": "你买下了一小包普通药材，摊主提醒药效有限。", "options": ["收好药材", "询问保存方法"], "patch": {"res_delta": {"灵石": -1}, "inv_add": [{"name": "炼气药材", "quantity": 1}]}}, "assertions": [{"kind": "resource", "key": "灵石", "equals": 2}]},
+        {"input": "我按师兄教的方法吐纳一晚", "mentioned": ["师兄"], "response": {"narrative": "一夜吐纳只让气息稍微顺畅，你没有突然突破境界。", "options": ["继续修炼", "去做杂役", "请教师兄"], "patch": {"attr_delta": {"灵力": 1}}}},
+        {"input": "查看自己的灵力和药材", "response": {"narrative": "你确认灵力只增加了一点，药材仍在包里。", "options": ["保存药材", "明日再修炼"]}}
+      ],
+      "assertions": [{"kind": "resource", "key": "灵石", "equals": 2}, {"kind": "state_value", "path": "attrs.灵力", "equals": 2}, {"kind": "inventory_quantity", "name": "炼气药材", "equals": 1}]
+    },
+    {
+      "id": "modernlife_relationship_4_turns",
+      "description": "现代日常：短期情绪变化不覆盖稳定身份和关系",
+      "world_id": "modernlife",
+      "preset_id": "xiaoyuan",
+      "pace": "medium",
+      "setup": {"game_state": {"revealed": false, "res": {}, "caps": {}, "inv": [], "skills": [], "loadout": {"activeCoreId": null}, "attrs": {}, "npcs": {}, "ledger": []}},
+      "turns": [
+        {"input": "我向同桌夏遥道歉，说明昨天忘了带资料", "mentioned": ["夏遥"], "speaker": "夏遥", "response": {"narrative": "夏遥还有点不高兴，但接受了你的道歉，约好放学后一起补资料。", "options": ["问她缺哪一页", "先去上课"], "ledger": {"character_states": [{"name": "夏遥", "identity": {"role": "同桌"}, "mid_term": {"goal": "完成小组作业"}, "short_term": {"mood": "仍有些不高兴"}, "relationships": {"玩家": "可修复"}}]}}},
+        {"input": "放学后和夏遥一起整理资料", "mentioned": ["夏遥"], "speaker": "夏遥", "response": {"narrative": "你们把缺的资料补齐，夏遥的语气自然了些。", "options": ["一起去打印", "明天再确认"], "ledger": {"character_states": [{"name": "夏遥", "short_term": {"mood": "放松"}, "relationships": {"玩家": "合作中"}}]}}},
+        {"input": "第二天在教室和夏遥打招呼", "mentioned": ["夏遥"], "speaker": "夏遥", "response": {"narrative": "夏遥正常地向你打招呼，仍记得你们要交的小组作业。", "options": ["讨论分工", "聊聊社团"]}},
+        {"input": "查看夏遥的状态", "mentioned": ["夏遥"], "speaker": "夏遥", "response": {"narrative": "她的身份仍是你的同桌，短暂的不快已经过去。", "options": ["继续聊天", "去上课"]}}
+      ],
+      "assertions": [{"kind": "character_state_count", "equals": 1}]
+    },
+    {
+      "id": "cyber_social_4_turns",
+      "description": "赛博酒吧日常：小规模社交线不自动升级为世界阴谋",
+      "world_id": "cyber",
+      "preset_id": "tiaojiu",
+      "pace": "medium",
+      "story_dna": "今夜只处理酒吧客人的个人烦恼；不扩展成拯救城市或幕后组织主线。",
+      "setup": {"game_state": {"revealed": false, "res": {"credits": 80}, "caps": {"credits": 9999}, "inv": [], "skills": [], "loadout": {"activeCoreId": null}, "attrs": {}, "npcs": {}, "ledger": []}},
+      "turns": [
+        {"input": "我给刚进门的快递员调一杯不含酒精的饮料", "mentioned": ["快递员"], "response": {"narrative": "快递员喝了一口，说今天只是想安静坐十分钟。", "options": ["问他要不要加冰", "擦拭吧台", "听他讲讲今天的工作"]}},
+        {"input": "我听他讲今天送件遇到的麻烦", "mentioned": ["快递员"], "speaker": "快递员", "response": {"narrative": "他抱怨电梯坏了三次、雨又下得太大，没提到任何异常组织或惊天秘密。", "options": ["给他续杯", "推荐一条回家路线", "继续忙吧台"]}},
+        {"input": "我收下饮料钱，继续招呼普通客人", "response": {"narrative": "你收到八枚信用点，门外的雨声盖过了街上的广告。", "options": ["整理杯子", "观察客流", "提前打烊"], "patch": {"res_delta": {"credits": 8}}}},
+        {"input": "打烊后回住处休息", "response": {"narrative": "你关掉招牌，回到住处，把今天的零钱放进抽屉。", "options": ["睡觉", "看看明日排班"], "patch": {"loc": "住处"}}}
+      ],
+      "assertions": [{"kind": "resource", "key": "credits", "equals": 88}, {"kind": "location", "equals": "住处"}]
+    },
+    {
+      "id": "transmigration_chain_5_turns",
+      "description": "穿越/转生只是特殊入口：阶段按程序推进，不吞掉其它开局模式",
+      "world_id": "fantasy",
+      "preset_id": "xueyuan",
+      "pace": "medium",
+      "premise_state": {"kind": "transmigration", "phase": "before", "fast": true},
+      "planner_calls_at_least": 3,
+      "setup": {"game_state": {"revealed": false, "res": {}, "caps": {}, "inv": [], "skills": [], "loadout": {"activeCoreId": null}, "attrs": {}, "npcs": {}, "ledger": []}},
+      "turns": [
+        {"input": "我还在原世界的房间里，先确认发生了什么", "planner_called": true, "premise_phase": "before", "premise_state": {"kind": "transmigration", "phase": 0, "fast": true}, "response": {"narrative": "房间里只有熟悉的电器声和一封没有寄件人的信，异常刚刚出现，还没有把你的生活整段抹掉。", "options": ["检查信封", "联系朋友", "观察窗外"]}},
+        {"input": "我拆开信封，确认那道光来自哪里", "planner_called": true, "premise_phase": "trigger", "premise_state": {"kind": "transmigration", "phase": 1, "fast": true}, "response": {"narrative": "信纸上的光短暂照亮桌面，房间里的声音逐渐远去，但你仍能做出选择。", "options": ["抓住桌沿", "继续读信", "闭上眼睛"]}},
+        {"input": "我抓住桌沿，不想被强行带走", "planner_called": true, "premise_phase": "threshold", "premise_state": {"kind": "transmigration", "phase": 2, "fast": true}, "response": {"narrative": "你没能阻止变化，却记住了信上的最后一句话；这不是无缘无故的黑屏。", "options": ["大声呼喊", "带走信纸", "保持清醒"]}},
+        {"input": "我在陌生的草地上醒来，先确认自己还活着", "planner_called": false, "premise_phase": "arrival", "premise_state": {"kind": "transmigration", "phase": 3, "fast": true}, "response": {"narrative": "草地、远处的钟声和不认识的天空逐一变得清晰；你还不知道这里的规则，但可以先观察。", "options": ["检查身体", "寻找道路", "呼喊附近的人"], "patch": {"loc": "陌生草地"}}},
+        {"input": "我沿着道路走向看得见的学院围墙", "planner_called": false, "premise_phase": "landed", "premise_state": {"kind": "transmigration", "phase": 5, "fast": true}, "response": {"narrative": "学院的门卫先询问你的来历，没有把你直接认成既定职业或救世主。", "options": ["如实说明", "先询问城镇", "观察门卫"], "patch": {"loc": "学院门口"}}}
+      ],
+      "assertions": [{"kind": "location", "equals": "学院门口"}]
+    }
+  ],
+  "comparisons": [
+    {"left": "ordinary_adventure_branch_a", "right": "ordinary_adventure_branch_b", "paths": ["final_state.loc", "final_state.inv", "final_state.res"]}
+  ]
+}

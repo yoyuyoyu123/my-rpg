@@ -16,12 +16,83 @@
 
 回滚同时也是回合的幂等机制：先回滚到 N 再重跑第 N 回合，天然不会重复累积。
 """
+import json
+
 from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import (
-    CharacterState, Commitment, Entity, EntityAlias, Fact, NarrativeEvent, NpcBelief,
+    CharacterState, Commitment, Entity, EntityAlias, Fact, LedgerRevision,
+    NarrativeEvent, NpcBelief, TurnCommit,
 )
+
+
+_REVISION_MODELS = {
+    "commitment": (
+        Commitment,
+        ("id", "session_id", "kind", "owner_name", "counterparty_name", "text",
+         "status", "hard", "created_turn", "updated_turn", "due_turn",
+         "forbids_json", "source_event_id"),
+    ),
+    "belief": (
+        NpcBelief,
+        ("id", "session_id", "npc_name", "statement", "mode", "confidence",
+         "source_name", "learned_turn", "updated_turn", "status"),
+    ),
+    "character_state": (
+        CharacterState,
+        ("id", "session_id", "entity_name", "identity_json", "mid_term_json",
+         "short_term_json", "relationships_json", "updated_turn"),
+    ),
+}
+
+
+async def _restore_ledger_revisions(
+    db: AsyncSession, session_id: str, from_turn: int,
+) -> None:
+    """把所有后续更新恢复到 `from_turn` 之前最后一次可见的版本。"""
+    revisions = list((await db.execute(
+        select(LedgerRevision).where(
+            LedgerRevision.session_id == session_id,
+            LedgerRevision.change_turn >= from_turn,
+        ).order_by(LedgerRevision.change_turn.asc(), LedgerRevision.id.asc())
+    )).scalars())
+
+    # 同一记录可能在第 6、8 回合各更新一次。回滚到第 6 回合时应恢复
+    # “第 6 回合修改前”的最早快照，而不是第 8 回合修改前的中间状态。
+    earliest: dict[tuple[str, str], LedgerRevision] = {}
+    for revision in revisions:
+        earliest.setdefault(
+            (revision.record_type, revision.record_key), revision,
+        )
+
+    for (record_type, record_key), revision in earliest.items():
+        spec = _REVISION_MODELS.get(record_type)
+        if spec is None:
+            continue
+        model, fields = spec
+        try:
+            snapshot = json.loads(revision.snapshot_json)
+        except (TypeError, json.JSONDecodeError):
+            continue
+        identity = record_key if record_type == "commitment" else int(record_key)
+        row = await db.get(model, identity)
+        values = {field: snapshot[field] for field in fields if field in snapshot}
+        if row is None:
+            row = model(**values)
+            db.add(row)
+        else:
+            for field, value in values.items():
+                if field not in {"id", "session_id"}:
+                    setattr(row, field, value)
+
+    # 后续的删除查询必须看到刚恢复的 updated_turn。
+    await db.flush()
+    if revisions:
+        await db.execute(delete(LedgerRevision).where(
+            LedgerRevision.session_id == session_id,
+            LedgerRevision.change_turn >= from_turn,
+        ))
 
 
 async def rollback_to_turn(
@@ -34,7 +105,8 @@ async def rollback_to_turn(
     """
     from_turn = max(0, int(from_turn))
     removed = {"facts": 0, "entities": 0, "events": 0,
-               "commitments": 0, "beliefs": 0, "character_states": 0}
+               "commitments": 0, "beliefs": 0, "character_states": 0,
+               "turn_commits": 0}
 
     # ── 事实 ────────────────────────────────────────────────────
     # 先取出要删的，因为还得把它们顶掉的旧事实放回来
@@ -78,6 +150,9 @@ async def rollback_to_turn(
             ent.last_seen_turn = int(latest) if latest is not None else ent.first_turn
 
     # ── 叙事账本 ────────────────────────────────────────────────
+    # 先恢复被后续回合原地修改的旧记录，再删除真正诞生于被丢弃区间的记录。
+    # 没有这层版本快照，fulfilled/active、NPC认知和人物目标一旦更新就无法撤回。
+    await _restore_ledger_revisions(db, session_id, from_turn)
     for model, key, field in (
         (NarrativeEvent, "events", NarrativeEvent.turn),
         (Commitment, "commitments", Commitment.created_turn),
@@ -90,6 +165,16 @@ async def rollback_to_turn(
         for row in rows:
             await db.delete(row)
         removed[key] = len(rows)
+
+    commits = list((await db.execute(
+        select(TurnCommit).where(
+            TurnCommit.session_id == session_id,
+            TurnCommit.turn_no >= from_turn,
+        )
+    )).scalars())
+    for commit in commits:
+        await db.delete(commit)
+    removed["turn_commits"] = len(commits)
 
     await db.commit()
     return removed

@@ -46,7 +46,7 @@ def test_launcher_settings_deep_link_opens_existing_web_config() -> None:
 
 def test_streaming_placeholder_survives_postprocessing() -> None:
     """SSE text must stay visible while option/state/agency passes finish."""
-    run_start = INDEX.index("async function _runTurn()")
+    run_start = INDEX.index("async function _runTurn(")
     run = INDEX[run_start:]
     assert "var typ=addTyp(), live=null" in run
     assert "finally { live.remove(); }" not in run

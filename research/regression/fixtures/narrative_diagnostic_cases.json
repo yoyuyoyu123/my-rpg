@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "rejection_keeps_alternate_route_open",
+      "input": "我不接受那个上线邀请，关掉弹窗，继续收拾店铺。",
+      "tone": "温馨日常",
+      "reply": "弹窗熄灭后没有再出现。楼下送货员按响门铃，来确认明早的牛奶数量。",
+      "expectedCodes": [],
+      "forbiddenCodes": ["SAME_GATE_REINTRODUCED", "TONE_DRIFT_HEURISTIC"]
+    },
+    {
+      "id": "rejection_same_gate_reintroduced",
+      "input": "我不接受那个上线邀请，关掉弹窗。",
+      "tone": "温馨日常",
+      "reply": "你刚把屏幕扣下，刚才的确认框又一次亮起，仍然要求你接受同一个上线邀请。",
+      "expectedCodes": ["SAME_GATE_REINTRODUCED"],
+      "forbiddenCodes": ["TONE_DRIFT_HEURISTIC"]
+    },
+    {
+      "id": "low_pressure_flavor_word_is_not_escalation",
+      "input": "看看甜品店今天有什么新品。",
+      "tone": "市井日常、轻喜剧",
+      "reply": "店主把新品叫作“神秘森林”，又故作神秘地把价签翻过来：其实只是抹茶栗子蛋糕。",
+      "expectedCodes": [],
+      "forbiddenCodes": ["TONE_DRIFT_HEURISTIC"]
+    },
+    {
+      "id": "low_pressure_unprepared_escalation",
+      "input": "买完面包以后回家休息。",
+      "tone": "治愈日常",
+      "reply": "街角忽然出现不祥的黑影，像在窥视你。远处接连传来尖叫与警报，所有出口同时封锁。",
+      "expectedCodes": ["TONE_DRIFT_HEURISTIC"],
+      "forbiddenCodes": []
+    },
+    {
+      "id": "player_requested_pressure_is_not_unprepared",
+      "input": "我主动追踪那个黑影，想查清幕后真相。",
+      "tone": "温馨日常",
+      "reply": "黑影拐进巷子，墙上留着不祥记号。前方传来警报，你意识到这次追踪可能有危险。",
+      "expectedCodes": [],
+      "forbiddenCodes": ["TONE_DRIFT_HEURISTIC"]
+    },
+    {
+      "id": "refusing_investigation_does_not_authorize_pressure",
+      "input": "我不要调查这件事，离开危险的巷子回家。",
+      "tone": "生活感强",
+      "reply": "你回到熟悉的街道。面包店正在打烊，老板隔着玻璃向你挥了挥手。",
+      "expectedCodes": [],
+      "forbiddenCodes": ["TONE_DRIFT_HEURISTIC"]
+    }
+  ]
+}

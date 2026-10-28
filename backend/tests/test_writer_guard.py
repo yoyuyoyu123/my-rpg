@@ -16,6 +16,7 @@ from app.main import app  # noqa: E402
 from app.services.writer_guard import (  # noqa: E402
     build_agency_guard, build_option_repair, strip_hidden_blocks,
 )
+from app.services.writer_output import normalize_writer_output  # noqa: E402
 
 
 @pytest.fixture
@@ -107,3 +108,41 @@ def test_endpoints(client: TestClient) -> None:
 
 def test_option_repair_requires_draft(client: TestClient) -> None:
     assert client.post("/api/writer/option-repair", json={}).status_code == 422
+
+
+# ── 结构化写手信封（兼容切片） ──────────────────────────────────
+
+def test_structured_writer_output_normalizes_json_and_caps_options() -> None:
+    result = normalize_writer_output(
+        '```json\n{"narrative":"  门开了。 ","options":["进去","进去","观察","询问","多余"],'
+        '"state_patch":{"loc":"门口"}}\n```'
+    )
+    assert result is not None
+    assert result.narrative == "门开了。"
+    assert result.options == ["进去", "观察", "询问", "多余"]
+    assert result.state_patch == {"loc": "门口"}
+
+
+def test_plain_text_and_non_writer_json_fall_back() -> None:
+    assert normalize_writer_output("雨停了。") is None
+    assert normalize_writer_output('{"narrative":"资料","items":[]}') is None
+
+
+def test_structured_writer_normalize_endpoint_is_non_destructive(client: TestClient) -> None:
+    response = client.post(
+        "/api/writer/normalize",
+        json={"raw": '{"narrative":"门开了","options":["进去","离开"]}'},
+    )
+    assert response.status_code == 200
+    assert response.json()["structured"] is True
+    assert response.json()["options"] == ["进去", "离开"]
+
+    fallback = client.post("/api/writer/normalize", json={"raw": "普通正文"})
+    assert fallback.status_code == 200
+    assert fallback.json() == {
+        "structured": False,
+        "narrative": "",
+        "options": [],
+        "state_patch": {},
+        "memory_writes": [],
+    }

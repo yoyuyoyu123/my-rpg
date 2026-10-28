@@ -147,3 +147,24 @@ def test_program_owned_decisions_have_no_prompt_authority(report) -> None:
     total = sum(report[d]["intruder_total"] for d in program_owned)
     # 现状快照。清理时这个数字只能往下走。
     assert total <= 24, f"程序权威的决策上，提示词越权已涨到 {total} 条"
+
+
+def test_no_rule_constant_escapes_the_inventory() -> None:
+    """
+    清点器的 SOURCES 是手列的，新增规则常量会**静默漏掉**。
+
+    实测漏过一次：别人加了 STRUCTURED_WRITER_RULES（236 字的写手规则）之后，
+    棘轮照样全绿——因为清点器根本没看见那条规则。一个有盲区的警报器等于
+    没有警报器，所以反过来扫一遍源码。
+
+    新增了规则常量就把它加进 SOURCES（顺便想清楚它管哪个决策、谁是权威）；
+    确认不是规则的，加进 NOT_RULES 表示「看见了，不用清点」。
+    """
+    from rule_inventory import untracked_rule_constants
+    missed = untracked_rule_constants()
+    assert not missed, (
+        "有像规则文本的常量没进清点：\n  "
+        + "\n  ".join(f"{n}（{p}）" for n, p in missed)
+        + "\n\n加进 tools/rule_inventory.py 的 SOURCES；"
+        "确认不是规则就加进 NOT_RULES。"
+    )

@@ -11,11 +11,13 @@ from fastapi import APIRouter
 
 from app.schemas.writer import (
     AgencyGuardIn, AgencyGuardOut, OptionRepairIn, OptionRepairOut,
+    StructuredWriterNormalizeIn, StructuredWriterNormalizeOut,
 )
 from app.services.writer_guard import (
     OPTION_MAX_TOKENS, OPTION_TEMPERATURE, REWRITE_MAX_TOKENS,
     build_agency_guard, build_option_repair,
 )
+from app.services.writer_output import normalize_writer_output
 
 router = APIRouter(prefix="/api/writer", tags=["写手后处理"])
 
@@ -36,3 +38,12 @@ def option_repair(req: OptionRepairIn) -> OptionRepairOut:
         temperature=OPTION_TEMPERATURE,
         max_tokens=OPTION_MAX_TOKENS,
     )
+
+
+@router.post("/normalize", response_model=StructuredWriterNormalizeOut,
+             summary="识别结构化写手信封")
+def normalize(req: StructuredWriterNormalizeIn) -> StructuredWriterNormalizeOut:
+    result = normalize_writer_output(req.raw)
+    if result is None:
+        return StructuredWriterNormalizeOut(structured=False)
+    return StructuredWriterNormalizeOut(structured=True, **result.model_dump())

@@ -13,6 +13,7 @@
     FastAPI 会自动开启会话、请求结束后关闭，不用手写 try/finally。
 """
 from collections.abc import AsyncGenerator
+import os
 from pathlib import Path
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -20,8 +21,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from app.db.models import Base
 
 # 数据库文件放在 backend/data/ 下（已在 .gitignore 里，不会进版本库）
-DATA_DIR = Path(__file__).resolve().parents[2] / "data"
-DATA_DIR.mkdir(exist_ok=True)
+DATA_DIR = Path(os.environ.get("WUJI_DATA_DIR") or (Path(__file__).resolve().parents[2] / "data")).resolve()
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 DB_PATH = DATA_DIR / "wuji.db"
 
 DATABASE_URL = f"sqlite+aiosqlite:///{DB_PATH}"
@@ -47,6 +48,7 @@ _ADDED_COLUMNS: list[tuple[str, str, str]] = [
     # (表名, 列名, SQLite 列定义)
     ("saves", "schema_version", "INTEGER NOT NULL DEFAULT 1"),
     ("saves", "revision", "INTEGER NOT NULL DEFAULT 0"),
+    ("npc_beliefs", "updated_turn", "INTEGER NOT NULL DEFAULT 0"),
 ]
 
 
@@ -62,6 +64,23 @@ def _add_missing_columns(conn) -> None:
         cols = {row[1] for row in conn.execute(text(f"PRAGMA table_info({table})"))}
         if column not in cols:
             conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {ddl}"))
+
+    # 旧 belief 只有 learned_turn。新增列后的 0 不是“第 0 回合更新”，而是
+    # 尚未迁移；回填后才能可靠拒绝晚到的陈旧抽取结果。
+    belief_table = conn.execute(
+        text("SELECT name FROM sqlite_master WHERE type='table' AND name='npc_beliefs'")
+    ).first()
+    if belief_table:
+        cols = {row[1] for row in conn.execute(text("PRAGMA table_info(npc_beliefs)"))}
+        if "updated_turn" in cols:
+            conn.execute(text(
+                "UPDATE npc_beliefs SET updated_turn = learned_turn "
+                "WHERE updated_turn = 0 AND learned_turn > 0"
+            ))
+            conn.execute(text(
+                "CREATE INDEX IF NOT EXISTS ix_belief_session_turn "
+                "ON npc_beliefs (session_id, updated_turn)"
+            ))
 
 
 async def init_db() -> None:

@@ -1655,6 +1655,8 @@ body::before{
       <label class="set-chk"><input type="checkbox" id="set-statesync" onchange="SETTINGS.stateSync=this.checked;saveSettings()"> 状态自动结算（物品／技能变化更可靠，略增消耗）</label>
       <label class="set-chk"><input type="checkbox" id="set-agencyguard" onchange="SETTINGS.agencyGuard=this.checked;saveSettings()"> 玩家主权自动重写（拦截AI替玩家行动）</label>
       <label class="set-chk"><input type="checkbox" id="set-optionrepair" onchange="SETTINGS.optionRepair=this.checked;saveSettings()"> 缺失行动选项时自动补全（只补按钮，不重写正文）</label>
+      <label class="set-chk"><input type="checkbox" id="set-structured-writer" onchange="SETTINGS.structuredWriter=this.checked;saveSettings()"> 结构化写手输出（实验；正文格式异常时自动回退）</label>
+      <div class="set-hint">开启后要求写手返回正文、选项和状态候选的 JSON；旧模型返回纯文本时仍按原流程显示。</div>
       <div class="set-row">设定记录
         <select id="set-loreextract" onchange="SETTINGS.loreExtract=this.value;saveSettings();syncLoreExtractHint()">
           <option value="balanced">均衡（推荐）</option>
@@ -1708,6 +1710,26 @@ body::before{
       <div class="agent-monitor-title">◉ 后台运行监视器</div>
       <div class="agent-monitor-live" id="agent-monitor-live">待机</div>
       <div class="spacer"></div>
+      <select id="agent-monitor-agent-filter" aria-label="筛选 Agent" onchange="setAgentMonitorFilter('agent',this.value)">
+        <option value="">全部环节</option>
+        <option value="pipeline">回合流水线</option>
+        <option value="planner">剧情规划</option>
+        <option value="director">GM 裁定</option>
+        <option value="narrative">场景写手</option>
+        <option value="state">状态审计</option>
+        <option value="memory">事实记忆</option>
+        <option value="summary">历史摘要</option>
+        <option value="commit">提交与存档</option>
+      </select>
+      <select id="agent-monitor-status-filter" aria-label="筛选状态" onchange="setAgentMonitorFilter('status',this.value)">
+        <option value="">全部状态</option>
+        <option value="running">运行中</option>
+        <option value="retrying">重试中</option>
+        <option value="done">已完成</option>
+        <option value="error">错误</option>
+        <option value="skipped">已跳过</option>
+      </select>
+      <button onclick="loadAgentRunsFromServer()">刷新服务端</button>
       <button onclick="closeAgentMonitor()">关闭</button>
     </div>
     <div class="agent-monitor-summary" id="agent-monitor-summary"></div>
@@ -2171,7 +2193,7 @@ function rollTone(profile,audit){
   if(/黑色悬疑|悬疑|恐怖|推理|谜/.test(STORY_TONE))TONE_TRANS='暗牌——只保留玩家主动选择的谜团；线索有证据链，NPC知识严格隔离';
   else TONE_TRANS='明牌——目标、因果和人物动机尽量透明；不额外生成阴谋网、神秘观察者或隐藏身份线';
 }
-var SETTINGS={temp:0.85,stream:true,streamCps:90,thinking:false,agentThinking:{narrative:false,planner:false,director:false,state:false,memory:false,utility:false},dice:true,autoMem:true,loreExtract:'balanced',maxTokens:8192,director:true,storyAgents:true,plannerModel:'',stateSync:true,agencyGuard:true,optionRepair:true,debug:false,fontSize:16,lineHeight:1.9};
+var SETTINGS={temp:0.85,stream:true,streamCps:90,thinking:false,agentThinking:{narrative:false,planner:false,director:false,state:false,memory:false,utility:false},dice:true,autoMem:true,loreExtract:'balanced',maxTokens:8192,director:true,storyAgents:true,plannerModel:'',stateSync:true,agencyGuard:true,optionRepair:true,structuredWriter:false,debug:false,fontSize:16,lineHeight:1.9};
 try{
   var _st=localStorage.getItem('wuji_settings'),_parsed=_st?JSON.parse(_st):null;
   if(_parsed){SETTINGS=Object.assign(SETTINGS,_parsed);SETTINGS.agentThinking=Object.assign({narrative:false,planner:false,director:false,state:false,memory:false,utility:false},_parsed.agentThinking||{});if(!_parsed.agentThinking&&_parsed.thinking===true)SETTINGS.agentThinking.narrative=true;}
@@ -2199,113 +2221,55 @@ var PACE_CONFIG = {
 
 </script>
 <script>
-var WORLDS = {
-  wuxia: {
-    name:'武侠江湖', skillLabel:'武学', color:'#c8a96e', family:'东方',
-    daily:['打坐练功','市井闲逛','前往客栈','与人攀谈','查看武学','采买物资'],
-    presets:[
-      {id:'',name:'纯正江湖',note:''},
-      {id:'chao',name:'朝堂权谋',note:'侧重庙堂与江湖的纠缠：官府、党争、密探、漕运，武力只是棋局里的一子。'},
-      {id:'zoubiao',name:'国术走镖',note:'侧重镖局、走商、押运的市井武行日常，一拳一脚都要换饭吃，江湖是生计不是传奇。'},
-      {id:'daxia',name:'大侠日常',note:'侧重侠客的慢生活：收徒、开馆、管闲事、儿女情长，快意恩仇退为背景。'}
-    ]
-  },
-  xianxia: {
-    name:'仙侠修真', skillLabel:'功法', color:'#a0c4ff', family:'东方',
-    daily:['打坐吐纳','采集灵草','前往坊市','参悟功法','炼制丹药','与同门交谈'],
-    presets:[
-      {id:'',name:'正统修真',note:''},
-      {id:'fanren',name:'凡人流',note:'侧重资质平平的散修如何步步为营、谨慎求存，修炼极缓，一颗丹药一件法器都来之不易。'},
-      {id:'shanhai',name:'山海志怪',note:'侧重上古神话、妖魔精怪、民俗信仰的东方志怪色彩，仙气里透着幽森。'},
-      {id:'xiandai',name:'现代修真',note:'灵气复苏的当代都市，修真者混迹于写字楼与地铁之间，法术与手机并存。'}
-    ]
-  },
-  history: {
-    name:'古代人间', skillLabel:'技艺', color:'#d4a86a', family:'东方',
-    daily:['操持营生','市集采买','走访邻里','打理家事','盘算生计','歇息闲谈'],
-    presets:[
-      {id:'',name:'市井烟火',note:'侧重古代市井小民的营生与人情：开铺子、做手艺、邻里家长里短。'},
-      {id:'zhongtian',name:'种田经营',note:'侧重从一间铺子或一片田产做起，慢慢经营壮大，账目、货源、人手都要操心。'},
-      {id:'chaotang',name:'朝堂权谋',note:'侧重官场与庙堂：科举、党争、外放、密奏，一步走错满盘皆输。'},
-      {id:'niandai',name:'年代生活',note:'近代或民国年代感，时代洪流下的小人物生活，家国动荡里的柴米油盐。'}
-    ]
-  },
-  fantasy: {
-    name:'剑与魔法', skillLabel:'技能', color:'#98e89a', family:'幻想',
-    daily:['接取委托','逛冒险者公会','采购装备','与同伴闲聊','训练或研究','在酒馆歇脚'],
-    presets:[
-      {id:'',name:'王道奇幻',note:'经典西式奇幻大陆：冒险者公会、魔法、迷宫、多种族并存，日常与冒险交织。'},
-      {id:'xueyuan',name:'学院奇幻',note:'魔法学院背景，课业、社团、同窗与考核构成日常，冒险从校园延伸出去。'},
-      {id:'anhei',name:'黑暗奇幻',note:'低魔、残酷、道德灰暗的奇幻，剑与魔法都沾着血与泥，生存本身就是奢侈。'},
-      {id:'elona',name:'沙盒生活流',note:'参考Elona/Elin的极度自由与黑色幽默：种田、酿酒、经营、养宠、下地城皆可，任何NPC都可招惹但后果自负，死亡真实，世界边角充满奇异细节与荒诞感。'},
-      {id:'undertale',name:'怪物与路线',note:'参考传说之下：怪物有血有肉各有故事，遭遇可战斗也可用交谈化解；杀戮与宽恕会累积成不同世界走向；温馨中带忧郁。'},
-      {id:'tianzai',name:'天灾感染',note:'参考明日方舟泰拉：移动城市躲避天灾，某种矿物既是资源也是让人患病遭歧视的病源，感染者的困境与各势力政治博弈是底色，语气沉稳克制。'}
-    ]
-  },
-  modernlife: {
-    name:'都市人间', skillLabel:'特长', color:'#ffd580', family:'现代',
-    daily:['处理本职工作','和朋友约饭','逛街采购','刷手机放松','精进专业','安排日程'],
-    presets:[
-      {id:'',name:'都市生活',note:'当代都市的普通人生活，职业、人际、爱情与自我实现是主线。'},
-      {id:'xiaoyuan',name:'校园青春',note:'中学或大学校园，课业、社团、暗恋、友谊与成长的酸甜。'},
-      {id:'zhichang',name:'职场行业',note:'聚焦某一具体行业（医疗/法律/科研/传媒/金融等，开局确定）的专业日常与职场博弈，行业细节要真实。'},
-      {id:'meishi',name:'美食料理',note:'以做菜、开店、觅食为核心，一道菜承载一个故事，烟火气十足。'},
-      {id:'wutai',name:'音乐舞台',note:'乐队、偶像、演出行业，为一场演出、一首歌、一次登台而拼。'}
-    ]
-  },
-  occult: {
-    name:'现代异闻', skillLabel:'异能', color:'#c890e8', family:'现代',
-    daily:['能力训练','过普通日子','与友人交谈','调查异常','浏览内部情报','独处思考'],
-    presets:[
-      {id:'',name:'都市超自然',note:'表面平静的现代都市，暗处有超自然与异常，主角在普通生活与异闻之间周旋。'},
-      {id:'yineng',name:'异能觉醒',note:'参考某科学的超电磁炮：少数人觉醒超能力，有官方管理局与地下组织，普通日常与异能事件交织，异能战斗有视觉冲击。'},
-      {id:'tishen',name:'精神具现',note:'参考JoJo替身：精神力具现为有独特外形与规则的能力体，普通人看不见；战斗是能力规则与心理的博弈而非数值堆砌，能力必须有明确限制。'},
-      {id:'zhentan',name:'意识形态侦探',note:'参考极乐迪斯科：破败城市里的失忆侦探办案，内心多个人格化的"技能"会插话争论（格式：[技能名——成功/失败] 独白）；悲凉而荒诞，失败的检定往往更有趣。'},
-      {id:'dianbo',name:'电波系存在主义',note:'参考Z.A.T.O.：一座即将从世界消失的封闭小城，有人能感知世界底层的"编码"却因此精神退化。叙述随主角的异常感知悄悄扭曲——细节停留过久、逻辑跳跃不解释、人称游移，禁止点破，让叙述本身变得不对劲。'},
-      {id:'guaitan',name:'现代怪谈',note:'规则怪谈与都市传说：遵守看不见的规则才能活命，恐惧来自日常的细微失序。'}
-    ]
-  },
-  cyber: {
-    name:'赛博近未来', skillLabel:'义体程序', color:'#00ffe7', family:'未来',
-    daily:['扫描环境','黑入网络','泡酒吧','联系线人','检查义体','查黑市消息'],
-    presets:[
-      {id:'',name:'街头佣兵',note:'霓虹与雨的赛博都市底层，义体改造普及，接活、火拼、情报交易的街头生存。'},
-      {id:'heike',name:'黑客潜入',note:'侧重网络入侵、数据窃取、电子战，主战场在网络与信息，物理世界是掩护。'},
-      {id:'tiaojiu',name:'调酒倾听',note:'参考VA-11 HALL-A与红弦俱乐部：主角是赛博酒吧的调酒师，核心互动是为形形色色的客人调一杯合适的酒、倾听他们的故事——调对了酒话匣子就开。温柔治愈带忧郁，不拯救世界，只把今夜过好；哲思藏在闲谈里。'},
-      {id:'airen',name:'AI与人性',note:'聚焦人工智能、义体化、意识上传带来的身份与人性拷问，冷峻思辨。'}
-    ]
-  },
-  space: {
-    name:'星海征途', skillLabel:'技能', color:'#80c8ff', family:'未来',
-    daily:['查看赏金板','维护飞船','逛空间站','联系雇主','扫描星图','补给燃料'],
-    presets:[
-      {id:'',name:'星际漂泊',note:'人类已殖民数十星系，无统一政府，飞船是家太空是江湖，在空间站间漂泊接活。'},
-      {id:'shangjin',name:'赏金猎人',note:'参考星际牛仔：慵懒随性带点忧郁的赏金猎人生活，搭档间的损友感，太空有荒凉的美。'},
-      {id:'jiandui',name:'舰队权谋',note:'星系政治、舰队会战、势力博弈，宏大的星海战争史诗。'},
-      {id:'zhimin',name:'殖民开拓',note:'在蛮荒星球建立殖民地，资源、生态、内政与未知威胁，从零建设一个据点。'}
-    ]
-  },
-  apocalypse: {
-    name:'末日废土', skillLabel:'特长', color:'#e8a060', family:'末日恐怖',
-    daily:['搜刮物资','检查据点','与幸存者谈','修整装备','侦察外围','分配口粮'],
-    presets:[
-      {id:'',name:'灾变求生',note:'文明崩塌后的幸存者生活，物资匮乏，安全第一，人性在极限下放大。'},
-      {id:'sangshi',name:'丧尸围城',note:'尸潮环伺的经典末日，弹药与食物就是命，据点防御与搜刮是日常。'},
-      {id:'jingying',name:'末日经营',note:'侧重据点/避难所的建设经营：招人、种粮、防御、内部矛盾，从废墟建起秩序。'},
-      {id:'guize',name:'规则求生',note:'灾变带着诡异规则（丧尸有异常行为、区域有禁忌），摸清规则才能活。'}
-    ]
-  },
-  horror: {
-    name:'诡秘怪谈', skillLabel:'能力', color:'#6b8e6b', family:'末日恐怖',
-    daily:['查阅资料','走访相关人','勘查现场','整理线索','稳住心神','联系同伴'],
-    presets:[
-      {id:'',name:'超自然调查',note:'表面平常的世界暗藏不可名状之物，主角调查异常，越接近真相越危险。'},
-      {id:'cthulhu',name:'理智调查',note:'参考洛夫克拉夫特克苏鲁：宇宙冷漠，远古存在超越人类理解。恐惧缓慢渗透（先是异常小细节，再是不安规律，最后才是本体），有理智值(SAN)从10起，接触异常与禁忌知识会消耗，归零则疯狂；文风华丽压抑，对不可描述之物保持模糊。'},
-      {id:'scp',name:'异常收容',note:'参考SCP基金会：秘密组织收容全球异常存在。文风仿档案体裁，冷静官僚却透着压抑，可插入[已编辑][数据删除]等格式；有理智值，接触异常降SAN；有D级实验等道德灰暗地带；信息碎片化，永不知全貌。'},
-      {id:'minsu',name:'民俗恐怖',note:'乡野、古村、旧俗背景的东方恐怖，禁忌、香火、家族秘密里长出的诡异。'}
-    ]
+var WORLDS = {};
+var WORLD_CATALOG = [];
+var WORLD_CATALOG_ERROR = '';
+var WORLD_CATALOG_READY = null;
+
+function worldCatalogUrl(){
+  return new URL('data/worlds/catalog.json',document.baseURI).href;
+}
+function normalizeWorldCatalog(payload){
+  var rows=Array.isArray(payload)?payload:(payload&&payload.worlds);
+  if(!Array.isArray(rows)||!rows.length)throw new Error('世界目录为空');
+  var seen={};
+  return rows.map(function(raw){
+    var id=String(raw&&raw.id||'').trim(),card=raw&&raw.card||{};
+    if(!id||seen[id])throw new Error(id?'世界目录存在重复 ID：'+id:'世界目录含无 ID 项');
+    seen[id]=true;
+    if(!raw.name||!raw.family||!raw.skill_label||!Array.isArray(raw.daily)||!Array.isArray(raw.presets))throw new Error('世界 '+id+' 的元数据不完整');
+    return {
+      id:id,name:String(raw.name),family:String(raw.family),skillLabel:String(raw.skill_label),
+      color:String(raw.color||'#c8a96e'),daily:raw.daily.map(String),
+      presets:raw.presets.map(function(p){return{id:String(p&&p.id||''),name:String(p&&p.name||''),note:String(p&&p.note||'')};}),
+      card:{icon:String(card.icon||'◈'),description:String(card.description||''),tag:String(card.tag||'')}
+    };
+  });
+}
+function installWorldCatalog(payload){
+  WORLD_CATALOG=normalizeWorldCatalog(payload);
+  var custom=WORLDS.__custom__||null,next={};
+  WORLD_CATALOG.forEach(function(w){next[w.id]=w;});
+  if(custom)next.__custom__=custom;
+  WORLDS=next;WORLD_CATALOG_ERROR='';
+  renderWorldCards();
+  renderStartupSlots();
+  return WORLD_CATALOG;
+}
+async function loadWorldCatalog(){
+  var errors=[];
+  for(var i=0;i<2;i++){
+    var url=i===0?worldCatalogUrl():'/api/worlds';
+    try{
+      var r=await fetch(url,{cache:'no-cache'});
+      if(!r.ok)throw new Error('HTTP '+r.status);
+      return installWorldCatalog(await r.json());
+    }catch(e){errors.push(url+'：'+String(e&&e.message||e));}
   }
-};
+  WORLD_CATALOG_ERROR=errors.join('；');
+  renderWorldCards();
+  return [];
+}
 
 // Program-owned character sheets. World prose may describe these values but
 // cannot rename the four core attributes or silently replace the sheet.
@@ -2420,44 +2384,47 @@ function migrateGameState(old){
   n.talents=Array.isArray(old.talents)?old.talents.slice():[];n.inv=normalizeInventory(old.inv);n.skills=normalizeSkills(old.skills);n.loadout=old.loadout&&typeof old.loadout==='object'?Object.assign({activeCoreId:null},old.loadout):{activeCoreId:null};n.skillCapacity=clampNum(old.skillCapacity,1,100,20);n.ledger=Array.isArray(old.ledger)?old.ledger.slice(-300):[];n.loc=old.loc||'';n.npcs=old.npcs&&typeof old.npcs==='object'?old.npcs:{};Object.keys(n.npcs).forEach(function(k){var v=n.npcs[k]||{};v.knows=Array.isArray(v.knows)?v.knows.map(String).filter(Boolean).slice(0,30):[];n.npcs[k]=v;});n.lastCheck=old.lastCheck||null;n.version=4;return n;
 }
 
-// Build world cards
-(function() {
-  var grid = document.getElementById('world-grid');
-  var qc = document.createElement('div');
-  qc.className = 'wcard generator';
-  qc.style.borderColor = 'var(--g)';
-  qc.innerHTML = '<div class="wcard-icon">🎲</div><div class="wcard-name">快速开局</div><div class="wcard-desc">世界观、基调、身份、进入方式全部现场抽取，一键入局。每一局都是没人写过的组合。</div><span class="wcard-tag">研究库驱动 ／ 下一页仍可加口味约束</span>';
-  qc.onclick = function(){ quickStart(); };
-  grid.appendChild(qc);
-  var worlds_data = [
-    {id:'wuxia', fam:'东方', icon:'⚔️', name:'武侠江湖', desc:'门派纷争，侠义江湖，快意恩仇。以武入道，闯出一番天地。', tag:'金庸·古龙'},
-    {id:'xianxia', fam:'东方', icon:'🌙', name:'仙侠修真', desc:'炼气筑基，问鼎大道。但飞升那天，你还记得自己是谁吗？', tag:'修炼·飞升'},
-    {id:'history', fam:'东方', icon:'🏮', name:'古代人间', desc:'没有神仙妖魔，只有市井烟火、朝堂风云与时代洪流里的小人物。', tag:'历史·种田·年代'},
-    {id:'fantasy', fam:'幻想', icon:'⚔️', name:'剑与魔法', desc:'西式奇幻大陆，冒险者、魔法与迷宫。可玩沙盒生活、怪物路线或天灾泰拉。', tag:'异世界·奇幻'},
-    {id:'modernlife', fam:'现代', icon:'🏙️', name:'都市人间', desc:'现代都市的普通人生活：职业、校园、美食、舞台，酸甜自知。', tag:'日常·职业·校园'},
-    {id:'occult', fam:'现代', icon:'🌀', name:'现代异闻', desc:'平静都市的暗处。异能、替身、意识形态侦探、电波系、怪谈皆可。', tag:'超能·怪谈·推理'},
-    {id:'cyber', fam:'未来', icon:'🌆', name:'赛博近未来', desc:'义体霓虹与企业统治。街头佣兵、黑客，或只是个倾听客人的调酒师。', tag:'赛博·义体'},
-    {id:'space', fam:'未来', icon:'🚀', name:'星海征途', desc:'飞船是家，太空是江湖。赏金猎人、舰队权谋或殖民开拓。', tag:'星际·太空歌剧'},
-    {id:'apocalypse', fam:'末日恐怖', icon:'🧟', name:'末日废土', desc:'文明崩塌，活下去是第一目标。丧尸、经营或诡异规则求生。', tag:'末日·生存'},
-    {id:'horror', fam:'末日恐怖', icon:'🐙', name:'诡秘怪谈', desc:'不可名状之物潜伏在日常之下。克苏鲁理智、SCP收容或民俗恐怖。', tag:'克苏鲁·SCP·怪谈'}
-  ];
-  var fams=[]; worlds_data.forEach(function(w){ if(fams.indexOf(w.fam)<0)fams.push(w.fam); });
+// Build world cards from the versioned shared catalog.
+function appendWorldUtilityCard(grid,kind){
+  var card=document.createElement('div');card.className='wcard generator';
+  if(kind==='quick'){
+    card.style.borderColor='var(--g)';
+    card.innerHTML='<div class="wcard-icon">🎲</div><div class="wcard-name">快速开局</div><div class="wcard-desc">世界观、基调、身份、进入方式全部现场抽取，一键入局。每一局都是没人写过的组合。</div><span class="wcard-tag">研究库驱动 ／ 下一页仍可加口味约束</span>';
+    card.onclick=function(){quickStart();};
+  }else{
+    card.innerHTML='<div class="wcard-icon">✨</div><div class="wcard-name">自由生成</div><div class="wcard-desc">点选你想要的元素，AI即时生成专属世界观，无限可能。</div><span class="wcard-tag">连接后端后可用</span>';
+    card.onclick=function(){openGenerator();};
+  }
+  grid.appendChild(card);
+}
+function renderWorldCards(){
+  var grid=document.getElementById('world-grid');if(!grid)return;
+  grid.innerHTML='';
+  appendWorldUtilityCard(grid,'quick');
+  if(!WORLD_CATALOG.length){
+    var status=document.createElement('div');status.className='fam-head';
+    status.style.color=WORLD_CATALOG_ERROR?'var(--r)':'var(--dm)';
+    status.textContent=WORLD_CATALOG_ERROR?'世界目录加载失败，请使用后端地址打开页面并重新加载。':'正在加载世界目录…';
+    grid.appendChild(status);
+    return;
+  }
+  var fams=[];WORLD_CATALOG.forEach(function(w){if(fams.indexOf(w.family)<0)fams.push(w.family);});
   fams.forEach(function(fam){
-    var hd=document.createElement('div'); hd.className='fam-head'; hd.textContent=fam; grid.appendChild(hd);
-    worlds_data.filter(function(w){return w.fam===fam;}).forEach(function(w){
-      var d=document.createElement('div'); d.className='wcard'; d.id='wc-'+w.id;
-      d.innerHTML='<div class="wcard-icon">'+w.icon+'</div><div class="wcard-name">'+w.name+'</div><div class="wcard-desc">'+w.desc+'</div><span class="wcard-tag">'+w.tag+'</span>';
-      d.onclick=(function(id){return function(){selWorld(id);};})(w.id);
-      grid.appendChild(d);
+    var hd=document.createElement('div');hd.className='fam-head';hd.textContent=fam;grid.appendChild(hd);
+    WORLD_CATALOG.filter(function(w){return w.family===fam;}).forEach(function(w){
+      var d=document.createElement('div');d.className='wcard';d.id='wc-'+w.id;d.style.setProperty('--world-color',w.color);
+      var icon=document.createElement('div');icon.className='wcard-icon';icon.textContent=w.card.icon;
+      var name=document.createElement('div');name.className='wcard-name';name.textContent=w.name;
+      var desc=document.createElement('div');desc.className='wcard-desc';desc.textContent=w.card.description;
+      var tag=document.createElement('span');tag.className='wcard-tag';tag.textContent=w.card.tag;
+      d.appendChild(icon);d.appendChild(name);d.appendChild(desc);d.appendChild(tag);
+      d.onclick=(function(id){return function(){selWorld(id);};})(w.id);grid.appendChild(d);
     });
   });
-  // Add generator card
-  var gen = document.createElement('div');
-  gen.className = 'wcard generator';
-  gen.innerHTML = '<div class="wcard-icon">✨</div><div class="wcard-name">自由生成</div><div class="wcard-desc">点选你想要的元素，AI即时生成专属世界观，无限可能。</div><span class="wcard-tag">连接后端后可用</span>';
-  gen.onclick = function(){ openGenerator(); };
-  grid.appendChild(gen);
-})();
+  appendWorldUtilityCard(grid,'custom');
+}
+renderWorldCards();
+WORLD_CATALOG_READY=loadWorldCatalog();
 
 function selWorld(w) {
   WORLD = w;
@@ -2591,7 +2558,7 @@ async function qMod(t) {
   }
 }
 
-function doConnect(t) {
+async function doConnect(t) {
   var st=document.getElementById('ast');
   CHATPATH = (t==='zp') ? '/api/paas/v4/chat/completions' : '/v1/chat/completions';
   if(t==='be'){
@@ -2606,6 +2573,8 @@ function doConnect(t) {
   else if(t==='sf'){APIKEY=document.getElementById('sfkey').value.trim();MODEL=document.getElementById('sfmod').value;BASEURL='https://api.siliconflow.cn';}
   else{APIKEY='';BASEURL=document.getElementById('olhost').value.trim();MODEL=document.getElementById('olman').value.trim()||document.getElementById('olmod').value;}
   if(!MODEL||(t!=='ol'&&!APIKEY)){st.textContent='▸ 请填写Key并选择模型';st.style.color='var(--r)';return;}
+  if(WORLD_CATALOG_READY)await WORLD_CATALOG_READY;
+  if(!WORLD_CATALOG.length){st.textContent='▸ 世界目录未加载，无法进入游戏：'+(WORLD_CATALOG_ERROR||'未知错误');st.style.color='var(--r)';return;}
   BK=t;
   if(PENDING_STARTUP_LOAD!==null){
     document.getElementById('sdot').classList.add('on');
@@ -2651,6 +2620,7 @@ function syncSettingsControls(){
   var ss=document.getElementById('set-statesync');if(ss)ss.checked=SETTINGS.stateSync!==false;
   var ag=document.getElementById('set-agencyguard');if(ag)ag.checked=SETTINGS.agencyGuard!==false;
   var op=document.getElementById('set-optionrepair');if(op)op.checked=SETTINGS.optionRepair!==false;
+  var sw=document.getElementById('set-structured-writer');if(sw)sw.checked=SETTINGS.structuredWriter===true;
   var dg=document.getElementById('set-debug');if(dg)dg.checked=!!SETTINGS.debug;
   updateDebugStatus();
   applyReadingPrefs();
@@ -2975,8 +2945,43 @@ function qcmd(c){if(!LOADING)send(c,false);}
 function cleanOptionMarkdown(text){
   return String(text||'').trim().replace(/^\*\*|\*\*$/g,'').replace(/^__|__$/g,'').replace(/^[“”"']|[“”"']$/g,'').trim();
 }
+// 新写手可以返回 {narrative, options, state_patch} JSON；旧写手的纯文本和
+// 【STATE】协议继续走下面的兼容解析。只在对象同时拥有 narrative 字符串和
+// options 数组时认定为信封，避免把正文里的普通 JSON 当成游戏协议。
+function parseStructuredWriterOutput(text){
+  var src=String(text||'').trim(),candidates=[];
+  if(!src)return null;
+  candidates.push(src);
+  var fm=src.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);if(fm)candidates.unshift(fm[1].trim());
+  var start=src.indexOf('{');
+  while(start>=0){
+    var depth=0,inStr=false,escaped=false;
+    for(var i=start;i<src.length;i++){
+      var ch=src[i];
+      if(inStr){if(escaped)escaped=false;else if(ch==='\\')escaped=true;else if(ch==='"')inStr=false;continue;}
+      if(ch==='"')inStr=true;
+      else if(ch==='{')depth++;
+      else if(ch==='}'){
+        depth--;if(depth===0){candidates.push(src.slice(start,i+1));break;}
+      }
+    }
+    start=src.indexOf('{',start+1);
+  }
+  for(var c=0;c<candidates.length;c++){
+    var obj=null;try{obj=JSON.parse(candidates[c]);}catch(_e){continue;}
+    if(!obj||typeof obj!=='object'||Array.isArray(obj)||typeof obj.narrative!=='string'||!Array.isArray(obj.options))continue;
+    var opts=[];(obj.options||[]).forEach(function(x){var t=cleanOptionMarkdown(x);if(t&&opts.length<4&&opts.indexOf(t)<0)opts.push(t.substring(0,160));});
+    return {narrative:obj.narrative.trim(),opts:opts,hasFree:true,statePatch:obj.state_patch&&typeof obj.state_patch==='object'?obj.state_patch:null,memoryWrites:Array.isArray(obj.memory_writes)?obj.memory_writes:[]};
+  }
+  return null;
+}
 function parseActionOptions(text){
   var src=String(text||''),lines=src.split('\n'),heading=-1,firstOption=-1,opts=[],hasFree=false;
+  var structured=parseStructuredWriterOutput(src);
+  if(structured){
+    var structuredOpts=structured.opts.map(function(t,i){return {n:String(i+1),t:t};});
+    return {main:structured.narrative,opts:structuredOpts,hasFree:true,found:structuredOpts.length>=2,structured:true,statePatch:structured.statePatch,memoryWrites:structured.memoryWrites};
+  }
   var circled={'①':'1','②':'2','③':'3','④':'4','⑤':'5','⑥':'6'};
   function normalized(line){return String(line||'').replace(/[１２３４５６]/g,function(x){return String('１２３４５６'.indexOf(x)+1);});}
   function optionFrom(line){
@@ -3019,10 +3024,12 @@ function parseActionOptions(text){
 }
 
 function renderNar(text,hidx) {
-  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'').replace(/【命名表】[\s\S]*?【\/命名表】/g,'').replace(/【裁定】[\s\S]*?【\/裁定】/g,'').replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*$/,'').replace(/【SHEET_INIT】[\s\S]*$/,'').replace(/【命名表】[\s\S]*$/,'').trim();
+  var structured=parseStructuredWriterOutput(text);
+  text=structured?structured.narrative:String(text);
+  text=String(text).replace(/【大纲】[\s\S]*?【\/大纲】/g,'').replace(/【STATE】[\s\S]*?【\/STATE】/g,'').replace(/【SHEET_INIT】[\s\S]*?【\/SHEET_INIT】/g,'').replace(/【命名表】[\s\S]*?【\/命名表】/g,'').replace(/【裁定】[\s\S]*?【\/裁定】/g,'').replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*$/,'').replace(/【SHEET_INIT】[\s\S]*$/,'').replace(/【命名表】[\s\S]*$/,'').replace(/【裁定】[\s\S]*$/,'').trim();
   var wrapper=document.createElement('div'); wrapper.className='sb nar';
   if(typeof hidx==='number') wrapper.dataset.hidx=hidx;
-  var parsedOptions=parseActionOptions(text),mainText=parsedOptions.main;
+  var parsedOptions=structured?{main:text,opts:structured.opts.map(function(t,i){return {n:String(i+1),t:t};}),hasFree:true,found:structured.opts.length>=2}:parseActionOptions(text),mainText=parsedOptions.main;
   mainText=mainText.replace(/【任务[^』]*』[^\n]*/g,'').replace(/【技能标[^』]*』[^\n]*/g,'').trim();
   mainText=mainText.replace(/[\[［][^\[\]［］\n]*\|[^\[\]［］\n]*[\]］]/g,'').replace(/（(?:持有|技能)[：:][^）\n]*）?/g,'').replace(/\((?:持有|技能)[：:][^)\n]*\)?/g,'').trim();
   var body=document.createElement('div');
@@ -3061,9 +3068,11 @@ var SAVE_SCHEMA_VERSION=2;
 
 function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  return {schema_version:SAVE_SCHEMA_VERSION,history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,storyRuntime:STORY_RUNTIME,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,effectiveSetup:EFFECTIVE_SETUP,tone:STORY_TONE,toneDesc:TONE_DESC,toneTrans:TONE_TRANS,names:NAMES,chatpath:CHATPATH,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null,loreSid:LORE.sid||'',lorePending:LORE_PENDING};
+  // 存档必须是拍下来的照片，不是继续指向运行时对象的窗口。
+  // 否则保存后再改背包/NPC/历史，旧存档也会跟着变。
+  return JSON.parse(JSON.stringify({schema_version:SAVE_SCHEMA_VERSION,history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,storyRuntime:STORY_RUNTIME,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,effectiveSetup:EFFECTIVE_SETUP,tone:STORY_TONE,toneDesc:TONE_DESC,toneTrans:TONE_TRANS,names:NAMES,chatpath:CHATPATH,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null,loreSid:LORE.sid||'',lorePending:LORE_PENDING}));
 }
-function applySnapshot(sv){
+function applySnapshot(sv,opts){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
@@ -3071,7 +3080,7 @@ function applySnapshot(sv){
   // 读档要接回同一个事实库会话，否则这局记住的设定就断了
   LORE={on:false,sid:sv.loreSid||'',ctx:'',names:[],conflicts:[],busy:false,trace:[],counts:{}};
   LORE_PENDING=Array.isArray(sv.lorePending)?sv.lorePending:[];
-  if(LORE.sid)loreResume();
+  if(LORE.sid&&!(opts&&opts.skipLoreResume))loreResume();
   if(sv.customWorld) WORLDS['__custom__']=sv.customWorld;
   if(sv.world) WORLD=sv.world;
   if(sv.pace) PACE=sv.pace;
@@ -3107,6 +3116,13 @@ function idbOpen(){return new Promise(function(ok,bad){ if(IDB)return ok(IDB); v
 function idbPut(k,v){return idbOpen().then(function(db){return new Promise(function(ok,bad){var tx=db.transaction('saves','readwrite');tx.objectStore('saves').put(v,k);tx.oncomplete=function(){ok();};tx.onerror=function(){bad(tx.error);};});});}
 function idbGet(k){return idbOpen().then(function(db){return new Promise(function(ok,bad){var rq=db.transaction('saves','readonly').objectStore('saves').get(k);rq.onsuccess=function(){ok(rq.result);};rq.onerror=function(){bad(rq.error);};});});}
 function idbDel(k){return idbOpen().then(function(db){return new Promise(function(ok,bad){var tx=db.transaction('saves','readwrite');tx.objectStore('saves').delete(k);tx.oncomplete=function(){ok();};tx.onerror=function(){bad(tx.error);};});});}
+
+// 最终提交请求可能已经到达服务端，但浏览器在收到响应前断网。
+// 这条记录放在同一个 IndexedDB 存储里，重开页面后可以用相同 commit_id 重试，
+// 由服务端幂等契约判断是首次提交还是重放，而不是重新调用叙事模型。
+var PENDING_TURN_KEY='pending_turn_commit', PENDING_RECOVERY_WARNED=false, PENDING_RECOVERY_BUSY=false;
+async function pendingTurnRead(){return idbGet(PENDING_TURN_KEY).catch(function(){return null;});}
+async function pendingTurnClear(){return idbDel(PENDING_TURN_KEY).catch(function(){});}
 
 // ── 存档存储层 ──────────────────────────────────────────────────
 // IndexedDB 跟设备绑死：电脑上玩到一半，手机打开是一片空白。
@@ -3272,46 +3288,69 @@ async function migrateSavesToBackend(){
 // Always-on, session-local operational view. It records prompts/results but never
 // request headers or API keys. The older debug trace below remains the durable
 // problem-report format; this monitor is for seeing what is happening right now.
-var AGENT_MONITOR={runs:[],selected:'',open:false,max:80,renderPending:false};
-var AGENT_LABELS={pipeline:'回合流水线',planner:'剧情规划 Agent',director:'GM 裁定 Agent',narrative:'场景写手',state:'状态审计 Agent',memory:'事实记忆 Agent',summary:'历史摘要 Agent',agency:'玩家主权重写',sheet:'角色卡整理',archive:'档案整理',worldgen:'世界生成 Agent',utility:'辅助任务'};
+var AGENT_MONITOR={runs:[],selected:'',open:false,max:80,renderPending:false,filterAgent:'',filterStatus:''};
+var MONITOR_PARENT_ID='';
+var AGENT_LABELS={pipeline:'回合流水线',planner:'剧情规划 Agent',director:'GM 裁定 Agent',narrative:'场景写手',state:'状态审计 Agent',memory:'事实记忆 Agent',summary:'历史摘要 Agent',agency:'玩家主权重写',sheet:'角色卡整理',archive:'档案整理',worldgen:'世界生成 Agent',commit:'提交与存档',utility:'辅助任务'};
 function monitorText(v,limit){v=String(v===undefined||v===null?'':v);limit=limit||40000;return v.length>limit?v.substring(0,limit)+'\n[MONITOR_TRUNCATED '+(v.length-limit)+' CHARS]':v;}
 function monitorInput(messages){return (messages||[]).map(function(m){return '['+String(m.role||'')+']\n'+String(m.content||'');}).join('\n\n');}
 function monitorModel(agent,override){return String(override||((agent==='planner'&&SETTINGS.plannerModel)||MODEL)||'').trim();}
+var MONITOR_PERSIST_QUEUE={}, MONITOR_PERSIST_DISABLED=false;
+function monitorRunPayload(r){return {run_id:r.runId||r.id,parent_id:r.parentId||'',session_id:r.sessionId||'',turn_id:Number(r.turnId)||0,agent:r.agent||'utility',title:r.title||'',status:r.status||'running',provider:r.provider||'',model:r.model||'',thinking:!!r.thinking,input:monitorText(r.input,40000),output:monitorText(r.output,40000),reasoning:monitorText(r.reasoning,40000),error:monitorText(r.error,6000),usage:debugClone(r.usage||{}),stages:debugClone(r.stages||[]),meta:debugClone(r.meta||{}),retries:Number(r.retries)||0,started_at:r.startedAt||'',duration_ms:Number(r.durationMs)||0};}
+function monitorPersistRun(r){
+  if(MONITOR_PERSIST_DISABLED||BK!=='be'||!r||!r.sessionId)return;
+  var key=r.runId||r.id,payload=monitorRunPayload(r),previous=MONITOR_PERSIST_QUEUE[key]||Promise.resolve();
+  MONITOR_PERSIST_QUEUE[key]=previous.then(function(){return fetch('/api/agent-runs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(function(res){if(!res.ok){if(res.status===404)MONITOR_PERSIST_DISABLED=true;throw new Error('HTTP '+res.status);}});}).catch(function(e){if(!MONITOR_PERSIST_DISABLED)debugEvent('agent_run_persist_failed',{runId:key,message:String(e&&e.message||e)});});
+}
+function monitorRunFromServer(row){return {id:row.run_id,runId:row.run_id,parentId:row.parent_id||'',sessionId:row.session_id||'',turnId:Number(row.turn_id)||0,agent:row.agent||'utility',title:row.title||'',status:row.status||'done',provider:row.provider||'',model:row.model||'',thinking:!!row.thinking,input:row.input||'',output:row.output||'',reasoning:row.reasoning||'',error:row.error||'',usage:row.usage||null,retries:Number(row.retries)||0,stages:Array.isArray(row.stages)?row.stages:[],meta:row.meta||{},startedAt:row.started_at||'',startedMs:Date.parse(row.started_at||'')||Date.now(),durationMs:Number(row.duration_ms)||0};}
+async function loadAgentRunsFromServer(){
+  if(BK!=='be'||!LORE.on||!LORE.sid)return false;
+  try{
+    var res=await fetch('/api/sessions/'+encodeURIComponent(LORE.sid)+'/agent-runs?limit='+AGENT_MONITOR.max);
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    var rows=await res.json(),loaded=rows.map(monitorRunFromServer),ids={};loaded.forEach(function(r){ids[r.id]=true;});
+    AGENT_MONITOR.runs=AGENT_MONITOR.runs.filter(function(r){return !ids[r.id];}).concat(loaded).slice(-AGENT_MONITOR.max);
+    if(!AGENT_MONITOR.selected&&AGENT_MONITOR.runs.length)AGENT_MONITOR.selected=AGENT_MONITOR.runs[AGENT_MONITOR.runs.length-1].id;
+    renderAgentMonitor();return true;
+  }catch(e){debugEvent('agent_run_load_failed',{message:String(e&&e.message||e)});return false;}
+}
 function monitorStart(agent,title,opt){
-  opt=opt||{};var now=Date.now(),id='agent_'+now+'_'+Math.floor(Math.random()*100000);
-  var run={id:id,turn:TURNS,agent:agent||'utility',title:title||AGENT_LABELS[agent]||agent||'后台任务',status:'running',startedAt:new Date(now).toISOString(),startedMs:now,durationMs:0,provider:BK==='be'?(BACKEND_PROVIDER||'backend'):BK,model:monitorModel(agent,opt.model),thinking:opt.thinking===undefined?thinkingEnabledForAgent(agent):!!opt.thinking,input:monitorText(opt.input||''),output:'',reasoning:'',error:'',usage:null,retries:0,stages:[],meta:debugClone(opt.meta||{})};
-  AGENT_MONITOR.runs.push(run);if(AGENT_MONITOR.runs.length>AGENT_MONITOR.max)AGENT_MONITOR.runs=AGENT_MONITOR.runs.slice(-AGENT_MONITOR.max);AGENT_MONITOR.selected=id;monitorSchedule();return id;
+  opt=opt||{};var now=Date.now(),id='agent_'+now+'_'+Math.floor(Math.random()*100000),meta=opt.meta||{};
+  var run={id:id,runId:id,parentId:String(opt.parentId||meta.parentId||MONITOR_PARENT_ID||''),sessionId:String(opt.sessionId===undefined?(typeof LORE!=='undefined'&&LORE.sid||''):opt.sessionId),turnId:Number(opt.turnId===undefined?TURNS:opt.turnId)||0,agent:agent||'utility',title:title||AGENT_LABELS[agent]||agent||'后台任务',status:'running',startedAt:new Date(now).toISOString(),startedMs:now,durationMs:0,provider:BK==='be'?(BACKEND_PROVIDER||'backend'):BK,model:monitorModel(agent,opt.model),thinking:opt.thinking===undefined?thinkingEnabledForAgent(agent):!!opt.thinking,input:monitorText(opt.input||''),output:'',reasoning:'',error:'',usage:null,retries:0,stages:[],meta:debugClone(meta)};
+  AGENT_MONITOR.runs.push(run);if(AGENT_MONITOR.runs.length>AGENT_MONITOR.max)AGENT_MONITOR.runs=AGENT_MONITOR.runs.slice(-AGENT_MONITOR.max);AGENT_MONITOR.selected=id;monitorPersistRun(run);monitorSchedule();return id;
 }
 function monitorFind(id){for(var i=AGENT_MONITOR.runs.length-1;i>=0;i--)if(AGENT_MONITOR.runs[i].id===id)return AGENT_MONITOR.runs[i];return null;}
-function monitorStage(id,name,status,detail){var r=monitorFind(id);if(!r)return;var s={name:String(name||'阶段'),status:status||'running',atMs:Date.now()-r.startedMs,detail:monitorText(detail||'',5000)};r.stages.push(s);if(r.stages.length>30)r.stages=r.stages.slice(-30);monitorSchedule();}
+function monitorStage(id,name,status,detail){var r=monitorFind(id);if(!r)return;var s={name:String(name||'阶段'),status:status||'running',atMs:Date.now()-r.startedMs,detail:monitorText(detail||'',5000)};r.stages.push(s);if(r.stages.length>30)r.stages=r.stages.slice(-30);monitorPersistRun(r);monitorSchedule();}
 function monitorRetry(id,attempt,error){var r=monitorFind(id);if(!r)return;r.status='retrying';r.retries=attempt;r.error=monitorText(error||'',2000);monitorStage(id,'等待第 '+(attempt+1)+' 次重试','running',r.error);}
 function monitorLive(id,output,reasoning,meta){var r=monitorFind(id);if(!r)return;r.status='running';r.durationMs=Date.now()-r.startedMs;if(output!==undefined)r.output=monitorText(output);if(reasoning!==undefined)r.reasoning=monitorText(reasoning);if(meta)r.meta=Object.assign(r.meta||{},debugClone(meta));monitorSchedule();}
-function monitorFinish(id,data){var r=monitorFind(id);if(!r)return;data=data||{};r.status=data.status||'done';r.durationMs=Date.now()-r.startedMs;if(data.output!==undefined)r.output=monitorText(data.output);if(data.reasoning!==undefined)r.reasoning=monitorText(data.reasoning);if(data.usage!==undefined)r.usage=debugClone(data.usage);if(data.meta)r.meta=Object.assign(r.meta||{},debugClone(data.meta));r.error='';monitorSchedule();}
-function monitorFail(id,error,meta){var r=monitorFind(id);if(!r)return;r.status='error';r.durationMs=Date.now()-r.startedMs;r.error=monitorText(error&&error.message||error||'未知错误',6000);if(meta)r.meta=Object.assign(r.meta||{},debugClone(meta));monitorStage(id,'失败','error',r.error);monitorSchedule();}
+function monitorFinish(id,data){var r=monitorFind(id);if(!r)return;data=data||{};r.status=data.status||'done';r.durationMs=Date.now()-r.startedMs;if(data.output!==undefined)r.output=monitorText(data.output);if(data.reasoning!==undefined)r.reasoning=monitorText(data.reasoning);if(data.usage!==undefined)r.usage=debugClone(data.usage);if(data.meta)r.meta=Object.assign(r.meta||{},debugClone(data.meta));r.error='';monitorPersistRun(r);monitorSchedule();}
+function monitorFail(id,error,meta){var r=monitorFind(id);if(!r)return;r.status='error';r.durationMs=Date.now()-r.startedMs;r.error=monitorText(error&&error.message||error||'未知错误',6000);if(meta)r.meta=Object.assign(r.meta||{},debugClone(meta));monitorStage(id,'失败','error',r.error);monitorPersistRun(r);monitorSchedule();}
 function monitorSchedule(){if(AGENT_MONITOR.renderPending)return;AGENT_MONITOR.renderPending=true;requestAnimationFrame(function(){AGENT_MONITOR.renderPending=false;renderAgentMonitor();});}
 function monitorDuration(r){var ms=r.status==='running'||r.status==='retrying'?Date.now()-r.startedMs:Number(r.durationMs)||0;return ms<1000?ms+'ms':(ms/1000).toFixed(1)+'s';}
-function openAgentMonitor(){AGENT_MONITOR.open=true;var el=document.getElementById('agent-monitor');if(el){el.classList.add('on');el.setAttribute('aria-hidden','false');}if(!AGENT_MONITOR.selected&&AGENT_MONITOR.runs.length)AGENT_MONITOR.selected=AGENT_MONITOR.runs[AGENT_MONITOR.runs.length-1].id;renderAgentMonitor();}
+function openAgentMonitor(){AGENT_MONITOR.open=true;var el=document.getElementById('agent-monitor');if(el){el.classList.add('on');el.setAttribute('aria-hidden','false');}if(!AGENT_MONITOR.selected&&AGENT_MONITOR.runs.length)AGENT_MONITOR.selected=AGENT_MONITOR.runs[AGENT_MONITOR.runs.length-1].id;renderAgentMonitor();loadAgentRunsFromServer();}
 function closeAgentMonitor(){AGENT_MONITOR.open=false;var el=document.getElementById('agent-monitor');if(el){el.classList.remove('on');el.setAttribute('aria-hidden','true');}}
 function selectAgentRun(id){AGENT_MONITOR.selected=id;renderAgentMonitor();}
+function setAgentMonitorFilter(kind,value){if(kind==='agent')AGENT_MONITOR.filterAgent=String(value||'');if(kind==='status')AGENT_MONITOR.filterStatus=String(value||'');renderAgentMonitor();}
 function clearAgentMonitor(){if(AGENT_MONITOR.runs.some(function(r){return r.status==='running'||r.status==='retrying';})&&!confirm('仍有后台环节运行，确定只清空已经完成的记录吗？'))return;AGENT_MONITOR.runs=AGENT_MONITOR.runs.filter(function(r){return r.status==='running'||r.status==='retrying';});AGENT_MONITOR.selected=AGENT_MONITOR.runs.length?AGENT_MONITOR.runs[AGENT_MONITOR.runs.length-1].id:'';renderAgentMonitor();}
 function exportAgentMonitor(){if(!AGENT_MONITOR.runs.length)return alert('还没有后台运行记录。');var payload=debugClone({format:'wuji-agent-monitor',version:1,appVersion:APP_VERSION,exportedAt:new Date().toISOString(),runs:AGENT_MONITOR.runs}),blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),a=document.createElement('a'),stamp=new Date().toISOString().replace(/[:.]/g,'-');a.href=URL.createObjectURL(blob);a.download='myrpg_agent_monitor_'+stamp+'.json';a.click();setTimeout(function(){URL.revokeObjectURL(a.href);},2000);}
 function renderAgentMonitor(){
-  var runs=AGENT_MONITOR.runs,list=document.getElementById('agent-run-list'),detail=document.getElementById('agent-run-detail'),summary=document.getElementById('agent-monitor-summary'),live=document.getElementById('agent-monitor-live'),badge=document.getElementById('agent-monitor-badge');
-  var active=runs.filter(function(r){return r.status==='running'||r.status==='retrying';}).length,failed=runs.filter(function(r){return r.status==='error';}).length,thought=runs.filter(function(r){return !!r.reasoning;}).length;
+  var allRuns=AGENT_MONITOR.runs,agentFilter=AGENT_MONITOR.filterAgent,statusFilter=AGENT_MONITOR.filterStatus;
+  var runs=allRuns.filter(function(r){return (!agentFilter||r.agent===agentFilter)&&(!statusFilter||r.status===statusFilter);});
+  var list=document.getElementById('agent-run-list'),detail=document.getElementById('agent-run-detail'),summary=document.getElementById('agent-monitor-summary'),live=document.getElementById('agent-monitor-live'),badge=document.getElementById('agent-monitor-badge');
+  var active=allRuns.filter(function(r){return r.status==='running'||r.status==='retrying';}).length,failed=allRuns.filter(function(r){return r.status==='error';}).length,thought=allRuns.filter(function(r){return !!r.reasoning;}).length;
   if(badge)badge.textContent=active?('· '+active+'运行中'):(failed?('· '+failed+'错误'):'');
   if(live){live.textContent=active?(active+' 个环节运行中'):'待机';live.classList.toggle('busy',active>0);}
   // 监视器关闭时只刷新轻量角标。流式正文每隔百余毫秒会更新一次，
   // 此处不重建隐藏列表，避免诊断 UI 反过来拖慢玩家看到正文的速度。
   if(!AGENT_MONITOR.open)return;
   var mc=(typeof LORE!=='undefined'&&LORE.counts)||{};
-  if(summary)summary.innerHTML='<span class="agent-stat">记录<b>'+runs.length+'</b></span><span class="agent-stat">运行<b>'+active+'</b></span><span class="agent-stat">错误<b>'+failed+'</b></span><span class="agent-stat">含推理<b>'+thought+'</b></span><span class="agent-stat">当前回合<b>'+TURNS+'</b></span><span class="agent-stat">检索<b>事实'+(mc.facts||0)+' / 事件'+(mc.events||0)+' / 承诺'+(mc.commitments||0)+'</b></span><div class="agent-monitor-tools"><button onclick="exportAgentMonitor()">导出</button><button onclick="clearAgentMonitor()">清空</button></div>';
+  if(summary)summary.innerHTML='<span class="agent-stat">显示<b>'+runs.length+'/'+allRuns.length+'</b></span><span class="agent-stat">运行<b>'+active+'</b></span><span class="agent-stat">错误<b>'+failed+'</b></span><span class="agent-stat">含推理<b>'+thought+'</b></span><span class="agent-stat">当前回合<b>'+TURNS+'</b></span><span class="agent-stat">检索<b>事实'+(mc.facts||0)+' / 事件'+(mc.events||0)+' / 承诺'+(mc.commitments||0)+'</b></span><div class="agent-monitor-tools"><button onclick="exportAgentMonitor()">导出</button><button onclick="clearAgentMonitor()">清空</button></div>';
   if(!list||!detail)return;
   if(!runs.length){list.innerHTML='<div class="agent-empty">开始游戏后，这里会实时显示规划、裁定、写作、状态和记忆环节。</div>';detail.innerHTML='<div class="agent-empty">选择左侧环节查看完整输入、深度思考、输出与耗时。</div>';return;}
-  list.innerHTML=runs.slice().reverse().map(function(r){return '<button class="agent-run '+escAttr(r.status)+(r.id===AGENT_MONITOR.selected?' active':'')+'" onclick="selectAgentRun(\''+escAttr(r.id)+'\')"><span class="agent-run-dot"></span><span><div class="agent-run-name">'+esc(AGENT_LABELS[r.agent]||r.agent)+' · '+esc(r.title)+'</div><div class="agent-run-sub">回合 '+r.turn+' · '+esc(r.model||'程序环节')+' · '+(r.thinking?'深度思考':'标准')+'</div></span><span class="agent-run-time">'+monitorDuration(r)+'</span></button>';}).join('');
-  var r=monitorFind(AGENT_MONITOR.selected)||runs[runs.length-1];if(!r)return;
+  list.innerHTML=runs.slice().reverse().map(function(r){return '<button class="agent-run '+escAttr(r.status)+(r.id===AGENT_MONITOR.selected?' active':'')+'" onclick="selectAgentRun(\''+escAttr(r.id)+'\')"><span class="agent-run-dot"></span><span><div class="agent-run-name">'+esc(AGENT_LABELS[r.agent]||r.agent)+' · '+esc(r.title)+'</div><div class="agent-run-sub">回合 '+(r.turnId||0)+' · '+esc(r.model||'程序环节')+' · '+(r.thinking?'深度思考':'标准')+'</div></span><span class="agent-run-time">'+monitorDuration(r)+'</span></button>';}).join('');
+  var r=runs.filter(function(item){return item.id===AGENT_MONITOR.selected;})[0]||runs[runs.length-1];if(!r)return;
   var stages=(r.stages||[]).map(function(s){return '<span class="agent-stage '+escAttr(s.status)+'" title="'+escAttr(s.detail||'')+'">'+esc(s.name)+' · '+s.atMs+'ms</span>';}).join('');
   function sec(title,text,cls,open){if(!text)return '';return '<details class="agent-section '+(cls||'')+'"'+(open?' open':'')+'><summary>'+esc(title)+' · '+String(text).length+' 字</summary><pre>'+esc(text)+'</pre></details>';}
-  detail.innerHTML='<div class="agent-detail-title">'+esc(AGENT_LABELS[r.agent]||r.agent)+' · '+esc(r.title)+'</div><div class="agent-detail-meta">状态='+esc(r.status)+' ｜ 回合='+r.turn+' ｜ 耗时='+monitorDuration(r)+' ｜ provider='+esc(r.provider||'')+' ｜ model='+esc(r.model||'')+' ｜ <span class="'+(r.thinking?'agent-thinking-on':'agent-thinking-off')+'">深度思考='+(r.thinking?'开启':'关闭')+'</span>'+(r.usage?(' ｜ tokens='+esc(JSON.stringify(r.usage))):'')+'</div><div class="agent-stage-list">'+(stages||'<span class="agent-stage">尚无子阶段</span>')+'</div>'+sec('错误',r.error,'',true)+sec('输入／提示词',r.input,'',false)+sec('模型深度思考',r.reasoning,'reasoning',true)+sec('输出／结构化结果',r.output,'',true)+sec('附加信息',JSON.stringify(r.meta||{},null,2),'',false);
+  detail.innerHTML='<div class="agent-detail-title">'+esc(AGENT_LABELS[r.agent]||r.agent)+' · '+esc(r.title)+'</div><div class="agent-detail-meta">状态='+esc(r.status)+' ｜ session_id='+esc(r.sessionId||'未绑定')+' ｜ turn_id='+r.turnId+' ｜ run_id='+esc(r.runId||r.id||'')+' ｜ parent_id='+esc(r.parentId||'无')+' ｜ 耗时='+monitorDuration(r)+' ｜ provider='+esc(r.provider||'')+' ｜ model='+esc(r.model||'')+' ｜ <span class="'+(r.thinking?'agent-thinking-on':'agent-thinking-off')+'">深度思考='+(r.thinking?'开启':'关闭')+'</span>'+(r.usage?(' ｜ tokens='+esc(JSON.stringify(r.usage))):'')+'</div><div class="agent-stage-list">'+(stages||'<span class="agent-stage">尚无子阶段</span>')+'</div>'+sec('错误',r.error,'',true)+sec('输入／提示词',r.input,'',false)+sec('模型深度思考',r.reasoning,'reasoning',true)+sec('输出／结构化结果',r.output,'',true)+sec('附加信息',JSON.stringify(r.meta||{},null,2),'',false);
 }
 
 // ── V23 STRUCTURED DEBUG TRACE ──
@@ -3488,14 +3527,19 @@ async function migrateLegacySlots(){
     try{await savePut('sv_'+i,JSON.parse(raw));localStorage.removeItem('wuji_sv_'+i);}catch(e){}
   }
 }
+var STARTUP_RENDER_ID=0;
 async function renderStartupSlots(){
+  var renderId=++STARTUP_RENDER_ID;
   var c=document.getElementById('startup-slots');if(!c)return;
   try{await migrateLegacySlots();}catch(e){}
+  if(renderId!==STARTUP_RENDER_ID)return;
   // 先把本地存档推上服务端，再渲染列表——否则会先闪一下「无存档」
   try{await migrateSavesToBackend();}catch(e){}
+  if(renderId!==STARTUP_RENDER_ID)return;
   c.innerHTML='';var found=0;
   var defs=[{key:'sv_0',name:'存档 1'},{key:'sv_1',name:'存档 2'},{key:'sv_2',name:'存档 3'},{key:'auto',name:'⟳ 自动存档'}];
   var metas=await saveSummaries();
+  if(renderId!==STARTUP_RENDER_ID)return;
   for(var i=0;i<defs.length;i++){
     var def=defs[i],sv=metas[def.key];
     var d=document.createElement('div');d.className='svs'+(PENDING_STARTUP_LOAD===def.key?' chosen':'')+(sv?'':' emp');
@@ -3537,33 +3581,60 @@ async function resumeStartupSave(key){
 // 它是后台行为，玩家没有表达任何意图；而另一台设备上的进度是真实存在的。
 // 静默覆盖等于替玩家做了一个他不知道的、不可逆的决定。
 var _autoSaveConflictWarned=false;
+var SAVE_CONFLICT_STATE=null;
+function showSaveConflict(slot,localSnapshot,e,automatic){
+  if(!e||!e.conflict)return;
+  var conflictMonitor=monitorStart('commit','等待处理存档冲突',{sessionId:LORE.sid,turnId:TURNS,parentId:MONITOR_PARENT_ID,input:'槽位：'+slot+'\n服务端回合：'+(e.currentTurns||0)+'\n本机回合：'+(Number(localSnapshot&&localSnapshot.turns)||TURNS),meta:{slot:slot,automatic:!!automatic,currentRevision:e.currentRevision||0,currentTurns:e.currentTurns||0}});
+  monitorStage(conflictMonitor,'等待玩家选择','running','不会自动覆盖；等待选择本机版本、服务端版本或稍后处理');
+  SAVE_CONFLICT_STATE={slot:slot,snapshot:localSnapshot,automatic:!!automatic,currentRevision:e.currentRevision||0,currentTurns:e.currentTurns||0,monitorId:conflictMonitor};
+  var current=SAVE_CONFLICT_STATE.currentTurns||0, local=Number(localSnapshot&&localSnapshot.turns)||TURNS;
+  openArchiveModal('存档版本冲突',
+    '<div>服务端已经有更新版本：第 <b>'+current+'</b> 回合；本机是第 <b>'+local+'</b> 回合。</div>'+
+    '<div style="margin-top:8px;color:#d5cbbb">这不是模型错误，而是另一台设备或页面先保存了进度。请选择哪一份作为继续游玩的版本。</div>');
+  modalAction('保留本机版本并覆盖服务端',function(){resolveSaveConflict('local');},'red');
+  modalAction('读取服务端版本',function(){resolveSaveConflict('remote');},'blue');
+  modalAction('稍后处理',function(){var c=SAVE_CONFLICT_STATE;if(c)monitorFinish(c.monitorId,{status:'skipped',output:'玩家选择稍后处理，服务端版本未被覆盖',meta:{choice:'later',slot:c.slot}});closeModal();},'');
+  addBlk('sys','▸ '+(automatic?'自动':'手动')+'存档发生版本冲突：服务端第 '+current+' 回合，本机第 '+local+' 回合，请在弹窗中选择');
+}
+async function resolveSaveConflict(choice){
+  var c=SAVE_CONFLICT_STATE;if(!c)return;
+  closeModal();
+  if(choice==='local'){
+    try{
+      await savePut(c.slot,c.snapshot,{force:true});
+      SAVE_CONFLICT_STATE=null;_autoSaveConflictWarned=false;renderSlots();renderStartupSlots();
+      addBlk('sys','▸ 已保留本机进度并覆盖服务端存档');
+      monitorFinish(c.monitorId,{output:'玩家选择保留本机版本并覆盖服务端',meta:{choice:'local',slot:c.slot}});
+    }catch(e){addBlk('err','▸ 覆盖服务端存档失败：'+String(e&&e.message||e));monitorFail(c.monitorId,e,{choice:'local',slot:c.slot});}
+    return;
+  }
+  try{
+    var sv=await saveGet(c.slot);if(!sv)throw new Error('服务端存档不存在');
+    applySnapshot(sv);SAVE_CONFLICT_STATE=null;renderSlots();renderStartupSlots();
+    addBlk('sys','▸ 已读取服务端存档，本机进度未覆盖服务端');
+    monitorFinish(c.monitorId,{output:'玩家选择读取服务端版本',meta:{choice:'remote',slot:c.slot}});
+  }catch(e){addBlk('err','▸ 读取服务端存档失败：'+String(e&&e.message||e));monitorFail(c.monitorId,e,{choice:'remote',slot:c.slot});}
+}
 function autoSave(){
   if(!HIST.length)return;
-  savePut('auto',snapshot()).then(function(){
+  var localSnapshot=snapshot();
+  savePut('auto',localSnapshot).then(function(){
     _autoSaveConflictWarned=false;
   }).catch(function(e){
     if(!(e&&e.conflict))return;              // 普通失败保持静默，本机镜像已经写了
     if(_autoSaveConflictWarned)return;       // 每次冲突只提醒一次，不要每回合刷屏
     _autoSaveConflictWarned=true;
-    addBlk('sys','▸ 另一台设备上的自动存档更新（已到第 '+(e.currentTurns||'?')+
-      ' 回合），本机进度只存在本地、没有上传。要以这一边为准，请手动存到某个存档位。');
+    showSaveConflict('auto',localSnapshot,e,true);
   });
 }
 function saveSv(i){
   if(!HIST.length)return;
-  savePut('sv_'+i,snapshot()).then(function(){
+  var localSnapshot=snapshot();
+  savePut('sv_'+i,localSnapshot).then(function(){
     renderSlots();addBlk('sys','▸ 已保存至存档 '+(i+1));
   }).catch(function(e){
     if(e&&e.conflict){
-      // 明确的保存动作可以覆盖，但必须让玩家知道自己在覆盖什么
-      if(confirm('存档 '+(i+1)+' 在服务端已经更新到第 '+(e.currentTurns||'?')+' 回合'+
-                 '（可能来自另一台设备），你当前是第 '+TURNS+' 回合。\n\n确定用当前进度覆盖吗？')){
-        savePut('sv_'+i,snapshot(),{force:true}).then(function(){
-          renderSlots();addBlk('sys','▸ 已覆盖存档 '+(i+1));
-        }).catch(function(e2){addBlk('err','保存失败：'+String(e2&&e2.message||e2));});
-      }else{
-        addBlk('sys','▸ 已取消，服务端的进度保持不变');
-      }
+      showSaveConflict('sv_'+i,localSnapshot,e,false);
       return;
     }
     addBlk('err','保存失败：'+String(e&&e.message||e));
@@ -3773,7 +3844,7 @@ function thinkingPayload(provider,forBackend,agentKind){
 }
 
 async function doFetch(messages,maxTok,temp,modelOverride,callMeta){
-  callMeta=callMeta||null;var agent=callMeta&&callMeta.agent||'utility',runId=callMeta?monitorStart(agent,callMeta.title||AGENT_LABELS[agent],{input:callMeta.input||monitorInput(messages),model:modelOverride,meta:callMeta.meta}):'';
+  callMeta=callMeta||null;var agent=callMeta&&callMeta.agent||'utility',runId=callMeta?monitorStart(agent,callMeta.title||AGENT_LABELS[agent],{sessionId:callMeta.sessionId===undefined?(LORE&&LORE.sid||''):callMeta.sessionId,turnId:callMeta.turnId===undefined?TURNS:callMeta.turnId,parentId:callMeta.parentId===undefined?MONITOR_PARENT_ID:callMeta.parentId,input:callMeta.input||monitorInput(messages),model:modelOverride,meta:callMeta.meta}):'';
   var maxAttempts=3, lastErr=null;
   try{
     for(var attempt=0;attempt<maxAttempts;attempt++){
@@ -3855,7 +3926,7 @@ function chatContent(data){
 }
 
 async function doFetchStream(messages,maxTok,onDelta,temp,callMeta){
-  callMeta=callMeta||null;var agent=callMeta&&callMeta.agent||'narrative',runId=callMeta?monitorStart(agent,callMeta.title||AGENT_LABELS[agent],{input:callMeta.input||monitorInput(messages),meta:callMeta.meta}):'';
+  callMeta=callMeta||null;var agent=callMeta&&callMeta.agent||'narrative',runId=callMeta?monitorStart(agent,callMeta.title||AGENT_LABELS[agent],{sessionId:callMeta.sessionId===undefined?(LORE&&LORE.sid||''):callMeta.sessionId,turnId:callMeta.turnId===undefined?TURNS:callMeta.turnId,parentId:callMeta.parentId===undefined?MONITOR_PARENT_ID:callMeta.parentId,input:callMeta.input||monitorInput(messages),meta:callMeta.meta}):'';
   var maxAttempts=3,lastErr=null;
   try{
     for(var attempt=0;attempt<maxAttempts;attempt++){
@@ -4031,7 +4102,13 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp,callMeta,monitorRu
   monitorStream(true);
   if(finishReason==='length')return {text:salvageTruncated(full),reasoning:reasoning,usage:usage,truncated:true,frames:frames,finishReason:finishReason};
   if(finishReason==='error'||finishReason==='content_filter')throw new Error('模型未正常完成输出（'+finishReason+'），本次回复未写入历史');
-  if(!sawDone&&finishReason!=='stop'&&finishReason!=='tool_calls')throw new Error('流式连接在完成标记前结束，本次半截回复未写入历史');
+  if(!sawDone&&finishReason!=='stop'&&finishReason!=='tool_calls'){
+    var incomplete=new Error('流式连接在完成标记前结束，本次半截回复未写入历史');
+    // 连接在 reader 正常结束时不会经过上面的异常捕获，但这仍然是
+    // 可识别的半截正文：交给上层保留诊断/监视器信息，不要伪装成普通空失败。
+    if(full){incomplete.__partial=true;incomplete.partialText=salvageTruncated(full);}
+    throw incomplete;
+  }
   return {text:full,reasoning:reasoning,usage:usage,frames:frames,finishReason:finishReason};
 }
 
@@ -4104,7 +4181,26 @@ function promptAddPin(){
 
 // ── REAL UNDO: dialogue and authoritative runtime state move together ──
 function runtimeBackup(){
-  return JSON.parse(JSON.stringify({gstate:GAME_STATE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,turns:TURNS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,outline:OUTLINE,storyRuntime:STORY_RUNTIME,names:NAMES,stateActive:STATE_ACTIVE,sheetArmed:SHEET_INIT_ARMED}));
+  return JSON.parse(JSON.stringify({gstate:GAME_STATE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,tokens:TOKENS,turns:TURNS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lastMemTurn:_lastMemTurn,outline:OUTLINE,storyRuntime:STORY_RUNTIME,storyAgent:STORY_AGENT,names:NAMES,stateActive:STATE_ACTIVE,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,lorePending:LORE_PENDING,lore:{ctx:LORE.ctx,names:LORE.names,conflicts:LORE.conflicts,trace:LORE.trace,counts:LORE.counts}}));
+}
+
+// 一个回合只有两种结局：全部成功后提交，或恢复到开始前。
+// 叙事、数值、账本、冲突消费和自动存档不再各自为政。
+function beginTurnTransaction(){
+  return {runtime:runtimeBackup(),history:JSON.parse(JSON.stringify(HIST)),backups:JSON.parse(JSON.stringify(TURN_BACKUPS)),conflictCount:(LORE.conflicts||[]).length,commitId:'turn_'+Date.now()+'_'+Math.floor(Math.random()*1e9),committed:false};
+}
+function commitTurnTransaction(tx){
+  if(!tx||tx.committed)return;
+  if(tx.conflictCount>0)LORE.conflicts.splice(0,Math.min(tx.conflictCount,LORE.conflicts.length));
+  if(TURN_BACKUPS.length>30)TURN_BACKUPS=TURN_BACKUPS.slice(-30);
+  tx.committed=true;
+}
+function rollbackTurnTransaction(tx){
+  if(!tx||tx.committed)return;
+  HIST=JSON.parse(JSON.stringify(tx.history||[]));
+  TURN_BACKUPS=JSON.parse(JSON.stringify(tx.backups||[]));
+  restoreRuntime(tx.runtime);
+  rebuildLog();
 }
 
 function premiseEvidence(text){
@@ -4241,10 +4337,13 @@ function editCanon(k){
 }
 function restoreRuntime(b){
   if(!b)return;
-  var bs=b.gstate&&typeof b.gstate==='object'?Object.assign({},b.gstate):freshGameState();if((!bs.inv||!bs.inv.length)&&b.inv)bs.inv=b.inv;if((!bs.skills||!bs.skills.length)&&b.skills)bs.skills=b.skills;
-  GAME_STATE=migrateGameState(bs);QUESTS=b.quests||{main:[],side:[]};TURNS=b.turns||0;WORLD_CLOCK=b.wclock||0;EVENT_THRESHOLD=b.ethresh||8;OUTLINE=b.outline||'';STORY_RUNTIME=b.storyRuntime&&typeof b.storyRuntime==='object'?b.storyRuntime:{};NAMES=b.names||'';STATE_ACTIVE=b.stateActive!==false;
+  b=JSON.parse(JSON.stringify(b));
+  var bs=b.gstate&&typeof b.gstate==='object'?b.gstate:freshGameState();if((!bs.inv||!bs.inv.length)&&b.inv)bs.inv=b.inv;if((!bs.skills||!bs.skills.length)&&b.skills)bs.skills=b.skills;
+  GAME_STATE=migrateGameState(bs);QUESTS=b.quests||{main:[],side:[]};TOKENS=Number(b.tokens)||0;TURNS=b.turns||0;WORLD_CLOCK=b.wclock||0;EVENT_THRESHOLD=b.ethresh||8;_lastMemTurn=Number(b.lastMemTurn)||0;OUTLINE=b.outline||'';STORY_RUNTIME=b.storyRuntime&&typeof b.storyRuntime==='object'?b.storyRuntime:{};STORY_AGENT=b.storyAgent&&typeof b.storyAgent==='object'?b.storyAgent:{busy:false,lastError:'',lastAttemptTurn:-1};NAMES=b.names||'';STATE_ACTIVE=b.stateActive!==false;PREMISE_STATE=b.premise&&typeof b.premise==='object'?b.premise:{kind:'none'};LORE_PENDING=Array.isArray(b.lorePending)?b.lorePending:[];
+  if(b.lore&&typeof b.lore==='object'){LORE.ctx=b.lore.ctx||'';LORE.names=Array.isArray(b.lore.names)?b.lore.names:[];LORE.conflicts=Array.isArray(b.lore.conflicts)?b.lore.conflicts:[];LORE.trace=Array.isArray(b.lore.trace)?b.lore.trace:[];LORE.counts=b.lore.counts&&typeof b.lore.counts==='object'?b.lore.counts:{};}
   SHEET_INIT_ARMED=!!b.sheetArmed;
   syncStateCollections();renderQuests();renderInventory();renderSkills();renderNpcs();renderCharacterSheet();
+  var tk=document.getElementById('tkc');if(tk)tk.textContent='TOKENS: '+TOKENS.toLocaleString();
 }
 function requestSkip(){
   if(LOADING)return;
@@ -4273,18 +4372,26 @@ async function loreRollback(fromTurn, reason){
   }
 }
 
-function undoTurn(){
-  if(LOADING) return;
-  if(!TURN_BACKUPS.length){ addBlk('sys','▸ 当前进度没有可安全回滚的状态快照'); return; }
+async function undoTurn(){
+  if(LOADING) return false;
+  if(!TURN_BACKUPS.length){ addBlk('sys','▸ 当前进度没有可安全回滚的状态快照'); return false; }
   var ai=-1;
   for(var i=HIST.length-1;i>=0;i--){ if(HIST[i].role==='assistant'){ai=i;break;} }
-  if(ai<1 || HIST[ai-1].role!=='user'){ addBlk('sys','▸ 没有可撤销的回合'); return; }
-  HIST.splice(ai-1,2);
+  if(ai<1 || HIST[ai-1].role!=='user'){ addBlk('sys','▸ 没有可撤销的回合'); return false; }
   var undone=TURNS;
-  restoreRuntime(TURN_BACKUPS.pop());
-  rebuildLog();
-  addBlk('sys','▸ 已撤销上一回合');
-  loreRollback(undone,'undo');
+  LOADING=true;
+  try{
+    var required=LORE.on,remote=await loreRollback(undone,'undo');
+    if(required&&remote===null)return false;
+    HIST.splice(ai-1,2);
+    restoreRuntime(TURN_BACKUPS.pop());
+    rebuildLog();
+    addBlk('sys','▸ 已撤销上一回合');
+    autoSave();
+    return true;
+  }finally{
+    LOADING=false;var input=document.getElementById('pinp');if(input)input.focus();
+  }
 }
 
 async function startGame(){
@@ -4370,6 +4477,8 @@ async function applyStatePatch(p){
 function extractStatePatches(text){
   var re=/【STATE】([\s\S]*?)【\/STATE】/g,m,out=[];
   while((m=re.exec(String(text)))!==null){var raw=m[1].trim().replace(/^```json/i,'').replace(/^```/,'').replace(/```$/,'').trim();try{var p=JSON.parse(raw);if(p&&typeof p==='object')out.push(p);}catch(e){}}
+  var structured=parseStructuredWriterOutput(text);
+  if(structured&&structured.statePatch&&typeof structured.statePatch==='object'&&Object.keys(structured.statePatch).length)out.push(structured.statePatch);
   return out;
 }
 function stateChangeLikely(input,reply){
@@ -4527,9 +4636,10 @@ function fullVisibleSceneText(text){return String(text||'').replace(/【(?:STATE
 async function repairMissingActionOptions(draft,playerInput){
   if(SETTINGS.optionRepair===false||parseActionOptions(draft).found)return draft;
   try{
+    var structuredDraft=parseStructuredWriterOutput(draft),repairDraft=structuredDraft?structuredDraft.narrative:draft;
     var qr=await fetch('/api/writer/option-repair',{method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({draft:String(draft||''),player_input:String(playerInput||'')})});
+      body:JSON.stringify({draft:String(repairDraft||''),player_input:String(playerInput||'')})});
     if(!qr.ok)throw new Error('HTTP '+qr.status);
     var spec=await qr.json();
     var res=await doFetch([{role:'user',content:spec.prompt}],
@@ -4549,7 +4659,7 @@ async function repairMissingActionOptions(draft,playerInput){
     var clean=[];
     arr.forEach(function(x){var t=cleanOptionMarkdown(x).replace(/^\d+[.、。．:：\-）)]\s*/,'').trim();if(t&&t.length<=160&&clean.indexOf(t)<0&&clean.length<4)clean.push(t);});
     if(clean.length<2)return draft;
-    return String(draft||'').trimEnd()+'\n\n选项：\n'+clean.map(function(x,i){return (i+1)+' '+x;}).join('\n')+'\n或输入任何你想做的事';
+    return String(repairDraft||draft||'').trimEnd()+'\n\n选项：\n'+clean.map(function(x,i){return (i+1)+' '+x;}).join('\n')+'\n或输入任何你想做的事';
   }catch(e){debugEvent('option_repair_error',{message:String(e&&e.message||e)});return draft;}
 }
 
@@ -4578,7 +4688,11 @@ async function loreApi(path,opt){
   opt=opt||{};
   if(opt.body)opt.headers={'Content-Type':'application/json'};
   var r=await fetch('/api'+path,opt);
-  if(!r.ok)throw new Error('HTTP '+r.status);
+  if(!r.ok){
+    var detail=null;try{detail=await r.json();}catch(_e){}
+    var msg=detail&&detail.detail&&detail.detail.message||detail&&detail.detail||('HTTP '+r.status);
+    var err=new Error(String(msg));err.status=r.status;err.detail=detail&&detail.detail||null;throw err;
+  }
   return r.json();
 }
 
@@ -4607,6 +4721,7 @@ async function loreResume(){
     await loreApi('/sessions/'+LORE.sid);
     LORE.on=true;
     debugEvent('lore_session_resumed',{sid:LORE.sid});
+    await recoverPendingTurnCommit();
   }catch(e){
     LORE.on=false; LORE.sid='';
     debugEvent('lore_resume_failed',{message:String(e&&e.message||e)});
@@ -4657,9 +4772,7 @@ function deterministicCommitments(input){
   }
   return rows;
 }
-async function loreRecordLedger(turn,narrative,playerInput){
-  if(!LORE.on||!LORE.sid)return false;
-  try{
+function buildNarrativeLedger(turn,narrative,playerInput){
     var visible=storyVisibleText(narrative),parsedVisible=parseActionOptions(visible);
     visible=(parsedVisible.found?parsedVisible.main:visible).substring(0,600);
     var mentioned=loreMentioned(String(playerInput||'')+' '+visible);
@@ -4675,16 +4788,95 @@ async function loreRecordLedger(turn,narrative,playerInput){
       });
       states.push({name:n,short_term:{relationship:v.rel||'',attitude:Number(v.att)||0,note:v.note||''},relationships:{player:v.rel||''}});
     });
-    var out=await loreApi('/sessions/'+LORE.sid+'/ledger',{method:'POST',body:JSON.stringify({
+    return {
       turn:turn,
       events:[{kind:'player_turn',actor:'玩家',action:String(playerInput||'').substring(0,500),
         outcome:visible,location:String(GAME_STATE.loc||'').substring(0,120),participants:mentioned,
         visibility:'public',source:'system'}],
       commitments:deterministicCommitments(playerInput),beliefs:beliefs,character_states:states
-    })});
+    };
+}
+async function loreRecordLedger(turn,narrative,playerInput){
+  if(!LORE.on||!LORE.sid)return false;
+  try{
+    var out=await loreApi('/sessions/'+LORE.sid+'/ledger',{method:'POST',body:JSON.stringify(buildNarrativeLedger(turn,narrative,playerInput))});
     debugEvent('narrative_ledger_written',out);
     return true;
   }catch(e){debugEvent('narrative_ledger_failed',{message:String(e&&e.message||e)});return false;}
+}
+
+// 后端模式下把账本和自动存档作为一个服务端事务提交。
+// 这条路径不再先写 ledger、再另起一个 PUT save，避免中途断网留下半个回合。
+async function commitCompletedTurnServer(tx,turn,narrative,playerInput,parentId){
+  if(!(BK==='be'&&LORE.on&&LORE.sid))return false;
+  if(!tx||!tx.commitId)throw new Error('缺少本回合 commit_id');
+  var commitMonitor=monitorStart('commit','提交第 '+turn+' 回合',{sessionId:LORE.sid,parentId:parentId,turnId:turn,input:'commit_id='+String(tx.commitId)+'\n玩家输入：'+String(playerInput||''),meta:{turn:turn,commitId:String(tx.commitId),session:LORE.sid,parentId:parentId||''}});
+  monitorStage(commitMonitor,'准备提交','running','准备账本、自动存档和版本号');
+  if(SAVE_REVISIONS.auto===undefined)await saveSummaries();
+  var payload=snapshot();
+  var baseRevision=SAVE_REVISIONS.auto===undefined?0:Number(SAVE_REVISIONS.auto)||0;
+  var body={
+    commit_id:String(tx.commitId),
+    ledger:buildNarrativeLedger(turn,narrative,playerInput),
+    save_slot:'auto',
+    save:Object.assign(saveMeta(payload),{payload:payload,base_revision:baseRevision})
+  };
+  var pending={commit_id:String(tx.commitId),session_id:LORE.sid,turn:turn,body:body,created_at:new Date().toISOString()};
+  // 先留待恢复记录，再发请求；写失败不阻断当前回合，但会记录诊断信息。
+  try{await idbPut(PENDING_TURN_KEY,pending);monitorStage(commitMonitor,'待恢复记录','done','已写入 IndexedDB；断响应时可用同一 commit_id 恢复');}catch(e){debugEvent('pending_commit_persist_failed',{message:String(e&&e.message||e)});monitorStage(commitMonitor,'待恢复记录','error','本地待恢复记录写入失败，但仍继续尝试服务端提交');}
+  var out;
+  try{
+    monitorStage(commitMonitor,'服务端事务','running','正在提交叙事账本与自动存档');
+    out=await loreApi('/sessions/'+LORE.sid+'/turn/commit',{method:'POST',body:JSON.stringify(body)});
+  }catch(e){
+    e.pendingCommit=true;e.commitId=String(tx.commitId);
+    debugEvent('turn_commit_ambiguous',{commitId:tx.commitId,turn:turn,status:e.status||0,message:String(e&&e.message||e)});
+    monitorFail(commitMonitor,e,{pendingCommit:true,commitId:String(tx.commitId)});
+    throw e;
+  }
+  if(out&&out.save&&typeof out.save.revision==='number')SAVE_REVISIONS.auto=out.save.revision;
+  await pendingTurnClear();
+  // 服务端是权威源，本地只留一份镜像，绝不再发第二次 PUT。
+  await idbPut('auto',payload).catch(function(){});
+  debugEvent('turn_commit_written',{commitId:tx.commitId,turn:turn,replayed:!!(out&&out.replayed),saveRevision:out&&out.save&&out.save.revision});
+  monitorFinish(commitMonitor,{output:'第 '+turn+' 回合提交完成'+(out&&out.replayed?'（幂等重放）':''),meta:{turn:turn,commitId:String(tx.commitId),replayed:!!(out&&out.replayed),saveRevision:out&&out.save&&out.save.revision}});
+  return true;
+}
+
+async function recoverPendingTurnCommit(){
+  if(!(BK==='be'&&LORE.on&&LORE.sid))return false;
+  if(PENDING_RECOVERY_BUSY)return true;
+  PENDING_RECOVERY_BUSY=true;
+  var recoveryMonitor=monitorStart('commit','恢复待提交回合',{sessionId:LORE.sid,turnId:TURNS,parentId:MONITOR_PARENT_ID,input:'检查 IndexedDB pending_turn_commit',meta:{session:LORE.sid}});
+  monitorStage(recoveryMonitor,'读取待恢复记录','running','检查是否存在上次未确认的服务端提交');
+  try{
+    var pending=await pendingTurnRead();
+    if(!pending||pending.session_id!==LORE.sid||!pending.body||!pending.body.save){monitorFinish(recoveryMonitor,{output:'没有需要恢复的回合',meta:{found:false}});return false;}
+    monitorStage(recoveryMonitor,'幂等恢复','running','使用同一个 commit_id 重试，不重新调用叙事模型');
+    var out=await loreApi('/sessions/'+LORE.sid+'/turn/commit',{method:'POST',body:JSON.stringify(pending.body)});
+    if(out&&out.save&&typeof out.save.revision==='number')SAVE_REVISIONS.auto=out.save.revision;
+    await pendingTurnClear();
+    var payload=pending.body.save.payload;
+    await idbPut('auto',payload).catch(function(){});
+    // 不再次触发 loreResume，避免恢复过程递归；保存快照已经包含原事实库会话号。
+    applySnapshot(payload,{skipLoreResume:true});
+    LORE.on=true;LORE.sid=pending.session_id;
+    PENDING_RECOVERY_WARNED=false;
+    addBlk('sys','▸ 已恢复第 '+pending.turn+' 回合的服务端提交'+(out&&out.replayed?'（幂等重放）':'')+'，没有重新生成正文');
+    debugEvent('pending_commit_recovered',{commitId:pending.commit_id,turn:pending.turn,replayed:!!(out&&out.replayed)});
+    monitorFinish(recoveryMonitor,{output:'第 '+pending.turn+' 回合恢复完成'+(out&&out.replayed?'（幂等重放）':''),meta:{found:true,turn:pending.turn,commitId:pending.commit_id,replayed:!!(out&&out.replayed)}});
+    return true;
+  }catch(e){
+    if(!PENDING_RECOVERY_WARNED){
+      PENDING_RECOVERY_WARNED=true;
+      addBlk('err','▸ 上次回合提交尚未确认：'+String(e&&e.message||e)+'。系统会保留恢复记录，不会自动重新生成。');
+    }
+    debugEvent('pending_commit_recovery_failed',{commitId:pending&&pending.commit_id||'',turn:pending&&pending.turn||0,status:e&&e.status||0,message:String(e&&e.message||e)});
+    monitorFail(recoveryMonitor,e,{pendingCommit:true,commitId:pending&&pending.commit_id||''});
+    return false;
+  }finally{
+    PENDING_RECOVERY_BUSY=false;
+  }
 }
 
 // 抽取要不要跑：这是成本与一致性的取舍。
@@ -4828,7 +5020,6 @@ async function deleteLoreEntity(eid,name){
 function loreConflictNote(){
   if(!LORE.conflicts.length)return '';
   var lines=LORE.conflicts.map(function(c){return '· '+c.description;}).join('\n');
-  LORE.conflicts=[];
   return '\n\n【设定冲突——上一回合你写的内容与已确立的设定矛盾，程序已拒绝采纳新值】\n'+lines+
          '\n本回合必须以上列各项中先确立的那个值为准继续叙事。若确实需要改变，就在正文里给出合理解释（先前是误传、有人刻意隐瞒、玩家理解有误），不得默默改写，也不得向玩家提及这条系统提示。';
 }
@@ -4965,11 +5156,21 @@ function buildTurnContext(recentText){
     locked_tags:w.lockedTags||[], inspiration_tags:w.inspirationTags||[],
     story_dna:STORY_DNA||'', opening_text:OPENING_TEXT||'',
     game_state:GAME_STATE, player_canon:PLAYER_CANON||{},
-    premise_state:PREMISE_STATE||{}, story_runtime:storyAgentEnabled()?(STORY_RUNTIME||{}):{}, prefs:PREFS||{},
+    premise_state:PREMISE_STATE||{}, story_runtime:storyAgentEnabled()?(STORY_RUNTIME||{}):{},
+    prefs:Object.assign({},PREFS||{},{structured_writer:SETTINGS.structuredWriter===true}),
     outline:OUTLINE||'', names:NAMES||'',
     pins:PINS||[], lorebook:LOREBOOK||[],
     lore_context:LORE.ctx||'', recent_text:recentText||''
   };
+}
+
+// 风险检定由服务端纯规则结算；前端只负责把已确认的属性/技能组成请求，
+// 这样模型不能改骰面、难度或成功失败。后端不可用时由调用方按旧流程降级，
+// 不会让普通叙事回合因此失败。
+async function resolveProgramCheck(payload){
+  var r=await fetch('/api/rules/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload||{})});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return await r.json();
 }
 
 async function compileSystemPrompt(recentText){
@@ -4995,13 +5196,15 @@ async function compileSystemPrompt(recentText){
   return LAST_SYSTEM_PROMPT;
 }
 
-async function _runTurn(){
+async function _runTurn(tx){
   var typ=addTyp(), live=null, t0=Date.now(),pipelineRun='';
+  var previousMonitorParent=MONITOR_PARENT_ID;
   try{
     var stateBefore=JSON.parse(JSON.stringify(GAME_STATE));
     var lastUser='';
     for(var li=HIST.length-1;li>=0;li--){ if(HIST[li].role==='user'){lastUser=HIST[li].content;break;} }
-    pipelineRun=monitorStart('pipeline','处理第 '+TURNS+' 回合',{input:lastUser,thinking:false,meta:{world:WORLD,pace:PACE,stream:!!SETTINGS.stream}});
+    pipelineRun=monitorStart('pipeline','处理第 '+TURNS+' 回合',{input:lastUser,thinking:false,turnId:TURNS,meta:{world:WORLD,pace:PACE,stream:!!SETTINGS.stream}});
+    MONITOR_PARENT_ID=pipelineRun;
     debugBeginTurn(lastUser,t0,stateBefore);
     var recentText = lastUser + ' ' + HIST.slice(-6).map(function(m){return m.content;}).join(' ');
     // 组装提示词之前先取回「已确立的设定」，它要参与本回合的 system prompt
@@ -5042,7 +5245,6 @@ async function _runTurn(){
       var rt='【GM裁定——后台裁判已完成本回合判定，你只负责按判定叙事，禁止改判，禁止向玩家提及裁判的存在】';
       if(ruling.spoken===false) rt+='玩家本回合的输入是心理活动，没有说出口，任何NPC都不知道其内容，不得回应它。';
       if(ruling.risky && SETTINGS.dice && GAME_STATE.revealed){
-        dice=1+Math.floor(Math.random()*100);
         var atn=String(ruling.attr||'').trim();
         if(!(atn in GAME_STATE.attrs))atn=Object.keys(GAME_STATE.attrs)[0]||'行动';
         var av=Number(GAME_STATE.attrs[atn]); if(!isFinite(av))av=1;
@@ -5054,13 +5256,23 @@ async function _runTurn(){
         var bonus=skillBonus+activeBonus+(tl?5:0);
         var dc=Number(ruling.dc)||55;
         dc=Math.max(40,Math.min(85,Math.round(dc)));
-        var total=dice+av*5+bonus;
-        var outc=total>=dc?'成功':'失败';
-        if(total-dc>=30)outc='大成功';
-        if(dc-total>=30)outc='大失败';
         var act=String(ruling.action||atn+'检定').substring(0,16);
-        checkLine='【检定】'+act+'｜d100 '+dice+' + '+atn+av+'×5'+(sk?' + '+sk.name+skillBonus:'')+(activeBonus?' + 运转'+activeBonus:'')+(tl?' + 天赋5':'')+' = '+total+'｜难度'+dc+'｜'+outc+'【/检定】';
-        pendingCheck={action:act,attr:atn,attrValue:av,skill:sk?sk.name:(tl||''),die:dice,total:total,dc:dc,outcome:outc,success:outc.indexOf('成功')>=0};
+        var checked=null;
+        try{
+          checked=await resolveProgramCheck({action:act,attr:atn,attr_value:av,skill:sk?sk.name:(tl||''),skill_bonus:bonus,talent_bonus:0,dc:dc});
+        }catch(_ruleErr){
+          // 后端暂时离线时保留旧版本地降级，普通叙事仍可继续；调试记录会标明降级。
+          dice=1+Math.floor(Math.random()*100);
+          var fallbackTotal=dice+av*5+bonus, fallbackOutcome=fallbackTotal>=dc?'成功':'失败';
+          if(fallbackTotal-dc>=30)fallbackOutcome='大成功';
+          if(dc-fallbackTotal>=30)fallbackOutcome='大失败';
+          checked={die:dice,total:fallbackTotal,dc:dc,outcome:fallbackOutcome,success:fallbackOutcome.indexOf('成功')>=0};
+          debugEvent('rule_check_fallback',{message:String(_ruleErr&&_ruleErr.message||_ruleErr)});
+        }
+        dice=Number(checked.die)||1;
+        var total=Number(checked.total)||0,outc=String(checked.outcome||'失败'),resolvedDc=Number(checked.dc)||dc;
+        checkLine='【检定】'+act+'｜d100 '+dice+' + '+atn+av+'×5'+(sk?' + '+sk.name+skillBonus:'')+(activeBonus?' + 运转'+activeBonus:'')+(tl?' + 天赋5':'')+' = '+total+'｜难度'+resolvedDc+'｜'+outc+'【/检定】';
+        pendingCheck={action:act,attr:atn,attrValue:av,skill:sk?sk.name:(tl||''),die:dice,total:total,dc:resolvedDc,outcome:outc,success:!!checked.success};
         rt+='本回合检定已由系统算出，结果：'+outc+'。必须严格按此结果叙事。';
         if(outc.indexOf('失败')>=0 && ruling.fail_cost) rt+='失败的代价必须落实：'+ruling.fail_cost;
       }
@@ -5113,7 +5325,7 @@ async function _runTurn(){
       var data=await res.json();
       var fr=data.choices&&data.choices[0]&&data.choices[0].finish_reason;
       if(fr==='length'){truncated=true;}
-      if(data.error){if(typ)typ.remove();debugEvent('narrative_error',{apiError:data.error});debugFinish('api-error',{apiError:data.error});monitorFail(pipelineRun,'叙事模型返回错误：'+JSON.stringify(data.error));addBlk('err','错误：'+JSON.stringify(data.error));LOADING=false;return;}
+      if(data.error){if(typ)typ.remove();typ=null;debugEvent('narrative_error',{apiError:data.error});throw new Error('叙事模型返回错误：'+JSON.stringify(data.error));}
       reply=chatContent(data); if(truncated)reply=salvageTruncated(reply); usage=data.usage;
       typ.remove(); typ=null;
     }
@@ -5188,38 +5400,72 @@ async function _runTurn(){
     extractNames(reply);
     renderCharacterSheet();
     document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString()+' · '+((Date.now()-t0)/1000).toFixed(1)+'s';
-    // Saving is immediate; lossy summary/memory maintenance is version-safe
-    // background work and must not keep the input box locked after a reply.
-    autoSave(); maybeCompress(); maybeAutoMemory();
-    // 结构化时间线先程序直写；更细的事实/承诺/知识由抽取器异步补齐。
-    await loreRecordLedger(TURNS,reply,lastUser);
+    // 后端模式把结构化时间线与自动存档放进同一事务；直接 API 模式保留旧账本路径。
+    var serverCommitted=false,ledgerOk=false;
+    if(BK==='be'&&LORE.on&&LORE.sid){
+      monitorStage(pipelineRun,'原子提交','running','正在一次性写入叙事账本与自动存档');
+      serverCommitted=await commitCompletedTurnServer(tx,TURNS,reply,lastUser,pipelineRun);
+      monitorStage(pipelineRun,'原子提交',serverCommitted?'done':'error',serverCommitted?'账本、会话回合和自动存档已在服务端同一事务完成':'服务端原子提交失败');
+      if(!serverCommitted)throw new Error('服务端叙事账本与自动存档原子提交失败');
+    }else{
+      // 结构化时间线先程序直写；更细的事实/承诺/知识由抽取器异步补齐。
+      ledgerOk=await loreRecordLedger(TURNS,reply,lastUser);
+      if(LORE.on&&!ledgerOk)throw new Error('服务端叙事账本提交失败');
+    }
+    // 到这里正文、状态和权威账本才算同一个完整回合。后台摘要/事实抽取不阻塞输入，
+    // 但只接收已经提交的回合；服务端事务路径不再额外发送第二次自动存档 PUT。
+    commitTurnTransaction(tx);
+    if(!serverCommitted)autoSave();
+    maybeCompress(); maybeAutoMemory();
     // 把这一回合新确立的设定抽进事实库。不 await —— 玩家不该为记账等待。
     loreQueue(TURNS,reply,lastUser);
     debugFinish('complete');
-    monitorStage(pipelineRun,'保存与后台记忆','done','存档已写入；摘要与事实抽取在后台继续');
+    monitorStage(pipelineRun,'保存与后台记忆','done',serverCommitted?'服务端原子存档已写入；摘要与事实抽取在后台继续':'存档已写入；摘要与事实抽取在后台继续');
     monitorFinish(pipelineRun,{output:'第 '+TURNS+' 回合完成',meta:{replyChars:String(reply||'').length,truncated:truncated,statePatchSource:appliedPatchSource,durationMs:Date.now()-t0}});
-  }catch(e){ if(typ)typ.remove();if(live)live.remove();monitorFail(pipelineRun,e);debugEvent('turn_error',{message:String(e&&e.message||e),stack:String(e&&e.stack||e).substring(0,3000)});debugFinish('error',{error:String(e&&e.message||e)}); addBlk('err','连接失败：'+String(e&&e.message||e).substring(0,250)); }
-  LOADING=false; document.getElementById('pinp').focus();
+    MONITOR_PARENT_ID=previousMonitorParent;
+    return true;
+  }catch(e){ MONITOR_PARENT_ID=previousMonitorParent;if(typ)typ.remove();if(live)live.remove();monitorFail(pipelineRun,e);debugEvent('turn_error',{message:String(e&&e.message||e),stack:String(e&&e.stack||e).substring(0,3000)});debugFinish('error',{error:String(e&&e.message||e)});throw e; }
 }
 
 async function send(text,isSystem){
-  if(!text||!text.trim()||LOADING)return;
+  if(!text||!text.trim()||LOADING)return false;
+  if(!isSystem&&BK==='be'&&LORE.on&&LORE.sid){
+    var recovered=await recoverPendingTurnCommit();
+    if(recovered)return false;
+  }
+  var tx=beginTurnTransaction();
   LOADING=true;
-  if(!isSystem){ TURN_BACKUPS.push(runtimeBackup());if(TURN_BACKUPS.length>30)TURN_BACKUPS.shift();if(!GAME_STATE.revealed&&/(查看|检查|打开|呼出|感受|确认|探索).{0,10}(状态|面板|属性|能力|身体|技能|天赋|角色卡)/.test(text))SHEET_INIT_ARMED=true;addBlk('ply',text,HIST.length); WORLD_CLOCK++; TURNS++;renderCharacterSheet(); }
-  HIST.push({role:'user',content:text});
-  await _runTurn();
+  try{
+    if(!isSystem){ TURN_BACKUPS.push(JSON.parse(JSON.stringify(tx.runtime)));if(!GAME_STATE.revealed&&/(查看|检查|打开|呼出|感受|确认|探索).{0,10}(状态|面板|属性|能力|身体|技能|天赋|角色卡)/.test(text))SHEET_INIT_ARMED=true;addBlk('ply',text,HIST.length); WORLD_CLOCK++; TURNS++;renderCharacterSheet(); }
+    HIST.push({role:'user',content:text});
+    await _runTurn(tx);
+    return true;
+  }catch(e){
+    rollbackTurnTransaction(tx);
+    addBlk('err','本回合未提交：'+String(e&&e.message||e).substring(0,250));
+    return false;
+  }finally{
+    LOADING=false;var input=document.getElementById('pinp');if(input)input.focus();
+  }
 }
 
-function regenTurn(){
-  if(LOADING)return;
-  if(!HIST.length||HIST[HIST.length-1].role!=='assistant'){addBlk('sys','▸ 没有可重写的回复');return;}
-  HIST.pop();
-  if(TURN_BACKUPS.length){var b=TURN_BACKUPS[TURN_BACKUPS.length-1];restoreRuntime(b);TURNS=b.turns+1;WORLD_CLOCK=b.wclock+1;}
-  rebuildLog();
-  addBlk('sys','▸ 正在重写本回合...');
+async function regenTurn(){
+  if(LOADING)return false;
+  if(!HIST.length||HIST[HIST.length-1].role!=='assistant'){addBlk('sys','▸ 没有可重写的回复');return false;}
   LOADING=true;
-  // 必须先撤再跑：不然重写出的新叙事会被上一版确立的设定当成矛盾拦下
-  loreRollback(TURNS,'regen').then(function(){ _runTurn(); });
+  try{
+    // 必须先确认服务端撤回成功，再让本地旧正文消失。
+    var required=LORE.on,remote=await loreRollback(TURNS,'regen');
+    if(required&&remote===null)return false;
+    HIST.pop();
+    if(TURN_BACKUPS.length){var b=TURN_BACKUPS[TURN_BACKUPS.length-1];restoreRuntime(b);TURNS=b.turns+1;WORLD_CLOCK=b.wclock+1;}
+    rebuildLog();addBlk('sys','▸ 正在重写本回合...');
+    var tx=beginTurnTransaction();
+    try{await _runTurn(tx);return true;}
+    catch(e){rollbackTurnTransaction(tx);addBlk('err','重写未提交：'+String(e&&e.message||e).substring(0,250));return false;}
+  }finally{
+    LOADING=false;var input=document.getElementById('pinp');if(input)input.focus();
+  }
 }
 
 

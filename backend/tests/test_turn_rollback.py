@@ -9,19 +9,26 @@
 矛盾检测本来是保一致性的，却在强制执行玩家已经否决的内容。
 """
 import asyncio
+import json
 import sys
 from pathlib import Path
 
 import pytest
 import pytest_asyncio
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from app.db.models import Base, Entity, Fact, NarrativeEvent, Session  # noqa: E402
+from app.db.models import (  # noqa: E402
+    Base, CharacterState, Commitment, Entity, Fact, LedgerRevision, NarrativeEvent,
+    NpcBelief, Session,
+)
+from app.schemas.narrative import NarrativeLedgerWrite  # noqa: E402
 from app.services.memory import (  # noqa: E402
     active_facts, record_fact, resolve_entity, upsert_entity,
 )
+from app.services.narrative_memory import write_ledger  # noqa: E402
 from app.services.turn_rollback import rollback_to_turn  # noqa: E402
 
 SID = "roll-test"
@@ -184,3 +191,188 @@ async def test_narrative_events_are_rolled_back_too(db: AsyncSession) -> None:
         __import__("sqlalchemy").select(NarrativeEvent)
     )).scalars())
     assert [e.id for e in left] == ["e1"]
+
+
+# ── 已存在账本记录的版本回滚 ────────────────────────────────────
+#
+# 下面三条不是普通的「新记录删除」：同一个承诺、认知或人物状态会在后续
+# 回合原地更新。rollback_to_turn() 必须借助修改前快照恢复旧值。
+
+
+@pytest.mark.asyncio
+async def test_rollback_restores_commitment_version_before_discarded_turn(
+    db: AsyncSession,
+) -> None:
+    await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+        "turn": 3,
+        "commitments": [{
+            "id": "com_shop",
+            "kind": "promise",
+            "owner": "王掌柜",
+            "counterparty": "玩家",
+            "text": "明早帮玩家打听码头消息",
+            "status": "active",
+            "due_turn": 8,
+        }],
+    }))
+    await db.commit()
+    await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+        "turn": 6,
+        "commitments": [{
+            "id": "com_shop",
+            "kind": "promise",
+            "owner": "王掌柜",
+            "counterparty": "玩家",
+            "text": "明早帮玩家打听码头消息",
+            "status": "fulfilled",
+        }],
+    }))
+    await db.commit()
+
+    await rollback_to_turn(db, SID, 6)
+
+    row = await db.get(Commitment, "com_shop")
+    assert row is not None
+    assert row.status == "active"
+    assert row.updated_turn == 3
+    assert row.due_turn == 8
+
+
+@pytest.mark.asyncio
+async def test_rollback_restores_belief_version_before_discarded_turn(
+    db: AsyncSession,
+) -> None:
+    await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+        "turn": 3,
+        "beliefs": [{
+            "npc": "老板",
+            "statement": "钥匙已经丢了",
+            "mode": "misinformed",
+            "confidence": 80,
+            "status": "active",
+        }],
+    }))
+    await db.commit()
+    await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+        "turn": 6,
+        "beliefs": [{
+            "npc": "老板",
+            "statement": "钥匙已经丢了",
+            "mode": "misinformed",
+            "confidence": 20,
+            "status": "corrected",
+        }],
+    }))
+    await db.commit()
+
+    await rollback_to_turn(db, SID, 6)
+
+    row = (await db.execute(
+        select(NpcBelief).where(
+            NpcBelief.session_id == SID,
+            NpcBelief.npc_name == "老板",
+            NpcBelief.statement == "钥匙已经丢了",
+        )
+    )).scalar_one()
+    assert row.status == "active"
+    assert row.confidence == 80
+
+
+@pytest.mark.asyncio
+async def test_rollback_restores_character_state_before_discarded_turn(
+    db: AsyncSession,
+) -> None:
+    await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+        "turn": 3,
+        "character_states": [{
+            "name": "老板",
+            "identity": {"role": "店主"},
+            "mid_term": {"goal": "攒钱开分店"},
+        }],
+    }))
+    await db.commit()
+    await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+        "turn": 6,
+        "character_states": [{
+            "name": "老板",
+            "mid_term": {"goal": "向玩家复仇"},
+            "short_term": {"mood": "愤怒"},
+        }],
+    }))
+    await db.commit()
+
+    await rollback_to_turn(db, SID, 6)
+
+    row = (await db.execute(
+        select(CharacterState).where(
+            CharacterState.session_id == SID,
+            CharacterState.entity_name == "老板",
+        )
+    )).scalar_one()
+    assert json.loads(row.identity_json) == {"role": "店主"}
+    assert json.loads(row.mid_term_json) == {"goal": "攒钱开分店"}
+    assert json.loads(row.short_term_json) == {}
+    assert row.updated_turn == 3
+
+
+@pytest.mark.asyncio
+async def test_rollback_can_step_back_through_multiple_commitment_versions(
+    db: AsyncSession,
+) -> None:
+    base = {
+        "id": "com_versions",
+        "kind": "promise",
+        "owner": "王掌柜",
+        "text": "替玩家保管包裹",
+    }
+    for turn, status in ((3, "active"), (6, "fulfilled"), (8, "cancelled")):
+        await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+            "turn": turn,
+            "commitments": [{**base, "status": status}],
+        }))
+        await db.commit()
+
+    await rollback_to_turn(db, SID, 8)
+    row = await db.get(Commitment, "com_versions")
+    assert row is not None and row.status == "fulfilled" and row.updated_turn == 6
+    revisions = list((await db.execute(
+        select(LedgerRevision).where(LedgerRevision.session_id == SID)
+    )).scalars())
+    assert [revision.change_turn for revision in revisions] == [6]
+
+    await rollback_to_turn(db, SID, 6)
+    row = await db.get(Commitment, "com_versions")
+    assert row is not None and row.status == "active" and row.updated_turn == 3
+    assert list((await db.execute(
+        select(LedgerRevision).where(LedgerRevision.session_id == SID)
+    )).scalars()) == []
+
+
+@pytest.mark.asyncio
+async def test_same_turn_retries_keep_the_original_pre_turn_snapshot(
+    db: AsyncSession,
+) -> None:
+    base = {
+        "id": "com_same_turn",
+        "kind": "promise",
+        "owner": "王掌柜",
+        "text": "替玩家保管包裹",
+    }
+    await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+        "turn": 3, "commitments": [{**base, "status": "active"}],
+    }))
+    await db.commit()
+    for status in ("fulfilled", "cancelled"):
+        await write_ledger(db, SID, NarrativeLedgerWrite.model_validate({
+            "turn": 6, "commitments": [{**base, "status": status}],
+        }))
+        await db.commit()
+
+    revisions = list((await db.execute(
+        select(LedgerRevision).where(LedgerRevision.session_id == SID)
+    )).scalars())
+    assert len(revisions) == 1 and revisions[0].change_turn == 6
+
+    await rollback_to_turn(db, SID, 6)
+    row = await db.get(Commitment, "com_same_turn")
+    assert row is not None and row.status == "active" and row.updated_turn == 3

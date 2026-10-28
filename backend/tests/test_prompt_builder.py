@@ -66,6 +66,13 @@ def test_every_world_compiles(world_id: str) -> None:
     assert "【角色卡与状态协议" in sp
 
 
+def test_structured_writer_is_opt_in_and_keeps_legacy_default() -> None:
+    legacy = build_system_prompt(ctx(prefs={}))
+    structured = build_system_prompt(ctx(prefs={"structured_writer": True}))
+    assert "【结构化写手信封" not in legacy
+    assert "【结构化写手信封" in structured
+
+
 def test_fantasy_prompt_has_no_global_wuxia_name_seeds() -> None:
     """剑与魔法开局不能再从共享规则里抄出武侠/中式地名。"""
     sp = build_system_prompt(ctx(world_id="fantasy", turns=0))

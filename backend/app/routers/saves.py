@@ -9,8 +9,6 @@
 前端仍然保留 IndexedDB 作为降级路径 —— 后端没开时游戏必须照样能玩。
 """
 import json
-import re
-from datetime import timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
@@ -18,35 +16,23 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Save
 from app.db.session import get_db
-from app.schemas.save import SAVE_SCHEMA_VERSION, SaveDetail, SaveSummary, SaveWrite
-from app.services.save_migration import SaveFormatError, migrate_payload, stamp
+from app.schemas.save import SaveDetail, SaveSummary, SaveWrite
+from app.services.save_migration import SaveFormatError, migrate_payload
+from app.services.save_store import (
+    SaveStoreError, prepare_save_write, to_summary, validate_slot,
+)
 
 router = APIRouter(prefix="/api", tags=["存档"])
 
-# 槽位名限制成已知的几种，避免变成任人写入的键值仓库
-SLOT_RE = re.compile(r"^(auto|sv_\d{1,2})$")
-
-# 单个存档的上限。几十回合的完整历史大约几 MB，16MB 留足余量，
-# 同时挡住「客户端出 bug 无限往里塞」这种情况。
-MAX_SAVE_BYTES = 16 * 1024 * 1024
-
-
 def _check_slot(slot: str) -> str:
-    if not SLOT_RE.match(slot):
-        raise HTTPException(
-            400, detail={"code": "bad_slot", "message": f"槽位名不合法：{slot}"}
-        )
-    return slot
+    try:
+        return validate_slot(slot)
+    except SaveStoreError as exc:
+        raise HTTPException(exc.status_code, detail=exc.detail()) from exc
 
 
 def _to_summary(s: Save) -> SaveSummary:
-    return SaveSummary(
-        slot=s.slot, desc=s.desc, world_id=s.world_id, world_name=s.world_name,
-        turns=s.turns, client_time=s.client_time, size_bytes=s.size_bytes,
-        updated_at=s.updated_at.replace(tzinfo=timezone.utc).isoformat() if s.updated_at else "",
-        schema_version=s.schema_version or 1,
-        revision=s.revision or 0,
-    )
+    return to_summary(s)
 
 
 @router.get("/saves", response_model=list[SaveSummary], summary="列出所有存档（不含正文）")
@@ -91,59 +77,10 @@ async def put_save(
     slot: str, req: SaveWrite, db: AsyncSession = Depends(get_db)
 ) -> SaveSummary:
     _check_slot(slot)
-    # 先验再存。以前这里什么都收，于是「改个字段名」会变成几十小时进度
-    # 静默消失；现在结构不对当场 422，坏数据进不了库。
     try:
-        payload, notes = migrate_payload(req.payload)
-    except SaveFormatError as exc:
-        raise HTTPException(
-            422, detail={"code": "save_invalid", "message": str(exc)}
-        ) from exc
-
-    blob = json.dumps(stamp(payload), ensure_ascii=False)
-    size = len(blob.encode("utf-8"))
-    if size > MAX_SAVE_BYTES:
-        raise HTTPException(
-            413,
-            detail={"code": "save_too_large",
-                    "message": f"存档过大（{size // 1024} KB），超过上限"},
-        )
-
-    s = await db.get(Save, slot)
-
-    # 乐观并发：客户端声明「我是基于第 N 版改的」，对不上就拒绝。
-    # 不做这一步的代价实测过——电脑上一个停在第 5 回合的旧标签页，
-    # 一次自动存档就能抹掉手机上 15 个回合的进度，而且毫无提示。
-    if req.base_revision is not None:
-        current = (s.revision or 0) if s is not None else 0
-        if req.base_revision != current:
-            raise HTTPException(
-                409,
-                detail={
-                    "code": "save_conflict",
-                    "message": (
-                        f"服务端的存档已经更新到第 {s.turns if s else 0} 回合"
-                        f"（版本 {current}），你这边是基于版本 {req.base_revision} 的进度。"
-                        "直接覆盖会丢掉另一台设备上的进度"
-                    ),
-                    "current_revision": current,
-                    "current_turns": s.turns if s is not None else 0,
-                },
-            )
-
-    if s is None:
-        s = Save(slot=slot)
-        db.add(s)
-
-    s.payload_json = blob
-    s.schema_version = SAVE_SCHEMA_VERSION
-    s.revision = (s.revision or 0) + 1
-    s.size_bytes = size
-    s.desc = req.desc
-    s.world_id = req.world_id
-    s.world_name = req.world_name
-    s.turns = req.turns
-    s.client_time = req.client_time
+        s, notes = await prepare_save_write(db, slot, req)
+    except SaveStoreError as exc:
+        raise HTTPException(exc.status_code, detail=exc.detail()) from exc
 
     await db.commit()
     await db.refresh(s)

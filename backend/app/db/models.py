@@ -68,6 +68,9 @@ class Session(Base):
     character_states: Mapped[list["CharacterState"]] = relationship(
         back_populates="session", cascade="all, delete-orphan"
     )
+    ledger_revisions: Mapped[list["LedgerRevision"]] = relationship(
+        back_populates="session", cascade="all, delete-orphan"
+    )
 
 
 class Entity(Base):
@@ -165,6 +168,60 @@ class Save(Base):
     updated_at: Mapped[datetime] = mapped_column(default=utcnow, onupdate=utcnow)
 
 
+class TurnCommit(Base):
+    """一次已经完成的服务端回合提交，也是客户端重试的幂等凭据。"""
+
+    __tablename__ = "turn_commits"
+    __table_args__ = (
+        UniqueConstraint("session_id", "turn_no", name="uq_turn_commit_session_turn"),
+        Index("ix_turn_commit_session_turn", "session_id", "turn_no"),
+    )
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    session_id: Mapped[str] = mapped_column(ForeignKey("sessions.id", ondelete="CASCADE"))
+    turn_no: Mapped[int] = mapped_column(Integer)
+    save_slot: Mapped[str] = mapped_column(String(20), default="auto")
+    request_hash: Mapped[str] = mapped_column(String(64))
+    result_json: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+
+
+class AgentRun(Base):
+    """可追踪的 Agent 运行记录；正文之外的运维事件也要能跨设备查询。"""
+
+    __tablename__ = "agent_runs"
+    __table_args__ = (
+        Index("ix_agent_run_session_turn", "session_id", "turn_no"),
+        Index("ix_agent_run_session_parent", "session_id", "parent_id"),
+        Index("ix_agent_run_status", "status"),
+    )
+
+    run_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    session_id: Mapped[str | None] = mapped_column(
+        ForeignKey("sessions.id", ondelete="CASCADE"), nullable=True,
+    )
+    parent_id: Mapped[str] = mapped_column(String(64), default="")
+    turn_no: Mapped[int] = mapped_column(Integer, default=0)
+    agent: Mapped[str] = mapped_column(String(32), default="utility")
+    title: Mapped[str] = mapped_column(String(160), default="")
+    status: Mapped[str] = mapped_column(String(20), default="running")
+    provider: Mapped[str] = mapped_column(String(40), default="")
+    model: Mapped[str] = mapped_column(String(120), default="")
+    thinking: Mapped[bool] = mapped_column(default=False)
+    input_text: Mapped[str] = mapped_column(Text, default="")
+    output_text: Mapped[str] = mapped_column(Text, default="")
+    reasoning_text: Mapped[str] = mapped_column(Text, default="")
+    error_text: Mapped[str] = mapped_column(Text, default="")
+    usage_json: Mapped[str] = mapped_column(Text, default="{}")
+    stages_json: Mapped[str] = mapped_column(Text, default="[]")
+    meta_json: Mapped[str] = mapped_column(Text, default="{}")
+    retries: Mapped[int] = mapped_column(Integer, default=0)
+    started_at: Mapped[str] = mapped_column(String(40), default="")
+    duration_ms: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+    updated_at: Mapped[datetime] = mapped_column(default=utcnow, onupdate=utcnow)
+
+
 class Fact(Base):
     """
     一条已确立的事实。
@@ -232,6 +289,30 @@ class NarrativeEvent(Base):
     session: Mapped[Session] = relationship(back_populates="narrative_events")
 
 
+class LedgerRevision(Base):
+    """账本记录被原地更新前的快照；用于按回合恢复，而不是只能删除。"""
+
+    __tablename__ = "ledger_revisions"
+    __table_args__ = (
+        UniqueConstraint(
+            "session_id", "record_type", "record_key", "change_turn",
+            name="uq_ledger_revision_turn",
+        ),
+        Index("ix_ledger_revision_session_turn", "session_id", "change_turn"),
+        Index("ix_ledger_revision_record", "session_id", "record_type", "record_key"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    session_id: Mapped[str] = mapped_column(ForeignKey("sessions.id", ondelete="CASCADE"))
+    record_type: Mapped[str] = mapped_column(String(32))
+    record_key: Mapped[str] = mapped_column(String(80))
+    change_turn: Mapped[int] = mapped_column(Integer)
+    snapshot_json: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(default=utcnow)
+
+    session: Mapped[Session] = relationship(back_populates="ledger_revisions")
+
+
 class Commitment(Base):
     """承诺、拒绝与任务接受等持续约束；避免钩子被换皮重塞。"""
 
@@ -265,6 +346,7 @@ class NpcBelief(Base):
     __table_args__ = (
         UniqueConstraint("session_id", "npc_name", "statement", name="uq_npc_belief"),
         Index("ix_belief_session_npc", "session_id", "npc_name"),
+        Index("ix_belief_session_turn", "session_id", "updated_turn"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -275,6 +357,7 @@ class NpcBelief(Base):
     confidence: Mapped[int] = mapped_column(Integer, default=100)
     source_name: Mapped[str] = mapped_column(String(100), default="")
     learned_turn: Mapped[int] = mapped_column(Integer, default=0)
+    updated_turn: Mapped[int] = mapped_column(Integer, default=0)
     status: Mapped[str] = mapped_column(String(20), default="active")
     created_at: Mapped[datetime] = mapped_column(default=utcnow)
     session: Mapped[Session] = relationship(back_populates="npc_beliefs")
