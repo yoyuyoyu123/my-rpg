@@ -31,6 +31,7 @@ def prepare(dest: Path):
         shutil.copyfile(source, target)
     paths = [Path("index.html"), Path("data/worlds/catalog.json")]
     paths += [Path("research") / (name + ".json") for name in RESEARCH]
+    paths += [p.relative_to(ROOT) for p in (ROOT / "web").rglob("*") if p.is_file() and not p.is_symlink()]
     manifest = {}
     with zipfile.ZipFile(assets / "game-web.zip", "w", zipfile.ZIP_DEFLATED) as archive:
         for relative in paths:

@@ -18,7 +18,7 @@ from functools import lru_cache
 from pathlib import Path
 import os
 
-from pydantic import Field
+from pydantic import AliasChoices, Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -53,6 +53,8 @@ class Settings(BaseSettings):
     zhipu_api_key: str = Field("", description="智谱 API Key")
     siliconflow_api_key: str = Field("", description="硅基流动 API Key")
     openrouter_api_key: str = Field("", description="OpenRouter API Key")
+    gemini_api_key: str = Field("", description="Google Gemini API Key")
+    openai_api_key: str = Field("", description="OpenAI API Key")
 
     default_provider: str = Field("deepseek", description="默认使用哪个后端")
 
@@ -69,6 +71,10 @@ class Settings(BaseSettings):
     request_timeout_s: float = Field(120.0, description="调用 LLM 的超时秒数")
     max_retries: int = Field(3, description="遇到限流/网关错误的重试次数")
 
+    site_auth_enabled: bool = Field(False, validation_alias=AliasChoices("WUJI_SITE_AUTH_ENABLED", "site_auth_enabled"))
+    site_password: SecretStr = Field(default="", validation_alias=AliasChoices("WUJI_SITE_PASSWORD", "site_password"))
+    site_secure_cookies: bool = Field(True, validation_alias=AliasChoices("WUJI_SITE_SECURE_COOKIES", "site_secure_cookies"))
+
     @property
     def cors_origin_list(self) -> list[str]:
         """把逗号分隔的字符串拆成列表，给 CORS 中间件用。"""
@@ -83,6 +89,8 @@ class Settings(BaseSettings):
             "zhipu": self.zhipu_api_key,
             "siliconflow": self.siliconflow_api_key,
             "openrouter": self.openrouter_api_key,
+            "gemini": self.gemini_api_key,
+            "openai": self.openai_api_key,
         }.get(provider, "")
 
 

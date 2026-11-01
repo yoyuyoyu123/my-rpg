@@ -1,0 +1,28 @@
+name: Deploy private game to Fly
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: [Mobile website]
+    types: [completed]
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: fly-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: vars.FLY_APP_NAME != '' && (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - name: Deploy existing application
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          test -n "$FLY_API_TOKEN"
+          flyctl deploy --remote-only --ha=false --app "${{ vars.FLY_APP_NAME }}"

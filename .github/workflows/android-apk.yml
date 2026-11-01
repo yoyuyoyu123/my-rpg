@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['android/**', 'backend/app/**', 'index.html', 'data/worlds/**', 'research/*.json', 'tools/prepare_android.py', 'tools/smoke_android.py', '.github/workflows/android-apk.yml']
+    paths: ['android/**', 'backend/app/**', 'web/**', 'index.html', 'data/worlds/**', 'research/*.json', 'tools/prepare_android.py', 'tools/smoke_android.py', '.github/workflows/android-apk.yml']
   pull_request:
-    paths: ['android/**', 'backend/app/**', 'index.html', 'data/worlds/**', 'research/*.json', 'tools/prepare_android.py', 'tools/smoke_android.py', '.github/workflows/android-apk.yml']
+    paths: ['android/**', 'backend/app/**', 'web/**', 'index.html', 'data/worlds/**', 'research/*.json', 'tools/prepare_android.py', 'tools/smoke_android.py', '.github/workflows/android-apk.yml']
 
 permissions:
   contents: read

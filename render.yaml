@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: wuji-rpg
+    runtime: python
+    region: singapore
+    plan: 0.5c-512mb
+    numInstances: 1
+    buildCommand: pip install -r backend/requirements-prod.txt
+    startCommand: python tools/serve_web.py
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass
+    maxShutdownDelaySeconds: 120
+    disk:
+      name: wuji-game-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: WUJI_SITE_AUTH_ENABLED
+        value: 'true'
+      - key: WUJI_SITE_SECURE_COOKIES
+        value: 'true'
+      - key: WUJI_SITE_PASSWORD
+        sync: false
+      - key: WUJI_DATA_DIR
+        value: /var/data/wuji
+      - key: WUJI_CONFIG_FILE
+        value: /var/data/wuji/runtime.env

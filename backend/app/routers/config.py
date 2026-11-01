@@ -14,11 +14,15 @@ _KEY_FIELDS = {
     "zhipu": ("zhipu_api_key", "clear_zhipu"),
     "siliconflow": ("siliconflow_api_key", "clear_siliconflow"),
     "openrouter": ("openrouter_api_key", "clear_openrouter"),
+    "gemini": ("gemini_api_key", "clear_gemini"),
+    "openai": ("openai_api_key", "clear_openai"),
 }
 
 
 def _require_local_request(request: Request) -> None:
     """API key 写入只允许本机浏览器，避免 LAN 上的页面盗写密钥。"""
+    if get_settings().site_auth_enabled and getattr(request.state, "site_authenticated", False):
+        return
     host = (request.client.host if request.client else "").lower()
     if host not in {"127.0.0.1", "::1", "localhost", "::ffff:127.0.0.1"}:
         raise HTTPException(status_code=403, detail="只能在运行后端的这台电脑上修改 API 配置")

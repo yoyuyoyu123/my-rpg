@@ -102,6 +102,18 @@ def _build_payload(req_model: str, messages: list[dict], temperature: float,
     # 因为收到未知字段而拒绝请求，所以只在 DeepSeek 上发送。
     if provider.id == "deepseek" and thinking in {"enabled", "disabled"}:
         payload["thinking"] = {"type": thinking}
+    if provider.id == "openai":
+        payload["max_completion_tokens"] = payload.pop("max_tokens")
+        payload["store"] = False
+        if req_model.startswith("gpt-6-luna"):
+            # Luna supports none; sampling is valid in this mode. Avoid consuming
+            # a short RPG response budget entirely with hidden reasoning.
+            payload["reasoning_effort"] = "none"
+        elif req_model.startswith(("gpt-6", "gpt-5", "o1", "o3", "o4")):
+            payload.pop("temperature", None)
+            payload.pop("top_p", None)
+            if req_model.startswith("gpt-6"):
+                payload["reasoning_effort"] = "low"
     return payload
 
 
