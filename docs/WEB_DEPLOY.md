@@ -26,7 +26,7 @@ Fly 的计算按运行时间收费，停机仍有根镜像和卷存储费用；�
 
 ## Gemini 与 GPT-6 Luna
 
-- Gemini：在 https://aistudio.google.com/ 的 API Keys 页面创建 Key。部分模型有免费层，额度以账户和模型页面为准；免费层并不保证所有模型或无限请求。官方：https://ai.google.dev/gemini-api/docs/api-key ，https://ai.google.dev/gemini-api/docs/pricing 。当前兼容入口默认 `gemini-3.8-flash`，官方兼容接口仍为 beta。
+- Gemini：在 https://aistudio.google.com/ 的 API Keys 页面创建 Key。部分模型有免费层，额度以账户和模型页面为准；免费层并不保证所有模型或无限请求。官方：https://ai.google.dev/gemini-api/docs/api-key ，https://ai.google.dev/gemini-api/docs/pricing 。当前兼容入口默认 `gemini-3.1-flash-lite`，官方兼容接口仍为 beta。
 - OpenAI GPT-6 Luna：在 https://platform.openai.com/api-keys 创建项目 Key，并在 API 平台 Billing 检查可用额度。ChatGPT 订阅与 API 计费分开；符合条件的 Pro、Business 用户目前可在账单设置中关联自己的 API 组织领取额度，先查看此权益再决定充值：https://developers.openai.com/api/docs/guides/chatgpt-api-credits 。模型 ID 为 `gpt-6-luna`；游戏默认以 `reasoning_effort: none` 使用其采样参数，使用 `max_completion_tokens` 控制预算。官方：https://developers.openai.com/api/docs/models/gpt-6-luna ，https://developers.openai.com/api/docs/guides/latest-model 。
 
 在游戏连接页填入对应 Key，点“保存到后端”，再在模型选择框选 Gemini 或 Luna。不要将 Key 发给其他人。模型调用未使用真实账户测试，具体可用性与额度以自己的控制台为准。建议用同开局、同行动对照；“均衡”模式比“双稿”模式减少调用，原有“传统单稿”也可用于比较。

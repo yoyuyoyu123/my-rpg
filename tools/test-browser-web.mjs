@@ -28,7 +28,7 @@ try {
       openaiCleared: !document.getElementById('cfg-openai').value };
   });
   assert.equal(configured.ok, true);
-  assert.match(configured.options, /gemini-3.8-flash/);
+  assert.match(configured.options, /gemini-3.1-flash-lite/);
   assert.match(configured.options, /gpt-6-luna/);
   assert.equal(configured.googleCleared && configured.openaiCleared, true);
   assert.equal(await page.evaluate(async () => { await navigator.serviceWorker.ready; return !!(await caches.match('/api/saves')); }), false);

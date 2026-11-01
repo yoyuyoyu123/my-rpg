@@ -101,7 +101,7 @@ PROVIDERS: dict[str, Provider] = {
     "gemini": Provider(
         id="gemini", label="Google Gemini", base_url="https://generativelanguage.googleapis.com",
         chat_path="/v1beta/openai/chat/completions", models_path="/v1beta/openai/models",
-        default_model="gemini-3.8-flash", stream_usage=False,
+        default_model="gemini-3.1-flash-lite", stream_usage=False,
         note="Google 官方兼容接口（beta）；Key 与可用模型见 AI Studio，免费额度因模型而异",
     ),
     "openai": Provider(
