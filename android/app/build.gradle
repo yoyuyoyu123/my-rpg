@@ -13,6 +13,7 @@ tasks.register('prepareGame', Exec) {
     inputs.file('../../tools/prepare_android.py')
     inputs.dir('../../data/worlds')
     inputs.dir('../../research')
+    inputs.dir('../../web')
     inputs.file('src/main/assets/mobile-shell.js')
     outputs.dir(gameStage)
 }
