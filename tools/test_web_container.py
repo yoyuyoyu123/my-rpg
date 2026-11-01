@@ -56,6 +56,7 @@ def main():
             raise AssertionError("Production image did not start")
 
         wait_for_health()
+        print("Production image started; checking private login and persistent data", flush=True)
         assert request("/api/saves")[0] == 401
         assert request("/_site/login", "POST", {"password": password}, form=True)[0] == 200
         assert request("/api/config", "POST", {"gemini_api_key": "fixture-container-google"})[0] == 200
@@ -66,6 +67,9 @@ def main():
         uid = docker("exec", container, "sh", "-c", "awk '/^Uid:/{print $2}' /proc/1/status")
         assert uid == "10001", uid
         docker("restart", "--time", "5", container)
+        # Docker may allocate a different ephemeral host port on restart.
+        port = docker("port", container, "8000/tcp").rsplit(":", 1)[-1]
+        base = "http://127.0.0.1:" + port
         wait_for_health()
         status, saved = request("/api/saves/auto")
         assert status == 200 and saved["payload"]["history"] == payload["history"]
