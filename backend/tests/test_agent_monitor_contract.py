@@ -29,7 +29,9 @@ def test_deepseek_thinking_is_configurable_per_agent() -> None:
 
 def test_stream_writer_is_monitored_without_losing_sse_or_enter() -> None:
     assert "'/api/chat/stream'" in INDEX
-    assert "agent:'narrative',title:'流式生成本回合场景正文'" in INDEX
+    assert "agent:'narrative',title:" in INDEX
+    assert "'流式生成本回合场景正文'" in INDEX
+    assert "'/api/novel/turn/stream'" in INDEX
     assert "monitorLive(monitorRunId,full,reasoning" in INDEX
     assert "if(e.key==='Enter'&&!e.shiftKey)" in INDEX
     assert "SETTINGS.stream" in INDEX

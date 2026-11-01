@@ -5,3 +5,10 @@ test-results/
 .pytest_*/
 __pycache__/
 *.py[cod]
+android/.gradle/
+android/local.properties
+android/**/build/
+*.apk
+*.aab
+*.keystore
+*.jks

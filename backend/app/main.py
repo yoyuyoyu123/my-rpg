@@ -12,6 +12,7 @@
 """
 from contextlib import asynccontextmanager
 from pathlib import Path
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,6 +33,7 @@ from app.routers import worlds as worlds_router
 from app.routers import writer as writer_router
 from app.routers import rules as rules_router
 from app.routers import agent_runs as agent_runs_router
+from app.routers import novel as novel_router
 from app.schemas.chat import ErrorDetail  # noqa: F401  (让它出现在 OpenAPI 文档里)
 
 settings = get_settings()
@@ -83,6 +85,7 @@ app.include_router(turn_router.router)
 app.include_router(writer_router.router)
 app.include_router(rules_router.router)
 app.include_router(agent_runs_router.router)
+app.include_router(novel_router.router)
 
 
 @app.get("/health", tags=["系统"], summary="健康检查")
@@ -98,7 +101,7 @@ def health() -> dict:
 #   3. 部署时只有一个服务要管
 #
 # 这也是 SillyTavern 的做法。
-FRONTEND_DIR = Path(__file__).resolve().parents[2]  # 仓库根目录
+FRONTEND_DIR = Path(os.environ.get("WUJI_RESOURCE_DIR") or Path(__file__).resolve().parents[2]).resolve()
 
 
 @app.get("/", include_in_schema=False)

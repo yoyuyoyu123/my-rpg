@@ -1,0 +1,10 @@
+# Android pins: use matching Pydantic/core and prebuilt CPython 3.12 wheels.
+fastapi==0.115.12
+uvicorn==0.34.2
+pydantic==2.11.7
+pydantic-core==2.33.2
+pydantic-settings==2.9.1
+sqlalchemy==2.0.41
+greenlet==3.0.1
+aiosqlite==0.21.0
+httpx==0.28.1

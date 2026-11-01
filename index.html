@@ -1655,6 +1655,15 @@ body::before{
       <label class="set-chk"><input type="checkbox" id="set-statesync" onchange="SETTINGS.stateSync=this.checked;saveSettings()"> 状态自动结算（物品／技能变化更可靠，略增消耗）</label>
       <label class="set-chk"><input type="checkbox" id="set-agencyguard" onchange="SETTINGS.agencyGuard=this.checked;saveSettings()"> 玩家主权自动重写（拦截AI替玩家行动）</label>
       <label class="set-chk"><input type="checkbox" id="set-optionrepair" onchange="SETTINGS.optionRepair=this.checked;saveSettings()"> 缺失行动选项时自动补全（只补按钮，不重写正文）</label>
+      <div class="set-row">游戏叙事质量
+        <select id="set-narrative-mode" onchange="SETTINGS.narrativeMode=this.value;saveSettings()">
+          <option value="quality">沉浸 · 多稿比较与校读</option>
+          <option value="balanced">均衡 · 单稿与校读</option>
+          <option value="classic">传统单稿</option>
+        </select>
+      </div>
+      <div class="set-hint">沉浸模式先比较人物反应与不同写法，再显示选中的正文，会增加等待和模型调用。自由行动、检定、背包、技能与任务照常游玩；仅本地后端支持。</div>
+      <button class="ob" type="button" onclick="exportNarrativeExperiment()">导出本局叙事体验记录</button>
       <label class="set-chk"><input type="checkbox" id="set-structured-writer" onchange="SETTINGS.structuredWriter=this.checked;saveSettings()"> 结构化写手输出（实验；正文格式异常时自动回退）</label>
       <div class="set-hint">开启后要求写手返回正文、选项和状态候选的 JSON；旧模型返回纯文本时仍按原流程显示。</div>
       <div class="set-row">设定记录
@@ -1773,6 +1782,7 @@ var PENDING_STARTUP_LOAD=null; // selected save key, consumed after backend conn
 var OPENING_TEXT='', OPENING_PICK=''; // per-run opening variant, rolled by JS
 var PREMISE_STATE={kind:'none'}; // program-owned opening milestone, prevents premise drift/stalling
 var STORY_RUNTIME={}; // planner-owned partially ordered threads + current public scene card
+var NOVEL_RUNTIME={}; // committed RPG narration memory/preferences, included in real undo
 var STORY_AGENT={busy:false,lastError:'',lastAttemptTurn:-1};
 var PREFS={tone:'',skeleton:'',opening:'',scene:'',entry:'',era:'',role:'',prof:'',relation:'',growth:'',conflict:'',trigger:'',transmode:'',advanced:{},canon:'',extra:''};
 var EFFECTIVE_SETUP={}; // compiled, conflict-free run contract; the model never receives discarded draws
@@ -2193,7 +2203,7 @@ function rollTone(profile,audit){
   if(/黑色悬疑|悬疑|恐怖|推理|谜/.test(STORY_TONE))TONE_TRANS='暗牌——只保留玩家主动选择的谜团；线索有证据链，NPC知识严格隔离';
   else TONE_TRANS='明牌——目标、因果和人物动机尽量透明；不额外生成阴谋网、神秘观察者或隐藏身份线';
 }
-var SETTINGS={temp:0.85,stream:true,streamCps:90,thinking:false,agentThinking:{narrative:false,planner:false,director:false,state:false,memory:false,utility:false},dice:true,autoMem:true,loreExtract:'balanced',maxTokens:8192,director:true,storyAgents:true,plannerModel:'',stateSync:true,agencyGuard:true,optionRepair:true,structuredWriter:false,debug:false,fontSize:16,lineHeight:1.9};
+var SETTINGS={temp:0.85,stream:true,streamCps:90,thinking:false,agentThinking:{narrative:false,planner:false,director:false,state:false,memory:false,utility:false},dice:true,autoMem:true,loreExtract:'balanced',maxTokens:8192,director:true,storyAgents:true,plannerModel:'',stateSync:true,agencyGuard:true,optionRepair:true,structuredWriter:false,narrativeMode:"quality",debug:false,fontSize:16,lineHeight:1.9};
 try{
   var _st=localStorage.getItem('wuji_settings'),_parsed=_st?JSON.parse(_st):null;
   if(_parsed){SETTINGS=Object.assign(SETTINGS,_parsed);SETTINGS.agentThinking=Object.assign({narrative:false,planner:false,director:false,state:false,memory:false,utility:false},_parsed.agentThinking||{});if(!_parsed.agentThinking&&_parsed.thinking===true)SETTINGS.agentThinking.narrative=true;}
@@ -2620,6 +2630,7 @@ function syncSettingsControls(){
   var ss=document.getElementById('set-statesync');if(ss)ss.checked=SETTINGS.stateSync!==false;
   var ag=document.getElementById('set-agencyguard');if(ag)ag.checked=SETTINGS.agencyGuard!==false;
   var op=document.getElementById('set-optionrepair');if(op)op.checked=SETTINGS.optionRepair!==false;
+  var nm=document.getElementById('set-narrative-mode');if(nm)nm.value=SETTINGS.narrativeMode||'quality';
   var sw=document.getElementById('set-structured-writer');if(sw)sw.checked=SETTINGS.structuredWriter===true;
   var dg=document.getElementById('set-debug');if(dg)dg.checked=!!SETTINGS.debug;
   updateDebugStatus();
@@ -3057,7 +3068,65 @@ function renderNar(text,hidx) {
     }
   }
   document.getElementById('slog').appendChild(wrapper);
+  refreshNovelFeedback();
   scrollB(); updateStatus(text);
+}
+
+// Narrative quality changes presentation of a GAME turn; state remains owned by the existing engine.
+function novelVisibleText(text){
+  var st=parseStructuredWriterOutput(text),visible=st?st.narrative:String(text);
+  visible=visible.replace(/【(STATE|SHEET_INIT|大纲|命名表|裁定|检定)】[\s\S]*?(?:【\/\1】|$)/g,'');
+  return parseActionOptions(visible).main.trim();
+}
+function finalizeNovelTurn(meta,reply,input,original){
+  if(!meta){NOVEL_RUNTIME.last={};return;}
+  var next=JSON.parse(JSON.stringify(NOVEL_RUNTIME||{}));
+  next.version=1;next.scene_id=meta.scene_id||'';next.scene_age=Number(meta.scene_age)||1;
+  next.preferences=next.preferences||{};next.feedback=Array.isArray(next.feedback)?next.feedback.slice(-40):[];
+  var visible=novelVisibleText(reply);
+  next.last=Object.assign({},meta,{postprocessed:visible!==novelVisibleText(original)});
+  var excerpt=('玩家行动：'+input+'\n反馈：'+visible).substring(0,1200);
+  next.excerpts=(Array.isArray(next.excerpts)?next.excerpts:[]).filter(function(e){return e.turn!==TURNS;});
+  next.excerpts.push({turn:TURNS,text:excerpt});next.excerpts=next.excerpts.slice(-24);
+  NOVEL_RUNTIME=next;
+}
+function refreshNovelFeedback(){
+  document.querySelectorAll('.novel-feedback').forEach(function(e){e.remove();});
+  var last=NOVEL_RUNTIME&&NOVEL_RUNTIME.last;
+  if(!last||last.turn!==TURNS||!last.style||last.postprocessed)return;
+  var nodes=document.querySelectorAll('#slog .sb.nar[data-hidx]'),node=nodes[nodes.length-1];
+  if(!node||Number(node.dataset.hidx)!==HIST.length-1)return;
+  var area=document.createElement('div');area.className='novel-feedback';
+  area.style.cssText='display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;font-size:12px;opacity:.8';
+  var voted=(NOVEL_RUNTIME.feedback||[]).find(function(f){return f.turn===TURNS;});
+  [true,false].forEach(function(liked){var b=document.createElement('button');b.className='ob';b.type='button';
+    b.textContent=(voted&&voted.liked===liked?'✓ ':'')+(liked?'喜欢这种写法':'不喜欢这种写法');
+    b.onclick=function(){recordNovelFeedback(liked);};area.appendChild(b);});
+  node.appendChild(area);
+}
+async function recordNovelFeedback(liked){
+  if(LOADING)return;
+  var last=NOVEL_RUNTIME.last;if(!last||last.turn!==TURNS||last.postprocessed)return;
+  var prefs=NOVEL_RUNTIME.preferences||(NOVEL_RUNTIME.preferences={});
+  var votes=NOVEL_RUNTIME.feedback||(NOVEL_RUNTIME.feedback=[]),old=votes.find(function(f){return f.turn===TURNS;});
+  if(old&&old.liked===liked)return;
+  if(old){var prev=prefs[old.style];if(prev)prev[old.liked?'likes':'dislikes']=Math.max(0,(prev[old.liked?'likes':'dislikes']||0)-1);}
+  var p=prefs[last.style]||(prefs[last.style]={likes:0,dislikes:0});
+  p[liked?'likes':'dislikes']=Math.min(10000,(p[liked?'likes':'dislikes']||0)+1);
+  NOVEL_RUNTIME.feedback=votes.filter(function(f){return f.turn!==TURNS;}).concat([{turn:TURNS,style:last.style,liked:liked}]).slice(-40);
+  refreshNovelFeedback();
+  // Keep preference saves from racing the next atomic game turn or undo.
+  LOADING=true;var localSnapshot=snapshot();
+  try{await savePut('auto',localSnapshot);}
+  catch(e){if(e&&e.conflict)showSaveConflict('auto',localSnapshot,e,true);else addBlk('sys','▸ 写法偏好已留在本机，服务端保存暂未完成');}
+  finally{LOADING=false;}
+}
+function exportNarrativeExperiment(){
+  var record={format:'wuji-narrative-experience-v1',world:WORLD,turns:TURNS,
+    feedback:NOVEL_RUNTIME.feedback||[],preferences:NOVEL_RUNTIME.preferences||{},last:NOVEL_RUNTIME.last||{},
+    note:'仅本机显式反馈与最近回合诊断；无API密钥、无完整对话；未自动上传、未用于训练。'};
+  var blob=new Blob([JSON.stringify(record,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download='wuji-narrative-experience.json';a.click();setTimeout(function(){URL.revokeObjectURL(url);},1000);
 }
 
 function getDesc(){var d=document.getElementById('sdsp');return(d&&d.textContent&&d.textContent!=='— 游戏开始后显示 —')?d.textContent.replace(/\n/g,' ').substring(0,55)+'…':'第'+Math.ceil(HIST.length/2)+'回合';}
@@ -3070,13 +3139,13 @@ function snapshot(){
   var now=new Date(), t=(now.getMonth()+1)+'/'+now.getDate()+' '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
   // 存档必须是拍下来的照片，不是继续指向运行时对象的窗口。
   // 否则保存后再改背包/NPC/历史，旧存档也会跟着变。
-  return JSON.parse(JSON.stringify({schema_version:SAVE_SCHEMA_VERSION,history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,storyRuntime:STORY_RUNTIME,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,effectiveSetup:EFFECTIVE_SETUP,tone:STORY_TONE,toneDesc:TONE_DESC,toneTrans:TONE_TRANS,names:NAMES,chatpath:CHATPATH,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null,loreSid:LORE.sid||'',lorePending:LORE_PENDING}));
+  return JSON.parse(JSON.stringify({schema_version:SAVE_SCHEMA_VERSION,history:HIST,tokens:TOKENS,desc:getDesc(),time:t,world:WORLD,pace:PACE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,pins:PINS,playerCanon:PLAYER_CANON,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lorebook:LOREBOOK,turns:TURNS,lastMemTurn:_lastMemTurn,outline:OUTLINE,storyRuntime:STORY_RUNTIME,novelRuntime:NOVEL_RUNTIME,gstate:GAME_STATE,stateActive:STATE_ACTIVE,turnBackups:TURN_BACKUPS,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,opening:OPENING_TEXT,openingPick:OPENING_PICK,dna:STORY_DNA,effectiveSetup:EFFECTIVE_SETUP,tone:STORY_TONE,toneDesc:TONE_DESC,toneTrans:TONE_TRANS,names:NAMES,chatpath:CHATPATH,preset:WORLD_PRESET,prefs:PREFS,customWorld:WORLDS['__custom__']||null,loreSid:LORE.sid||'',lorePending:LORE_PENDING}));
 }
 function applySnapshot(sv,opts){
   if(!sv||!sv.history)return;
   HIST=sv.history; TOKENS=sv.tokens||0;
   QUESTS=sv.quests||{main:[],side:[]}; INVENTORY=sv.inv||[]; SKILLS=sv.skills||[]; PINS=sv.pins||[];
-  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; STORY_RUNTIME=sv.storyRuntime&&typeof sv.storyRuntime==='object'?sv.storyRuntime:{}; STORY_AGENT={busy:false,lastError:'',lastAttemptTurn:-1}; STATE_ACTIVE=true; TURN_BACKUPS=Array.isArray(sv.turnBackups)?sv.turnBackups.slice(-30):[]; SHEET_INIT_ARMED=!!sv.sheetArmed; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; EFFECTIVE_SETUP=sv.effectiveSetup&&typeof sv.effectiveSetup==='object'?sv.effectiveSetup:{}; STORY_TONE=sv.tone||EFFECTIVE_SETUP.tone||''; TONE_DESC=sv.toneDesc||''; TONE_TRANS=sv.toneTrans||EFFECTIVE_SETUP.informationMode||''; NAMES=sv.names||''; CHATPATH=sv.chatpath||'/v1/chat/completions'; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
+  WORLD_CLOCK=sv.wclock||0; EVENT_THRESHOLD=sv.ethresh||8; LOREBOOK=sv.lorebook||[]; TURNS=sv.turns||0; _lastMemTurn=sv.lastMemTurn||Math.max(0,TURNS-10); OUTLINE=sv.outline||''; STORY_RUNTIME=sv.storyRuntime&&typeof sv.storyRuntime==='object'?sv.storyRuntime:{};NOVEL_RUNTIME=sv.novelRuntime&&typeof sv.novelRuntime==='object'?sv.novelRuntime:{}; STORY_AGENT={busy:false,lastError:'',lastAttemptTurn:-1}; STATE_ACTIVE=true; TURN_BACKUPS=Array.isArray(sv.turnBackups)?sv.turnBackups.slice(-30):[]; SHEET_INIT_ARMED=!!sv.sheetArmed; OPENING_TEXT=sv.opening||''; OPENING_PICK=sv.openingPick||''; STORY_DNA=sv.dna||''; EFFECTIVE_SETUP=sv.effectiveSetup&&typeof sv.effectiveSetup==='object'?sv.effectiveSetup:{}; STORY_TONE=sv.tone||EFFECTIVE_SETUP.tone||''; TONE_DESC=sv.toneDesc||''; TONE_TRANS=sv.toneTrans||EFFECTIVE_SETUP.informationMode||''; NAMES=sv.names||''; CHATPATH=sv.chatpath||'/v1/chat/completions'; WORLD_PRESET=sv.preset||''; if(sv.prefs)PREFS=sv.prefs;
   // 读档要接回同一个事实库会话，否则这局记住的设定就断了
   LORE={on:false,sid:sv.loreSid||'',ctx:'',names:[],conflicts:[],busy:false,trace:[],counts:{}};
   LORE_PENDING=Array.isArray(sv.lorePending)?sv.lorePending:[];
@@ -3618,7 +3687,7 @@ async function resolveSaveConflict(choice){
 function autoSave(){
   if(!HIST.length)return;
   var localSnapshot=snapshot();
-  savePut('auto',localSnapshot).then(function(){
+  return savePut('auto',localSnapshot).then(function(){
     _autoSaveConflictWarned=false;
   }).catch(function(e){
     if(!(e&&e.conflict))return;              // 普通失败保持静默，本机镜像已经写了
@@ -3927,7 +3996,7 @@ function chatContent(data){
 
 async function doFetchStream(messages,maxTok,onDelta,temp,callMeta){
   callMeta=callMeta||null;var agent=callMeta&&callMeta.agent||'narrative',runId=callMeta?monitorStart(agent,callMeta.title||AGENT_LABELS[agent],{sessionId:callMeta.sessionId===undefined?(LORE&&LORE.sid||''):callMeta.sessionId,turnId:callMeta.turnId===undefined?TURNS:callMeta.turnId,parentId:callMeta.parentId===undefined?MONITOR_PARENT_ID:callMeta.parentId,input:callMeta.input||monitorInput(messages),meta:callMeta.meta}):'';
-  var maxAttempts=3,lastErr=null;
+  var maxAttempts=callMeta&&callMeta.novel?1:3,lastErr=null;
   try{
     for(var attempt=0;attempt<maxAttempts;attempt++){
       try{
@@ -3970,6 +4039,7 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp,callMeta,monitorRu
     url='/api/chat/stream';
     hdrs={'Content-Type':'application/json'};
     body=Object.assign({model:MODEL,messages:messages,provider:BACKEND_PROVIDER,stream:true,temperature:tempFor(temp),max_tokens:maxTok||4096},thinkingPayload(BACKEND_PROVIDER,true,agent));
+    if(callMeta&&callMeta.novel){url='/api/novel/turn/stream';Object.assign(body,callMeta.novel);}
   } else if(BK==='ol'){
     hdrs={'Content-Type':'application/json'};
     body={model:MODEL,messages:messages,stream:true,options:{num_ctx:32768,temperature:tempFor(temp),top_p:0.9,num_predict:maxTok||-1}};
@@ -3991,7 +4061,7 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp,callMeta,monitorRu
     try{var ej=JSON.parse(et);if(ej&&ej.detail&&ej.detail.message)msg=ej.detail.message;}catch(_e){}
     throw new Error('HTTP '+res.status+' '+msg);
   }
-  var reader=res.body.getReader(),dec=new TextDecoder(),buf='',full='',usage=null,sawDone=false,finishReason='',lastMonitorAt=0;
+  var reader=res.body.getReader(),dec=new TextDecoder(),buf='',full='',usage=null,novelMeta=null,sawDone=false,finishReason='',lastMonitorAt=0;
   function monitorStream(force){if(!monitorRunId)return;var now=Date.now();if(!force&&now-lastMonitorAt<120)return;lastMonitorAt=now;monitorLive(monitorRunId,full,reasoning,{frames:frames,finishReason:finishReason});}
   // 网络分帧可能一次塞来几十个 token；如果在同一个 JS 任务里全部改 DOM，
   // 浏览器只会在循环结束后绘制，看起来仍像“一次全出来”。这里把可见正文
@@ -4037,6 +4107,8 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp,callMeta,monitorRu
           var em=typeof j.error==='string'?j.error:(j.error.message||JSON.stringify(j.error));
           throw new Error('流式后端错误：'+em);
         }
+        if(j.novel_stage&&monitorRunId)monitorLive(monitorRunId,undefined,undefined,{stage:j.novel_stage});
+        if(j.novel_meta)novelMeta=j.novel_meta;
         frames++;
         var dl=j.choices&&j.choices[0]&&j.choices[0].delta;
         if(!firstShape&&dl)firstShape=Object.keys(dl).join(',');
@@ -4064,6 +4136,7 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp,callMeta,monitorRu
       try{
         var tj=JSON.parse(tp);
         if(tj&&tj.error){var tem=typeof tj.error==='string'?tj.error:(tj.error.message||JSON.stringify(tj.error));throw new Error('流式后端错误：'+tem);}
+        if(tj.novel_meta)novelMeta=tj.novel_meta;
         frames++;
         var tdl=tj.choices&&tj.choices[0]&&tj.choices[0].delta;
         if(tdl&&tdl.reasoning_content){reasoning+=String(tdl.reasoning_content);monitorStream(false);}
@@ -4080,7 +4153,7 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp,callMeta,monitorRu
     var streamErr=(e&&e.name==='AbortError')?new Error('流式输出长时间没有返回内容'):e;
     if(full&&streamErr){streamErr.__partial=true;streamErr.partialText=salvageTruncated(full);}
     throw streamErr;
-  }finally{clearTimeout(idleTimer);}
+  }finally{clearTimeout(idleTimer);ctrl.abort();try{await reader.cancel();}catch(_cancel){}}
   // 撞上输出上限时不再整段丢弃。
   // 输出 token 现在很贵，扔掉一段 4000 token 的正文是实打实的钱，
   // 而且玩家还得把这一回合重来一遍。
@@ -4109,7 +4182,7 @@ async function doFetchStreamOnce(messages,maxTok,onDelta,temp,callMeta,monitorRu
     if(full){incomplete.__partial=true;incomplete.partialText=salvageTruncated(full);}
     throw incomplete;
   }
-  return {text:full,reasoning:reasoning,usage:usage,frames:frames,finishReason:finishReason};
+  return {text:full,reasoning:reasoning,usage:usage,frames:frames,finishReason:finishReason,novelMeta:novelMeta};
 }
 
 async function maybeCompress(){
@@ -4181,7 +4254,7 @@ function promptAddPin(){
 
 // ── REAL UNDO: dialogue and authoritative runtime state move together ──
 function runtimeBackup(){
-  return JSON.parse(JSON.stringify({gstate:GAME_STATE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,tokens:TOKENS,turns:TURNS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lastMemTurn:_lastMemTurn,outline:OUTLINE,storyRuntime:STORY_RUNTIME,storyAgent:STORY_AGENT,names:NAMES,stateActive:STATE_ACTIVE,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,lorePending:LORE_PENDING,lore:{ctx:LORE.ctx,names:LORE.names,conflicts:LORE.conflicts,trace:LORE.trace,counts:LORE.counts}}));
+  return JSON.parse(JSON.stringify({gstate:GAME_STATE,quests:QUESTS,inv:INVENTORY,skills:SKILLS,tokens:TOKENS,turns:TURNS,wclock:WORLD_CLOCK,ethresh:EVENT_THRESHOLD,lastMemTurn:_lastMemTurn,outline:OUTLINE,storyRuntime:STORY_RUNTIME,novelRuntime:NOVEL_RUNTIME,storyAgent:STORY_AGENT,names:NAMES,stateActive:STATE_ACTIVE,sheetArmed:SHEET_INIT_ARMED,premise:PREMISE_STATE,lorePending:LORE_PENDING,lore:{ctx:LORE.ctx,names:LORE.names,conflicts:LORE.conflicts,trace:LORE.trace,counts:LORE.counts}}));
 }
 
 // 一个回合只有两种结局：全部成功后提交，或恢复到开始前。
@@ -4339,7 +4412,7 @@ function restoreRuntime(b){
   if(!b)return;
   b=JSON.parse(JSON.stringify(b));
   var bs=b.gstate&&typeof b.gstate==='object'?b.gstate:freshGameState();if((!bs.inv||!bs.inv.length)&&b.inv)bs.inv=b.inv;if((!bs.skills||!bs.skills.length)&&b.skills)bs.skills=b.skills;
-  GAME_STATE=migrateGameState(bs);QUESTS=b.quests||{main:[],side:[]};TOKENS=Number(b.tokens)||0;TURNS=b.turns||0;WORLD_CLOCK=b.wclock||0;EVENT_THRESHOLD=b.ethresh||8;_lastMemTurn=Number(b.lastMemTurn)||0;OUTLINE=b.outline||'';STORY_RUNTIME=b.storyRuntime&&typeof b.storyRuntime==='object'?b.storyRuntime:{};STORY_AGENT=b.storyAgent&&typeof b.storyAgent==='object'?b.storyAgent:{busy:false,lastError:'',lastAttemptTurn:-1};NAMES=b.names||'';STATE_ACTIVE=b.stateActive!==false;PREMISE_STATE=b.premise&&typeof b.premise==='object'?b.premise:{kind:'none'};LORE_PENDING=Array.isArray(b.lorePending)?b.lorePending:[];
+  GAME_STATE=migrateGameState(bs);QUESTS=b.quests||{main:[],side:[]};TOKENS=Number(b.tokens)||0;TURNS=b.turns||0;WORLD_CLOCK=b.wclock||0;EVENT_THRESHOLD=b.ethresh||8;_lastMemTurn=Number(b.lastMemTurn)||0;OUTLINE=b.outline||'';STORY_RUNTIME=b.storyRuntime&&typeof b.storyRuntime==='object'?b.storyRuntime:{};NOVEL_RUNTIME=b.novelRuntime&&typeof b.novelRuntime==='object'?b.novelRuntime:{};STORY_AGENT=b.storyAgent&&typeof b.storyAgent==='object'?b.storyAgent:{busy:false,lastError:'',lastAttemptTurn:-1};NAMES=b.names||'';STATE_ACTIVE=b.stateActive!==false;PREMISE_STATE=b.premise&&typeof b.premise==='object'?b.premise:{kind:'none'};LORE_PENDING=Array.isArray(b.lorePending)?b.lorePending:[];
   if(b.lore&&typeof b.lore==='object'){LORE.ctx=b.lore.ctx||'';LORE.names=Array.isArray(b.lore.names)?b.lore.names:[];LORE.conflicts=Array.isArray(b.lore.conflicts)?b.lore.conflicts:[];LORE.trace=Array.isArray(b.lore.trace)?b.lore.trace:[];LORE.counts=b.lore.counts&&typeof b.lore.counts==='object'?b.lore.counts:{};}
   SHEET_INIT_ARMED=!!b.sheetArmed;
   syncStateCollections();renderQuests();renderInventory();renderSkills();renderNpcs();renderCharacterSheet();
@@ -4387,7 +4460,7 @@ async function undoTurn(){
     restoreRuntime(TURN_BACKUPS.pop());
     rebuildLog();
     addBlk('sys','▸ 已撤销上一回合');
-    autoSave();
+    await autoSave();
     return true;
   }finally{
     LOADING=false;var input=document.getElementById('pinp');if(input)input.focus();
@@ -4396,7 +4469,7 @@ async function undoTurn(){
 
 async function startGame(){
   LOADING=true;
-  HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0; OUTLINE=''; STORY_RUNTIME={}; STORY_AGENT={busy:false,lastError:'',lastAttemptTurn:-1}; NAMES='';
+  HIST=[]; QUESTS={main:[],side:[]}; INVENTORY=[]; SKILLS=[]; PINS=[]; WORLD_CLOCK=0; EVENT_THRESHOLD=8; TURNS=0; OUTLINE=''; STORY_RUNTIME={}; NOVEL_RUNTIME={}; STORY_AGENT={busy:false,lastError:'',lastAttemptTurn:-1}; NAMES='';
   // 新游戏不能继承上一局尚未完成的事实抽取批次。
   LORE_PENDING=[];
   GAME_STATE=freshGameState(); STATE_ACTIVE=true; TURN_BACKUPS=[]; SHEET_INIT_ARMED=false; PLAYER_CANON=parseCanonText(PREFS.canon||''); PREMISE_STATE={kind:'none'}; EFFECTIVE_SETUP={};
@@ -5302,23 +5375,28 @@ async function _runTurn(tx){
     msgs.splice(msgs.length-1,0,{role:'system',content:noteContent});
     if(DEBUG_ACTIVE){DEBUG_ACTIVE.directorRuling=debugClone(ruling);DEBUG_ACTIVE.authorNote=noteContent;DEBUG_ACTIVE.request=debugCompactMessages(msgs);}
     debugEvent('narrative_request_ready',{messageCount:msgs.length,authorNote:noteContent});
-    var reply, usage=null, truncated=false;
+    var reply, usage=null, truncated=false,novelMeta=null;
+    var useNovel=BK==='be'&&SETTINGS.narrativeMode!=='classic';
     var narrTok=narrativeMaxTokens();
     monitorStage(pipelineRun,'场景写作','running','请求上限 '+narrTok+' token；'+(SETTINGS.stream?'流式输出':'整段输出'));
-    if(SETTINGS.stream){
+    if(SETTINGS.stream||useNovel){
       // 保留流式临时正文，直到所有后处理完成，避免正文中途消失。
       live=document.createElement('div'); live.className='sb nar';
       var liveShown=0;
-      typ.remove(); typ=null;
       document.getElementById('slog').appendChild(live);
       var r=await doFetchStream(msgs,narrTok,function(full){
+          if(!SETTINGS.stream)return 0;
+          if(typ){typ.remove();typ=null;}
           var vis=full.replace(/【大纲】[\s\S]*$/,'').replace(/【STATE】[\s\S]*?(【\/STATE】|$)/g,'').replace(/【SHEET_INIT】[\s\S]*?(【\/SHEET_INIT】|$)/g,'').replace(/【命名表】[\s\S]*?(【\/命名表】|$)/g,'').replace(/【裁定】[\s\S]*?(【\/裁定】|$)/g,'');
           var added=Math.max(0,vis.length-liveShown);liveShown=vis.length;
           live.innerHTML=vis.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');
           scrollB();
           return added;
-        },null,{agent:'narrative',title:'流式生成本回合场景正文',input:monitorInput(msgs),meta:{stream:true,maxTokens:narrTok}});
-      reply=r.text; usage=r.usage; truncated=!!r.truncated;
+        },null,{agent:'narrative',title:useNovel?'比较并生成本回合游戏反馈':'流式生成本回合场景正文',input:monitorInput(msgs),meta:{stream:!!SETTINGS.stream,maxTokens:narrTok},novel:useNovel?{mode:SETTINGS.narrativeMode||'quality',context:buildTurnContext(recentText),runtime:NOVEL_RUNTIME}:null});
+      if(typ){typ.remove();typ=null;}
+      reply=r.text; usage=r.usage; truncated=!!r.truncated;novelMeta=r.novelMeta||null;
+      if(useNovel&&(!novelMeta||novelMeta.version!==1||novelMeta.turn!==TURNS))throw new Error('游戏叙事响应缺少匹配的完成记录，本回合未提交');
+      if(novelMeta){debugEvent('novel_engine',novelMeta);(novelMeta.warnings||[]).forEach(function(w){addBlk('sys','▸ '+w);});}
       if(!reply) throw new Error('空回复（可尝试在设置中关闭流式输出）');
     } else {
       var res=await doFetch(msgs,narrTok,null,null,{agent:'narrative',title:'生成本回合场景正文',input:monitorInput(msgs),meta:{stream:false,maxTokens:narrTok}});
@@ -5401,6 +5479,7 @@ async function _runTurn(tx){
     renderCharacterSheet();
     document.getElementById('tkc').textContent='TOKENS: '+TOKENS.toLocaleString()+' · '+((Date.now()-t0)/1000).toFixed(1)+'s';
     // 后端模式把结构化时间线与自动存档放进同一事务；直接 API 模式保留旧账本路径。
+    finalizeNovelTurn(novelMeta,reply,lastUser,rawModelReply);
     var serverCommitted=false,ledgerOk=false;
     if(BK==='be'&&LORE.on&&LORE.sid){
       monitorStage(pipelineRun,'原子提交','running','正在一次性写入叙事账本与自动存档');
@@ -5415,6 +5494,7 @@ async function _runTurn(tx){
     // 到这里正文、状态和权威账本才算同一个完整回合。后台摘要/事实抽取不阻塞输入，
     // 但只接收已经提交的回合；服务端事务路径不再额外发送第二次自动存档 PUT。
     commitTurnTransaction(tx);
+    refreshNovelFeedback();
     if(!serverCommitted)autoSave();
     maybeCompress(); maybeAutoMemory();
     // 把这一回合新确立的设定抽进事实库。不 await —— 玩家不该为记账等待。

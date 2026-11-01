@@ -46,8 +46,8 @@ STRUCTURED_WRITER_RULES = (
     "【结构化写手信封——仅在本局开关开启时生效】只输出一个合法JSON对象，不要使用Markdown代码围栏。"
     "字段必须为：narrative（玩家可见正文字符串）、options（2-4个完整行动字符串）、"
     "state_patch（只写本回合实际变化，结构服从【STATE】协议；无变化为空对象）、"
-    "memory_writes（值得长期记忆的事实数组，没有就为空数组）。不要在narrative中重复输出选项、"
-    "STATE或系统说明。options必须允许自由输入，不得替玩家决定。"
+    "memory_writes（值得长期记忆的事实数组，没有就为空数组）。narrative仅承载可见正文，不重复其他字段或系统说明。"
+    "options必须允许自由输入，不得替玩家决定。"
 )
 
 # 禁止代替玩家行动
