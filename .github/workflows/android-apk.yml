@@ -2,10 +2,10 @@ name: Android APK
 on:
   workflow_dispatch:
   push:
-    branches: [main, codex/android-apk]
-    paths: ['android/**', 'backend/app/**', 'index.html', 'data/worlds/**', 'research/*.json', 'tools/prepare_android.py', '.github/workflows/android-apk.yml']
+    branches: [main]
+    paths: ['android/**', 'backend/app/**', 'index.html', 'data/worlds/**', 'research/*.json', 'tools/prepare_android.py', 'tools/smoke_android.py', '.github/workflows/android-apk.yml']
   pull_request:
-    paths: ['android/**', 'backend/app/**', 'index.html', 'data/worlds/**', 'research/*.json', 'tools/prepare_android.py', '.github/workflows/android-apk.yml']
+    paths: ['android/**', 'backend/app/**', 'index.html', 'data/worlds/**', 'research/*.json', 'tools/prepare_android.py', 'tools/smoke_android.py', '.github/workflows/android-apk.yml']
 
 permissions:
   contents: read
@@ -28,6 +28,10 @@ jobs:
         with:
           python-version: '3.12'
       - uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: '13114758'
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
       - uses: gradle/actions/setup-gradle@v4
       - name: Install SDK
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
@@ -40,3 +44,20 @@ jobs:
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 30
+      - name: Build emulator APK
+        working-directory: android
+        run: ./gradlew --no-daemon clean :app:assembleDebug -PwujiAbis=x86_64
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Verify native Android startup
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: default
+          arch: x86_64
+          emulator-options: -no-window -no-audio -no-boot-anim -no-snapshot -gpu swiftshader
+          disable-animations: true
+          script: python tools/smoke_android.py android/app/build/outputs/apk/debug/app-debug.apk
