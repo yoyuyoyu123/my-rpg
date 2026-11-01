@@ -69,7 +69,8 @@ export async function startTestServer() {
 export async function startTestBrowser() {
   const server = await startTestServer();
   try {
-    const browser = await chromium.launch({ headless: true });
+    const browser = await chromium.launch({ headless: true,
+      ...(process.env.RPG_TEST_BROWSER_EXECUTABLE ? { executablePath: process.env.RPG_TEST_BROWSER_EXECUTABLE } : {}) });
     return { ...server, browser, stop: async () => {
       try { await browser.close(); } finally { await server.stop(); }
     } };
