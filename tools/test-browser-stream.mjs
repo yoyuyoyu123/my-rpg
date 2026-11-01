@@ -3,6 +3,7 @@ import { startTestBrowser } from './browser-test-environment.mjs';
 
 const { browser, url, stop } = await startTestBrowser();
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+await page.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//, route => route.fulfill({ contentType: 'text/css', body: '' }));
 const pageErrors = [];
 const consoleErrors = [];
 page.on('pageerror', (error) => pageErrors.push(String(error)));
@@ -15,6 +16,8 @@ try {
   assert(response, `没有收到页面响应：${url}`);
   assert.equal(response.status(), 200);
   await page.waitForFunction(() => typeof window.doFetchStream === 'function');
+  // Startup fetches must finish before installing a global fetch stream fixture.
+  await page.waitForFunction(() => document.querySelectorAll('#startup-slots .svs').length === 4);
 
   const result = await page.evaluate(async () => {
     BK = 'be';

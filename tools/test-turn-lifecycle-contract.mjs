@@ -32,6 +32,7 @@ function baseSnapshotContext() {
     _lastMemTurn: 0,
     OUTLINE: '',
     STORY_RUNTIME: { current_scene: { id: 'scene-1' } },
+    NOVEL_RUNTIME: { excerpts: [{ turn: 2, text: '已提交游戏正文' }] },
     GAME_STATE: { hp: 10, attrs: { 体质: 2 } },
     STATE_ACTIVE: true,
     TURN_BACKUPS: [],
@@ -63,9 +64,11 @@ function snapshotIsDetached() {
   context.HIST[0].content = '后来被改写';
   context.GAME_STATE.hp = 1;
   context.LORE_PENDING[0].text = '后来被覆盖';
+  context.NOVEL_RUNTIME.excerpts[0].text = '未提交候选';
   return saved.history[0].content === '原始输入'
     && saved.gstate.hp === 10
-    && saved.lorePending[0].text === '待写入事实';
+    && saved.lorePending[0].text === '待写入事实'
+    && saved.novelRuntime.excerpts[0].text === '已提交游戏正文';
 }
 
 async function failedTurnLeavesNoPartialCommit() {
@@ -81,6 +84,7 @@ async function failedTurnLeavesNoPartialCommit() {
     EVENT_THRESHOLD: 8,
     OUTLINE: '旧大纲',
     STORY_RUNTIME: { current_scene: { id: 'old' } },
+    NOVEL_RUNTIME: { excerpts: [] },
     STORY_AGENT: { busy: false, lastError: '', lastAttemptTurn: 7 },
     NAMES: '老板',
     STATE_ACTIVE: true,

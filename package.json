@@ -4,6 +4,7 @@
   "private": true,
   "description": "无界 AI 文字 RPG 的前端契约与浏览器验收依赖",
   "scripts": {
+    "test:browser:novel": "node tools/test-browser-novel-game.mjs",
     "test:browser:isolation": "node tools/test-browser-isolation.mjs",
     "test:contracts": "node tools/test-debug-analyzer.mjs && node tools/test-narrative-diagnostics.mjs && node tools/test-opening-identity-contract.mjs && node tools/test-option-parser.mjs && node tools/test-turn-lifecycle-contract.mjs && node tools/test-world-catalog-contract.mjs",
     "test:browser:smoke": "node tools/test-browser-smoke.mjs",

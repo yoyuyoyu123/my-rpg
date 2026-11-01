@@ -49,6 +49,7 @@ class LLMResult:
     completion_tokens: int = 0
     total_tokens: int = 0
     retries: int = 0
+    finish_reason: str = "stop"
 
 
 def _is_retryable_status(status: int) -> bool:
@@ -342,4 +343,5 @@ def _parse_success(data: dict, provider_id: str, model: str, attempt: int) -> LL
         completion_tokens=int(usage.get("completion_tokens") or 0),
         total_tokens=int(usage.get("total_tokens") or 0),
         retries=attempt,
+        finish_reason=str(choices[0].get("finish_reason") or "stop"),
     )

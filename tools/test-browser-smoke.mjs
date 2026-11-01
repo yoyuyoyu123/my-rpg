@@ -8,6 +8,8 @@ const artifactDir = path.resolve('.playwright-artifacts', 'browser-smoke');
 fs.mkdirSync(artifactDir, { recursive: true });
 
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+// External fonts are optional; keep acceptance independent of Internet availability.
+await page.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//, route => route.fulfill({ contentType: 'text/css', body: '' }));
 const pageErrors = [];
 const consoleErrors = [];
 const failedRequests = [];

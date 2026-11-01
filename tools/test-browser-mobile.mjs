@@ -8,6 +8,7 @@ const artifactDir = path.resolve('.playwright-artifacts', 'browser-mobile');
 fs.mkdirSync(artifactDir, { recursive: true });
 
 const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1 });
+await page.route(/^https:\/\/fonts\.(googleapis|gstatic)\.com\//, route => route.fulfill({ contentType: 'text/css', body: '' }));
 const pageErrors = [];
 const consoleErrors = [];
 page.on('pageerror', (error) => pageErrors.push(String(error)));
@@ -22,6 +23,7 @@ try {
   await page.waitForFunction(() => typeof window.render_game_to_text === 'function');
   await page.waitForFunction(() => Array.isArray(window.WORLD_CATALOG) && window.WORLD_CATALOG.length === 10);
   await page.locator('#ascreen').waitFor({ state: 'visible', timeout: 5000 });
+  await page.waitForFunction(() => document.querySelectorAll('#startup-slots .svs').length === 4);
 
   const menuState = JSON.parse(await page.evaluate(() => window.render_game_to_text()));
   assert.equal(menuState.screen, 'menu');
