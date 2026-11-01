@@ -12,6 +12,7 @@
 """
 from contextlib import asynccontextmanager
 from pathlib import Path
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -100,7 +101,7 @@ def health() -> dict:
 #   3. 部署时只有一个服务要管
 #
 # 这也是 SillyTavern 的做法。
-FRONTEND_DIR = Path(__file__).resolve().parents[2]  # 仓库根目录
+FRONTEND_DIR = Path(os.environ.get("WUJI_RESOURCE_DIR") or Path(__file__).resolve().parents[2]).resolve()
 
 
 @app.get("/", include_in_schema=False)

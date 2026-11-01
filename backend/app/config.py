@@ -16,6 +16,7 @@
 """
 from functools import lru_cache
 from pathlib import Path
+import os
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -23,7 +24,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # 用绝对路径而不是依赖当前工作目录；这样从 dev.ps1、IDE 或服务管理器启动时
 # 都能读到同一份 backend/.env。
-ENV_FILE = Path(__file__).resolve().parents[1] / ".env"
+ENV_FILE = Path(os.environ.get("WUJI_CONFIG_FILE") or (Path(__file__).resolve().parents[1] / ".env"))
 
 
 class Settings(BaseSettings):

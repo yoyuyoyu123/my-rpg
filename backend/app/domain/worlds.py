@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -15,7 +16,7 @@ from app.domain.world_content import WORLD_CONTENT
 
 
 CATALOG_SCHEMA_VERSION = 1
-CATALOG_PATH = Path(__file__).resolve().parents[3] / "data" / "worlds" / "catalog.json"
+CATALOG_PATH = Path(os.environ.get("WUJI_RESOURCE_DIR") or Path(__file__).resolve().parents[3]) / "data" / "worlds" / "catalog.json"
 
 
 @dataclass(frozen=True)

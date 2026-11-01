@@ -1,0 +1,60 @@
+plugins {
+    id 'com.android.application'
+    id 'com.chaquo.python'
+}
+
+def gameStage = layout.buildDirectory.dir('generated/game')
+def pythonCommand = providers.environmentVariable('WUJI_BUILD_PYTHON').getOrElse('python3')
+tasks.register('prepareGame', Exec) {
+    workingDir rootProject.projectDir.parentFile
+    commandLine pythonCommand, 'tools/prepare_android.py'
+    inputs.dir('../../backend/app')
+    inputs.file('../../index.html')
+    inputs.file('../../tools/prepare_android.py')
+    inputs.dir('../../data/worlds')
+    inputs.dir('../../research')
+    inputs.file('src/main/assets/mobile-shell.js')
+    outputs.dir(gameStage)
+}
+
+android {
+    namespace 'com.wuji.rpg'
+    buildFeatures { buildConfig true }
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.wuji.rpg'
+        minSdk 24
+        targetSdk 35
+        versionCode 1
+        versionName '0.2.0-preview'
+        ndk { abiFilters.addAll(providers.gradleProperty('wujiAbis').getOrElse('arm64-v8a').split(',') as List) }
+        testInstrumentationRunner 'android.test.InstrumentationTestRunner'
+    }
+    sourceSets.main.assets.srcDir(gameStage.map { it.dir('assets') })
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    buildTypes {
+        debug { debuggable true }
+        release { minifyEnabled false }
+    }
+}
+
+chaquopy {
+    defaultConfig {
+        version '3.12'
+        buildPython pythonCommand
+        pip {
+            options '--extra-index-url', 'https://pypi.flet.dev'
+            install '-r', '../requirements-android.txt'
+        }
+    }
+    sourceSets.main.srcDir(gameStage.map { it.dir('python') }.get().asFile)
+}
+
+tasks.configureEach {
+    if (name != 'prepareGame' && (name == 'preBuild' || name.contains('Python') || name.endsWith('Assets'))) {
+        dependsOn tasks.named('prepareGame')
+    }
+}
