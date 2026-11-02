@@ -31,6 +31,22 @@ try {
   assert.match(configured.options, /gemini-3.1-flash-lite/);
   assert.match(configured.options, /gpt-6-luna/);
   assert.equal(configured.googleCleared && configured.openaiCleared, true);
+  await page.evaluate(() => { goStep(1); setTab('be'); });
+  const modelID = page.locator('#be-model-id');
+  await modelID.pressSequentially('gemini-3.1-flash-lite', { delay: 30 });
+  assert.equal(await modelID.inputValue(), 'gemini-3.1-flash-lite');
+  await modelID.blur();
+  await modelID.focus();
+  assert.equal(await modelID.inputValue(), 'gemini-3.1-flash-lite');
+  await modelID.fill('gpt-6-luna');
+  await page.locator('#be-gemini-lite').click();
+  assert.equal(await modelID.inputValue(), 'gemini-3.1-flash-lite');
+  assert.match(await page.locator('#bemod').inputValue(), /^gemini\|/);
+  const selectedModel = await page.evaluate(async () => {
+    await doConnect('be');
+    return { provider: BACKEND_PROVIDER, model: MODEL };
+  });
+  assert.deepEqual(selectedModel, { provider: 'gemini', model: 'gemini-3.1-flash-lite' });
   assert.equal(await page.evaluate(async () => { await navigator.serviceWorker.ready; return !!(await caches.match('/api/saves')); }), false);
   await page.waitForFunction(() => document.getElementById('site-logout'));
   await page.route('**/api/site/status', route => route.fulfill({ contentType: 'application/json', body: JSON.stringify({ auth_enabled: true, revision: 'test-next-version' }) }));

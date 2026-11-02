@@ -26,5 +26,8 @@ jobs:
       - run: npm run test:browser:web
         env:
           RPG_TEST_PYTHON: python
+      - run: npm run test:browser:android
+        env:
+          RPG_TEST_PYTHON: python
       - run: docker build -t wuji-web:test .
       - run: python tools/test_web_container.py

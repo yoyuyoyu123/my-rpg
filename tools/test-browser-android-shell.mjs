@@ -15,6 +15,28 @@ try {
     window.WujiAndroid = { saveJson: (name, text) => phoneExports.push({ name, text }) };
   });
   await page.addScriptTag({ content: fs.readFileSync(new URL('../android/app/src/main/assets/mobile-shell.js', import.meta.url), 'utf8') });
+  await page.evaluate(async () => {
+    goStep(1); setTab('be');
+    document.getElementById('cfg-gemini').value = 'fixture-android-google-not-real';
+    if (!await saveBackendConfig()) throw new Error('Isolated fixture configuration failed');
+  });
+  const modelID = page.locator('#be-model-id');
+  const model = 'gemini-3.1-flash-lite';
+  await modelID.pressSequentially(model, { delay: 30 });
+  assert.equal(await modelID.inputValue(), model);
+  await modelID.fill('');
+  await modelID.focus();
+  // A keyboard replaces the current composing span on each update, then commits.
+  const keyboard = await page.context().newCDPSession(page);
+  for (let length = 1; length <= model.length; length++) {
+    await keyboard.send('Input.imeSetComposition', { text: model.slice(0, length), selectionStart: length, selectionEnd: length });
+  }
+  await keyboard.send('Input.insertText', { text: model });
+  assert.equal(await modelID.inputValue(), model);
+  await modelID.blur();
+  await page.locator('#be-gemini-lite').click();
+  assert.equal(await modelID.inputValue(), model);
+  assert.match(await page.locator('#bemod').inputValue(), /^gemini\|/);
   await page.evaluate(() => {
     WORLD = 'wuxia'; TURNS = 2;
     HIST = [{ role: 'user', content: '我把干粮收进行囊。' }, { role: 'assistant', content: '干粮还温着。' }];
@@ -40,5 +62,5 @@ try {
   });
   assert.deepEqual(back, { handled: true, closed: true, idle: false });
   assert.deepEqual(errors, []);
-  console.log('Android shell: original save export to native bridge, JSON import, narration memory and panel back handling passed');
+  console.log('Android shell: model typing, IME composition, one-tap Gemini selection, original save export/import, narration memory and panel back handling passed');
 } finally { await stop(); }
