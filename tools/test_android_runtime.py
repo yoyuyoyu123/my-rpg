@@ -19,7 +19,7 @@ spec.loader.exec_module(runtime)
 
 
 def main():
-    for key in ("DEEPSEEK_API_KEY", "ZHIPU_API_KEY", "SILICONFLOW_API_KEY", "OPENROUTER_API_KEY"):
+    for key in ("DEEPSEEK_API_KEY", "ZHIPU_API_KEY", "SILICONFLOW_API_KEY", "OPENROUTER_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"):
         os.environ[key] = ""
     with TemporaryDirectory(prefix="wuji-phone-test-") as temporary:
         info = json.loads(runtime.start(temporary, str(ROOT)))

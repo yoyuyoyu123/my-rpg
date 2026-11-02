@@ -16,8 +16,15 @@ data_dir = Path(args.data_dir).resolve()
 if data_dir == (ROOT / "backend/data").resolve() or (data_dir / "wuji.db").exists():
     raise SystemExit("Browser tests require a fresh isolated database directory")
 os.environ["WUJI_DATA_DIR"] = str(data_dir)
-for key in ("DEEPSEEK_API_KEY", "ZHIPU_API_KEY", "SILICONFLOW_API_KEY", "OPENROUTER_API_KEY"):
-    os.environ[key] = ""
+os.environ["WUJI_CONFIG_FILE"] = str(data_dir / ".env")
+os.environ["WUJI_SITE_AUTH_ENABLED"] = "true" if os.environ.get("RPG_TEST_WEB_AUTH") == "1" else "false"
+if os.environ.get("RPG_TEST_WEB_AUTH") == "1":
+    os.environ["WUJI_SITE_PASSWORD"] = "fixture-site-password-12345"
+    os.environ["WUJI_SITE_SECURE_COOKIES"] = "false"
+for key in ("DEEPSEEK_API_KEY", "ZHIPU_API_KEY", "SILICONFLOW_API_KEY", "OPENROUTER_API_KEY", "GEMINI_API_KEY", "OPENAI_API_KEY"):
+    # Strip inherited credentials, but allow this isolated server's config UI
+    # to read the fixture values it writes to its own private .env file.
+    os.environ.pop(key, None)
 
 from app import config  # noqa: E402
 
@@ -61,6 +68,8 @@ def identity():
 
 @app.middleware("http")
 async def block_real_model_requests(request, call_next):
+    if request.url.path == "/__test__/identity":
+        return JSONResponse(identity())
     if request.url.path.startswith("/api/chat") or (request.url.path.startswith("/api/novel") and os.environ.get("RPG_TEST_NOVEL_FIXTURE") != "1"):
         return JSONResponse({"detail": "Real model calls disabled in browser tests"}, status_code=403)
     return await call_next(request)

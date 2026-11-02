@@ -21,6 +21,8 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
 from app.db.session import init_db
+from app.db.session import DATA_DIR
+from app.services.site_access import SiteAccess
 from app.routers import chat as chat_router
 from app.routers import director as director_router
 from app.routers import config as config_router
@@ -72,6 +74,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.add_middleware(SiteAccess, settings=settings, data_dir=DATA_DIR)
 
 app.include_router(chat_router.router)
 app.include_router(director_router.router)
@@ -106,7 +109,32 @@ FRONTEND_DIR = Path(os.environ.get("WUJI_RESOURCE_DIR") or Path(__file__).resolv
 
 @app.get("/", include_in_schema=False)
 def serve_index() -> FileResponse:
-    return FileResponse(FRONTEND_DIR / "index.html")
+    return FileResponse(FRONTEND_DIR / "index.html", headers={"Cache-Control": "no-store"})
+
+
+@app.get("/api/site/status", tags=["系统"])
+def site_status() -> dict:
+    import hashlib
+    revision = os.environ.get("RENDER_GIT_COMMIT") or os.environ.get("WUJI_BUILD_ID")
+    if not revision:
+        revision = hashlib.sha256((FRONTEND_DIR / "index.html").read_bytes()).hexdigest()[:16]
+    return {"auth_enabled": settings.site_auth_enabled, "revision": revision}
+
+
+@app.get("/service-worker.js", include_in_schema=False)
+def service_worker() -> FileResponse:
+    from fastapi import HTTPException
+    path = FRONTEND_DIR / "web/service-worker.js"
+    if not path.is_file():
+        raise HTTPException(404)
+    return FileResponse(path, media_type="application/javascript", headers={
+        "Cache-Control": "no-cache", "Service-Worker-Allowed": "/",
+    })
+
+
+web_dir = FRONTEND_DIR / "web"
+if web_dir.is_dir():
+    app.mount("/web", StaticFiles(directory=web_dir), name="mobile-web")
 
 
 # research/ 下的数据文件也要能被前端取到

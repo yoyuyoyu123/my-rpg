@@ -98,6 +98,16 @@ PROVIDERS: dict[str, Provider] = {
         extra_headers={"HTTP-Referer": "http://localhost", "X-Title": "WujiNarrativeEngine"},
         note="一个 key 转发多家模型",
     ),
+    "gemini": Provider(
+        id="gemini", label="Google Gemini", base_url="https://generativelanguage.googleapis.com",
+        chat_path="/v1beta/openai/chat/completions", models_path="/v1beta/openai/models",
+        default_model="gemini-3.1-flash-lite", stream_usage=False,
+        note="Google 官方兼容接口（beta）；Key 与可用模型见 AI Studio，免费额度因模型而异",
+    ),
+    "openai": Provider(
+        id="openai", label="OpenAI · GPT-6 Luna", base_url="https://api.openai.com",
+        default_model="gpt-6-luna", note="OpenAI 官方 API；与 ChatGPT 订阅分开计费",
+    ),
     "ollama": Provider(
         id="ollama",
         label="本地 Ollama",

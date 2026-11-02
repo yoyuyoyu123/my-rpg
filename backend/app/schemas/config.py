@@ -29,8 +29,12 @@ class ConfigUpdate(BaseModel):
     zhipu_api_key: str | None = Field(None, max_length=500)
     siliconflow_api_key: str | None = Field(None, max_length=500)
     openrouter_api_key: str | None = Field(None, max_length=500)
+    gemini_api_key: str | None = Field(None, max_length=500)
+    openai_api_key: str | None = Field(None, max_length=500)
     clear_deepseek: bool = False
     clear_zhipu: bool = False
     clear_siliconflow: bool = False
     clear_openrouter: bool = False
-    default_provider: Literal["deepseek", "zhipu", "siliconflow", "openrouter", "ollama"] | None = None
+    clear_gemini: bool = False
+    clear_openai: bool = False
+    default_provider: Literal["deepseek", "zhipu", "siliconflow", "openrouter", "gemini", "openai", "ollama"] | None = None

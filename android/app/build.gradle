@@ -13,6 +13,7 @@ tasks.register('prepareGame', Exec) {
     inputs.file('../../tools/prepare_android.py')
     inputs.dir('../../data/worlds')
     inputs.dir('../../research')
+    inputs.dir('../../web')
     inputs.file('src/main/assets/mobile-shell.js')
     outputs.dir(gameStage)
 }
@@ -25,8 +26,8 @@ android {
         applicationId 'com.wuji.rpg'
         minSdk 24
         targetSdk 35
-        versionCode 1
-        versionName '0.2.0-preview'
+        versionCode 2
+        versionName '0.2.1-preview'
         ndk { abiFilters.addAll(providers.gradleProperty('wujiAbis').getOrElse('arm64-v8a').split(',') as List) }
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
     }

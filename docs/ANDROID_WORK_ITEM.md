@@ -19,7 +19,7 @@ WebView 保留 JavaScript/DOM 存储，禁止 file:// 访问、混合内容与�
 ## 本次验证
 
 - arm64-v8a 安装包实际编译成功，APK v2 签名验证通过；Android lint：0 errors、2 warnings（旧系统忽略新版 manifest 属性、提示文案国际化）。
-- x86_64 模拟器测试包实际编译成功。当前无 KVM 的软件模拟器未取得成功启动证据，不计为安卓运行测试通过；未在物理安卓手机上运行。
+- x86_64 测试包编译成功。无 KVM 的本地软件模拟器未取得启动成功证据；随后 GitHub 的 KVM 模拟器实际运行成功，确认 WebView、内置 Python、受保护后端与游戏菜单启动。证据：https://github.com/yoyuyoyu123/my-rpg/actions/runs/41324464944 。仍未在物理安卓手机上运行。
 - 桌面依赖下后端：473 passed、3 既有 xfailed；Android 锁定依赖的主机环境下同为 473 passed、3 xfailed。前端契约通过。
 - 手机引导模块在隔离主机环境中启动真实服务：一次性引导/HttpOnly Cookie、未授权访问拒绝、API 配置写入私有目录、世界目录、SQLite 和叙事记忆存档往返通过。
 - Android 依赖下的完整浏览器游戏回归通过；手机 JS 桥的原存档导出、JSON 导入、叙事记忆与返回关闭面板通过。安卓系统文件选择器、软键盘与真机后台行为尚待设备验证。

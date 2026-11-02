@@ -1,0 +1,33 @@
+name: Mobile website
+on:
+  push:
+    branches: [main, codex/mobile-web]
+    paths: ['backend/**', 'web/**', 'index.html', 'render.yaml', 'fly.toml', 'Dockerfile', '.dockerignore', 'tools/serve_web.py', 'tools/docker-entrypoint.sh', 'tools/test_web_container.py', 'tools/test-browser-web.mjs', '.github/workflows/web.yml']
+  pull_request:
+    paths: ['backend/**', 'web/**', 'index.html', 'render.yaml', 'fly.toml', 'Dockerfile', '.dockerignore', 'tools/serve_web.py', 'tools/docker-entrypoint.sh', 'tools/test_web_container.py', 'tools/test-browser-web.mjs', '.github/workflows/web.yml']
+permissions:
+  contents: read
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: python -m pip install -r backend/requirements-prod.txt pytest pytest-asyncio
+      - run: python -m pytest backend/tests -q
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:contracts
+      - run: npm run test:browser:web
+        env:
+          RPG_TEST_PYTHON: python
+      - run: npm run test:browser:android
+        env:
+          RPG_TEST_PYTHON: python
+      - run: docker build -t wuji-web:test .
+      - run: python tools/test_web_container.py

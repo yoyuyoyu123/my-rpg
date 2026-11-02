@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>无界·叙事引擎 v25 · 全量标签兼容组合</title>
+<meta name="theme-color" content="#102626">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="无界 RPG">
+<link rel="manifest" href="/web/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/web/icons/wuji-180.png">
+<script defer src="/web/mobile-web.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -89,6 +95,7 @@ body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradi
 .fld{flex:1;background:rgba(200,169,110,0.04);border:1px solid var(--bd);color:var(--g);font-family:'Share Tech Mono',monospace;font-size:12px;padding:9px 12px;outline:none;}
 .fld:focus{border-color:var(--g);}
 .fld::placeholder{color:var(--dm);}
+#be-model-id{width:100%;min-width:0;min-height:76px;resize:vertical;line-height:1.5;font-size:16px;overflow-wrap:anywhere;}
 .fld.dm{color:var(--dm);font-size:11px;}
 .btn{background:transparent;border:1px solid var(--g);color:var(--g);font-family:'Share Tech Mono',monospace;font-size:11px;padding:9px 18px;cursor:pointer;letter-spacing:2px;text-transform:uppercase;transition:all 0.2s;white-space:nowrap;}
 .btn:hover{background:var(--g);color:var(--dark);}
@@ -1449,14 +1456,20 @@ body::before{
       <div class="pdsc">通过你自己的后端调用模型 · <span style="color:var(--g)">API Key 保存在服务端，不进浏览器</span></div>
       <div id="be-status" style="font-size:11px;color:var(--dm);margin:8px 0;line-height:1.7">正在检测后端…</div>
       <div class="prow">
-        <select id="bemod" class="fld"><option value="">— 先检测后端 —</option></select>
+        <select id="bemod" class="fld" onchange="document.getElementById('be-model-id').value=''"><option value="">— 先检测后端 —</option></select>
       </div>
+      <label for="be-model-id" class="pdsc">自定义模型 ID（可输入或粘贴）</label>
+      <div class="prow"><textarea id="be-model-id" class="fld" rows="2" maxlength="128" inputmode="url" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="be-model-help" placeholder="例如 gemini-3.1-flash-lite；留空使用上方默认型号"></textarea></div>
+      <div id="be-model-help" class="pdsc">型号按原样发送，不自动纠正拼写。也可以直接点选：</div>
+      <div class="prow"><button id="be-gemini-lite" class="btn sm" onclick="chooseBackendModel('gemini','gemini-3.1-flash-lite')">使用 Gemini 3.1 Flash-Lite</button></div>
       <div class="backend-config">
         <div class="backend-config-title">▸ 在网页中配置后端 Key</div>
-        <div class="backend-config-note">只提交给本机后端并写入 backend/.env；已配置的 Key 只显示脱敏状态。留空表示保留原值，不会传到模型服务。</div>
+        <div class="backend-config-note">Key 仅保存到当前游戏后端的私有配置；只向对应模型服务认证，页面只显示脱敏状态。留空保留原值。</div>
         <div class="prow"><input type="password" id="cfg-deepseek" class="fld" placeholder="DeepSeek Key（留空保持不变）" autocomplete="off"></div>
         <div class="prow"><input type="password" id="cfg-zhipu" class="fld" placeholder="智谱 Key（留空保持不变）" autocomplete="off"></div>
         <div class="prow"><input type="password" id="cfg-siliconflow" class="fld" placeholder="硅基流动 Key（留空保持不变）" autocomplete="off"></div>
+        <div class="prow"><input type="password" id="cfg-gemini" class="fld" placeholder="Google Gemini Key（AI Studio）" autocomplete="off"></div>
+        <div class="prow"><input type="password" id="cfg-openai" class="fld" placeholder="OpenAI Key（GPT-6 Luna）" autocomplete="off"></div>
         <div class="prow"><input type="password" id="cfg-openrouter" class="fld" placeholder="OpenRouter Key（留空保持不变）" autocomplete="off"></div>
         <div class="prow">
           <select id="cfg-default" class="fld">
@@ -1464,6 +1477,8 @@ body::before{
             <option value="zhipu">默认：智谱 GLM</option>
             <option value="siliconflow">默认：硅基流动</option>
             <option value="openrouter">默认：OpenRouter</option>
+            <option value="gemini">默认：Google Gemini</option>
+            <option value="openai">默认：OpenAI · GPT-6 Luna</option>
             <option value="ollama">默认：本地 Ollama</option>
           </select>
         </div>
@@ -1662,7 +1677,7 @@ body::before{
           <option value="classic">传统单稿</option>
         </select>
       </div>
-      <div class="set-hint">沉浸模式先比较人物反应与不同写法，再显示选中的正文，会增加等待和模型调用。自由行动、检定、背包、技能与任务照常游玩；仅本地后端支持。</div>
+      <div class="set-hint">沉浸模式先比较人物反应与不同写法，再显示选中的正文，会增加等待和模型调用。自由行动、检定、背包、技能与任务照常游玩；需要完整游戏后端。</div>
       <button class="ob" type="button" onclick="exportNarrativeExperiment()">导出本局叙事体验记录</button>
       <label class="set-chk"><input type="checkbox" id="set-structured-writer" onchange="SETTINGS.structuredWriter=this.checked;saveSettings()"> 结构化写手输出（实验；正文格式异常时自动回退）</label>
       <div class="set-hint">开启后要求写手返回正文、选项和状态候选的 JSON；旧模型返回纯文本时仍按原流程显示。</div>
@@ -2501,6 +2516,18 @@ function setTab(t) {
 // 后端模式：把「有哪些模型可用」这件事交给服务端回答。
 // 前端不再持有任何 key —— 这是这次前后端分离最直接的收益。
 var BACKEND_PROVIDERS=[];
+function chooseBackendModel(provider,model){
+  var sel=document.getElementById('bemod');
+  var option=Array.prototype.find.call(sel.options,function(o){return o.value.split('|')[0]===provider;});
+  if(!option){
+    var status=document.getElementById('be-status');
+    status.textContent='请先在下方填写对应服务的 API Key 并保存，再选择型号。';
+    return false;
+  }
+  sel.value=option.value;
+  document.getElementById('be-model-id').value=model;
+  return true;
+}
 async function probeBackend(){
   var st=document.getElementById('be-status'), sel=document.getElementById('bemod');
   st.textContent='正在检测后端…'; st.style.color='var(--dm)';
@@ -2573,7 +2600,7 @@ async function doConnect(t) {
   CHATPATH = (t==='zp') ? '/api/paas/v4/chat/completions' : '/v1/chat/completions';
   if(t==='be'){
     var v=(document.getElementById('bemod').value||'').split('|');
-    BACKEND_PROVIDER=v[0]||''; MODEL=v[1]||'';
+    BACKEND_PROVIDER=v[0]||''; MODEL=(document.getElementById('be-model-id').value||'').trim()||v[1]||'';
     APIKEY='backend'; BASEURL=''; CHATPATH='/api/chat';
     if(!BACKEND_PROVIDER){st.textContent='▸ 请先检测后端并选择一个已配置的模型';st.style.color='var(--r)';return;}
   }
@@ -3839,7 +3866,7 @@ function setStreamSpeed(v){
   saveSettings();
 }
 
-// 只在同源的本机后端上读写配置；GitHub Pages/直接打开 HTML 时会明确提示，
+// 通过同源的本机后端或已登录的私人站点读写配置；静态页面会明确提示，
 // 不会把用户误导成“已经保存成功”。
 async function loadBackendConfig(){
   var st=document.getElementById('be-config-status');
@@ -3852,7 +3879,7 @@ async function loadBackendConfig(){
       throw new Error((data&&data.detail)||('HTTP '+r.status));
     }
     var map={};(data.providers||[]).forEach(function(p){map[p.id]=p;});
-    ['deepseek','zhipu','siliconflow','openrouter'].forEach(function(id){
+    ['deepseek','zhipu','siliconflow','openrouter','gemini','openai'].forEach(function(id){
       var el=document.getElementById('cfg-'+id), p=map[id];
       if(!el)return;
       el.value='';
@@ -3870,7 +3897,7 @@ async function loadBackendConfig(){
 async function saveBackendConfig(){
   var st=document.getElementById('be-config-status');
   var body={default_provider:(document.getElementById('cfg-default')||{}).value||'deepseek'};
-  [['deepseek','deepseek_api_key'],['zhipu','zhipu_api_key'],['siliconflow','siliconflow_api_key'],['openrouter','openrouter_api_key']].forEach(function(pair){
+  [['deepseek','deepseek_api_key'],['zhipu','zhipu_api_key'],['siliconflow','siliconflow_api_key'],['openrouter','openrouter_api_key'],['gemini','gemini_api_key'],['openai','openai_api_key']].forEach(function(pair){
     var el=document.getElementById('cfg-'+pair[0]), value=el&&el.value.trim();
     if(value)body[pair[1]]=value;
   });
@@ -3879,13 +3906,13 @@ async function saveBackendConfig(){
     var r=await fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     var data=await r.json().catch(function(){return{};});
     if(!r.ok)throw new Error((data&&data.detail)||('HTTP '+r.status));
-    ['deepseek','zhipu','siliconflow','openrouter'].forEach(function(id){var el=document.getElementById('cfg-'+id);if(el)el.value='';});
-    if(st){st.textContent='已保存到 backend/.env；后端配置已即时重载。';st.style.color='var(--g)';}
+    ['deepseek','zhipu','siliconflow','openrouter','gemini','openai'].forEach(function(id){var el=document.getElementById('cfg-'+id);if(el)el.value='';});
+    if(st){st.textContent='已保存到当前后端的私有配置；已即时生效。';st.style.color='var(--g)';}
     await probeBackend();
     await loadBackendConfig();
     return true;
   }catch(e){
-    if(st){st.textContent='保存失败：'+(e.message||String(e))+'。请确认页面由 http://127.0.0.1:8000/ 打开。';st.style.color='var(--r)';}
+    if(st){st.textContent='保存失败：'+(e.message||String(e))+'。请确认已连接游戏后端或重新登录网站。';st.style.color='var(--r)';}
     return false;
   }
 }
